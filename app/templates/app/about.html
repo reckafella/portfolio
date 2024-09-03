@@ -1,0 +1,26 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} About Me {% endblock %}
+
+{% block content %}
+<section id="section about" class="section about bg-dark">
+    <div class="mt-5 col-md-9 col-sm-10 col-lg-9 card d-flex container-sm container-fluid align-items-center justify-content-between bg-black">
+        <div class="mt-3 mb-1 col-lg-4 col-md-4 col-sm-4 w-sm-50 pic">
+            <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle">
+        </div>
+        <div class="text-white mt-1 p-2">
+            <h2 class="fw-bold text-light">Hello, I'm <span class="pacifico-regular">Ethan</span></h2>
+            <p>Welcome to my portfolio website!</p>
+            <p>I am a
+                <strong><span class="text-decoration-underline typed" data-typed-items=" FullStack Software Engineer, DevOps Engineer, Backend Developer, Code Testing Specialist," style="text-decoration-thickness: 10%;"></span></strong>
+                <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
+                <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
+            </p>
+            <p>You can learn more about my work here.</p>
+            <div class="d-flex mb-3 justify-content-around align-items-center">
+                <a class="btn btn-light" href="{% url 'projects' %}">View Projects</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

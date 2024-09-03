@@ -1,0 +1,66 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} My Projects {% endblock %}
+
+{% block content %}
+<section id="section projects" class="mt-5 section projects bg-dark text-white">
+    <div class="card container d-flex info-wrap bg-black text-white" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-center mb-2 card-header" data-aos="fade-up">
+            <div class="info-wrap">
+                <div class="text-center mb-2" data-aos="fade-up">
+                <h1 class="fw-bold text-white">My Projects</h1>
+                <p>Here are some of the projects I have worked on.</p>
+
+                <div class="row gy-4 d-flex justify-content-center align-items-center">
+                    <div class="col-lg-7">
+                        <div class="row gy-4">
+                            <div class="col-md-6">
+                                <div class="card bg-dark text-white">
+                                    <img src="{% static 'assets/images/projects/project1.jpeg' %}" class="card-img-top" alt="AirBnB clone screenshot">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold">AirBnB Clone</h5>
+                                        <p class="card-text">A clone of the AirBnB website frontend created using HTML, CSS, and JQuery.</p>
+                                        <a href="#" class="btn btn-light">View Project</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-dark text-white">
+                                    <img src="{% static 'assets/images/projects/project2.jpg' %}" class="card-img-top" alt="Project 2">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold">Project 2</h5>
+                                        <p class="card-text">This is a project I worked on.</p>
+                                        <a href="#" class="btn btn-light">View Project</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-dark text-white">
+                                    <img src="{% static 'assets/images/projects/project3.jpg' %}" class="card-img-top" alt="Project 1">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold">Project 3</h5>
+                                        <p class="card-text">This is a project I worked on.</p>
+                                        <a href="#" class="btn btn-light">View Project</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-dark text-white">
+                                    <img src="{% static 'assets/images/projects/project4.png' %}" class="card-img-top" alt="Project 2">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold">Project 4</h5>
+                                        <p class="card-text">This is a project I worked on.</p>
+                                        <a href="#" class="btn btn-light">View Project</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+</section>
+{% endblock %}

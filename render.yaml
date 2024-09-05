@@ -4,4 +4,4 @@ services:
     plan: free
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn portfolio.asgi:app -k uvicorn.workers.UvicornWorker"
+    startCommand: "python -m gunicorn portfolio.asgi:application -k uvicorn.workers.UvicornWorker"

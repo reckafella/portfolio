@@ -27,7 +27,13 @@ def contact_view(request):
 
 def blog_view(request):
     ''' View to render the home page '''
-    return render(request=request, template_name='app/blog.html', status=200)
+    blog_json_path = os.path.join(settings.BASE_DIR, 'app', 'static', 'assets', 'data', 'projects.json')
+
+    with open(blog_json_path, 'r') as fl:
+        blog_data = json.load(fl)
+    
+    context = dict(articles=blog_data)
+    return render(request=request, template_name='app/blog.html', context=context, status=200)
 
 
 def projects_view(request):

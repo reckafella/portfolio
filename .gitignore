@@ -129,7 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-staticfiles/staticfiles.json
+#staticfiles/staticfiles.json
 
 # Spyder project settings
 .spyderproject
@@ -161,6 +161,6 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-/staticfiles/admin/
-/staticfiles/assets/
-.vercel
+#/staticfiles/admin/
+#/staticfiles/assets/
+#.vercel

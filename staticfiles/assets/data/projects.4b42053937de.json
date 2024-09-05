@@ -1,0 +1,38 @@
+[
+    {
+        "title": "AirBnB Clone",
+        "description": "A clone of the AirBnB website frontend created using HTML, CSS, and JQuery.",
+        "image": "assets/images/projects/airbnb-clone.png",
+        "link": "https://github.com/reckafella/Airbnb_clone_v3"
+    },
+    {
+        "title": "React Intro",
+        "description": "In this project, I worked on an app that fetched data from an API and rendered it on the website. The project helped me learn how to work with APIs in JavaScript.",
+        "image": "assets/images/projects/react-intro.png",
+        "link": "https://github.com/reckafella/React"
+    },
+    {
+        "title": "Simple Shell",
+        "description": "This is a project I worked on using C. The goal was to create a simple shell interpreter, like the one used on Linux systems (e.g. bash, sh)",
+        "image": "assets/images/projects/simple-shell.png",
+        "link": "https://github.com/reckafella/simple_shell"
+    },
+    {
+        "title": "Files Manager",
+        "description": "This is a project I worked on.",
+        "image": "assets/images/projects/files-manager.png",
+        "link": "https://github.com/reckafella/alx-files_manager"
+    },
+    {
+        "title": "Video Downloader",
+        "description": "This is a project I worked on to practice my skills on working with Django, using templates, and authentication.",
+        "image": "assets/images/projects/video-dl.png",
+        "link": "https://github.com/reckafella/video-downloader"
+    },
+    {
+        "title": "Weather App",
+        "description": "This is a Django app created as part of the final project at ALX.",
+        "image": "assets/images/projects/alx-final_project.png",
+        "link": "https://github.com/reckafella/alx-final_project"
+    }
+]

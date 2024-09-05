@@ -5,13 +5,21 @@
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
     },
     {
-      "src": "portfolio/static/(.*)",
+      "src": "/static/(.*)",
       "use": "@vercel/static",
-      "config": { "source": "portfolio/static/$1" }
+      "config": { "source": "/static/$1" }
     }
   ],
   "routes": [
-    { "src": "/static/(.*)", "dest": "/static/$1" },
-    { "src": "/(.*)", "dest": "vercel/wsgi.py" }
+    { "handle": "filesystem" },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "portfolio/wsgi.py"
+    }
+    
   ]
 }

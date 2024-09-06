@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-from ckeditor.fields import CKEditor5Field
+from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.auth.models import User
 
 

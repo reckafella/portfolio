@@ -1,0 +1,23 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Blog {% endblock %}
+
+{% block content %}
+<section id="section" class="mt-5 section blog bg-dark">
+    <div class="card container justify-content-center d-flex align-items-center bg-black text-white" data-aos="fade-up" data-aos-delay="200">
+        <div class="mt-2 text-center justify-content-center mb-2 card-header" data-aos="fade-up">
+            <div class="info-wrap text-center mb-2" data-aos="fade-up">
+                <h1 class="fw-bold text-white">{{ post.title }}</h1>
+                <p class="text-white text-start">By <a href="{{ url 'author_posts' post.author.username }}">{{ post.author.username }}</a></p>
+                <p class="text-muted text-white">{{ post.created_at }}</p>
+            </div>
+        </div>
+
+        <div class="row gy-4 justify-content-center align-items-center mb-3 mt-0">
+            <div class="col-lg-11 text-start text-white">
+                {{ post.content|safe }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

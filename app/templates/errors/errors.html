@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+
+{% block title %}CSRF-Failure{% endblock %}
+
+{% block content %}
+<section id="profile" class="profile section bg-image"
+    style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+    <div class="mask d-flex align-items-center gradient-custom-3">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                    <div class="card" style="border-radius: 15px;">
+                        <div class="card-body p-5">
+                            <div class="section-title">
+                                <h2  class="fw-bold">Error</h2>
+                            </div>
+                            <div class="mb-0">
+                                <h1 class="section-title">{{ errors }}</h1>
+                                <div class="links d-flex justify-content-center">
+                                    <a class="btn btn-primary btn-secondary" href="{% url 'home' %}">Home</a>
+                                    <a class="btn btn-primary btn-secondary" href="{% url 'blog' %}">Blog Articles</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

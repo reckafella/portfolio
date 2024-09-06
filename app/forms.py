@@ -1,5 +1,5 @@
 from django import forms
-from ckeditor.widgets import CKEditorWidget
+from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib import admin
 
 from app.models import BlogPost
@@ -15,19 +15,20 @@ class LoginForm(forms.Form):
                                     'class': 'form-control', 'id': 'form3Example4cg', 'placeholder': 'Enter Password'},
                                     render_value=True))
 
+
 class BlogPostForm(forms.Form):
     """ form to handle blog post info """
     title = forms.CharField(label='Title', required=True, max_length=200,
                             widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Title'}))
     
     content = forms.CharField(label='Content', required=True,
-                              widget=CKEditorWidget(attrs={'class': 'form-control', 'placeholder': 'Enter Content'}))
+                              widget=CKEditor5Widget(attrs={'class': 'form-control', 'placeholder': 'Enter Content'}))
 
 
 class BlogPostAdminForm(forms.ModelForm):
     """ form to handle blog post info in admin """
     content = forms.CharField(label='Content', required=True,
-                                widget=CKEditorWidget(attrs={'class': 'form-control', 'placeholder': 'Enter Content'}))
+                                widget=CKEditor5Widget(attrs={'class': 'form-control', 'placeholder': 'Enter Content'}))
     class Meta:
         model = BlogPost
         fields = '__all__'
@@ -46,5 +47,4 @@ class BlogPostAdmin(admin.ModelAdmin):
         if not obj.author_id:
             obj.author = request.user
         super().save_model(request, obj, form, change)
-
 

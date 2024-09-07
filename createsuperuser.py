@@ -2,7 +2,8 @@
 
 import os
 import django
-from django.core.management import call_command
+from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'portfolio.settings')
 django.setup()
@@ -12,9 +13,11 @@ password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
 email = os.getenv('DJANGO_SUPERUSER_EMAIL')
 
 if not username or not password or not email:
-    raise ValueError('You must provide DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD and DJANGO_SUPERUSER_EMAIL environment variables')
+    raise ValueError('You must provide DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, and DJANGO_SUPERUSER_EMAIL environment variables')
 
-if __name__ == '__main__':
-    call_command('createsuperuser', interactive=False, username=username, email=email, password=password)
-
-# This script creates a superuser in Django using the createsuperuser management command. It reads the username, password, and email from environment variables and calls the createsuperuser command with the provided values. The interactive option is set to False to prevent the command from prompting the user for input.
+# Create the superuser
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username=username, email=email, password=password)
+    print(f'Superuser {username} created successfully.')
+else:
+    print(f'Superuser {username} already exists.')

@@ -12,4 +12,4 @@ python manage.py makemigrations
 python manage.py migrate
 
 # create superuser
-./create_superuser.py
+./createsuperuser.py

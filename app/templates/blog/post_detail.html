@@ -1,23 +1,65 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} Blog {% endblock %}
+{% block title %} {{ post.title }} {% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog bg-dark">
-    <div class="card container justify-content-center d-flex align-items-center bg-black text-white" data-aos="fade-up" data-aos-delay="200">
-        <div class="mt-2 text-center justify-content-center mb-2 card-header" data-aos="fade-up">
-            <div class="info-wrap text-center mb-2" data-aos="fade-up">
-                <h1 class="fw-bold text-white">{{ post.title }}</h1>
-                <p class="text-white text-start">By <a href="{{ url 'author_posts' post.author.username }}">{{ post.author.username }}</a></p>
-                <p class="text-muted text-white">{{ post.created_at }}</p>
+<section id="section" class="mt-5 section blog bg-light">
+    <div class="container bg-white col-lg-7 col-md-9 col-sm-10">
+        <div class="card bg-white mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header text-center">
+                <div class="info-wrap mb-2" data-aos="fade-up">
+                    <h2 class="fw-bold">{{ post.title }}</h2>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            By 
+                            <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
+                                {% if post.author.first_name and post.author.last_name %}
+                                    {{ post.author.first_name }} {{ post.author.last_name }}
+                                {% else %}
+                                    {{ post.author.username|capfirst }}
+                                {% endif %}
+                            </a>
+                            &nbsp;|&nbsp; {{ post.created_at|date:"F j, Y" }}
+                        </small>
+                    </p>
+                </div>
             </div>
-        </div>
 
-        <div class="row gy-4 justify-content-center align-items-center mb-3 mt-0">
-            <div class="col-lg-11 text-start text-white">
-                {{ post.content|safe }}
+            <div class="card-body">
+                <div class="text-start">
+                    {{ post.content|safe }}
+                </div>
             </div>
         </div>
+        
+        <!-- Recommended Articles Section -->
+        {% if other_posts %}
+        <div class="mt-5">
+            <h3 class="text-center">More from 
+                {% if post.author.first_name and post.author.last_name %}
+                    {{ post.author.first_name }} {{ post.author.last_name }}
+                {% else %}
+                    {{ post.author.username|capfirst }}
+                {% endif %}
+            </h3>
+            <div class="row">
+                {% for article in other_posts %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card bg-white h-100" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
+                            </h5>
+                            <p class="card-text">
+                                <small class="text-muted">{{ article.created_at|date:"F j, Y" }}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

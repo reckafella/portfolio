@@ -26,7 +26,7 @@ FALLBACK_SECRET_KEY = 'django-insecure-(mqx%zsxjly7+4g554fulva4zmxb(e=$e7gun91&_
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', 'ethanmuthoni.tech', 'vercel.app', 'now.sh']
@@ -147,8 +147,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CKEditor
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'default': {
+        'language': 'en',
+        'toolbar': 'full',
+        'height': 400,
+        'width': 'auto',
+        'image_resize_options': ['original', '300', '600'],
+        'image_resize_width': 'auto',
         'toolbar': 'Custom',
         'toolbar_Custom': [
             {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']},
@@ -161,6 +167,11 @@ CKEDITOR_CONFIGS = {
             {'name': 'document', 'items': ['Source']},
         ],
         'width': '100%',
+        'extra_plugins': ','.join([
+            'uploadimage',
+            'autolink',
+            'image2',
+        ]),
     }
 }
 
@@ -172,3 +183,15 @@ LOGOUT_URL = 'logout'
 APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_REF  = 'no-referrer'
+SECURE_REF_POLICY = 'strict-origin-when-cross-origin'

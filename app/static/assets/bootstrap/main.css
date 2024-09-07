@@ -181,12 +181,14 @@ h6 {
   .navmenu .active:focus {
     color: var(--nav-hover-color);
   }
-  .navmenu li:hover>a, 
+
+  /* .navmenu li:hover>a, 
   .navmenu .active:focus {
     font-family: "Pacifico", cursive;
     font-weight: 400;
     font-style: normal;
-  }
+  } */
+   
   .navmenu .dropdown ul {
     margin: 0;
     padding: 10px 0;

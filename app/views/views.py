@@ -1,9 +1,13 @@
 import os.path
+from titlecase import titlecase
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.utils.text import slugify
 import json
+from ..helpers import is_ajax
 from django.conf import settings
 from django.urls import reverse
 
@@ -53,9 +57,13 @@ def posts_list_view(request):
 def post_detail_view(request, slug):
     """ View to render the blog post details """
     post = get_object_or_404(BlogPost, slug=slug)
+    
+    other_posts = BlogPost.objects.filter(author=post.author).exclude(id=post.id).order_by('-created_at')[:3]
+
 
     context = {
-        'post': post
+        'post': post,
+        'other_posts': other_posts
     }
     return render(request, 'blog/post_detail.html', context)
 
@@ -75,7 +83,7 @@ def create_post(request):
     if request.method == 'POST':
         form = BlogPostForm(request.POST)
         if form.is_valid():
-            title = form.cleaned_data.get('title')
+            title = titlecase(form.cleaned_data.get('title'))
             content = form.cleaned_data.get('content')
 
             post = BlogPost.objects.create(
@@ -83,6 +91,17 @@ def create_post(request):
                 content=content,
                 author=request.user
             )
+            if not post.slug:
+                post.slug = slugify(post.title)
+                post.save()
+
+            if is_ajax(request):
+                response = {
+                    'success': True,
+                    'message': 'Post created successfully',
+                    'redirect_url': reverse('post_detail', args=[post.slug])
+                }
+                return JsonResponse(response)
 
             return redirect('post_detail', slug=post.slug)
     else:
@@ -93,7 +112,8 @@ def create_post(request):
         'form_action_url': reverse('create_post'),
         'page_title': 'Create a New Post',
         'form_title': 'Create Post',
-        'submit_text': 'Create'
+        'submit_text': 'Create',
+        'author': request.user
     }
 
-    return render(request, 'blog/create_post.html', {'form': form})
+    return render(request, 'blog/create_post.html', context)

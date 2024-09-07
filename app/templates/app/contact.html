@@ -3,12 +3,69 @@
 {% block title %} Contact Me {% endblock %}
 
 {% block content %}
-<section id="section contact" class="mt-5 section section-bg contact bg-dark">
-    <div class="card container d-flex info-wrap bg-black text-white" data-aos="fade-up" data-aos-delay="200">
+<section id="section contact" class="mt-5 section section-bg contact"
+style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+    <div class="container">
+        <h2 class="text-center text-black fw-bold" data-aos="fade-up">Contact Me</h2>
+        <div class="text-center text-black mb-2" data-aos="fade-up" data-aos-delay="100">
+            <p>Do you have any 
+                <strong>
+                    <span class="typed kalam-bold" data-typed-items="questions?, compliments?, complaints?, suggestions?, collaboration opportunities?"></span>
+                </strong>
+            </p>
+        </div>
+        
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <h3 class="card-title text-center fw-bold mb-4">Send Me a Message</h3>
+                        <form action="#" method="post" class="php-email-form">
+                            {% csrf_token %}
+                            <div class="row gy-4">
+                                <div class="col-md-6">
+                                    <label for="name-field" class="pb-2">Your Name</label>
+                                    <input type="text" name="name" id="name-field" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email-field" class="pb-2">Your Email</label>
+                                    <input type="email" class="form-control" name="email" id="email-field" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="subject-field" class="pb-2">Subject</label>
+                                    <input type="text" class="form-control" name="subject" id="subject-field" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="message-field" class="pb-2">Message</label>
+                                    <textarea class="form-control" name="message" rows="5" id="message-field" required></textarea>
+                                </div>
+                                <div class="col-md-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% comment %}
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Contact Me {% endblock %}
+
+{% block content %}
+<section id="section contact" class="mt-5 section section-bg contact">
+    <div class="card container d-flex info-wrap" data-aos="fade-up" data-aos-delay="200">
         <div class="text-center mb-2 card-header" data-aos="fade-up">
             <div class="info-wrap">
                 <div class="text-center mb-2" data-aos="fade-up">
-                <h1 class="fw-bold text-white">Contact Me</h1>
+                <h1 class="fw-bold">Contact Me</h1>
                 <p>Do you have any
                     <strong>
                         <span class="typed kalam-bold" data-typed-items="questions,compliments,complaints,suggestions,open job opportunities"></span>
@@ -19,7 +76,7 @@
             </div>
             <div class="info-item d-flex justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="150">
                 <i class="bi bi-envelope flex-shrink-0"></i>
-                <h3 class="text-white fw-bold">Send Me a Message</h3>
+                <h3 class= fw-bold">Send Me a Message</h3>
             </div>
         </div>
     </div>
@@ -30,19 +87,19 @@
                 <div class="row gy-4">
                     <div class="col-md-6">
                         <label for="name-field" class="pb-2">Your Name</label>
-                        <input type="text" name="name" id="name-field" class="form-control bg-dark text-white" required="">
+                        <input type="text" name="name" id="name-field" class="form-control" required="">
                     </div>
                     <div class="col-md-6">
                         <label for="email-field" class="pb-2">Your Email</label>
-                        <input type="email" class="form-control bg-dark text-white" name="email" id="email-field" required="">
+                        <input type="email" class="form-control" name="email" id="email-field" required="">
                     </div>
                     <div class="col-md-12">
                         <label for="subject-field" class="pb-2">Subject</label>
-                        <input type="text" class="form-control bg-dark text-white" name="subject" id="subject-field" required="">
+                        <input type="text" class="form-control" name="subject" id="subject-field" required="">
                     </div>
                     <div class="col-md-12">
                         <label for="message-field" class="pb-2">Message</label>
-                        <textarea class="form-control bg-dark text-white" name="message" rows="5" id="message-field" required=""></textarea>
+                        <textarea class="form-control" name="message" rows="5" id="message-field" required=""></textarea>
                     </div>
                     <div class="col-md-12 text-center">
                         <button type="submit">Send Message</button>
@@ -54,3 +111,4 @@
 </div>
 </section>
 {% endblock %}
+{% endcomment %}

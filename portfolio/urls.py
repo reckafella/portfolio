@@ -21,5 +21,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('ckeditor/', include('django_ckeditor_5.urls')),
     path('', include('app.urls'), name='app')
 ]

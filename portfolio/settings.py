@@ -183,7 +183,7 @@ LOGOUT_URL = 'logout'
 APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
-CSRF_COOKIE_SECURE = True
+""" CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_BROWSER_XSS_FILTER = True
@@ -194,4 +194,4 @@ SECURE_HSTS_PRELOAD = True
 CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_REF  = 'no-referrer'
-SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
+SECURE_REF_POLICY = 'strict-origin-when-cross-origin' """

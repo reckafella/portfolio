@@ -4,35 +4,26 @@
 
 {% block content %}
 <section id="section projects" class="mt-5 section projects bg-dark text-white">
-    <div class="card container justify-content-center d-flex align-items-center bg-black text-white" data-aos="fade-up" data-aos-delay="200">
-        <div class="text-center justify-content-center mb-2 card-header" data-aos="fade-up">
-            <div class="info-wrap text-center mb-2" data-aos="fade-up">
-                <h1 class="fw-bold text-white">My Projects</h1>
-                <p>Here are some of the projects I have worked on.</p>
-            </div>
-        </div>
-
-        <div class="row gy-4 justify-content-center align-items-center mb-3 mt-0">
-            <div class="col-lg-11">
-                <div class="row gy-4 align-items-center">
-                    {%  for project in projects %}
-                        <div class="col-md-5 col-sm-5 col-lg-4">
-                            <div class="card bg-dark text-white">
-                                <img src="{% static project.image %}" class="card-img-top" alt="{{ project.title }}">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title fw-bold">{{ project.title }}</h5>
-                                    <p class="card-text text-start">
-                                        <span class="short-description">{{ project.description|truncatewords:15 }}</span>
-                                        <span class="full-description" style="display:none;" data-length="{{ project.description|length }}">{{ project.description }}</span>
-                                        <a href="javascript:void(0);" class="toggle-description btn btn-link p-0" style="display:none;">More</a>
-                                    </p>
-                                    <a href="{{ project.link }}" target="_blank" class="btn btn-light">View Project</a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
+    <div class="container">
+        <h2 class="text-center text-white mb-5">My Projects</h2>
+        
+        <div class="row justify-content-center">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
+                    <img src="{% static project.image %}" class="card-img-top" alt="{{ project.title }}">
+                    <div class="card-body text-center">
+                        <h3 class="card-title fw-bold">{{ project.title }}</h3>
+                        <p class="card-text text-start">
+                            <span class="short-description">{{ project.description|truncatewords:15 }}</span>
+                            <span class="full-description" style="display:none;" data-length="{{ project.description|length }}">{{ project.description }}</span>
+                            <a href="javascript:void(0);" class="toggle-description btn btn-link p-0" style="display:none;">More</a>
+                        </p>
+                        <a href="{{ project.link }}" target="_blank" class="btn btn-success">View Project</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </section>

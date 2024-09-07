@@ -1,38 +1,38 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} My Blog {% endblock %}
+{% block title %} Blog Posts {% endblock %}
 
 {% block content %}
 <section id="section" class="mt-5 section blog bg-dark">
-    <div class="card container justify-content-center d-flex align-items-center bg-black text-white" data-aos="fade-up" data-aos-delay="200">
-        <div class="mt-2 text-center justify-content-center mb-2 card-header" data-aos="fade-up">
-            <div class="info-wrap text-center mb-2" data-aos="fade-up">
-                <h1 class="fw-bold text-white">Blog Posts</h1>
-            </div>
-        </div>
-
-        <div class="row gy-4 justify-content-center align-items-center mb-3 mt-0">
-            <div class="col-lg-11">
-                <div class="row gy-4 align-items-center">
-                    {%  for article in articles %}
-                        <div class="col-md-6 col-sm-5 col-lg-3">
-                            <div class="card bg-dark text-white">
-                                <div class="card-body text-center">
-                                    <a href="{% url 'post_detail' article.slug %}"><h5 class="card-title fw-bold">{{ article.title }}</h5></a>
-                                    <p>
-                                        <a href="{% url 'author_posts' article.author.username %}">{{ article.author.username }}</a>
-                                        <span>{{ article.created_at }}</span>
-                                    </p>
-                                    <p class="card-text text-start">
-                                        <span class="short-description">{{ article.content|truncatewords:60 }}</span>
-                                    </p>
-                                    <a href="{% url 'post_detail' article.slug %}" class="btn btn-light">Read Article</a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
+    <div class="container">
+        <h2 class="text-center text-white mb-5">Blog Posts</h2>
+        <div class="row justify-content-center">
+            {% for article in articles %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <p class="card-title fw-bold">
+                            <a href="{% url 'post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                By <a href="{% url 'author_posts' article.author.username %}" class="text-success text-decoration-none">
+                                    {% if article.author.first_name and article.author.last_name %}
+                                        {{ article.author.first_name }} {{ article.author.last_name }}
+                                    {% else %}
+                                        {{ article.author.username|capfirst }}
+                                    {% endif %}</a>
+                                &nbsp;|&nbsp; <span class="text-muted">{{ article.created_at|date:"F j, Y" }}</span>
+                            </small>
+                        </p>
+                        <p class="card-text">{{ article.content|safe|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'post_detail' article.slug %}" class="btn btn-success">Read Article</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </section>

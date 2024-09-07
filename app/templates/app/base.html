@@ -54,6 +54,7 @@
                     <li><a href="{% url 'logout' %}" class="text-start"><span>Logout</span></a></li>
                     {% else %}
                     <li><a href="{% url 'login' %}" class="text-start"><span>Login</span></a></li>
+                    {% endif %}
                 </ul>
                 <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

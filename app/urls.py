@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import RedirectView
 
-from .views import views, auth
+from .views import views, auth, search
 
 urlpatterns = [
     path('', views.home_view, name='home'),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('blog/', views.posts_list_view, name='blog'),
     path('blog/post/<slug:slug>/', views.post_detail_view, name='post_detail'),
     path('blog/authors/<str:username>/', views.author_posts_view, name='author_posts'),
-    path('blog/posts/new', views.create_post, name='create_post')
+    path('blog/posts/new', views.create_post, name='create_post'),
+    path('search/', search.search_view, name='search'),
 ]

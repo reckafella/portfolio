@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} Search Results {% endblock %}
+
+{% block content %}
+
+<section id="section search" class="mt-5 section section-bg search">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        {% if query %}
+                        <h3 class="card-title text-center fw-bold mb-4">Search Results</h3>
+                        <ul class="list-group">
+                            {% for post in posts %}
+                            <li class="list-group-item">
+                                <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none">
+                                    <h4 class="card-title fw-bold">{{ post.title }}</h4>
+                                    <p class="card-text">{{ post.content|slice:":200" }}...</p>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li class="list-group list-group-item">No results found</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <h3 class="card-title text-center fw-bold mb-4">Search</h3>
+                        <p class="card-text text-center">No Search term entered!</p>
+                        <form id="search-form" action="{% url 'search' %}" method="get" class="container d-flex">
+                            {% csrf_token %}
+                            <input type="text" name="q" id="search" class="form-control" placeholder="Search..." required>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

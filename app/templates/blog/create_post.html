@@ -14,7 +14,7 @@
                             <div class="text-center mb-2 card card-header">
                                 <h2  class="fw-bold">{{ form_title }}</h2>
                             </div>
-                            <form id="authForm" method="post" enctype="multipart/form-data" class="form-control form-group card">
+                            <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group card">
                                 {% csrf_token %}
                                 {% for field in form %}
                                 <div class="form-group mb-3">

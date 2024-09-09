@@ -103,3 +103,31 @@ button[type=submit]:hover {
   font-weight: 700;
   font-style: normal;
 }
+
+.search-box {
+  position: relative;
+  display: inline-block;
+}
+
+.search-icon {
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.search-input {
+  position: absolute;
+  right: 0;
+  width: 0;
+  height: 100%;
+  opacity: calc(0);
+  padding: 0;
+  transition: width 0.4s ease;
+  border-radius: 50px;
+}
+
+.search-box.active .search-input {
+  width: 200px;
+  padding: 2px 4px;
+  opacity: 1;
+  visibility: visible;
+}

@@ -14,7 +14,7 @@
                             <h2 class="fw-bold text-dark">Search</h2>
                         </div>
                         <form id="search-form" action="{% url 'search' %}" method="GET" class="form-control form-group d-flex">
-                            <input type="text" class="form-control" name="query" placeholder="Search" value="{{ q }}">
+                            <input type="text" class="form-control" name="q" placeholder="Search" value="{{ q }}">
                             <button type="submit" class="btn btn-secondary">Search</button>
                         </form>
                         {% if query %}

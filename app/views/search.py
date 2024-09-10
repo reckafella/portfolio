@@ -22,7 +22,7 @@ def search_view(request):
     if is_ajax(request):
         response = {
             'success': True,
-            'message': 'Search results',
+            'message': f'Search results: ${query}',
             'redirect_url': reverse('search'),
         }
         return JsonResponse(response)

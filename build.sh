@@ -15,4 +15,4 @@ python3 manage.py migrate
 #./createsuperuser.py
 
 # populate db
-./add_projects.py
+#./add_projects.py

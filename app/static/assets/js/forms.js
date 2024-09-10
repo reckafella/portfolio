@@ -36,7 +36,7 @@ const showToast = (type, message) => {
     toastContainer.style.display = 'grid';
     toastElement.style.display = 'grid';
     // Show the toast
-    const toast = new bootstrap.Toast(toastElement, { autohide: false });
+    const toast = new bootstrap.Toast(toastElement, { autohide: true });
     toast.show();
 };
 

@@ -21,7 +21,7 @@ style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/
                 <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="card-body">
                         <h3 class="card-title text-center fw-bold mb-4">Send Me a Message</h3>
-                        <form id="form" action="#" method="post" class="php-email-form">
+                        <form id="form" action="#" method="post" class="contact-form">
                             {% csrf_token %}
                             <div class="row gy-4">
                                 <div class="col-md-6">
@@ -38,10 +38,10 @@ style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/
                                 </div>
                                 <div class="col-md-12">
                                     <label for="message-field" class="pb-2">Message</label>
-                                    <textarea class="form-control" name="message" rows="5" id="message-field" required></textarea>
+                                    <textarea class="form-control" name="message" rows="5" id="message-field" placeholder="Enter your message..." required></textarea>
                                 </div>
                                 <div class="col-md-12 text-center mt-4">
-                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                    <button type="submit">Send Message</button>
                                 </div>
                             </div>
                         </form>

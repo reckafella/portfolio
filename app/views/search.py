@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from app.helpers import is_ajax
-from app.models import BlogPost
+from app.models import BlogPost, Projects
 
 
 def search_view(request):
@@ -13,9 +13,11 @@ def search_view(request):
     elif request.method == 'GET':
         query = request.GET.get('q')
     if query:
-        results = BlogPost.objects.filter(title__icontains=query) | BlogPost.objects.filter(content__icontains=query)
+        post_results = BlogPost.objects.filter(title__icontains=query) | BlogPost.objects.filter(content__icontains=query)
+        project_results = Projects.objects.filter(title__icontains=query) | Projects.objects.filter(description__icontains=query)
     else:
-        results = BlogPost.objects.all()
+        post_results = BlogPost.objects.all()[0:3]
+        project_results = Projects.objects.all()[0:3]
 
     if is_ajax(request):
         response = {
@@ -27,6 +29,9 @@ def search_view(request):
     
     context = {
         'query': query,
-        'results': results
+        'results': {
+            'posts': post_results,
+            'projects': project_results,
+        }
     }
     return render(request, 'app/search.html', context)

@@ -25,7 +25,7 @@
                                 &nbsp;|&nbsp; <span class="text-muted">{{ article.created_at|date:"F j, Y" }}</span>
                             </small>
                         </p>
-                        <p class="card-text">{{ article.content|safe|truncatewords:20 }}</p>
+                        <p class="card-text">{{ article.content| safe | truncatewords:20 }}</p>
                     </div>
                     <div class="card-footer text-center">
                         <a href="{% url 'post_detail' article.slug %}" class="btn btn-success">Read Article</a>

@@ -71,10 +71,7 @@
                             {% endif %}
                         </ul>
                     </li>
-                    <li class="text-start" onclick="console.log('Well, well!')">
-                        <i class="bi bi-search"></i>
-                    </li>
-                    <li id="search-bar" class="d-none">Search Form</li>
+                    <li><a href="{% url 'search' %}" class="text-start"><span>Search</span><i class="bi bi-search"></i></a></li>
                 </ul>
                 <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

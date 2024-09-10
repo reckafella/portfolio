@@ -36,7 +36,7 @@ const showToast = (type, message) => {
     toastContainer.style.display = 'grid';
     toastElement.style.display = 'grid';
     // Show the toast
-    const toast = new bootstrap.Toast(toastElement, { autohide: false });
+    const toast = new bootstrap.Toast(toastElement, { autohide: true });
     toast.show();
 };
 
@@ -46,7 +46,7 @@ const closeAlert = () => {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    let form = document.querySelector('form');
+    let form = document.getElementById('other-form');
     form.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -75,8 +75,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            showToast('error', 'An error occurred. Please try again.');
-            console.error('There was a problem with the fetch operation:', error);
+            showToast('danger', `An error occurred. Please try again. ${error}`);
+        });
+    });
+
+    // Add event listener to the close button
+    let closeButton = document.querySelector('.btn-close');
+    closeButton.addEventListener('click', closeAlert);
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    let form = document.getElementById('search-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let query = document.querySelector('input[name="q"]').value;
+        // Perform the fetch request
+        fetch(`${form.action}?q=${query}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast('success', `${data.message}`);
+                window.location.href = `${data.redirect_url}?q=${query}`;
+            } else {
+                showToast('danger', `${data.errors}`);
+            }
+        })
+        .catch(error => {
+            showToast('danger', `An error occurred. Please try again. ${error}`);
         });
     });
 

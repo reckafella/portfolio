@@ -5,16 +5,16 @@
 {% block content %}
 <section id="profile" class="profile section bg-image"
   style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
-  <div class="mask d-flex align-items-center gradient-custom-3">
+  <div class="mask d-flex align-items-center gradient-custom-3 mt-5">
     <div class="container">
       <div class="row d-flex justify-content-center align-items-center">
         <div class="col-12 col-md-9 col-lg-7 col-xl-6">
           <div class="card" style="border-radius: 15px;">
             <div class="card-body p-5">
-              <div class="text-center mb-2 card card-header">
-                <h2  class="fw-bold">{{ form_title }}</h2>
+              <div class="text-center mb-2 card-header">
+                <h2  class="card-title fw-bold">{{ form_title }}</h2>
               </div>
-              <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group card">
+              <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group" action="{% url 'form_action_url'}">
                 {% csrf_token %}
                 {% for field in form %}
                   <div class="form-group">
@@ -23,9 +23,14 @@
                   </div>
                 {% endfor %}
                 <div class="text-center mb-2 mt-3">
-                  <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+                  <button type="submit" class="btn btn-primary w-50">{{ submit_text }}</button>
                 </div>
               </form>
+              <div class="text-center text-muted mt-4 mb-2">
+                {% for message in extra_messages %}
+                <p>{{ message.text }} <a href="{{ message.link }}">{{ message.link_text }}</a></p>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>

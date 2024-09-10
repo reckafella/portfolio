@@ -40,7 +40,7 @@
     <header id="header" class="header fixed-top d-flex align-items-center mb-5">
         <div class="container-fluid container-sm container-xl position-relative d-flex align-items-center justify-content-between">
             <a href="{% url 'home' %}" class="logo align-items-center d-flex">
-                <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle">
+                <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle d-none">
                 <h3 class="sitename pacifico-regular">Ethan Wanyoike</h3>
             </a>
             <nav id="navmenu" class="navmenu">
@@ -48,9 +48,9 @@
                     <li><a href="{% url 'home' %}" class="text-start active"><span>Home</span></a></li>
                     <li class="dropdown"><a href="#"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'about' %}" class="btn btn-light text-start"><span>About</span></a></li>
-                            <li><a href="#" class="btn btn-light text-start"><span>Skills</span></a></li>
-                            <li><a href="#" class="btn btn-light text-start"><span>Education</span></a></li>
+                            <li><a href="{% url 'about' %}" class="text-start"><span>About</span></a></li>
+                            <li><a href="#" class="text-start"><span>Skills</span></a></li>
+                            <li><a href="#" class="text-start"><span>Education</span></a></li>
                         </ul>
                     </li>
                     <li><a href="{% url 'projects' %}" class="text-start"><span>Projects</span></a></li>
@@ -59,17 +59,22 @@
                     <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'admin:index' %}" class="btn btn-light text-start"><span>Admin</span></a></li>
-                            <li><a href="{% url 'create_post' %}" class="btn btn-light text-start"><span>Create Blog Post</span></a></li>
+                            <li><a href="{% url 'admin:index' %}" class="text-start"><span>Admin</span></a></li>
+                            <li><a href="{% url 'create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
+                            <li><a href="{% url 'add_project' %}" class="text-start"><span>Add New Project</span></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url 'logout' %}" class="btn btn-light text-start"><span>Logout</span></a></li>
+                            <li><a href="{% url 'logout' %}" class="text-start"><span>Logout</span></a></li>
                             {% else %}
-                            <li><a href="{% url 'login' %}" class="btn btn-light text-start"><span>Login</span></a></li>
+                            <li><a href="{% url 'login' %}" class="text-start"><span>Login</span></a></li>
+                            <li><a href="{% url 'signup' %}" class="text-start"><span>Register</span></a></li>
                             {% endif %}
                         </ul>
                     </li>
-                    <li class="btn-light text-start" onclick="console.log('Well, well!')"><i class="bi bi-search"></i></li>
+                    <li class="text-start" onclick="console.log('Well, well!')">
+                        <i class="bi bi-search"></i>
+                    </li>
+                    <li id="search-bar" class="d-none">Search Form</li>
                 </ul>
                 <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -139,7 +144,8 @@
                 <a href="https://x.com/devrohn" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
                 <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
                 <a href="https://instagram.com/reckafella" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
-                <a href="https://linkedin.com/" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
             </div>
             <div class="credits">
                 Styled using <a class="logo text-start" href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">Bootstrap 5</a>

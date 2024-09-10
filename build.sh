@@ -13,3 +13,6 @@ python3 manage.py migrate
 
 # create superuser
 #./createsuperuser.py
+
+# populate db
+./add_projects.py

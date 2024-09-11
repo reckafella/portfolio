@@ -26,6 +26,33 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        {% if projects.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if projects.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ projects.previous_page_number }}">&laquo; Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+                {% endif %}
+                
+                {% for i in projects.paginator.page_range %}
+                    {% if projects.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if projects.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ projects.next_page_number }}">Next &raquo;</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

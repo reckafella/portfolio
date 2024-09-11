@@ -26,7 +26,7 @@ FALLBACK_SECRET_KEY = 'django-insecure-(mqx%zsxjly7+4g554fulva4zmxb(e=$e7gun91&_
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', 'ethanmuthoni.tech', 'vercel.app', 'now.sh']
@@ -183,7 +183,7 @@ LOGOUT_URL = 'logout'
 APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
-"""
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
@@ -196,4 +196,3 @@ CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_REF  = 'no-referrer'
 SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
-"""

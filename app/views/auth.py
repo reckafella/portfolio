@@ -54,7 +54,6 @@ def signup_view(request):
     
     context = {
         'form': form,
-        'form_action_url': 'signup',
         'page_title': 'Create an Account',
         'form_title': 'Create Account',
         'submit_text': 'Create Account',
@@ -119,7 +118,6 @@ def login_view(request):
     
     context = {
         'form': form,
-        'form_action_url': 'login',
         'page_title': 'Login to Your Account',
         'form_title': 'Sign in',
         'submit_text': 'Login',

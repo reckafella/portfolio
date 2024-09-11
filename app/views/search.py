@@ -22,7 +22,7 @@ def search_view(request):
     if is_ajax(request):
         response = {
             'success': True,
-            'message': f'Search results: ${query}',
+            'message': f'Search results: {query}',
             'redirect_url': reverse('search'),
         }
         return JsonResponse(response)
@@ -30,7 +30,8 @@ def search_view(request):
     context = {
         'query': query,
         'posts': post_results,
-        'projects': project_results
+        'projects': project_results,
+        'page_title': 'Search'
     }
 
     return render(request, 'app/search.html', context)

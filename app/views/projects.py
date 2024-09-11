@@ -93,6 +93,6 @@ def projects_view(request):
         # if db is not empty, load data from db
         projects_data = projects.values('title', 'description', 'image', 'url')
 
-    context = dict(projects=projects_data)
+    context = dict(projects=projects_data, page_title='Projects')
 
     return render(request=request, template_name='app/projects.html', context=context, status=200)

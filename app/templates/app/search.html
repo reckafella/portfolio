@@ -1,6 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %} Search {% if query %} - {{ query }} {% endif %} {% endblock %}
+{% block title %} {{ page_title }} {% if query %} - {{ query }} {% endif %} {% endblock %}
 
 {% block content %}
 
@@ -11,38 +11,43 @@
                 <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="card-body">
                         <div class="section-title">
-                            <h2 class="fw-bold text-dark">Search</h2>
+                            {% if query %}
+                            <h2 class="card-title text-center fw-bold mb-4">Search Results:
+                                <span class="text-muted">{{ query }}</span>
+                            </h2>
+                            {% else %}
+                            <h2 class="fw-bold text-dark">{{ page_title }}</h2>
+                            {% endif %}
                         </div>
-                        <form id="search-form" action="{% url 'search' %}" method="GET" class="form-control form-group d-flex">
+                        <form id="search-form" action="{% url 'search' %}" method="GET" class="form-control d-flex">
                             <input type="text" class="form-control" name="q" placeholder="Search" value="{{ q }}">
-                            <button type="submit" class="btn btn-secondary">Search</button>
+                            <input type="submit" class="search-submit" value="{{ page_title }}">
                         </form>
                         {% if query %}
-                        <h2 class="card-title text-center fw-bold mb-4">Search Results</h2>
-                        <ul class="list-group">
-                            <h3>Blog Posts</h3>
+                        <ul class="list-group card p-2 m-1">
+                            <h3 class="text-center">Blog Posts</h3>
                             {% for post in posts %}
-                            <li class="list-group-item">
+                            <li class="list-group-item mb-2">
                                 <a href="{% url 'post_detail' post.slug %}" target="_blank" class="text-decoration-none">
                                     <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
-                                    <p class="card-text">{{ post.content | safe |slice:":200" }}...</p>
+                                    <p class="card-text text-muted">{{ post.content | safe |slice:":100" }}...</p>
                                 </a>
                             </li>
                             {% empty %}
-                            <li class="list-group list-group-item d-none">No results found</li>
+                            <li class="list-group list-group-item">No results found</li>
                             {% endfor %}
                         </ul>
-                        <ul class="list-group">
-                            <h3>Projects</h3>
+                        <ul class="list-group card">
+                            <h3 class="text-center">Projects</h3>
                             {% for project in projects %}
                             <li class="list-group-item">
                                 <a href="{{ project.url }}" target="_blank" class="text-decoration-none">
                                     <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
-                                    <p class="card-text">{{ project.description| safe | slice:":200" }}...</p>
+                                    <p class="card-text">{{ project.description| safe | slice:":100" }}...</p>
                                 </a>
                             </li>
                             {% empty %}
-                            <li class="list-group list-group-item d-none">No results found</li>
+                            <li class="list-group list-group-item">No results found</li>
                             {% endfor %}
                         </ul>
                         {% endif %}

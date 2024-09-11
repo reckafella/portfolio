@@ -12,7 +12,7 @@
 :root { 
   --background-color: #d9dbdd; /* Background color for the entire website, including individual sections */
   --default-color: #1c04f7; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #f1f0f7; /* Color for headings, subheadings and title throughout the website */
+  --heading-color: #070127; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #25a19b; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --contrast-color: #ffffff; /* The contrast color is used for elements when the background color is one of the heading, accent, or default colors. Its purpose is to ensure proper contrast and readability when placed over these more dominant colors */
 }
@@ -72,7 +72,7 @@ h6 {
 .header {
   --background-color: var(--nav-dropdown-background-color);
   --default-color: #ffffff;
-  --heading-color: #ffffff;
+  --heading-color: #f3eeee;
   color: var(--default-color);
   background-color: var(--background-color);
   padding: 20px 0;
@@ -612,15 +612,15 @@ section,
 --------------------------------------------------------------*/
 .section-title {
   text-align: center;
-  padding-bottom: 60px;
+  padding-bottom: 30px;
   position: relative;
 }
 
 .section-title h2 {
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   position: relative;
 }
 
@@ -647,7 +647,7 @@ section,
 .hero {
   --background-color: #000000;
   --default-color: #ffffff;
-  --heading-color: #ffffff;
+  --heading-color: #130133;
   width: 100%;
   min-height: calc(100vh - 92px);
   position: relative;
@@ -1389,6 +1389,8 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
+
+.search-submit,
 .contact .contact-form button[type=submit] {
   color: var(--contrast-color);
   background: var(--accent-color);
@@ -1398,6 +1400,7 @@ section,
   border-radius: 10px;
 }
 
+.search-submit,
 .contact .contact-form button[type=submit]:hover {
   background: color-mix(in srgb, var(--accent-color), transparent 20%);
 }

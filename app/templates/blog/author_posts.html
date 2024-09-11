@@ -25,7 +25,7 @@
             {% for post in posts %}
             <div class="col-lg-5 col-md-6 mb-4">
                 <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card-body">
+                    <div class="card-header">
                         <p class="card-title fw-bold">
                             <a href="{% url 'post_detail' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>
                         </p>
@@ -40,6 +40,8 @@
                                 &nbsp;|&nbsp; {{ post.created_at|date:"F j, Y" }}
                             </small>
                         </p>
+                    </div>
+                    <div class="card-body">
                         <p class="card-text">{{ post.content|truncatewords:20 | safe }}</p>
                     </div>
                     <div class="card-footer text-center">

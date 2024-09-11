@@ -1,6 +1,7 @@
 import os.path
 from titlecase import titlecase
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 import json
@@ -82,16 +83,21 @@ def projects_view(request):
         with open(json_file_path, 'r') as fl:
             projects_data = json.load(fl)
 
-        """ for project in projects_data:
-            project['title'] = titlecase(project['title'])
-            project['description'] = titlecase(project['description'])
-            project['image'] = project['image'].replace('app/', '')
-            project['url'] = project['url'].replace('app/', '')
-
-            Projects.objects.create(**project) """
     else:
         # if db is not empty, load data from db
         projects_data = projects.values('title', 'description', 'image', 'url')
+    
+    paginator = Paginator(projects_data, 6)  # Show 6 projects per page
+    page = request.GET.get('page')
+
+    try:
+        projects_data = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        projects_data = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        projects_data = paginator.page(paginator.num_pages)
 
     context = dict(projects=projects_data, page_title='Projects')
 

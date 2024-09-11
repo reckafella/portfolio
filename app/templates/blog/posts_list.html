@@ -6,6 +6,77 @@
 <section id="section" class="mt-5 section blog bg-dark">
     <div class="container">
         <div class="section-title">
+            <h2 class="text-center text-white mb-2">{{ page_title }}</h2>
+        </div>
+        <div class="row justify-content-center">
+            {% for article in articles %}
+            <div class="col-lg-5 col-md-6 mb-4">
+                <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <p class="card-title fw-bold">
+                            <a href="{% url 'post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                By <a href="{% url 'author_posts' article.author.username %}" class="text-success text-decoration-none">
+                                    {% if article.author.first_name and article.author.last_name %}
+                                        {{ article.author.first_name }} {{ article.author.last_name }}
+                                    {% else %}
+                                        {{ article.author.username|capfirst }}
+                                    {% endif %}</a>
+                                &nbsp;|&nbsp; <span class="text-muted">{{ article.created_at|date:"F j, Y" }}</span>
+                            </small>
+                        </p>
+                        <p class="card-text">{{ article.content| safe | truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'post_detail' article.slug %}" class="btn btn-success">{{ submit_text }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if articles.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if articles.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ articles.previous_page_number }}">&laquo; Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+                {% endif %}
+                
+                {% for i in articles.paginator.page_range %}
+                    {% if articles.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if articles.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ articles.next_page_number }}">Next &raquo;</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+
+{% comment %}
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} {{ page_title }} {% endblock %}
+
+{% block content %}
+<section id="section" class="mt-5 section blog bg-dark">
+    <div class="container">
+        <div class="section-title">
             <h2 class="text-center text-white mb-5">{{ page_title }}</h2>
         </div>
         <div class="row justify-content-center">
@@ -39,3 +110,4 @@
     </div>
 </section>
 {% endblock %}
+{% endcomment %}

@@ -1390,7 +1390,6 @@ section,
 }
 
 
-.search-submit,
 .contact .contact-form button[type=submit] {
   color: var(--contrast-color);
   background: var(--accent-color);
@@ -1400,9 +1399,19 @@ section,
   border-radius: 10px;
 }
 
-.search-submit,
+.search-submit {
+  color: #100c18;
+  background: #fff;
+  border: 0;
+  padding: 5px;
+  transition: 0.4s;
+  border-radius: 10px;
+}
+
+
+.search-submit:hover,
 .contact .contact-form button[type=submit]:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background: color-mix(in srgb, var(#fff), transparent 20%);
 }
 
 @keyframes animate-loading {

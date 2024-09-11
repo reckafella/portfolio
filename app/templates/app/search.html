@@ -3,6 +3,91 @@
 {% block title %} {{ page_title }} {% if query %} - {{ query }} {% endif %} {% endblock %}
 
 {% block content %}
+<section id="section-search" class="mt-5 section section-bg search mb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <div class="section-title">
+                            <h2 class="fw-bold text-dark">{{ page_title }}</h2>
+                            {% if query %}
+                            <h3 class="card-title text-center mb-4">Results for: <span class="text-muted">{{ query }}</span></h3>
+                            {% endif %}
+                        </div>
+                        <form id="search-form" action="{% url 'search' %}" method="GET" class="mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="q" placeholder="Search" value="{{ query }}">
+                                <select class="form-select" name="category" style="max-width: 120px;">
+                                    <option value="all" {% if category == 'all' %}selected{% endif %}>All</option>
+                                    <option value="posts" {% if category == 'posts' %}selected{% endif %}>Posts</option>
+                                    <option value="projects" {% if category == 'projects' %}selected{% endif %}>Projects</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+                        {% if query %}
+                            {% if category == 'all' or category == 'posts' %}
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h3 class="text-center mb-0">Blog Posts</h3>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    {% for post in posts %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none">
+                                            <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
+                                            <p class="card-text text-muted">{{ post.content | safe | truncatewords:20 }}</p>
+                                        </a>
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item">No blog posts found</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            
+                            {% if category == 'all' or category == 'projects' %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="text-center mb-0">Projects</h3>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    {% for project in projects %}
+                                    <li class="list-group-item">
+                                        <a href="{{ project.url }}" class="text-decoration-none">
+                                            <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
+                                            <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
+                                        </a>
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item">No projects found</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            
+                            {% if not posts and not projects %}
+                            <div class="alert alert-info" role="alert">
+                                No results found for your search query.
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% comment %}
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} {{ page_title }} {% if query %} - {{ query }} {% endif %} {% endblock %}
+
+{% block content %}
 
 <section id="section search" class="mt-5 section section-bg search mb-5">
     <div class="container">
@@ -58,3 +143,4 @@
     </div>
 </section>
 {% endblock %}
+{% endcomment %}

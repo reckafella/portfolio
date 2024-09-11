@@ -1,4 +1,5 @@
 from titlecase import titlecase
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -11,18 +12,6 @@ from app.forms import BlogPostForm
 from app.models import BlogPost
 
 # section defines code related to the blog
-
-def posts_list_view(request):
-    """ View to render the page listing blog posts """
-    blog_post_list = BlogPost.objects.all().order_by('-created_at')
-
-    context = dict(
-        articles=blog_post_list,
-        page_title='Blog Posts',
-        submit_text='Read Article'
-    )
-
-    return render(request=request, template_name='blog/posts_list.html', context=context, status=200)
 
 
 def post_detail_view(request, slug):
@@ -38,15 +27,6 @@ def post_detail_view(request, slug):
     }
     return render(request, 'blog/post_detail.html', context)
 
-def author_posts_view(request, username):
-    author = get_object_or_404(User, username=username)
-
-    posts = BlogPost.objects.filter(author=author).order_by('-created_at')
-    context = {
-        'author': author,
-        'posts': posts
-    }
-    return render(request, 'blog/author_posts.html', context)
 
 
 @login_required
@@ -92,3 +72,48 @@ def create_post(request):
     }
 
     return render(request, 'blog/create_post.html', context)
+
+
+def posts_list_view(request):
+    """ View to render the page listing blog posts """
+    blog_post_list = BlogPost.objects.all().order_by('-created_at')
+    paginator = Paginator(blog_post_list, 6)  # Show 6 posts per page
+    page = request.GET.get('page')
+
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        articles = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        articles = paginator.page(paginator.num_pages)
+
+    context = {
+        'articles': articles,
+        'page_title': 'Blog Posts',
+        'submit_text': 'Read Article'
+    }
+
+    return render(request=request, template_name='blog/posts_list.html', context=context, status=200)
+
+def author_posts_view(request, username):
+    author = get_object_or_404(User, username=username)
+    posts_list = BlogPost.objects.filter(author=author).order_by('-created_at')
+    paginator = Paginator(posts_list, 6)  # Show 6 posts per page
+    page = request.GET.get('page')
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        posts = paginator.page(paginator.num_pages)
+
+    context = {
+        'author': author,
+        'posts': posts
+    }
+    return render(request, 'blog/author_posts.html', context)

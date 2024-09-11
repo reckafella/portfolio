@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     closeButton.addEventListener('click', closeAlert);
 });
 
-
+/* 
 document.addEventListener('DOMContentLoaded', function() {
     let form = document.getElementById('search-form');
     form.addEventListener('submit', function(event) {
@@ -121,3 +121,4 @@ document.addEventListener('DOMContentLoaded', function() {
     let closeButton = document.querySelector('.btn-close');
     closeButton.addEventListener('click', closeAlert);
 });
+ */

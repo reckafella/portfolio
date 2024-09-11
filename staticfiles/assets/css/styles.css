@@ -104,35 +104,34 @@ button[type=submit]:hover {
   font-style: normal;
 }
 
-.search-box {
-  position: relative;
-  display: inline-block;
-}
-
-.search-icon {
-  cursor: pointer;
-  font-size: 1.5rem;
-}
-
-.search-input {
-  position: absolute;
-  right: 0;
-  width: 0;
-  height: 100%;
-  opacity: calc(0);
-  padding: 0;
-  transition: width 0.4s ease;
-  border-radius: 50px;
-}
-
-.search-box.active .search-input {
-  width: 200px;
-  padding: 2px 4px;
-  opacity: 1;
-  visibility: visible;
-}
-
-
 .bg-brown {
   background-color: #cccccb;
+}
+.search-bar {
+  z-index: 1050;
+}
+
+.search-bar form {
+  max-width: 800px;
+}
+
+@media (max-width: 767px) {
+  .search-bar .form-control,
+  .search-bar .form-select,
+  .search-bar .btn {
+      font-size: 1rem;
+  }
+  
+  .search-bar form {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-bar .form-control,
+  .search-bar .form-select,
+  .search-bar .btn {
+      font-size: 1.25rem;
+  }
 }

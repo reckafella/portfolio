@@ -16,7 +16,11 @@ def posts_list_view(request):
     """ View to render the page listing blog posts """
     blog_post_list = BlogPost.objects.all().order_by('-created_at')
 
-    context = dict(articles=blog_post_list)
+    context = dict(
+        articles=blog_post_list,
+        page_title='Blog Posts',
+        submit_text='Read Article'
+    )
 
     return render(request=request, template_name='blog/posts_list.html', context=context, status=200)
 
@@ -25,7 +29,7 @@ def post_detail_view(request, slug):
     """ View to render the blog post details """
     post = get_object_or_404(BlogPost, slug=slug)
     
-    other_posts = BlogPost.objects.filter(author=post.author).exclude(id=post.id).order_by('-created_at')[:3]
+    other_posts = BlogPost.objects.filter(author=post.author).exclude(id=post.id).order_by('-created_at')[:5]
 
 
     context = {
@@ -81,7 +85,6 @@ def create_post(request):
     
     context = {
         'form': form,
-        'form_action_url': reverse('create_post'),
         'page_title': 'Create a New Post',
         'form_title': 'Create Post',
         'submit_text': 'Create',

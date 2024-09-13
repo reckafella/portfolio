@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+#from ckeditor_uploader_5.fields import RichTextUploadingField
 from django_ckeditor_5.fields import CKEditor5Field
 
 
@@ -9,6 +10,7 @@ class BlogPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     slug = models.SlugField(unique=True, max_length=200, blank=True)
     content = CKEditor5Field()
+    topics = models.CharField(max_length=200, default='all', help_text="Comma-separated list of topics")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,6 +22,8 @@ class BlogPost(models.Model):
     def __str__(self):
         return self.title
 
+    def get_topics(self):
+        return [topic.strip() for topic in self.topics.split(',')]
 
 class Projects(models.Model):
     title = models.CharField(unique=True, max_length=200)

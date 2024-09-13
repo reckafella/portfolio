@@ -1,86 +1,85 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} Blog Posts by
-    {% if author.first_name and author.last_name %}
-    {{ author.first_name }} {{ author.last_name }}
-    {% else %}
-    {{ author.username|capfirst }}
-    {% endif %}
-{% endblock %}
+{% block title %} Blog Posts by {{ author.get_full_name|default:author.username }} {% endblock %}
 
 {% block content %}
 <section id="section" class="mt-5 section blog bg-dark">
     <div class="container">
         <div class="section-title">
-            <h2 class="text-center text-white mb-2">Blog Posts by
-                {% if author.first_name and author.last_name %}
-                {{ author.first_name }} {{ author.last_name }}
-                {% else %}
-                {{ author.username|capfirst }}
-                {% endif %}
-            </h2>
+            <h2 class="text-center text-white mb-4">Blog Posts by {{ author.get_full_name|default:author.username }}</h2>
         </div>
         
-        <div class="row justify-content-center">
-            {% for post in posts %}
-            <div class="col-lg-5 col-md-6 mb-4">
-                <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card-header">
-                        <p class="card-title fw-bold">
-                            <a href="{% url 'post_detail' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>
-                        </p>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                By <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
-                                    {% if post.author.first_name and post.author.last_name %}
-                                        {{ post.author.first_name }} {{ post.author.last_name }}
-                                    {% else %}
-                                        {{ post.author.username|capfirst }}
-                                    {% endif %}</a>
-                                &nbsp;|&nbsp; {{ post.created_at|date:"F j, Y" }}
-                            </small>
-                        </p>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">{{ post.content|truncatewords:20 | safe }}</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-success">Read Article</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+        <!-- Topic Tabs -->
+        <div class="d-flex bg-white card mb-4 justify-content-center align-items-center">
+            <h2 class="text-start">Topics</h2>
+            <ul class="nav nav-tabs card-header-tabs mb-3" id="topicTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if current_topic == 'all' %}active{% endif %}" href="#" data-topic="all">All</a>
+                </li>
+                {% for topic in topics %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if current_topic == topic %}active{% endif %}" href="#" data-topic="{{ topic }}">{{ topic|title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="postsContainer" class="row justify-content-center">
+            <!-- Posts will be dynamically loaded here -->
         </div>
         
         <!-- Pagination -->
-        {% if posts.has_other_pages %}
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                {% if posts.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo; Previous</a></li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
-                {% endif %}
-                
-                {% for i in posts.paginator.page_range %}
-                    {% if posts.number == i %}
-                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if posts.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next &raquo;</a></li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
-                {% endif %}
+        <nav aria-label="Page navigation" class="mt-3">
+            <ul id="pagination" class="pagination pagination-sm pagination-lg justify-content-center">
+                <!-- Pagination will be dynamically updated -->
             </ul>
         </nav>
-        {% endif %}
     </div>
 </section>
 {% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function loadPosts(topic, page) {
+            $.ajax({
+                url: '{% url "author_posts" author.username %}',
+                data: {
+                    'topic': topic,
+                    'page': page
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#postsContainer').html(data.posts_html);
+                    $('#pagination').html(data.pagination_html);
+                }
+            });
+        }
+
+        $('#topicTabs a').on('click', function(e) {
+            e.preventDefault();
+            $('#topicTabs a').removeClass('active');
+            $(this).addClass('active');
+            var topic = $(this).data('topic');
+            loadPosts(topic, 1);
+        });
+
+        $(document).on('click', '#pagination a', function(e) {
+            e.preventDefault();
+            var topic = $('#topicTabs .active').data('topic');
+            var page = $(this).attr('href').split('page=')[1];
+            loadPosts(topic, page);
+        });
+
+        // Load initial posts
+        loadPosts('{{ current_topic }}', 1);
+    });
+</script>
+{% endblock %}
+
+
+
 
 {% comment %}
 {% extends "app/base.html" %}
@@ -96,33 +95,43 @@
 {% block content %}
 <section id="section" class="mt-5 section blog bg-dark">
     <div class="container">
-        <h2 class="text-center text-white mb-5">Blog Posts by
-            {% if author.first_name and author.last_name %}
+        <div class="section-title">
+            <h2 class="text-center text-white mb-4">Blog Posts by
+                {% if author.first_name and author.last_name %}
                 {{ author.first_name }} {{ author.last_name }}
-            {% else %}
+                {% else %}
                 {{ author.username|capfirst }}
-            {% endif %}
-        </h2>
+                {% endif %}
+            </h2>
+        </div>
+        
+        <!-- Topic Tabs -->
+        <ul class="nav nav-tabs card-header-tabs mb-4" id="topicTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if current_topic == 'all' %}active{% endif %}" href="?topic=all">All</a>
+            </li>
+            {% for topic in topics %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if current_topic == topic %}active{% endif %}" href="?topic={{ topic }}">{{ topic|title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
         
         <div class="row justify-content-center">
             {% for post in posts %}
             <div class="col-lg-5 col-md-6 mb-4">
                 <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card-body">
+                    <div class="card-header">
                         <p class="card-title fw-bold">
                             <a href="{% url 'post_detail' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>
                         </p>
                         <p class="card-text">
                             <small class="text-muted">
-                                By <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
-                                    {% if post.author.first_name and post.author.last_name %}
-                                        {{ post.author.first_name }} {{ post.author.last_name }}
-                                    {% else %}
-                                        {{ post.author.username|capfirst }}
-                                    {% endif %}</a>
-                                &nbsp;|&nbsp; {{ post.created_at|date:"F j, Y" }}
+                                {{ post.created_at|date:"F j, Y" }}
                             </small>
                         </p>
+                    </div>
+                    <div class="card-body">
                         <p class="card-text">{{ post.content|truncatewords:20 | safe }}</p>
                     </div>
                     <div class="card-footer text-center">
@@ -130,8 +139,41 @@
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No articles found for this topic.
+                </div>
+            </div>
             {% endfor %}
         </div>
+        
+        <!-- Pagination -->
+        {% if posts.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination pagination-sm pagination-lg justify-content-center">
+                {% if posts.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?topic={{ current_topic }}&page={{ posts.previous_page_number }}">&laquo; Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+                {% endif %}
+                
+                {% for i in posts.paginator.page_range %}
+                    {% if posts.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?topic={{ current_topic }}&page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
+                    <li class="page-item"><a class="page-link" href="?topic={{ current_topic }}&page={{ posts.next_page_number }}">Next &raquo;</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

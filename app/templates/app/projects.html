@@ -30,7 +30,7 @@
         <!-- Pagination -->
         {% if projects.has_other_pages %}
         <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination pagination-sm pagination-lg justify-content-center">
                 {% if projects.has_previous %}
                     <li class="page-item"><a class="page-link" href="?page={{ projects.previous_page_number }}">&laquo; Previous</a></li>
                 {% else %}

@@ -1,16 +1,17 @@
 button[type=submit] {
     border: 0;
-    padding: 10px 32px;
-    color: #0880e8;
+    padding: 10px 12px;
+    color: #01172b;
     transition: 0.4s;
-    border-radius: 50px;
-    border: 2px solid #0880e8;
+    border-radius: 10px;
+    border: 2px solid #01172b;
     background: #fff;
   }
   
 button[type=submit]:hover {
-    background: #0880e8;
+    background: #01172b;
     color: #fff;
+    font-weight: bold;
   }
 
 /*--------------------------------------------------------------
@@ -134,4 +135,8 @@ button[type=submit]:hover {
   .search-bar .btn {
       font-size: 1.25rem;
   }
+}
+
+.bg-opacity-90 {
+  --bs-bg-opacity: 0.9;
 }

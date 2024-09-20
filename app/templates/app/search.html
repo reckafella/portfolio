@@ -6,7 +6,7 @@
 <section id="section-search" class="mt-5 section section-bg search mb-5">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div class="card bg-light text-dark" data-aos="fade-up" data-aos-delay="150">
                     <div class="card-header">
                         <h2 class="fw-bold text-dark mb-3">{{ page_title }}</h2>
@@ -15,17 +15,26 @@
                         {% endif %}
                         <form id="search-form" action="{% url 'search' %}" method="GET" class="mb-4">
                             <div class="row g-2">
-                                <div class="col-9 col-md-6">
+                                <div class="col-12 col-md-5">
                                     <input type="text" class="form-control" placeholder="Type to search..." aria-label="Search" name="q" value="{{ query }}" required>
                                 </div>
-                                <div class="col-3 col-md-3">
+                                <div class="col-6 col-md-2">
                                     <select class="form-select" name="category">
                                         <option value="all" {% if category == 'all' %}selected{% endif %}>All</option>
                                         <option value="posts" {% if category == 'posts' %}selected{% endif %}>Posts</option>
                                         <option value="projects" {% if category == 'projects' %}selected{% endif %}>Projects</option>
                                     </select>
                                 </div>
-                                <div class="col-12 col-md-3">
+                                <div class="col-6 col-md-3">
+                                    <select class="form-select" name="sort">
+                                        <option value="relevance" {% if sort == 'relevance' %}selected{% endif %}>Relevance</option>
+                                        <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Newest First</option>
+                                        <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Oldest First</option>
+                                        <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A-Z</option>
+                                        <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z-A</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-2">
                                     <button type="submit" class="btn btn-primary w-100">Search</button>
                                 </div>
                             </div>

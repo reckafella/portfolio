@@ -149,6 +149,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Certification authorities
+*.pem
+
+# Configurations files
+*.conf
+
 # pytype static type analyzer
 .pytype/
 
@@ -164,3 +170,9 @@ cython_debug/
 /staticfiles/admin/
 /staticfiles/assets/
 .vercel
+staticfiles/
+.env.local
+venv/
+cloudinary.json
+redis.json
+node_modules/

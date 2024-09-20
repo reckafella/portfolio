@@ -8,10 +8,9 @@
         <div class="section-title">
             <h2 class="text-center text-white mb-4">Blog Posts by {{ author.get_full_name|default:author.username }}</h2>
         </div>
-        
+  
         <!-- Topic Tabs -->
-        <div class="d-flex bg-white card mb-4 justify-content-center align-items-center">
-            <h2 class="text-start">Topics</h2>
+        <div class="d-flex bg-white card p-2 mb-4 justify-content-center align-items-center" data-bs-ride="carousel">
             <ul class="nav nav-tabs card-header-tabs mb-3" id="topicTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {% if current_topic == 'all' %}active{% endif %}" href="#" data-topic="all">All</a>
@@ -22,6 +21,10 @@
                 </li>
                 {% endfor %}
             </ul>
+        </div>
+
+        <div id="sortContainer" class="d-flex card bg-white p-2 mb-4 justify-content-center align-items-center">
+            <!-- Sorting Feature -->
         </div>
 
         <div id="postsContainer" class="row justify-content-center">
@@ -47,10 +50,11 @@
                 url: '{% url "author_posts" author.username %}',
                 data: {
                     'topic': topic,
-                    'page': page
+                    'page': page,
                 },
                 dataType: 'json',
                 success: function(data) {
+                    $('#sortContainer').html(data.sort_html);
                     $('#postsContainer').html(data.posts_html);
                     $('#pagination').html(data.pagination_html);
                 }
@@ -74,6 +78,25 @@
 
         // Load initial posts
         loadPosts('{{ current_topic }}', 1);
+
+        // sort posts by selected option
+        /* $('#sort').on('change', function() {
+            var sort = $(this).val();
+            var topic = $('#topicTabs .active').data('topic');
+            var page = $('#pagination .active').text();
+            $.ajax({
+                url: '{% url "author_posts" author.username %}',
+                data: {
+                    'topic': topic,
+                    'sort': sort,
+                    'page': page
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#postsContainer').html(data.posts_html);
+                }
+            });
+        }); */
     });
 </script>
 {% endblock %}

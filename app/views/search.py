@@ -10,9 +10,10 @@ def search_view(request):
     """ view to handle search """
     query = request.GET.get('q', '')
     category = request.GET.get('category', 'all')
+    sort = request.GET.get('sort', 'relevance')
     page = request.GET.get('page', 1)
-    posts_per_page = 6  # You can adjust this number
-    projects_per_page = 6  # You can adjust this number
+    posts_per_page = 6
+    projects_per_page = 6
     post_results = BlogPost.objects.none()
     project_results = Projects.objects.none()
 
@@ -20,12 +21,26 @@ def search_view(request):
         if category in ['all', 'posts']:
             post_results = BlogPost.objects.filter(
                 Q(title__icontains=query) | Q(content__icontains=query)
-            ).order_by('-created_at')  # Add ordering here
-
+            )
         if category in ['all', 'projects']:
             project_results = Projects.objects.filter(
                 Q(title__icontains=query) | Q(description__icontains=query)
-            ).order_by('-created_at')  # Add ordering here
+            )
+
+        # Apply sorting
+        if sort == 'date_desc':
+            post_results = post_results.order_by('-created_at')
+            project_results = project_results.order_by('-created_at')
+        elif sort == 'date_asc':
+            post_results = post_results.order_by('created_at')
+            project_results = project_results.order_by('created_at')
+        elif sort == 'title_asc':
+            post_results = post_results.order_by('title')
+            project_results = project_results.order_by('title')
+        elif sort == 'title_desc':
+            post_results = post_results.order_by('-title')
+            project_results = project_results.order_by('-title')
+        # For 'relevance', we don't need to change the order as it's the default
 
     # Pagination for posts
     post_paginator = Paginator(post_results, posts_per_page)
@@ -56,6 +71,7 @@ def search_view(request):
     context = {
         'query': query,
         'category': category,
+        'sort': sort,
         'posts': paginated_posts,
         'projects': paginated_projects,
         'page_title': 'Search'

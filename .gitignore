@@ -149,6 +149,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Certification authorities
+*.pem
+
+# Configurations files
+*.conf
+
 # pytype static type analyzer
 .pytype/
 

@@ -1,0 +1,17 @@
+<!-- Sorting Feature -->
+<div class="row p-2 justify-content-center align-items-center">
+        <label for="sort" class="form-label">Sort by:</label>
+    <form class="d-flex .justify-content-end align-items-center">
+        <select id="sort" class="form-select ms-2">
+            <option value="author_asc" {% if sort == 'author_asc' %}selected{% endif %}>Authors (A-Z)</option>
+            <option value="author_dsc" {% if sort == 'author_dsc' %}selected{% endif %}>Authors (Z-A)</option>
+            <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Newest First</option>
+            <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Oldest First</option>
+            <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A-Z</option>
+            <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z-A</option>
+        </select>
+        <div class="ms-2">
+            <button type="submit" class="btn btn-primary">Sort</button>
+        </div>
+    </form>
+</div>

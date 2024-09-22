@@ -12,9 +12,6 @@
         <!-- Topic Tabs -->
         <div class="d-flex bg-white card p-2 mb-4 justify-content-center align-items-center" data-bs-ride="carousel">
             <ul class="nav nav-tabs card-header-tabs mb-3" id="topicTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link {% if current_topic == 'all' %}active{% endif %}" href="#" data-topic="all">All</a>
-                </li>
                 {% for topic in topics %}
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {% if current_topic == topic %}active{% endif %}" href="#" data-topic="{{ topic }}">{{ topic|title }}</a>

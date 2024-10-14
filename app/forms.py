@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from app.models import BlogPost, Projects
+from app.models import BlogPost, Projects, Message
 
 
 class LoginForm(forms.Form):
@@ -138,3 +138,47 @@ class ProjectsAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
+
+
+class ContactForm(forms.Form):
+    """ form to handle contact info """
+    name = forms.CharField(label='Name', required=True, max_length=100,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'name-field', 'name': 'name'}))
+    email = forms.EmailField(label='Email', required=True,
+                            widget=forms.EmailInput(attrs={'class': 'form-control', 'id': 'email-field', 'name': 'email'}))
+    subject = forms.CharField(label='Subject', required=True, max_length=200,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'subject-field', 'name': 'subject'}))
+    message = forms.CharField(label='Message', required=True,
+                              widget=forms.Textarea(attrs={'class': 'form-control', 'id': 'message-field', 'name': 'message', 'rows': 5}))
+    
+    class Meta:
+        model = Message
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        email = cleaned_data.get('email')
+        subject = cleaned_data.get('subject')
+        message = cleaned_data.get('message')
+        if not name or not email or not message:
+            raise forms.ValidationError('All fields are required')
+        return cleaned_data
+    
+    def save(self, commit=True):
+        message = Message()
+        message.name = self.cleaned_data['name']
+        message.email = self.cleaned_data['email']
+        message.subject = self.cleaned_data['subject']
+        message.message = self.cleaned_data['message']
+        
+        if commit:
+            message.save()
+        return message
+
+
+class ContactFormAdminForm(admin.ModelAdmin):
+    """ form to handle contact info in admin """
+    class Meta:
+        model = Message
+        fields = '__all__'

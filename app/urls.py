@@ -1,7 +1,8 @@
 from django.urls import path
 from django.views.generic import RedirectView
 
-from app.views import views, auth, search, projects, posts
+from app.views import views, auth, search, projects, posts, messages
+
 
 urlpatterns = [
     path('', views.home_view, name='home'),
@@ -23,5 +24,12 @@ urlpatterns = [
     path('blog/posts/new', posts.create_post, name='create_post'),
     path('search/', search.search_view, name='search'),
     path('resume/', views.resume_pdf_view, name='resume'),
-    path('resume-pdf/', views.resume_pdf_view, name='resume_pdf')
+    path('resume-pdf/', views.resume_pdf_view, name='resume_pdf'),
+    path('messages/', messages.view_messages, name='messages'),
 ]
+
+# Error handling
+handler404 = 'app.views.errors.error_404_view'
+handler500 = 'app.views.errors.error_500_view'
+handler403 = 'app.views.errors.error_403_view'
+handler400 = 'app.views.errors.error_400_view'

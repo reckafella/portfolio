@@ -1,0 +1,20 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %} Permission Denied {% endblock %}
+
+{% block content %}
+<section id="section contact" class="mt-5 section section-bg contact h-100" style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+    <div class="container">
+        <h2 class="text-center text-black fw-bold" data-aos="fade-up">Permission Denied</h2>
+        <div class="text-center text-black mb-2" data-aos="fade-up" data-aos-delay="100">
+            <p>
+                <strong>403 Error: Permission Denied</strong>
+            </p>
+            <img src="{% static 'assets/images/errors/403.png' %}" alt="403 Error" class="img-fluid" style="max-width: 300px;">
+            <p>
+                Permission to access the requested resource is denied. Please go back to the <a href="{% url 'home' %}">homepage</a>.
+            </p>
+        </div>
+    </div>
+</section>

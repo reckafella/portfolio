@@ -1,0 +1,20 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %} Internal Server Error {% endblock %}
+
+{% block content %}
+<section id="section contact" class="mt-5 section section-bg contact h-100" style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+    <div class="container">
+        <h2 class="text-center text-black fw-bold" data-aos="fade-up">Internal Server Error</h2>
+        <div class="text-center text-black mb-2" data-aos="fade-up" data-aos-delay="100">
+            <p>
+                <strong>500 Error: Internal Server Error</strong>
+            </p>
+            <img src="{% static 'assets/images/errors/500.png' %}" alt="500 Error" class="img-fluid" style="max-width: 300px;">
+            <p>
+                The server encountered an internal error and was unable to complete your request. Please go back to the <a href="{% url 'home' %}">homepage</a>.
+            </p>
+        </div>
+    </div>
+</section>

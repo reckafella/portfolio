@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 from django.http import JsonResponse, FileResponse, Http404
 from django.shortcuts import render
-
+from ..forms import ContactForm
 from ..helpers import is_ajax
 
 
@@ -18,20 +18,33 @@ def about_view(request):
 
 def contact_view(request):
     """ View to render the contact page """
+    form = ContactForm()
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            email = form.cleaned_data.get('email')
+            subject = form.cleaned_data.get('subject')
+            message = form.cleaned_data.get('message')
+    
+            if name and subject and email and message:
+                form.save()
+                response = {'success': True, 'message': 'Message sent successfully'}
 
-        # send email
-        # send_email(name, email, message)
-        if is_ajax(request):
-            if name and email and message:
-                return JsonResponse({'success': True, 'message': 'Message sent successfully'})
             else:
-                return JsonResponse({'success': False, 'message': 'All fields are required'})
+                response = {'success': False, 'message': 'All fields are required'}
+            
+            if is_ajax(request):
+                    return JsonResponse(response)
+    else:
+        form = ContactForm()
 
-    return render(request=request, template_name='app/contact.html', status=200)
+    context = {
+        'form': form,
+        'page_title': 'Contact',
+        'submit_text': 'Send Message'
+    }
+    return render(request=request, template_name='app/contact.html', context=context, status=200)
 
 
 def resume_view(request):

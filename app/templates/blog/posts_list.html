@@ -29,9 +29,10 @@
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs card-header-tabs mb-1" id="topicTabs" role="tablist">
+{% comment %}
                             <li class="nav-item">
                                 <a class="nav-link {% if current_topic == 'all' %}active{% endif %}" href="#" data-topic="all">All</a>
-                            </li>
+                            </li>{% endcomment %} 
                             {% for topic in topics %}
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link {% if current_topic == topic %}active{% endif %}" href="#" data-topic="{{ topic }}">{{ topic|title }}</a>

@@ -9,7 +9,7 @@
                 <small class="text-muted">
                     By <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
                         {{ post.author.get_full_name|default:post.author.username }}</a>
-                    &nbsp;|&nbsp; <span class="text-muted">{{ post.created_at|date:"F j, Y" }}</span>
+                    &nbsp;|&nbsp; <span class="text-muted">{{ post.created_at|date:"N j, Y" }}</span>
                 </small>
             </p>
         </div>
@@ -23,7 +23,7 @@
 </div>
 {% empty %}
 <div class="col-12">
-    <div class="alert alert-info" role="alert">
+    <div class="alert alert-danger" role="alert">
         No articles found for this topic.
     </div>
 </div>

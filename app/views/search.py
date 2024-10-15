@@ -76,4 +76,4 @@ def search_view(request):
         'projects': paginated_projects,
         'page_title': 'Search'
     }
-    return render(request, 'app/search.html', context)
+    return render(request, 'app/search/search.html', context)

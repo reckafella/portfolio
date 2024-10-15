@@ -1,15 +1,11 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %} {% endblock %}
+{% block title %} Blog Posts by {{ author.get_full_name|default:author.username }} {% endblock %}
 
 {% block content %}
 <section id="author-posts" class="py-5 bg-light mt-5">
     <div class="container">
-        <div class="section-title mb-4">
-            <h1 class="text-center">
-                {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %}
-            </h1>
-        </div>
+        <h1 class="text-center mb-4">Blog Posts by {{ author.get_full_name|default:author.username }}</h1>
 
         <!-- Search Form -->
         <form id="searchForm" class="mb-4">
@@ -59,11 +55,13 @@
 
             <!-- Main Content -->
             <div class="col-md-9">
+               
+
                 <!-- Posts Container -->
                 <div id="postsContainer" class="row g-4">
                     <!-- Posts will be dynamically loaded here -->
                 </div>
-
+                
                 <!-- Pagination -->
                 <nav aria-label="Page navigation" class="mt-4">
                     <ul id="pagination" class="pagination justify-content-center">
@@ -83,7 +81,7 @@
     $(document).ready(function() {
         function loadPosts(topic, page, sort, search) {
             $.ajax({
-                url: '{% url "blog" %}', 
+                url: '{% url "blog" %}',  // or '{% url "author_posts" author.username %}' for author_posts
                 data: {
                     'topic': topic,
                     'page': page,
@@ -94,6 +92,7 @@
                 success: function(data) {
                     $('#postsContainer').html(data.posts_html);
                     $('#pagination').html(data.pagination_html);
+                    // Update the URL to reflect the new state
                     var newUrl = updateQueryStringParameter(window.location.href, 'sort', sort);
                     newUrl = updateQueryStringParameter(newUrl, 'topic', topic);
                     newUrl = updateQueryStringParameter(newUrl, 'page', page);

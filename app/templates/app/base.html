@@ -48,7 +48,7 @@
                     <li><a href="{% url 'home' %}" class="text-start active"><span>Home</span></a></li>
                     <li class="dropdown"><a href="#"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'about' %}" class="text-start"><span>About Me</span></a></li>
+                            <li><a href="#" class="text-start"><span>About Me</span></a></li>
                             <li><a href="{% url 'resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span></a></li>
                         </ul>
                     </li>
@@ -78,25 +78,34 @@
         </div>
     </header>
 
-    <div id="search-bar" class="search-bar position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-90 d-none">
-        <div class="container h-100 d-flex align-items-center justify-content-center">
+    <div id="search-bar" class="search-bar position-fixed top-50 start-50 translate-middle w-100 h-100 w-lg-50 h-lg-50 bg-dark bg-opacity-90 d-none">
+        <div class="container h-100 d-lg-flex d-block align-items-center justify-content-center">
             <form class="w-100 px-3" onsubmit="return performSearch()">
                 <div class="row g-2">
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-4">
                         <input type="text" class="form-control-sm form-control form-control-lg" placeholder="Type to search..." aria-label="Search" required>
                     </div>
                     <div class="col-12 col-md-2">
-                        <select class="form-select-sm form-select form-select-lg">
+                        <select id="search-bar-filterOption" class="form-select-sm form-select form-select-lg">
                             <option value="all" selected>All</option>
                             <option value="posts">Posts</option>
                             <option value="projects">Projects</option>
                         </select>
                     </div>
+                    <div class="col-12 col-md-3">
+                        <select id="search-bar-sortSelect" class="form-select-sm form-select form-select-lg">
+                            <option value="relevance" selected>Relevance</option>
+                            <option value="date_desc">Newest First</option>
+                            <option value="date_asc">Oldest First</option>
+                            <option value="title_asc">Title A-Z</option>
+                            <option value="title_desc">Title Z-A</option>
+                        </select>
+                    </div>
                     <div class="col-12 col-md-2">
                         <button type="submit" class="w-100 btn-info">Search</button>
                     </div>
-                    <div class="col-12 col-md-2">
-                        <button type="button" class="btn-close w-100 btn-close-white" aria-label="Close" onclick="toggleSearchBar()"></button>
+                    <div class="col-12 col-md-1 d-flex justify-content-center align-items-center" data-bs-theme="dark">
+                        <button type="button" class="btn btn-close" aria-label="Close" onclick="toggleSearchBar()"></button>
                     </div>
                 </div>
             </form>
@@ -165,6 +174,7 @@
     <script src="{% static 'assets/js/forms.js' %}"></script>
     <script src="{% static 'assets/js/more_less.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
+
     <!-- Form data validation -->
      {% block extra_js %} {% endblock %}
     {% comment %}<script src="{% static 'assets/js/input-validator.js' %}"></script>{% endcomment %}

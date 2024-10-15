@@ -101,4 +101,4 @@ def projects_view(request):
 
     context = dict(projects=projects_data, page_title='Projects')
 
-    return render(request=request, template_name='app/projects.html', context=context, status=200)
+    return render(request=request, template_name='app/projects/projects.html', context=context, status=200)

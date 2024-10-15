@@ -28,8 +28,3 @@ urlpatterns = [
     path('messages/', messages.view_messages, name='messages'),
 ]
 
-# Error handling
-handler404 = 'app.views.errors.error_404_view'
-handler500 = 'app.views.errors.error_500_view'
-handler403 = 'app.views.errors.error_403_view'
-handler400 = 'app.views.errors.error_400_view'

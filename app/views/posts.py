@@ -131,6 +131,7 @@ def posts_list_view(request):
         'current_sort': sort,
         'sorting_options': sorting_options,
         'search_query': search_query,
+        'all_authors': True
     }
 
     if is_ajax(request):
@@ -194,12 +195,14 @@ def author_posts_view(request, username):
     context = {
         'author': author,
         'articles': articles,
+        'page_title': 'Blog Posts',
         'topics': all_topics,
         'current_topic': topic,
         'current_sort': sort,
         'submit_text': 'Read Article',
         'sorting_options': sorting_options,
         'search_query': search_query,
+        'all_authors': False
     }
 
     if is_ajax(request):
@@ -214,145 +217,4 @@ def author_posts_view(request, username):
             'topics_html': topics_html,
         })
 
-    return render(request, 'blog/author_posts.html', context)
-
-""" 
-def posts_list_view(request):
-    topic = request.GET.get('topic', 'all')
-    sort = request.GET.get('sort', 'date_desc')
-
-    order_by = {
-        'date_desc': '-created_at',
-        'date_asc': 'created_at',
-        'title_asc': 'title',
-        'title_desc': '-title',
-        'author_asc': 'author__username',
-        'author_desc': '-author__username',
-    }.get(sort, '-created_at')
-    
-    if topic == 'all':
-        blog_post_list = BlogPost.objects.all().order_by(order_by)
-    else:
-        blog_post_list = BlogPost.objects.filter(topics__icontains=topic).order_by(order_by)
-    
-    all_topics = set()
-    for post in BlogPost.objects.all():
-        all_topics.update(post.get_topics())
-    all_topics = sorted(list(all_topics))
-
-    paginator = Paginator(blog_post_list, 6)
-    page = request.GET.get('page')
-
-    try:
-        articles = paginator.page(page)
-    except PageNotAnInteger:
-        articles = paginator.page(1)
-    except EmptyPage:
-        articles = paginator.page(paginator.num_pages)
-
-    sorting_options = {
-        'date_desc': 'Date (Newest First)',
-        'date_asc': 'Date (Oldest First)',
-        'title_asc': 'Title (A-Z)',
-        'title_desc': 'Title (Z-A)',
-        'author_asc': 'Author (A-Z)',
-        'author_desc': 'Author (Z-A)',
-    }
-
-    context = {
-        'articles': articles,
-        'page_title': 'Blog Posts',
-        'submit_text': 'Read Article',
-        'topics': all_topics,
-        'current_topic': topic,
-        'current_sort': sort,
-        'sorting_options': sorting_options,
-    }
-
-    if is_ajax(request):
-        ''' topics_html = render_to_string('blog/partials/topics.html', context) '''
-        sort_html = render_to_string('blog/partials/sorting.html', context)
-        posts_html = render_to_string('blog/partials/posts_list.html', context)
-        pagination_html = render_to_string('blog/partials/pagination.html', context)
-        return JsonResponse({
-            'sort_html': sort_html,
-            'posts_html': posts_html,
-            'pagination_html': pagination_html,
-        })
-
-    return render(request=request, template_name='blog/posts_list.html', context=context, status=200)
-
-
-def author_posts_view(request, username):
-    author = get_object_or_404(User, username=username)
-    topic = request.GET.get('topic', 'all')
-    sort = request.GET.get('sort', 'date_desc')
-
-    order_by = {
-        'date_desc': '-created_at',
-        'date_asc': 'created_at',
-        'title_asc': 'title',
-        'title_desc': '-title',
-        'author_asc': 'author__username',
-        'author_desc': '-author__username',
-    }.get(sort, '-created_at')
-
-    if sort == 'date_desc':
-        order_by = '-created_at'
-    elif sort == 'date_asc':
-        order_by = 'created_at'
-    elif sort == 'title_asc':
-        order_by = 'title'
-    elif sort == 'title_desc':
-        order_by = '-title'
-    
-
-    if topic == 'all':
-        posts_list = BlogPost.objects.filter(author=author).order_by(order_by)
-    else:
-        posts_list = BlogPost.objects.filter(author=author, topics__icontains=topic).order_by(order_by)
-    
-    all_topics = set()
-    for post in BlogPost.objects.filter(author=author):
-        all_topics.update(post.get_topics())
-    all_topics = sorted(list(all_topics))
-
-    paginator = Paginator(posts_list, 6)
-    page = request.GET.get('page')
-
-    try:
-        articles = paginator.page(page)
-    except PageNotAnInteger:
-        articles = paginator.page(1)
-    except EmptyPage:
-        articles = paginator.page(paginator.num_pages)
-
-    sorting_options = {
-        'date_desc': 'Date (Newest First)',
-        'date_asc': 'Date (Oldest First)',
-        'title_asc': 'Title (A-Z)',
-        'title_desc': 'Title (Z-A)',
-    }
-    context = {
-        'author': author,
-        'articles': articles,
-        'topics': all_topics,
-        'current_topic': topic,
-        'current_sort': sort,
-        'submit_text': 'Read Article',
-        'sorting_options': sorting_options,
-    }
-
-    if is_ajax(request):
-        ''' topics_html = render_to_string('blog/partials/topics.html', context) '''
-        sort_html = render_to_string('blog/partials/sorting.html', context)
-        posts_html = render_to_string('blog/partials/posts_list.html', context)
-        pagination_html = render_to_string('blog/partials/pagination.html', context)
-        return JsonResponse({
-            'sort_html': sort_html,
-            'posts_html': posts_html,
-            'pagination_html': pagination_html,
-        })
-
-    return render(request, 'blog/author_posts.html', context)
- """
+    return render(request, 'blog/posts_list.html', context)

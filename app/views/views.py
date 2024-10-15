@@ -4,11 +4,18 @@ from django.http import JsonResponse, FileResponse, Http404
 from django.shortcuts import render
 from ..forms import ContactForm
 from ..helpers import is_ajax
-
+from app.models import Projects, BlogPost
 
 def home_view(request):
     """ View to render the home page """
-    return render(request=request, template_name='app/home.html', status=200)
+    featured_projects = Projects.objects.all()[:3]
+    recent_posts = BlogPost.objects.all().order_by('-created_at')[:3]
+
+    context = {
+        'featured_projects': featured_projects,
+        'latest_posts': recent_posts,
+    }
+    return render(request=request, template_name='app/home.html', context=context, status=200)
 
 
 def about_view(request):

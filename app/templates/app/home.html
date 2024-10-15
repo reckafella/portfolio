@@ -1,27 +1,135 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} Home {% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<section id="section about" class="mt-5 section about" style="background-color: dimgray;">
-    <div class="container card d-flex flex-column flex-lg-row align-items-center mt-4 justify-content-between bg-dark text-white p-4 h-100 col-lg-6 col-sm-8 col-md-6">
+<!-- Hero Section -->
+<section id="section about" class="mt-5 section about bg-dark text-white py-5">
+    <div class="container card d-flex flex-column flex-lg-row align-items-center mt-4 justify-content-center bg-dark text-white p-4 h-100 col-lg-7 col-sm-11 col-md-7">
         <!-- Profile Picture -->
-        <div class="mb-3 mb-lg-0 col-lg-4 col-md-6 col-sm-8 text-center text-lg-start">
+        <div class="mb-2 mb-lg-0 col-lg-6 col-md-7 col-sm-4 text-center text-lg-start">
             <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle w-75">
         </div>
         <!-- About Text -->
-        <div class="text-white mt-3 mt-lg-0 p-2 col-lg-7">
+        <div class="text-white mt-1 mt-lg-0 p-1 col-lg-4">
             <h2 class="fw-bold text-white pacifico-regular kalam-bold">Hello, I'm Ethan</h2>
             <p>Welcome to my portfolio website!</p>
             <p>I am a
                 <strong><span class="text-decoration-underline text-success typed" data-typed-items=" FullStack Software Engineer, DevOps Engineer, Backend Developer, Code Testing Specialist," style="text-decoration-thickness: 10%;"></span></strong>
                 <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
             </p>
-            <p>You can learn more about my work here.</p>
-            <div class="d-flex justify-content-center justify-content-lg-start mt-4">
-                <a class="btn btn-success" href="{% url 'about' %}">About Me</a>
+            <div class="d-flex justify-content-center justify-content-lg-start">
+                <a href="{% url 'projects' %}" class="btn btn-outline-light">View Projects</a>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Featured Projects -->
+<section id="featured-projects" class="py-5">
+    <div class="container justify-content-center align-items-center">
+        <h2 class="text-center mb-5">Featured Projects</h2>
+        <div class="row d-flex col-lg-11 col-sm-11 col-md-9 justify-content-center align-items-center">
+            {% for project in featured_projects %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{% static project.image %}" class="card-img-top" alt="{{ project.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{{ project.url }}" target="_blank" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'projects' %}" class="btn btn-outline-primary">View All Projects</a>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Blog Posts -->
+<section id="latest-posts" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Latest Blog Posts</h2>
+        <div class="row">
+            {% for post in latest_posts %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content|truncatewords:30|safe }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">Read Article</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'blog' %}" class="btn btn-outline-primary">View All Posts</a>
+        </div>
+    </div>
+</section>
+
+<!-- Skills & Technologies -->
+<section id="skills" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Skills & Technologies</h2>
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-code-square fs-1 text-primary"></i>
+                <h5 class="mt-2">Web Development</h5>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-hdd-stack fs-1 text-primary"></i>
+                <h5 class="mt-2">DevOps</h5>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-database fs-1 text-primary"></i>
+                <h5 class="mt-2">Backend Systems</h5>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-bug fs-1 text-primary"></i>
+                <h5 class="mt-2">Testing & QA</h5>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-cloud fs-1 text-primary"></i>
+                <h5 class="mt-2">Server Maintenance</h5>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <i class="bi bi-tools fs-1 text-primary"></i>
+                <h5 class="mt-2">Database Design</h5>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section id="cta" class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to start a project?</h2>
+        <p class="lead mb-4">Let's collaborate and bring your ideas to life!</p>
+        <a href="{% url 'contact' %}" class="btn btn-light btn-lg">Get in Touch</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var typed = new Typed('.typed', {
+            strings: ['FullStack Software Engineer', 'DevOps Engineer', 'Backend Developer', 'Code Testing Specialist'],
+            typeSpeed: 50,
+            backSpeed: 30,
+            backDelay: 2000,
+            loop: true
+        });
+    });
+</script>
 {% endblock %}

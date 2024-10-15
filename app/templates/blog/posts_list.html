@@ -4,18 +4,18 @@
 
 {% block content %}
 <section id="author-posts" class="py-5 bg-light mt-5">
-    <div class="container">
-        <div class="section-title mb-4">
-            <h1 class="text-center">
+    <div class="container d-flex justify-content-center align-items-center card col-lg-9 col-md-10 col-sm-11">
+        <div class="section-title mt-3 mb-4">
+            <h2 class="text-center">
                 {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %}
-            </h1>
+            </h2>
         </div>
 
         <!-- Search Form -->
-        <form id="searchForm" class="mb-4">
+        <form id="searchForm" class="mb-4 w-sm-100 w-75 d-flex justify-content-between align-items-center">
             <div class="input-group">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search posts...">
-                <button class="btn btn-primary" type="submit">Search</button>
+                <input type="text" id="searchInput" class="form-control form-control-lg form-control-sm" placeholder="Search posts...">
+                <button class="btn btn-outline-light" type="submit">Search</button>
             </div>
         </form>
 

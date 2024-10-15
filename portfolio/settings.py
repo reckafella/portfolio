@@ -64,7 +64,7 @@ ROOT_URLCONF = 'portfolio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -198,4 +198,3 @@ CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_REF  = 'no-referrer'
 SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
- 

@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="text-center mt-2">
-            <a href="{% url 'projects' %}" class="btn btn-outline-primary">View All Projects</a>
+            <a href="{% url 'app:projects' %}" class="btn btn-outline-primary">View All Projects</a>
         </div>
     </div>
 </section>
@@ -77,14 +77,14 @@
                         <p class="card-text">{{ post.content|truncatewords:30|safe }}</p>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">Read Article</a>
+                        <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary">Read Article</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         <div class="text-center mt-4">
-            <a href="{% url 'blog' %}" class="btn btn-outline-primary">View All Posts</a>
+            <a href="{% url 'blog:post_list' %}" class="btn btn-outline-primary">View All Posts</a>
         </div>
     </div>
 </section>
@@ -131,7 +131,7 @@
             <h2 class="text-white">Ready to start a project?</h2>
         </div>
         <p class="lead mb-4">Let's collaborate and bring your ideas to life!</p>
-        <a href="{% url 'contact' %}" class="btn btn-light btn-lg">Get in Touch</a>
+        <a href="{% url 'app:contact' %}" class="btn btn-light btn-lg">Get in Touch</a>
     </div>
 </section>
 {% endblock %}

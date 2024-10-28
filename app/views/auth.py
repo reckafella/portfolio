@@ -12,9 +12,9 @@ from ..forms import LoginForm, SignupForm
 
 def signup_view(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('app:home')
     
-    next_url = request.GET.get('next') or reverse('home')
+    next_url = request.GET.get('next') or reverse('app:home')
     
     if request.method == 'POST':
         form = SignupForm(request.POST, request.FILES)
@@ -61,7 +61,7 @@ def signup_view(request):
         'submit_text': 'Create Account',
         'extra_messages': [{
             'text': 'Already have an account?',
-            'link': f"{reverse('login')}?next={next_url}",
+            'link': f"{reverse('app:login')}?next={next_url}",
             'link_text': 'Login'
         }],
         'next': next_url,
@@ -71,9 +71,9 @@ def signup_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('app:home')
     
-    next_url = request.GET.get('next') or reverse('home')
+    next_url = request.GET.get('next') or reverse('app:home')
     
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -128,7 +128,7 @@ def login_view(request):
         'submit_text': 'Login',
         'extra_messages': [{
             'text': 'Don\'t have an account?',
-            'link': reverse('signup'),
+            'link': reverse('app:signup'),
             'link_text': 'Register'}],
         'next': next_url,  # Add this line
     }
@@ -144,10 +144,10 @@ def logout_view(request):
         return JsonResponse({
             'success': True,
             'message': success_message,
-            'redirect_url': reverse('home')
+            'redirect_url': reverse('app:home')
         })
     messages.success(request, success_message)
-    return redirect('home')
+    return redirect('app:home')
 
 
 def csrf_failure(request, reason=""):
@@ -174,7 +174,7 @@ def server_error(request):
 """ 
 def signup_view(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('app:home')
     
     if request.method == 'POST':
         form = SignupForm(request.POST, request.FILES)

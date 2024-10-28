@@ -68,7 +68,7 @@ def add_project_view(request):
         'form_title': 'Add Project',
         'submit_text': 'Add Project'
     }
-    return render(request, 'app/add_project.html', context)
+    return render(request, 'app/projects/add_project.html', context)
 
 
 def projects_view(request):

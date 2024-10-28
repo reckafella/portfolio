@@ -39,35 +39,35 @@
 <body class="d-flex row h-100">
     <header id="header" class="header fixed-top d-flex align-items-center mb-5">
         <div class="container-fluid container-sm container-xl position-relative d-flex align-items-center justify-content-between">
-            <a href="{% url 'home' %}" class="logo align-items-center d-flex">
+            <a href="{% url 'app:home' %}" class="logo align-items-center d-flex">
                 <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle d-none">
                 <h3 class="sitename pacifico-regular">Ethan Wanyoike</h3>
             </a>
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="{% url 'home' %}" class="text-start active"><span>Home</span></a></li>
+                    <li><a href="{% url 'app:home' %}" class="text-start active"><span>Home</span></a></li>
                     <li class="dropdown"><a href="#"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="#" class="text-start"><span>About Me</span></a></li>
-                            <li><a href="{% url 'resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span></a></li>
+                            <li><a href="{% url 'app:resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span></a></li>
                         </ul>
                     </li>
-                    <li><a href="{% url 'projects' %}" class="text-start"><span>Projects</span></a></li>
-                    <li><a href="{% url 'contact' %}" class="text-start"><span>Contact</span></a></li>
-                    <li><a href="{% url 'blog' %}" class="text-start"><span>Blog</span></a></li>
+                    <li><a href="{% url 'app:projects' %}" class="text-start"><span>Projects</span></a></li>
+                    <li><a href="{% url 'app:contact' %}" class="text-start"><span>Contact</span></a></li>
+                    <li><a href="{% url 'blog:post_list' %}" class="text-start"><span>Blog</span></a></li>
                     <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
                             <li><a href="{% url 'admin:index' %}" class="text-start"><span>Admin</span></a></li>
-                            <li><a href="{% url 'messages' %}" class="text-start"><span>Messages</span></a></li>
-                            <li><a href="{% url 'create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
-                            <li><a href="{% url 'add_project' %}" class="text-start"><span>Add New Project</span></a></li>
+                            <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
+                            <li><a href="{% url 'blog:create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
+                            <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Add New Project</span></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url 'logout' %}" class="text-start"><span>Logout</span></a></li>
+                            <li><a href="{% url 'app:logout' %}" class="text-start"><span>Logout</span></a></li>
                             {% else %}
-                            <li><a href="{% url 'login' %}" class="text-start"><span>Login</span></a></li>
-                            <li><a href="{% url 'signup' %}" class="text-start"><span>Register</span></a></li>
+                            <li><a href="{% url 'app:login' %}" class="text-start"><span>Login</span></a></li>
+                            <li><a href="{% url 'app:signup' %}" class="text-start"><span>Register</span></a></li>
                             {% endif %}
                         </ul>
                     </li>

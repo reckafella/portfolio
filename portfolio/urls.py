@@ -30,5 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('ckeditor/', include('django_ckeditor_5.urls')),
-    path('', include('app.urls'), name='app')
+    path('', include('app.urls'), name='app'),
+    path('blog/', include('blog.urls'), name='blog'),
 ]

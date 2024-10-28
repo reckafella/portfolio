@@ -25,7 +25,7 @@ FALLBACK_SECRET_KEY = 'django-insecure-(mqx%zsxjly7+4g554fulva4zmxb(e=$e7gun91&_
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False # #True
+DEBUG = True # #True
 
 #ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', 'ethanmuthoni.tech']
@@ -41,16 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'corsheaders',
+    'cloudflare_images',
+    'rest_framework',
     'django_ckeditor_5',
     'app',
+    'blog',
 ]
 
-if DEBUG:
-    INSTALLED_APPS.append('sslserver')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -64,7 +67,11 @@ ROOT_URLCONF = 'portfolio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'app/templates'),
+            os.path.join(BASE_DIR, 'blog/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,9 +104,37 @@ else:
             'USER': os.environ.get('SUPABASE_USER'),
             'PASSWORD': os.environ.get('SUPABASE_DB_PW'),
             'HOST': os.environ.get('SUPABASE_HOST'),
-            'PORT': os.environ.get('SUPABASE_PORT')
+            'PORT': os.environ.get('SUPABASE_PORT', 5432),
         }
     }
+
+
+# CKEditor Config
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_IMAGE_QUALITY = 90
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Blockquote']},
+            {'name': 'links', 'items': ['Link', 'Unlink']},
+            {'name': 'styles', 'items': ['Format', 'Styles']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize']},
+            {'name': 'editing', 'items': ['Scayt']},
+            {'name': 'document', 'items': ['Source']},
+        ],
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'autolink',
+            'image2',
+        ]),
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -140,6 +175,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -147,35 +184,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# CKEditor
-CKEDITOR_5_CONFIGS = {
-    'default': {
-        'language': 'en',
-        'toolbar': 'full',
-        'height': 400,
-        'width': 'auto',
-        'image_resize_options': ['original', '300', '600'],
-        'image_resize_width': 'auto',
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']},
-            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Blockquote']},
-            {'name': 'links', 'items': ['Link', 'Unlink']},
-            {'name': 'styles', 'items': ['Format', 'Styles']},
-            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize']},
-            {'name': 'editing', 'items': ['Scayt']},
-            {'name': 'document', 'items': ['Source']},
-        ],
-        'width': '100%',
-        'extra_plugins': ','.join([
-            'uploadimage',
-            'autolink',
-            'image2',
-        ]),
-    }
-}
 
 # LOGIN REDIRECT URL
 LOGIN_REDIRECT_URL = 'home'
@@ -186,15 +194,26 @@ APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_REF  = 'no-referrer'
-SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    CSRF_FAILURE_VIEW = 'app.views.auth.csrf_failure'
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_REF  = 'no-referrer'
+    SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
+
+
+# Cloudflare Images Settings
+CLOUDFLARE_IMAGES = {
+    'ACCOUNT_ID': os.environ.get('CLOUDFLARE_ACCOUNT_ID'),
+    'API_TOKEN': os.environ.get('CLOUDFLARE_API_TOKEN'),
+    'ZONE_ID': os.environ.get('CLOUDFLARE_ZONE_ID'),
+    'BASE_URL': os.environ.get('CLOUDFLARE_BASE_URL'),
+    'ENABLED': True
+}

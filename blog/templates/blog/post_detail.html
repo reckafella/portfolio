@@ -1,6 +1,6 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} {{ post.title }} {% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
 <section id="section" class="mt-5 section blog bg-light">
@@ -12,16 +12,24 @@
                     <p class="card-text">
                         <small class="text-muted">
                             By 
-                            <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
+                            <a href="{% url 'blog:author_posts' post.author.username %}" class="text-success text-decoration-none">
                                 {% if post.author.first_name and post.author.last_name %}
                                     {{ post.author.first_name }} {{ post.author.last_name }}
                                 {% else %}
                                     {{ post.author.username|capfirst }}
                                 {% endif %}
                             </a>
-                            &nbsp;|&nbsp; {{ post.created_at|date:"F j, Y" }}
+                            &nbsp;|&nbsp; {{ post.created_at|date:"N j, Y" }}
                         </small>
                     </p>
+                    {% if user.is_authenticated and user == post.author or user.is_staff %}
+                    <div class="action-buttons mb-2">
+                        <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-sm btn-primary">Edit Post</a>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            Delete Post
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -48,10 +56,10 @@
                     <div class="card bg-white h-100" data-aos="fade-up" data-aos-delay="200">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{% url 'post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
+                                <a href="{% url 'blog:post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
                             </h5>
                             <p class="card-text">
-                                <small class="text-muted">{{ article.created_at|date:"F j, Y" }}</small>
+                                <small class="text-muted">{{ article.created_at|date:"N j, Y" }}</small>
                             </p>
                         </div>
                     </div>
@@ -61,5 +69,29 @@
         </div>
         {% endif %}
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    {% if user.is_authenticated and user == post.author or user.is_staff %}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete "{{ post.title }}"? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{% url 'blog:post_delete' post.slug %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </section>
 {% endblock %}

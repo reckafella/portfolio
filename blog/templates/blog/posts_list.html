@@ -1,0 +1,150 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %} {% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light mt-5">
+    <div class="container d-flex justify-content-center align-items-center card col-lg-9 col-md-10 col-sm-11">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="row d-flex justify-content-center align-items-center">
+                        <div class="section-title mt-3 mb-4">
+                            <h2 class="text-center">
+                                {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %}
+                            </h2>
+                        </div>
+                
+
+                        <!-- Search Form -->
+                        <form method="get" class="mb-4 w-sm-100 w-75 d-flex justify-content-between align-items-center">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control form-control-lg form-control-sm" 
+                                       placeholder="Search posts..." 
+                                       value="{{ search_query }}" required>
+                                <button class="btn btn-outline-light" type="submit">Search</button>
+                            </div>
+                        </form>
+                        
+
+                        <div class="row">
+                            <!-- Filters Sidebar -->
+                            <div class="col-md-3 mb-2">
+                                <!-- Topics Filter -->
+                                <div class="card mb-2">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Topics</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="nav flex-column nav-pills">
+                                            <a href="?topic=all&sort={{ current_sort }}" 
+                                               class="nav-link {% if current_topic == 'all' %}active{% endif %}">
+                                                All Topics
+                                            </a>
+                                            {% for topic in topics %}
+                                            <a href="?topic={{ topic|urlencode }}&sort={{ current_sort }}" 
+                                               class="nav-link {% if current_topic == topic %}active{% endif %}">
+                                                {{ topic|title }}
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sort Options -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Sort By</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <select class="form-select" onchange="window.location.href='?topic={{ current_topic }}&sort=' + this.value">
+                                            {% for key, value in sorting_options.items %}
+                                                <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
+                                                    {{ value }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Articles List -->
+                            <div class="col-md-9">
+                                <div class="row g-4">
+                                    {% for article in articles %}
+                                    <div class="col-lg-6 col-md-7 mb-3">
+                                        <div class="card bg-white text-black h-100" data-aos="flip-right" data-aos-easing="ease-out-cubic" data-aos-delay="150">
+                                            {% if article.cover_image.url %}
+                                            <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                                            {% endif %}
+                                            <div class="card-body">
+                                                <p class="card-title fw-bold">
+                                                    <a href="{{ article.get_absolute_url }}" class="text-success text-decoration-none">{{ article.title }}</a>
+                                                </p>
+                                                <p class="card-text text-muted">
+                                                    <small class="text-muted">
+                                                        By 
+                                                        <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
+                                                            {% if article.author.first_name and article.author.last_name %}
+                                                                {{ article.author.first_name }} {{ article.author.last_name }}
+                                                            {% else %}
+                                                                {{ article.author.username|capfirst }}
+                                                            {% endif %}
+                                                        </a>
+                                                        &nbsp;|&nbsp; {{ article.created_at|date:"N j, Y" }}
+                                                    </small>
+                                                </p>
+                                                <p class="card-text">{{ article.content| safe |truncatewords:20 }}</p>
+                                                <div class="card-footer text-center">
+                                                    <a href="{{ article.get_absolute_url }}" class="btn btn-success">{{ submit_text }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="col-12 text-center">
+                                        <p>No articles found.</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Pagination -->
+                                {% if is_paginated %}
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center">
+                                        {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&topic={{ current_topic }}&sort={{ current_sort }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                                Previous
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% for num in page_obj.paginator.page_range %}
+                                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                            <a class="page-link" href="?page={{ num }}&topic={{ current_topic }}&sort={{ current_sort }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                                {{ num }}
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+
+                                        {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&topic={{ current_topic }}&sort={{ current_sort }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                                Next
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

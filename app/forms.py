@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from app.models import BlogPost, Projects, Message
+from app.models import Projects, Message
 
 
 class LoginForm(forms.Form):
@@ -67,41 +67,6 @@ class SignupForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
-
-class BlogPostForm(forms.Form):
-    """ form to handle blog post info """
-    title = forms.CharField(label='Title', required=True, max_length=200,
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-    topics = forms.CharField(label='Topics', required=True, max_length=200,
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    content = forms.CharField(label='Content', required=True,
-                              widget=CKEditor5Widget(attrs={'class': 'form-control'}))
-
-
-class BlogPostAdminForm(forms.ModelForm):
-    """ form to handle blog post info in admin """
-    content = forms.CharField(label='Content', required=True,
-                                widget=CKEditor5Widget(attrs={'class': 'form-control'}))
-    class Meta:
-        model = BlogPost
-        fields = '__all__'
-        
-
-class BlogPostAdmin(admin.ModelAdmin):
-    form = BlogPostAdminForm
-    list_display = ('title', 'author', 'created_at')
-    search_fields = ('title', 'content', 'author__username')
-    prepopulated_fields = {'slug': ('title',)}
-    list_filter = ('created_at', 'author')
-    date_hierarchy = 'created_at'
-    ordering = ('-created_at',)
-
-    def save_model(self, request, obj, form, change):
-        if not obj.author_id:
-            obj.author = request.user
-        super().save_model(request, obj, form, change)
 
 
 class ProjectsForm(forms.ModelForm):

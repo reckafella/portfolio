@@ -3,8 +3,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Q
+
 from app.helpers import is_ajax
-from app.models import BlogPost, Projects
+from app.models import Projects
+from blog.models import BlogPost
+
 
 def search_view(request):
     """ view to handle search """

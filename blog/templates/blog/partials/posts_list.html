@@ -7,7 +7,7 @@
             </p>
             <p class="card-text">
                 <small class="text-muted">
-                    By <a href="{% url 'author_posts' post.author.username %}" class="text-success text-decoration-none">
+                    By <a href="{% url 'app:author_posts' post.author.username %}" class="text-success text-decoration-none">
                         {{ post.author.get_full_name|default:post.author.username }}</a>
                     &nbsp;|&nbsp; <span class="text-muted">{{ post.created_at|date:"N j, Y" }}</span>
                 </small>
@@ -17,7 +17,7 @@
             <p class="card-text">{{ post.content|safe|truncatewords:20 }}</p>
         </div>
         <div class="card-footer text-center">
-            <a href="{% url 'post_detail' post.slug %}" class="btn btn-success">{{ submit_text }}</a>
+            <a href="{% url 'app:post_detail' post.slug %}" class="btn btn-success">{{ submit_text }}</a>
         </div>
     </div>
 </div>

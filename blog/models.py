@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.urls import reverse
 from django_ckeditor_5.fields import CKEditor5Field
+from cloudflare_images.field import CloudflareImagesField
 
 
 class BlogPost(models.Model):
@@ -14,11 +15,15 @@ class BlogPost(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     topics = models.CharField(max_length=200, default='all', help_text="Comma-separated list of topics")
-    cover_image = models.ImageField(upload_to='blog/images/', blank=True, null=True)
+    cover_image = CloudflareImagesField(blank=True, null=True, default='NULL')
 
     # CLOUDFLARE IMAGE FIELDS
-    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True)
-    cloudflare_image_url = models.URLField(blank=True, null=True)
+    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True, default='NULL')
+    cloudflare_image_url = models.URLField(blank=True, null=True, default='NULL')
+
+    class Meta:
+        managed = True
+        verbose_name = 'Blog Post'
 
     def save(self, *args, **kwargs):
         if not self.slug:

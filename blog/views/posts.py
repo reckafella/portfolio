@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from titlecase import titlecase
 import random
 
 from blog.forms import BlogPostForm
 from blog.models import BlogPost
-from app.helpers import is_ajax
+from app.helpers import is_ajax, upload_image_to_cloudflare, delete_image_from_cloudflare
 
 
 class PostDetailView(DetailView):
@@ -34,18 +35,33 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     form_class = BlogPostForm
     template_name = 'blog/create_post.html'
     context_object_name = 'view'
-    success_url = reverse_lazy('blog:post_list')  # Adjust this to your URL name
+    success_url = reverse_lazy('blog:post_list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.title = titlecase(form.instance.title)
         if not self.test_func():
-            if self.request.is_ajax():
+            if is_ajax(self.request):
                 return JsonResponse({
                     'success': False,
                     'message': 'You are not authorized to create a post',
                     'redirect_url': reverse('app:home')
                 })
             return redirect('app:home')
+        
+        # Upload cover image to Cloudflare if it exists in the form
+        cover_image = form.files.get('cover_image')
+        if cover_image:
+            try:
+                image_id, image_url = upload_image_to_cloudflare(cover_image)
+                form.instance.cloudflare_image_id = image_id
+                form.instance.cloudflare_image_url = image_url
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Image upload failed: {str(e)}'
+                })
+
         return super().form_valid(form)
 
     def test_func(self):
@@ -163,6 +179,29 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = BlogPostForm
     template_name = 'blog/create_post.html'
 
+    def form_valid(self, form):
+        cover_image = form.files.get('cover_image')
+        post = form.instance
+        post.title = titlecase(post.title)
+
+        # Delete the old image from Cloudflare if a new image is being uploaded
+        if cover_image and post.cloudflare_image_id:
+            delete_image_from_cloudflare(post.cloudflare_image_id)
+
+        # Upload new image to Cloudflare
+        if cover_image:
+            try:
+                image_id, image_url = upload_image_to_cloudflare(cover_image)
+                post.cloudflare_image_id = image_id
+                post.cloudflare_image_url = image_url
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Image upload failed: {str(e)}'
+                })
+
+        return super().form_valid(form)
+
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
@@ -178,9 +217,19 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
-    template_name = 'blog/post_confirm_delete.html'
+    template_name = 'blog/deletion/confirm_delete.html'
     success_url = reverse_lazy('blog:post_list')
+
+    def delete(self, request, *args, **kwargs):
+        post = self.get_object()
+        
+        # Delete image from Cloudflare if it exists
+        if post.cloudflare_image_id:
+            delete_image_from_cloudflare(post.cloudflare_image_id)
+
+        return super().delete(request, *args, **kwargs)
 
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
+

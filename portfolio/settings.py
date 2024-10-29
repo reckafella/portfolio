@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'corsheaders',
     'cloudflare_images',
-    'rest_framework',
     'django_ckeditor_5',
     'app',
     'blog',
@@ -110,9 +109,9 @@ else:
 
 
 # CKEditor Config
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-CKEDITOR_IMAGE_BACKEND = 'pillow'
-CKEDITOR_IMAGE_QUALITY = 90
+CKEDITOR_5_UPLOAD_PATH = 'uploads/'
+CKEDITOR_5_IMAGE_BACKEND = 'pillow'
+CKEDITOR_5_IMAGE_QUALITY = 90
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
@@ -180,6 +179,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -210,10 +210,15 @@ if not DEBUG:
 
 
 # Cloudflare Images Settings
-CLOUDFLARE_IMAGES = {
-    'ACCOUNT_ID': os.environ.get('CLOUDFLARE_ACCOUNT_ID'),
-    'API_TOKEN': os.environ.get('CLOUDFLARE_API_TOKEN'),
-    'ZONE_ID': os.environ.get('CLOUDFLARE_ZONE_ID'),
-    'BASE_URL': os.environ.get('CLOUDFLARE_BASE_URL'),
-    'ENABLED': True
-}
+# SET THIS BASED ON WHETHER DJANGO VERSION == 4.2+
+
+DEFAULT_FILE_STORAGE = 'cloudflare_images.storage.CloudflareImagesStorage'
+
+CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', None)
+CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', None)
+#CLOUDFLARE_ZONE_ID = os.environ.get('CLOUDFLARE_ZONE_ID', None)
+#CLOUDFLARE_BASE_URL = os.environ.get('CLOUDFLARE_BASE_URL', None)
+CLOUDFLARE_ENABLED = True
+#CLOUDFLARE_ACCOUNT_HASH = os.environ.get('CLOUDFLARE_ACCOUNT_HASH', None)
+
+ 

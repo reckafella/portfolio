@@ -7,13 +7,18 @@ from django_ckeditor_5.fields import CKEditor5Field
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, max_length=200, blank=True)
-    content = CKEditor5Field()
+    slug = models.SlugField(unique=True, max_length=200, blank=False)
+    content = CKEditor5Field(config_name='extends', blank=True, null=True)
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     topics = models.CharField(max_length=200, default='all', help_text="Comma-separated list of topics")
+    cover_image = models.ImageField(upload_to='blog/images/', blank=True, null=True)
+
+    # CLOUDFLARE IMAGE FIELDS
+    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True)
+    cloudflare_image_url = models.URLField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

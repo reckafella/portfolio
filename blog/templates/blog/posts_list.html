@@ -75,8 +75,8 @@
                                     {% for article in articles %}
                                     <div class="col-lg-6 col-md-7 mb-3">
                                         <div class="card bg-white text-black h-100" data-aos="flip-right" data-aos-easing="ease-out-cubic" data-aos-delay="150">
-                                            {% if article.cover_image.url %}
-                                            <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                                            {% if article.clouldflare_image_url %}
+                                            <img src="{{ article.clouldflare_image_url }}" class="card-img-top" alt="{{ article.title }}">
                                             {% endif %}
                                             <div class="card-body">
                                                 <p class="card-title fw-bold">

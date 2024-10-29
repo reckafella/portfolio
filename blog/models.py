@@ -9,17 +9,17 @@ from cloudflare_images.field import CloudflareImagesField
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=200, blank=False)
-    content = CKEditor5Field(config_name='extends', blank=True, null=True)
+    content = CKEditor5Field()
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     topics = models.CharField(max_length=200, default='all', help_text="Comma-separated list of topics")
-    cover_image = CloudflareImagesField(blank=True, null=True, default='NULL')
+    cover_image = CloudflareImagesField(blank=True, null=True, default='')
 
     # CLOUDFLARE IMAGE FIELDS
-    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True, default='NULL')
-    cloudflare_image_url = models.URLField(blank=True, null=True, default='NULL')
+    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True, default='')
+    cloudflare_image_url = models.URLField(blank=True, null=True, default='')
 
     class Meta:
         managed = True

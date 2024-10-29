@@ -8,8 +8,13 @@ pip install -r requirements.txt #--break-system-packages
 python3 manage.py collectstatic --no-input --clear
 
 # Apply database migrations
-python3 manage.py makemigrations
-python3 manage.py migrate
+python3 manage.py makemigrations --verbosity 3
+python3 manage.py makemigrations app --verbosity 3
+python3 manage.py makemigrations blog --verbosity 3
+
+python3 manage.py migrate --verbosity 3
+python3 manage.py migrate app --verbosity 3
+python3 manage.py migrate blog --verbosity 3
 
 # create superuser
 #./createsuperuser.py

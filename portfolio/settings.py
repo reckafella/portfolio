@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', 
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -103,7 +102,7 @@ else:
             'USER': os.environ.get('SUPABASE_USER'),
             'PASSWORD': os.environ.get('SUPABASE_DB_PW'),
             'HOST': os.environ.get('SUPABASE_HOST'),
-            'PORT': os.environ.get('SUPABASE_PORT', 5432),
+            'PORT': os.environ.get('SUPABASE_PORT'),
         }
     }
 
@@ -216,9 +215,3 @@ DEFAULT_FILE_STORAGE = 'cloudflare_images.storage.CloudflareImagesStorage'
 
 CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', None)
 CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', None)
-#CLOUDFLARE_ZONE_ID = os.environ.get('CLOUDFLARE_ZONE_ID', None)
-#CLOUDFLARE_BASE_URL = os.environ.get('CLOUDFLARE_BASE_URL', None)
-CLOUDFLARE_ENABLED = True
-#CLOUDFLARE_ACCOUNT_HASH = os.environ.get('CLOUDFLARE_ACCOUNT_HASH', None)
-
- 

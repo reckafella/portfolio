@@ -9,6 +9,9 @@ class Projects(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        managed = True
+
     def __str__(self):
         return self.title
 
@@ -19,6 +22,9 @@ class Message(models.Model):
     subject = models.CharField(max_length=200, blank=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = True
 
     def __str__(self):
         return self.name

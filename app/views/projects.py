@@ -29,14 +29,14 @@ def add_project_view(request):
             title = titlecase(form.cleaned_data.get('title'))
             description = titlecase(form.cleaned_data.get('description'))
             image = form.cleaned_data.get('image')
-            link = form.cleaned_data.get('link')
+            url = form.cleaned_data.get('url')
 
             try:
                 Projects.objects.create(
                     title=title,
                     description=description,
                     image=image,
-                    link=link
+                    url=url
                 )
             except Exception as e:
                 if is_ajax(request):
@@ -82,6 +82,14 @@ def projects_view(request):
 
         with open(json_file_path, 'r') as fl:
             projects_data = json.load(fl)
+        
+        for project in projects_data:
+            Projects.objects.create(
+                title=project['title'],
+                description=project['description'],
+                image=project['image'],
+                url=project['url']
+            )
 
     else:
         # if db is not empty, load data from db

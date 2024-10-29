@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blogpost',
             name='cover_image',
-            field=cloudflare_images.field.CloudflareImagesField(blank=True, default='', null=True, upload_to='', variant='public'),
+            field=cloudflare_images.field.CloudflareImagesField(blank=True, default='', null=True),
         ),
     ]

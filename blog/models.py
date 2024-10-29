@@ -15,15 +15,14 @@ class BlogPost(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     topics = models.CharField(max_length=200, default='all', help_text="Comma-separated list of topics")
-    cover_image = CloudflareImagesField(blank=True, null=True, default='')
+    cover_image = CloudflareImagesField(blank=True, null=True)
 
     # CLOUDFLARE IMAGE FIELDS
-    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True, default='')
-    cloudflare_image_url = models.URLField(blank=True, null=True, default='')
+    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True)
+    cloudflare_image_url = models.URLField(blank=True, null=True)
 
     class Meta:
         managed = True
-        verbose_name = 'Blog Post'
 
     def save(self, *args, **kwargs):
         if not self.slug:

@@ -16,7 +16,7 @@
                         <img src="{% static error_image %}" alt="{{ error_code }} Error" class="img-fluid mb-4" style="max-width: 200px;">
                         <h1 class="display-1 fw-bold text-primary mb-4">{{ error_code }}</h1>
                         <p class="lead mb-4">{{ error_message }}</p>
-                        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Go to Homepage</a>
+                        <a href="{% url 'app:home' %}" class="btn btn-primary btn-lg">Go to Home</a>
                     </div>
                 </div>
             </div>

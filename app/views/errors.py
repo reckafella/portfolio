@@ -11,11 +11,11 @@ def error_404_view(request, exception=None):
     if response:
         return response
     if is_ajax(request):
-        return JsonResponse({'error': 'Page not found'}, status=404)
+        return JsonResponse({'error': 'Not Found'}, status=404)
     context = {
         'error_code': '404',
-        'error_title': 'Page Not Found',
-        'error_message': 'The page you are looking for does not exist or has been moved.',
+        'error_title': 'Not Found',
+        'error_message': 'The page or resource you are looking for does not exist or has been moved.',
         'error_image': 'assets/images/errors/404.jpg'
     }
     return render(request, 'errors/http_errors.html', context, status=404)
@@ -41,11 +41,11 @@ def error_403_view(request, exception=None):
     if response:
         return response
     if is_ajax(request):
-        return JsonResponse({'error': 'Permission denied'}, status=403)
+        return JsonResponse({'error': 'Permission Denied'}, status=403)
     context = {
         'error_code': '403',
         'error_title': 'Permission Denied',
-        'error_message': 'You do not have permission to access this resource.',
+        'error_message': 'You do not have permission to access this page / resource.',
         'error_image': 'assets/images/errors/403.png'
     }
     return render(request, 'errors/http_errors.html', context, status=403)
@@ -56,7 +56,7 @@ def error_400_view(request, exception=None):
     if response:
         return response
     if is_ajax(request):
-        return JsonResponse({'error': 'Bad request'}, status=400)
+        return JsonResponse({'error': 'Bad Request'}, status=400)
     context = {
         'error_code': '400',
         'error_title': 'Bad Request',

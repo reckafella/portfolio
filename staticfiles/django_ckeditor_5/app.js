@@ -55,7 +55,10 @@ function createEditors(element = document.body) {
             return
         }
         const script_id = `${editorEl.id}_script`;
-        editorEl.nextSibling.remove();
+        // remove next sibling if it is an empty text node
+        if (editorEl.nextSibling.nodeType == Node.TEXT_NODE && editorEl.nextSibling.textContent.trim() === '') {
+          editorEl.nextSibling.remove();
+        }
         const upload_url = element.querySelector(
             `#${script_id}-ck-editor-5-upload-url`
         ).getAttribute('data-upload-url');
@@ -96,6 +99,10 @@ function createEditors(element = document.body) {
             editorEl,
             config
         ).then(editor => {
+            const textarea = document.querySelector(`#${editorEl.id}`);
+            editor.model.document.on('change:data', () => {
+                textarea.value = editor.getData();
+            });
             if (editor.plugins.has('WordCount')) {
                 const wordCountPlugin = editor.plugins.get('WordCount');
                 const wordCountWrapper = element.querySelector(`#${script_id}-word-count`);
@@ -153,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createEditors();
 
     if (typeof django === "object" && django.jQuery) {
-        django.jQuery(document).on("formset:added", createEditors);
+        django.jQuery(document).on("formset:added", () => {createEditors();});
     }
 
     const observer = new MutationObserver((mutations) => {

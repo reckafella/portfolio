@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', default=FALLBACK_SECRET_KEY)
 DEBUG = False
 
 #ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', 'ethanmuthoni.tech']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me', '.rohn.live']
 
 
 # Application definition

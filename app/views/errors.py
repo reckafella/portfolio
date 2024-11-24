@@ -46,7 +46,7 @@ def error_403_view(request, exception=None):
         'error_code': '403',
         'error_title': 'Permission Denied',
         'error_message': 'You do not have permission to access this page / resource.',
-        'error_image': 'assets/images/errors/403.png'
+        'error_image': 'assets/images/errors/403.jpg'
     }
     return render(request, 'errors/http_errors.html', context, status=403)
 

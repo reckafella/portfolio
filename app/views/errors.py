@@ -16,7 +16,7 @@ def error_404_view(request, exception=None):
         'error_code': '404',
         'error_title': 'Page Not Found',
         'error_message': 'The page you are looking for does not exist or has been moved.',
-        'error_image': 'assets/images/errors/404.jpeg'
+        'error_image': 'assets/images/errors/404.jpg'
     }
     return render(request, 'errors/http_errors.html', context, status=404)
 

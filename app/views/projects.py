@@ -3,11 +3,12 @@ from django.views.generic import CreateView, ListView
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.views import redirect_to_login
 from titlecase import titlecase
-import json
-import os
-
 from django.conf import settings
+import json, os
+
 from app.forms import ProjectsForm
 from app.models import Projects
 
@@ -15,7 +16,10 @@ class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Projects
     form_class = ProjectsForm
     template_name = 'app/projects/add_project.html'
+    context_object_name = 'view'
     success_url = reverse_lazy('projects')
+    login_url = reverse_lazy('login')
+    redirect_field_name = 'next'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -30,12 +34,28 @@ class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return self.request.user.is_staff
 
     def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return self.handle_no_authentication()
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': False,
                 'message': 'You are not authorized to add a project'
             }, status=403)
         raise PermissionDenied('You are not authorized to add a project')
+
+    def handle_no_authentication(self):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'message': 'Please log in to continue',
+                'redirect_url': f'{self.login_url}?{self.redirect_field_name}={self.request.path}'
+            }, status=401)
+        # Fix: Use redirect_to_login function correctly
+        return redirect_to_login(
+            self.request.get_full_path(),
+            self.login_url,
+            self.redirect_field_name
+        )
 
     def form_valid(self, form):
         form.instance.title = titlecase(form.cleaned_data.get('title'))
@@ -48,7 +68,7 @@ class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                 return JsonResponse({
                     'success': True,
                     'message': 'Project added successfully',
-                    'redirect_url': self.success_url
+                    'redirect_url': str(self.success_url)  # Ensure success_url is serialized as string
                 })
             
             return response
@@ -100,4 +120,5 @@ class ProjectListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Projects'
+        context['form_title'] = 'Projects'
         return context

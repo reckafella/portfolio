@@ -36,7 +36,7 @@
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
 </head>
-<body class="d-flex row h-100">
+<body class="d-flex flex-column min-vh-100">
     <header id="header" class="header fixed-top d-flex align-items-center mb-5">
         <div class="container-fluid container-sm container-xl position-relative d-flex align-items-center justify-content-between">
             <a href="{% url 'app:home' %}" class="logo align-items-center d-flex">
@@ -49,7 +49,7 @@
                     <li class="dropdown"><a href="#"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="#" class="text-start"><span>About Me</span></a></li>
-                            <li><a href="{% url 'app:resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span></a></li>
+                            <li><a href="{% url 'app:resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                         </ul>
                     </li>
                     <li><a href="{% url 'app:projects' %}" class="text-start"><span>Projects</span></a></li>
@@ -58,7 +58,7 @@
                     <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'admin:index' %}" class="text-start"><span>Admin</span></a></li>
+                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>                           
                             <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
                             <li><a href="{% url 'blog:create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
                             <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Add New Project</span></a></li>
@@ -71,29 +71,34 @@
                             {% endif %}
                         </ul>
                     </li>
-                    <li><a href="#" onclick="toggleSearchBar(); return false;" class="text-start"><span>Search</span><i class="bi bi-search"></i></a></li>
+                    <li>
+                        <a href="#" onclick="toggleSearchBar(); return false;" class="text-start">
+                          <span class="d-inline d-lg-none">Search</span>
+                          <i class="bi bi-search"></i>
+                        </a>
+                      </li>                      
                 </ul>
                 <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
         </div>
     </header>
 
-    <div id="search-bar" class="search-bar position-fixed top-50 start-50 translate-middle w-100 h-100 w-lg-50 h-lg-50 bg-dark bg-opacity-90 d-none">
+    <div id="search-bar" class="search-bar position-fixed top-50 start-50 translate-middle w-100 h-100 w-md-75 h-md-75 w-lg-50 h-lg-50 bg-dark bg-opacity-90 d-none">
         <div class="container h-100 d-lg-flex d-block align-items-center justify-content-center">
             <form class="w-100 px-3" onsubmit="return performSearch()">
                 <div class="row g-2">
                     <div class="col-12 col-md-4">
-                        <input type="text" class="form-control-sm form-control form-control-lg" placeholder="Type to search..." aria-label="Search" required>
+                        <input type="text" class="form-control" placeholder="Type to search..." aria-label="Search" required>
                     </div>
                     <div class="col-12 col-md-2">
-                        <select id="search-bar-filterOption" class="form-select-sm form-select form-select-lg">
+                        <select id="search-bar-filterOption" class="form-select">
                             <option value="all" selected>All</option>
                             <option value="posts">Posts</option>
                             <option value="projects">Projects</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-3">
-                        <select id="search-bar-sortSelect" class="form-select-sm form-select form-select-lg">
+                        <select id="search-bar-sortSelect" class="form-select">
                             <option value="relevance" selected>Relevance</option>
                             <option value="date_desc">Newest First</option>
                             <option value="date_asc">Oldest First</option>
@@ -112,7 +117,7 @@
         </div>
     </div>
 
-    <main class="main">
+    <main class="main flex-grow-1">
         <div id="liveToast" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
             <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header d-flex align-items-center justify-content-between">
@@ -130,13 +135,13 @@
         {% endblock %}
     </main>
 
-    <footer id="footer" class="footer">
+    <footer id="footer" class="footer mt-auto py-3">
         <div class="container container-fluid container-xl">
             <div class="copyright text-center">
                 <p>
                     <span>All Rights Reserved</span>
                     &copy;
-                    <strong class="sitename satisfy-regular">Ethan Wanyoike</strong>
+                    <strong class="sitename pacifico-regular">Ethan Wanyoike</strong>
                 </p>
             </div>
             <div class="container-fluid info-wrap social-links d-flex justify-content-center">
@@ -148,7 +153,11 @@
                 <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
             </div>
             <div class="credits">
-                Styled by Ethan using <a class="text-start" href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">Bootstrap 5</a>
+                Styled using
+                <a class="text-start" href="https://getbootstrap.com/" target="_blank">
+                    <span class="text-white kalam-bold">Bootstrap 5</span>
+                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+                </a>
             </div>
         </div>
     </footer>

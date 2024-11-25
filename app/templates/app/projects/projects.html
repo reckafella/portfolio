@@ -6,26 +6,35 @@
 <section id="section projects" class="mt-5 section projects"> <!--  bg-dark text-white -->
     <div class="container">
         <div class="section-title">
-            <h2 class="text-center text-white mb-5">{{ form_title }}</h2>
+            <h2 class="text-center text-dark mb-2">{{ form_title }}</h2>
         </div>        
+        
         <div class="row justify-content-center">
             {% for project in projects %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <img src="{% static project.image %}" class="card-img-top" alt="{{ project.title }}">
+            <div class="col-lg-4 col-md-6 col-sm-8 mb-4">
+                <div class="card shadow-sm bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
+                    <img src="{% static project.image %}" class="card-img-top" alt="Image of {{ project.title }}">
                     <div class="card-body text-center">
                         <h3 class="card-title fw-bold">{{ project.title }}</h3>
                         <p class="card-text text-start">
                             <span class="short-description">{{ project.description|truncatewords:15 }}</span>
-                            <span class="full-description" style="display:none;" data-length="{{ project.description|length }}">{{ project.description }}</span>
-                            <a href="javascript:void(0);" class="toggle-description btn btn-link p-0" style="display:none;">More</a>
+                            <span class="full-description d-none" data-length="{{ project.description|length }}">{{ project.description }}</span>
+                            <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">
+                                More
+                            </button>
                         </p>
-                        <a href="{{ project.url }}" target="_blank" class="btn btn-success">View Project</a>
+                        
+                        
+                        <a href="{{ project.url }}" target="_blank" class="btn btn-success d-inline-flex align-items-center">
+                            <span>View Project</span>
+                            <i class="bi bi-box-arrow-up-right ms-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        
 
         <!-- Pagination -->
         {% if projects.has_other_pages %}

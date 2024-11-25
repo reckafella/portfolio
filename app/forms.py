@@ -108,13 +108,13 @@ class ProjectsAdmin(admin.ModelAdmin):
 class ContactForm(forms.Form):
     """ form to handle contact info """
     name = forms.CharField(label='Name', required=True, max_length=100,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'name-field', 'name': 'name'}))
+                            widget=forms.TextInput(attrs={'class': 'form-control focus-ring', 'id': 'name-field', 'name': 'name'}))
     email = forms.EmailField(label='Email', required=True,
-                            widget=forms.EmailInput(attrs={'class': 'form-control', 'id': 'email-field', 'name': 'email'}))
+                            widget=forms.EmailInput(attrs={'class': 'form-control focus-ring', 'id': 'email-field', 'name': 'email'}))
     subject = forms.CharField(label='Subject', required=True, max_length=200,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'subject-field', 'name': 'subject'}))
+                            widget=forms.TextInput(attrs={'class': 'form-control focus-ring', 'id': 'subject-field', 'name': 'subject'}))
     message = forms.CharField(label='Message', required=True,
-                              widget=forms.Textarea(attrs={'class': 'form-control', 'id': 'message-field', 'name': 'message', 'rows': 5}))
+                              widget=forms.Textarea(attrs={'class': 'form-control focus-ring', 'id': 'message-field', 'name': 'message', 'rows': 5}))
     
     class Meta:
         model = Message

@@ -16,6 +16,12 @@ from app.models import Projects
 @login_required
 def add_project_view(request):
     if not request.user.is_staff:
+        if is_ajax(request):
+            return JsonResponse({
+                'success': False,
+                'message': 'You are not authorized to add a project'
+                }, status=403)
+
         context = {
             'error_code': '403',
             'error_title': 'Permission Denied',
@@ -23,14 +29,8 @@ def add_project_view(request):
             'error_image': 'assets/images/errors/403.jpg'
         }
 
-        if is_ajax(request):
-            return JsonResponse({
-                'success': False,
-                'message': 'You are not authorized to add a project'
-                }, context, status=403)
-
         return render(request, 'errors/http_errors.html', context, status=403)
-    
+
     if request.method == 'POST':
         form = ProjectsForm(request.POST, request.FILES)
         if form.is_valid():
@@ -90,7 +90,7 @@ def projects_view(request):
 
         with open(json_file_path, 'r') as fl:
             projects_data = json.load(fl)
-        
+
         for project in projects_data:
             Projects.objects.create(
                 title=project['title'],
@@ -102,7 +102,7 @@ def projects_view(request):
     else:
         # if db is not empty, load data from db
         projects_data = projects.values('title', 'description', 'image', 'url')
-    
+
     paginator = Paginator(projects_data, 6)  # Show 6 projects per page
     page = request.GET.get('page')
 

@@ -3,10 +3,10 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog bg-dark">
+<section id="section" class="mt-5 section blog">
     <div class="container">
         <div class="section-title">
-            <h2 class="text-center text-white mb-4">{{ page_title }}</h2>
+            <h2 class="text-center text-black mb-4">{{ page_title }}</h2>
         </div>
 
         <!-- Messages received -->
@@ -58,7 +58,7 @@
     $(document).ready(function() {
         function loadMessages() {
             $.ajax({
-                url: '{% url "messages" %}',
+                url: '{% url "app:messages" %}',
                 dataType: 'json',
                 success: function(data) {
                     $('#messagesContainer').html(data.messages_html);

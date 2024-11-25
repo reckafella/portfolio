@@ -4,8 +4,8 @@
 {% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name|default:author.username }} {% endif %} {% endblock %}
 
 {% block content %}
-<section class="py-5 bg-light mt-5">
-    <div class="container d-flex justify-content-center align-items-center card col-lg-9 col-md-10 col-sm-11">
+<section class="py-5 mt-5">
+    <div class="container d-flex justify-content-center align-items-center card col-lg-10 col-md-12 col-sm-12">
         <div class="row justify-content-center">
             <div class="col-lg-9">
                 <div class="row">
@@ -31,43 +31,46 @@
                         <div class="row">
                             <!-- Filters Sidebar -->
                             <div class="col-md-3 mb-2">
-                                <!-- Topics Filter -->
-                                <div class="card mb-2">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">Topics</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="nav flex-column nav-pills">
-                                            <a href="?topic=all&sort={{ current_sort }}" 
-                                               class="nav-link {% if current_topic == 'all' %}active{% endif %}">
-                                                All Topics
-                                            </a>
-                                            {% for topic in topics %}
-                                            <a href="?topic={{ topic|urlencode }}&sort={{ current_sort }}" 
-                                               class="nav-link {% if current_topic == topic %}active{% endif %}">
-                                                {{ topic|title }}
-                                            </a>
-                                            {% endfor %}
+                                {% if articles %}
+                                    <!-- Topics Filter -->
+                                    <div class="card mb-2">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Topics</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="nav flex-column nav-pills">
+                                                <a href="?topic=all&sort={{ current_sort }}" 
+                                                class="nav-link {% if current_topic == 'all' %}active{% endif %}">
+                                                    All Topics
+                                                </a>
+                                                {% for topic in topics %}
+                                                <a href="?topic={{ topic|urlencode }}&sort={{ current_sort }}" 
+                                                class="nav-link {% if current_topic == topic %}active{% endif %}">
+                                                    {{ topic|title }}
+                                                </a>
+                                                {% endfor %}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Sort Options -->
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">Sort By</h5>
+                                    <!-- Sort Options -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Sort By</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <select class="form-select" onchange="window.location.href='?topic={{ current_topic }}&sort=' + this.value">
+                                                {% for key, value in sorting_options.items %}
+                                                    <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
+                                                        {{ value }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <select class="form-select" onchange="window.location.href='?topic={{ current_topic }}&sort=' + this.value">
-                                            {% for key, value in sorting_options.items %}
-                                                <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
-                                                    {{ value }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
+                                {% endif %}
                             </div>
+
 
                             <!-- Articles List -->
                             <div class="col-md-9">

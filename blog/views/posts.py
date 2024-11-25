@@ -108,9 +108,13 @@ class PostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        articles = self.get_queryset()
         context['page_title'] = 'Blog Posts'
         context['submit_text'] = 'Read Article'
-        context['topics'] = sorted(set(topic.strip() for post in BlogPost.objects.all() for topic in post.get_topics()))
+        context['topics'] = (
+            sorted(set(topic.strip() for post in articles for topic in post.get_topics())) 
+            if articles.exists() else []
+        )
         context['current_topic'] = self.request.GET.get('topic', 'all')
         context['current_sort'] = self.request.GET.get('sort', 'date_desc')
         context['sorting_options'] = {
@@ -232,4 +236,3 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author or self.request.user.is_staff
-

@@ -14,9 +14,11 @@ def create_superuser():
     from django.contrib.auth.models import User
 
     # Retrieve superuser credentials from environment variables
-    username = os.getenv('DJANGO_SUPERUSER_USERNAME')
-    password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
-    email = os.getenv('DJANGO_SUPERUSER_EMAIL')
+    # these are set directly for local development
+
+    username = 'ethan' # os.getenv('DJANGO_SUPERUSER_USERNAME')
+    password = 'admin' # os.getenv('DJANGO_SUPERUSER_PASSWORD')
+    email = 'ethan@admin.com' #os.getenv('DJANGO_SUPERUSER_EMAIL')
 
     # Check if credentials are provided
     if not username or not password or not email:

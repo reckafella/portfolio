@@ -1,114 +1,103 @@
-import os.path
-from titlecase import titlecase
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import CreateView, ListView
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.core.exceptions import PermissionDenied
+from titlecase import titlecase
 import json
-from ..helpers import is_ajax
-from django.conf import settings
-from django.urls import reverse
+import os
 
+from django.conf import settings
 from app.forms import ProjectsForm
 from app.models import Projects
 
+class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Projects
+    form_class = ProjectsForm
+    template_name = 'app/projects/add_project.html'
+    success_url = reverse_lazy('projects')
 
-@login_required
-def add_project_view(request):
-    if not request.user.is_staff:
-        if is_ajax(request):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'page_title': 'Add a New Project',
+            'form_title': 'Add Project',
+            'submit_text': 'Add Project'
+        })
+        return context
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def handle_no_permission(self):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': False,
                 'message': 'You are not authorized to add a project'
-                }, status=403)
-
+            }, status=403)
         raise PermissionDenied('You are not authorized to add a project')
 
-    if request.method == 'POST':
-        form = ProjectsForm(request.POST, request.FILES)
-        if form.is_valid():
-            title = titlecase(form.cleaned_data.get('title'))
-            description = titlecase(form.cleaned_data.get('description'))
-            image = form.cleaned_data.get('image')
-            url = form.cleaned_data.get('url')
-
-            try:
-                Projects.objects.create(
-                    title=title,
-                    description=description,
-                    image=image,
-                    url=url
-                )
-            except Exception as e:
-                if is_ajax(request):
-                    return JsonResponse({
-                        'success': False,
-                        'message': f'An error occurred while adding project: {str(e)}'
-                    })
-
-            if is_ajax(request):
-                response = {
+    def form_valid(self, form):
+        form.instance.title = titlecase(form.cleaned_data.get('title'))
+        form.instance.description = titlecase(form.cleaned_data.get('description'))
+        
+        try:
+            response = super().form_valid(form)
+            
+            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
                     'success': True,
                     'message': 'Project added successfully',
-                    'redirect_url': reverse('projects')
-                }
-                return JsonResponse(response)
-
-            return redirect('projects')
-        else:
-            if is_ajax(request):
+                    'redirect_url': self.success_url
+                })
+            
+            return response
+        
+        except Exception as e:
+            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
                     'success': False,
-                    'errors': form.errors})
-    else:
-        form = ProjectsForm()
+                    'message': f'An error occurred while adding project: {str(e)}'
+                }, status=500)
+            raise
 
-    context = {
-        'form': form,
-        'page_title': 'Add a New Project',
-        'form_title': 'Add Project',
-        'submit_text': 'Add Project'
-    }
-    return render(request, 'app/projects/add_project.html', context)
+    def form_invalid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            }, status=400)
+        return super().form_invalid(form)
 
+class ProjectListView(ListView):
+    model = Projects
+    template_name = 'app/projects/projects.html'
+    context_object_name = 'projects'
+    paginate_by = 6
 
-def projects_view(request):
-    """ View to render the projects page """
-    # first check if the db is empty
-    projects = Projects.objects.all()
+    def get_queryset(self):
+        projects = Projects.objects.all()
 
-    if not projects.exists():
-        # if db is empty, load data from json file
-        json_file_path = os.path.join(settings.BASE_DIR, 'app', 'static', 'assets', 'data', 'projects.json')
+        # Load data from JSON if database is empty
+        if not projects.exists():
+            json_file_path = os.path.join(settings.BASE_DIR, 'app', 'static', 'assets', 'data', 'projects.json')
+            
+            with open(json_file_path, 'r') as fl:
+                projects_data = json.load(fl)
 
-        with open(json_file_path, 'r') as fl:
-            projects_data = json.load(fl)
+            for project in projects_data:
+                Projects.objects.create(
+                    title=project['title'],
+                    description=project['description'],
+                    image=project['image'],
+                    url=project['url']
+                )
+            
+            projects = Projects.objects.all()
 
-        for project in projects_data:
-            Projects.objects.create(
-                title=project['title'],
-                description=project['description'],
-                image=project['image'],
-                url=project['url']
-            )
+        return projects
 
-    else:
-        # if db is not empty, load data from db
-        projects_data = projects.values('title', 'description', 'image', 'url')
-
-    paginator = Paginator(projects_data, 6)  # Show 6 projects per page
-    page = request.GET.get('page')
-
-    try:
-        projects_data = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        projects_data = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        projects_data = paginator.page(paginator.num_pages)
-
-    context = dict(projects=projects_data, page_title='Projects')
-
-    return render(request=request, template_name='app/projects/projects.html', context=context, status=200)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Projects'
+        return context

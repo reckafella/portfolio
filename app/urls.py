@@ -18,12 +18,11 @@ urlpatterns = [
     path('signup/', auth.signup_view, name='signup'),
     path('logout/', auth.logout_view, name='logout'),
     path('about/', views.about_view, name='about'),
-    path('projects/', projects.projects_view, name='projects'),
-    path('projects/add/', projects.add_project_view, name='add_project'),
+    path('projects/', projects.ProjectListView.as_view(), name='projects'),
+    path('projects/add/', projects.ProjectCreateView.as_view(), name='add_project'),
     path('contact/', views.contact_view, name='contact'),
     path('search/', search.search_view, name='search'),
     path('resume/', views.resume_pdf_view, name='resume'),
     path('resume-pdf/', views.resume_pdf_view, name='resume_pdf'),
     path('messages/', messages.view_messages, name='messages'),
 ]
-

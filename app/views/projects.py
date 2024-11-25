@@ -1,6 +1,7 @@
 import os.path
 from titlecase import titlecase
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -22,14 +23,7 @@ def add_project_view(request):
                 'message': 'You are not authorized to add a project'
                 }, status=403)
 
-        context = {
-            'error_code': '403',
-            'error_title': 'Permission Denied',
-            'error_message': 'You are not authorized to add a project',
-            'error_image': 'assets/images/errors/403.jpg'
-        }
-
-        return render(request, 'errors/http_errors.html', context, status=403)
+        raise PermissionDenied('You are not authorized to add a project')
 
     if request.method == 'POST':
         form = ProjectsForm(request.POST, request.FILES)

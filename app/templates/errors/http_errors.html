@@ -4,8 +4,8 @@
 {% block title %}{{ error_title }}{% endblock %}
 
 {% block content %}
-<section class="py-5 mt-5 vh-100 d-flex align-items-center justify-content-center bg-white">
-    <div class="container">
+<section class="py-5 min-vh-100 d-flex align-items-center justify-content-center bg-white">
+    <div class="container my-5 py-5">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-8 col-sm-11">
                 <div class="card border-0 shadow-lg">
@@ -14,8 +14,11 @@
                     </div>
                     <div class="card-body text-center py-5">
                         <img src="{% static error_image %}" alt="{{ error_code }} Error" class="img-fluid mb-2">
-                        <p class="lead mb-4">{{ error_message }}</p>
-                        <a href="{% url 'app:home' %}" class="btn btn-primary btn-lg">Go to Home</a>
+                        <p class="lead mb-4">{{ error_message }}. Go to?</p>
+                        <div class="links d-flex justify-content-center"> 
+                            <a class="btn btn-primary btn-secondary btn-lg" href="{% url 'app:home' %}">Home</a>
+                            <a class="btn btn-primary btn-secondary btn-lg" href="{% url '' %}">Blog</a>
+                        </div>
                     </div>
                 </div>
             </div>

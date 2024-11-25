@@ -16,12 +16,20 @@ from app.models import Projects
 @login_required
 def add_project_view(request):
     if not request.user.is_staff:
+        context = {
+            'error_code': '403',
+            'error_title': 'Permission Denied',
+            'error_message': 'You are not authorized to add a project',
+            'error_image': 'assets/images/errors/403.jpg'
+        }
+
         if is_ajax(request):
             return JsonResponse({
                 'success': False,
                 'message': 'You are not authorized to add a project'
-                })
-        return redirect('home')
+                }, context, status=403)
+
+        return render(request, 'errors/http_errors.html', context, status=403)
     
     if request.method == 'POST':
         form = ProjectsForm(request.POST, request.FILES)

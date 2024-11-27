@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Q
 
-from app.helpers import is_ajax
+from app.views.helpers.helpers import is_ajax
 from app.models import Projects
 from blog.models import BlogPost
 

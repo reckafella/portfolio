@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from whitenoise.middleware import WhiteNoiseMiddleware
-from app.helpers import is_ajax
+from app.views.helpers.helpers import is_ajax
 
 whitenoise = WhiteNoiseMiddleware()
 

@@ -13,12 +13,12 @@
             {% for project in projects %}
             <div class="col-lg-4 col-md-6 col-sm-8 mb-4">
                 <div class="card shadow-sm bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <img src="{% static project.image %}" class="card-img-top" alt="Image of {{ project.title }}">
+                    <img src="{% static project.image %}" class="card-img-top" alt="Image of {{ project.title|safe }}">
                     <div class="card-body text-center">
-                        <h3 class="card-title fw-bold">{{ project.title }}</h3>
+                        <h3 class="card-title fw-bold">{{ project.title|safe }}</h3>
                         <p class="card-text text-start">
-                            <span class="short-description">{{ project.description|truncatewords:15 }}</span>
-                            <span class="full-description d-none" data-length="{{ project.description|length }}">{{ project.description }}</span>
+                            <span class="short-description">{{ project.description|safe|truncatewords:15 }}</span>
+                            <span class="full-description d-none" data-length="{{ project.description|safe|length }}">{{ project.description|safe }}</span>
                             <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">
                                 More
                             </button>

@@ -17,7 +17,7 @@
                     <div class="card-body text-center">
                         <h3 class="card-title fw-bold">{{ project.title|safe }}</h3>
                         <p class="card-text text-start">
-                            <span class="short-description">{{ project.description|safe|truncatewords:15 }}</span>
+                            <span class="short-description">{{ project.description|safe|truncatechars:50 }}</span>
                             <span class="full-description d-none" data-length="{{ project.description|safe|length }}">{{ project.description|safe }}</span>
                             <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">
                                 More

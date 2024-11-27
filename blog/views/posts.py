@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User
@@ -9,8 +10,10 @@ import random
 
 from blog.forms import BlogPostForm
 from blog.models import BlogPost
-from app.helpers import is_ajax, upload_image_to_cloudflare, delete_image_from_cloudflare
+from app.views.helpers.helpers import is_ajax
+from app.views.helpers.cloudinary import CloudinaryImageHandler, generate_cloudinary_public_id
 
+uploader = CloudinaryImageHandler()
 
 class PostDetailView(DetailView):
     model = BlogPost
@@ -48,18 +51,24 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                     'redirect_url': reverse('app:home')
                 })
             return redirect('app:home')
-        
-        # Upload cover image to Cloudflare if it exists in the form
+
+        # Upload cover image to Cloudinary if it exists
         cover_image = form.files.get('cover_image')
         if cover_image:
             try:
-                image_id, image_url = upload_image_to_cloudflare(cover_image)
-                form.instance.cloudflare_image_id = image_id
-                form.instance.cloudflare_image_url = image_url
+                image = uploader.upload_image(
+                    cover_image,
+                    folder='portfolio/blog',
+                    public_id=generate_cloudinary_public_id(),
+                    overwrite=True,
+                )
+                form.instance.cloudflare_image_id = image['public_id']
+                form.instance.cloudflare_image_url = image['secure_url']
+
             except Exception as e:
                 return JsonResponse({
                     'success': False,
-                    'message': f'Image upload failed: {str(e)}'
+                    'message': f'{str(e)}'
                 })
 
         return super().form_valid(form)
@@ -112,7 +121,7 @@ class PostListView(ListView):
         context['page_title'] = 'Blog Posts'
         context['submit_text'] = 'Read Article'
         context['topics'] = (
-            sorted(set(topic.strip() for post in articles for topic in post.get_topics())) 
+            sorted(set(topic.strip() for post in articles for topic in post.get_topics()))
             if articles.exists() else []
         )
         context['current_topic'] = self.request.GET.get('topic', 'all')
@@ -188,20 +197,25 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = form.instance
         post.title = titlecase(post.title)
 
-        # Delete the old image from Cloudflare if a new image is being uploaded
+        # Delete the old image from Cloudflare/Cloudinary if a new image is being uploaded
         if cover_image and post.cloudflare_image_id:
-            delete_image_from_cloudflare(post.cloudflare_image_id)
+            uploader.delete_image(post.cloudflare_image_id)
 
         # Upload new image to Cloudflare
         if cover_image:
             try:
-                image_id, image_url = upload_image_to_cloudflare(cover_image)
-                post.cloudflare_image_id = image_id
-                post.cloudflare_image_url = image_url
+                image = uploader.upload_image(
+                    cover_image,
+                    folder='portfolio/blog',
+                    public_id=generate_cloudinary_public_id(),
+                    overwrite=True,
+                )
+                post.cloudflare_image_id = image['public_id']
+                post.cloudflare_image_url = image['secure_url']
             except Exception as e:
                 return JsonResponse({
                     'success': False,
-                    'message': f'Image upload failed: {str(e)}'
+                    'message': f'{str(e)}'
                 })
 
         return super().form_valid(form)
@@ -226,10 +240,16 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         post = self.get_object()
-        
+
         # Delete image from Cloudflare if it exists
         if post.cloudflare_image_id:
-            delete_image_from_cloudflare(post.cloudflare_image_id)
+            try:
+                uploader.delete_image(post.cloudflare_image_id)
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'{str(e)}'
+                })
 
         return super().delete(request, *args, **kwargs)
 

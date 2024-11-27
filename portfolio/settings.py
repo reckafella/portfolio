@@ -25,7 +25,7 @@ FALLBACK_SECRET_KEY = 'django-insecure-(mqx%zsxjly7+4g554fulva4zmxb(e=$e7gun91&_
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me',
@@ -209,9 +209,25 @@ if not DEBUG:
 
 
 # Cloudflare Images Settings
-# SET THIS BASED ON WHETHER DJANGO VERSION == 4.2+
-
 DEFAULT_FILE_STORAGE = 'cloudflare_images.storage.CloudflareImagesStorage'
 
-CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', None)
-CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', None)
+if not DEBUG:
+    CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', None)
+    CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', None)
+else:
+    from app.views.helpers.helpers import get_cloudflare_id_and_token
+
+    CLOUDFLARE_ACCOUNT_ID = get_cloudflare_id_and_token()[0]
+    CLOUDFLARE_API_TOKEN = get_cloudflare_id_and_token()[1]
+
+# CLOUDINARY CONFIG SETTINGS
+if not DEBUG:
+    CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', None)
+    CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', None)
+    CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', None)
+else:
+    from app.views.helpers.helpers import get_cloudinary_id_and_secret
+
+    CLOUDINARY_CLOUD_NAME: str = get_cloudinary_id_and_secret()[0]
+    CLOUDINARY_API_KEY: str = get_cloudinary_id_and_secret()[1]
+    CLOUDINARY_API_SECRET: str = get_cloudinary_id_and_secret()[2]

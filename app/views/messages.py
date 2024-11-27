@@ -1,7 +1,7 @@
 from app.models import Message
 from django.http import JsonResponse
 from django.shortcuts import render
-from app.helpers import is_ajax
+from app.views.helpers.helpers import is_ajax
 from django.template.loader import render_to_string
 
 

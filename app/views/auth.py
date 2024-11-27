@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from ..helpers import is_ajax
+from .helpers.helpers import is_ajax
 from ..forms import LoginForm, SignupForm
 
 

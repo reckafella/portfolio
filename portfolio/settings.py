@@ -66,7 +66,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
-    "portfolio.middlewares.handle_http_errors.CustomHttpErrorsMiddleware",
 ]
 
 ROOT_URLCONF = "portfolio.urls"

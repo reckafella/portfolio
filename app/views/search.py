@@ -1,11 +1,11 @@
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
 from django.http import JsonResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Q
 
-from app.views.helpers.helpers import is_ajax
 from app.models import Projects
+from app.views.helpers.helpers import is_ajax
 from blog.models import BlogPost
 
 
@@ -87,6 +87,18 @@ def search_view(request):
         'sort': sort,
         'posts': paginated_posts,
         'projects': paginated_projects,
-        'page_title': 'Search'
+        'page_title': 'Search',
+        'sort_options': {
+            'relevance': 'Relevance',
+            'date_desc': 'Date (Newest)',
+            'date_asc': 'Date (Oldest)',
+            'title_asc': 'Title (A-Z)',
+            'title_desc': 'Title (Z-A)',
+        },
+        'filter_options': {
+            'all': 'All',
+            'posts': 'Posts',
+            'projects': 'Projects',
+        }
     }
     return render(request, 'app/search/search.html', context)

@@ -1,25 +1,25 @@
 from django import forms
-from django_ckeditor_5.widgets import CKEditor5Widget
 from django.contrib import admin
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from blog.models import BlogPost
 
 
 class BlogPostForm(forms.ModelForm):
     """ form to handle blog post info """
-    title = forms.CharField(label='Title', required=True, max_length=200,
+    title = forms.CharField(label='Article Title', required=True, max_length=200,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    topics = forms.CharField(label='Topic(s)', required=True, max_length=200,
+    topics = forms.CharField(label='Relevant Topic(s)', required=True, max_length=200,
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    content = forms.CharField(label='Content', required=True,
+    content = forms.CharField(label='Article Content', required=True,
                               widget=CKEditor5Widget(attrs={'class': 'form-control'}))
 
-    published = forms.BooleanField(label='Published', required=False,
+    published = forms.BooleanField(label='Publish', required=False,
                                       widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
-    cover_image = forms.ImageField(label='Cover Image', required=False,
+    cover_image = forms.ImageField(label='Article Cover Image', required=False,
                                    widget=forms.FileInput(attrs={'class': 'form-control'}))
 
     class Meta:
@@ -51,4 +51,3 @@ class BlogPostAdmin(admin.ModelAdmin):
         if not obj.author_id:
             obj.author = request.user
         super().save_model(request, obj, form, change)
-

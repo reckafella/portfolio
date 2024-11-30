@@ -8,34 +8,39 @@
         <div class="section-title">
             <h2 class="text-center text-dark mb-2">{{ form_title }}</h2>
         </div>        
-        
-        <div class="row justify-content-center">
-            {% for project in projects %}
-            <div class="col-lg-4 col-md-6 col-sm-8 mb-4">
-                <div class="card shadow-sm bg-white text-black h-100" data-aos="fade-up" data-aos-delay="200">
-                    <img src="{% static project.image %}" class="card-img-top" alt="Image of {{ project.title|safe }}">
-                    <div class="card-body text-center">
-                        <h3 class="card-title fw-bold">{{ project.title|safe }}</h3>
-                        <p class="card-text text-start">
-                            <span class="short-description">{{ project.description|safe|truncatechars:50 }}</span>
-                            <span class="full-description d-none" data-length="{{ project.description|safe|length }}">{{ project.description|safe }}</span>
-                            <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">
-                                More
-                            </button>
+        <div class="d-flex justify-content-center align-items-center w-100">
+            <div class="row justify-content-center col-lg-12">
+                {% for project in projects %}
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4" data-aos="flip-left" data-aos-delay="50">
+                    <div class="card h-100 d-flex justify-content-center">
+                        <div class="card-header text-center">
+                            <h5 class="card-title fw-bold">
+                                <a href="{% url 'app:project_detail' project.id %}" class="text-decoration-none text-success">
+                                    {{ project.title }}
+                                </a>
+                            </h5>
+                        </div>
+                        {% if project.optimized_image_url %}
+                        <div class="card-body card-image"
+                            style="background-image: url('{{ project.optimized_image_url }}');
+                                background-size: cover; background-position: center; height: 200px; width: 100%;">
+                        </div>
+                        {% endif %}
+                        <p class="card-body card-text text-start">
+                            <span class="short-description">{{ project.description | safe | truncatechars:50 }}</span>
+                            <span class="full-description d-none" data-length="{{ project.description | safe | length }}">{{ project.description | safe }}</span>
+                            <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">More</button>
                         </p>
-                        
-                        
-                        <a href="{{ project.url }}" target="_blank" class="btn btn-success d-inline-flex align-items-center">
-                            <span>View Project</span>
-                            <i class="bi bi-box-arrow-up-right ms-2"></i>
-                        </a>
+                        <div class="card-footer text-center">
+                            <a href="{% url 'app:project_detail' project.id %}" class="btn btn-outline-primary">
+                                <span>View Project</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-        
-
         <!-- Pagination -->
         {% if projects.has_other_pages %}
         <nav aria-label="Page navigation" class="mt-4">

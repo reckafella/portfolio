@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+
 import django
+
 
 def create_superuser():
     # Set the Django settings module environment variable

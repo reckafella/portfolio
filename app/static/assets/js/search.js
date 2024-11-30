@@ -17,7 +17,7 @@ function performSearch() {
   const sortOptionValue = sortOption.value;
 
   if (searchTerm) {
-      let searchUrl = '/search/?q=' + encodeURIComponent(searchTerm);
+      let searchUrl = '/search?q=' + encodeURIComponent(searchTerm);
       
       if (searchCategory !== 'all') {
           searchUrl += '&category=' + encodeURIComponent(searchCategory);

@@ -13,32 +13,41 @@
                         {% if query %}
                         <h3 class="card-title mb-4">Results for: <span class="text-muted fst-italic">{{ query }}</span></h3>
                         {% endif %}
-                        <form id="search-form" action="{% url 'app:search' %}" method="GET" class="mb-4 d-flex justify-content-between align-items-center">
-                            <div class="row g-2">
-                                <div class="col-12 col-md-5">
-                                    <input type="text" class="form-control form-control-lg" placeholder="Type to search..." aria-label="Search" name="q" value="{{ query }}" required>
-                                </div>
-                                <div class="col-6 col-md-2">
-                                    <select class="form-select form-select-lg" name="category" id="category-select">
-                                        <option value="all" {% if category == 'all' %}selected{% endif %}>All</option>
-                                        <option value="posts" {% if category == 'posts' %}selected{% endif %}>Posts</option>
-                                        <option value="projects" {% if category == 'projects' %}selected{% endif %}>Projects</option>
-                                    </select>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <select class="form-select form-select-lg" name="sort">
-                                        <option value="relevance" {% if sort == 'relevance' %}selected{% endif %}>Relevance</option>
-                                        <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Newest First</option>
-                                        <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Oldest First</option>
-                                        <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A-Z</option>
-                                        <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z-A</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-md-2">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100 p-1">Search</button>
-                                </div>
+
+                        <form id="search-form" action="{% url 'app:search' %}" method="GET" class="mb-4 d-flex flex-wrap align-items-center gap-3">
+                            <!-- Search Input -->
+                            <div class="flex-grow-1">
+                                <input type="text" class="form-control form-control-lg" placeholder="Type to search..." 
+                                       aria-label="Search" name="q" value="{{ query }}" required>
                             </div>
-                        </form>
+                            
+                        
+                            <!-- Category Select -->
+                            <div>
+                                <select class="form-select form-select-lg" name="category" id="category-select">
+                                    {% for key, value in filter_options.items %}
+                                    <option value="{{ key }}" {% if category == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        
+                            <!-- Sort Select -->
+                            <div>
+                                <select class="form-select form-select-lg" name="sort">
+                                    {% for key, value in sort_options.items %}
+                                    <option value="{{ key }}" {% if sort == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        
+                            <!-- Submit Button -->
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center">
+                                    <span class="d-inline d-lg-none me-3">Search</span>
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>                        
                         {% if query %}
                         <ul class="nav nav-tabs card-header-tabs" id="searchTabs" role="tablist">
                             <li class="nav-item" role="presentation" id="posts-tab-container">
@@ -58,10 +67,10 @@
                                 <ul class="list-group list-group-flush">
                                     {% for post in posts %}
                                     <li class="list-group-item" data-aos="fade-up" data-aos-delay="100">
-                                        <a href="{% url 'blog:post_detail' post.slug %}" class="text-decoration-none">
+                                        <a href="{% url 'blog:post_detail' post.slug %}" target="_blank" class="text-decoration-none">
                                             <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
                                             <p class="card-text text-muted">{{ post.content | safe | truncatewords:20 }}</p>
-                                            <small class="text-muted"><span class="fw-bold">Published:</span> {{ post.created_at|date:"N d, Y" }}</small>
+                                            <small class="text-muted"><span class="fw-bold">Published:</span> {{ post.created_at | date:"N d, Y" }}</small>
                                         </a>
                                     </li>
                                     {% endfor %}
@@ -78,7 +87,7 @@
                                 <ul class="list-group list-group-flush">
                                     {% for project in projects %}
                                     <li class="list-group-item" data-aos="fade-up" data-aos-delay="100">
-                                        <a href="{{ project.url }}" class="text-decoration-none">
+                                        <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
                                             <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
                                             <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
                                             <small class="text-muted"><span class="fw-bold">Updated on:</span> {{ project.updated_at|date:"N d, Y" }}</small>
@@ -107,4 +116,3 @@
     </div>
 </section>
 {% endblock %}
-

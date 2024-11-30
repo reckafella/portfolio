@@ -14,10 +14,10 @@
                     <div class="card-body">
                         <h2 class="card-title">{{ post.title }}</h2>
                         <p class="text-muted">
-                            By {{ post.author.username }} on {{ post.created_at|date:"F j, Y" }}
+                            By {{ post.author.username }} on {{ post.created_at | date:"F j, Y" }}
                         </p>
                         <div class="card-text">
-                            {{ post.content|safe|truncatewords_html:50 }}
+                            {{ post.content | safe | truncatewords_html:50 }}
                         </div>
                         <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary mt-3">Read More</a>
                     </div>

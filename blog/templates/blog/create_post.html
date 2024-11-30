@@ -1,6 +1,6 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %}{{ view.title|default:"Create Post" }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <section id="profile" class="mt-5 profile section bg-image"
@@ -12,34 +12,17 @@
                     <div class="card" style="border-radius: 15px;">
                         <div class="card-body p-5">
                             <div class="text-center mb-2 card card-header">
-                                <h2 class="fw-bold text-black">
-                                    {% if object %}
-                                        Edit Post
-                                    {% else %}
-                                        Create New Post
-                                    {% endif %}
-                                </h2>
+                                <h2 class="fw-bold text-black">{{ title }}</h2>
                             </div>
                             <form method="post" enctype="multipart/form-data" class="form-control form-group card">
                                 {% csrf_token %}
                                 {% for field in form %}
                                 <div class="form-group mb-3">
                                     {{ field.label_tag }} {{ field }}
-                                    {% if field.errors %}
-                                        {% for error in field.errors %}
-                                            <span class="error-message text-danger" id="error-{{ field.name }}">{{ error }}</span>
-                                        {% endfor %}
-                                    {% endif %}
                                 </div>
                                 {% endfor %}
                                 <div class="text-center mb-2 mt-3">
-                                    <button type="submit" class="btn btn-primary">
-                                        {% if object %}
-                                            Update Post
-                                        {% else %}
-                                            Create Post
-                                        {% endif %}
-                                    </button>
+                                    <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
                                 </div>
                             </form>
                         </div>

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os.path
 from pathlib import Path
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'corsheaders',
-    'cloudflare_images',
     'django_ckeditor_5',
     'app',
     'blog',
@@ -57,9 +55,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware',
 ]
-#
+
 ROOT_URLCONF = 'portfolio.urls'
 
 TEMPLATES = [
@@ -153,6 +152,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'app.views.helpers.password_validator.ComplexPasswordValidator',
+    }
 ]
 
 
@@ -178,7 +180,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -189,7 +190,7 @@ LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/login'
 LOGOUT_REDIRECT_URL = '/'
 LOGOUT_URL = '/logout'
-APPEND_SLASH = True
+APPEND_SLASH = False
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
@@ -207,19 +208,6 @@ if not DEBUG:
     SECURE_REF  = 'no-referrer'
     SECURE_REF_POLICY = 'strict-origin-when-cross-origin'
 
-
-# Cloudflare Images Settings
-DEFAULT_FILE_STORAGE = 'cloudflare_images.storage.CloudflareImagesStorage'
-
-if not DEBUG:
-    CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', None)
-    CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', None)
-else:
-    from app.views.helpers.helpers import get_cloudflare_id_and_token
-
-    CLOUDFLARE_ACCOUNT_ID = get_cloudflare_id_and_token()[0]
-    CLOUDFLARE_API_TOKEN = get_cloudflare_id_and_token()[1]
-
 # CLOUDINARY CONFIG SETTINGS
 if not DEBUG:
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', None)
@@ -231,3 +219,14 @@ else:
     CLOUDINARY_CLOUD_NAME: str = get_cloudinary_id_and_secret()[0]
     CLOUDINARY_API_KEY: str = get_cloudinary_id_and_secret()[1]
     CLOUDINARY_API_SECRET: str = get_cloudinary_id_and_secret()[2]
+
+# Maximum upload size for images in bytes
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+
+# Image links for Error Codes 400, 403, 404, 500
+ERROR_CODES = {
+    '400': 'https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph',
+    '403': 'https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8',
+    '404': 'https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne',
+    '500': 'https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio',
+}

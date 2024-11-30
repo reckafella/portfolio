@@ -210,7 +210,7 @@ if not DEBUG:
 
 # CLOUDINARY CONFIG SETTINGS
 if not DEBUG:
-    CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', None)
+    CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_NAME', None)
     CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', None)
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', None)
 else:

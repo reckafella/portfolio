@@ -7,16 +7,16 @@ class RemoveTrailingSlashMiddleware(MiddlewareMixin):
         path: str = request.path
 
         # Exclude admin paths from the trailing slash logic
-        if path.startswith('/admin'):
+        if path.startswith("/admin"):
             return None
 
         # Ignore the root path and paths without trailing slashes
-        if path != '/' and path.endswith('/'):
+        if path != "/" and path.endswith("/"):
             # Strip the trailing slash from the path
-            non_slash_path = path.rstrip('/')
+            non_slash_path = path.rstrip("/")
 
             # Get the query string if it exists
-            query_string = request.META.get('QUERY_STRING', '')
+            query_string = request.META.get("QUERY_STRING", "")
 
             # Preserve the query string if it exists
             if query_string:
@@ -26,6 +26,7 @@ class RemoveTrailingSlashMiddleware(MiddlewareMixin):
             return HttpResponsePermanentRedirect(non_slash_path)
 
         return None
+
 
 """ from django.http import HttpResponsePermanentRedirect
 from django.utils.deprecation import MiddlewareMixin

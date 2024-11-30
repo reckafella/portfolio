@@ -7,18 +7,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0007_remove_projects_image'),
+        ("app", "0007_remove_projects_image"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='message',
-            name='message',
+            model_name="message",
+            name="message",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='projects',
-            name='description',
+            model_name="projects",
+            name="description",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
     ]

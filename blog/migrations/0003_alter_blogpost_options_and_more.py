@@ -7,27 +7,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0002_alter_blogpost_cloudflare_image_id_and_more'),
+        ("blog", "0002_alter_blogpost_cloudflare_image_id_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='blogpost',
-            options={'managed': True},
+            name="blogpost",
+            options={"managed": True},
         ),
         migrations.AlterField(
-            model_name='blogpost',
-            name='cloudflare_image_id',
+            model_name="blogpost",
+            name="cloudflare_image_id",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AlterField(
-            model_name='blogpost',
-            name='cloudflare_image_url',
+            model_name="blogpost",
+            name="cloudflare_image_url",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='blogpost',
-            name='cover_image',
-            field=cloudflare_images.field.CloudflareImagesField(blank=True, null=True, upload_to='', variant='public'),
+            model_name="blogpost",
+            name="cover_image",
+            field=cloudflare_images.field.CloudflareImagesField(
+                blank=True, null=True, upload_to="", variant="public"
+            ),
         ),
     ]

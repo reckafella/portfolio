@@ -7,7 +7,7 @@ import django
 
 def create_superuser():
     # Set the Django settings module environment variable
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'portfolio.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "portfolio.settings")
 
     # Initialize Django
     django.setup()
@@ -16,20 +16,23 @@ def create_superuser():
     from django.contrib.auth.models import User
 
     # Retrieve superuser credentials from environment variables
-    username = os.getenv('DJANGO_SUPERUSER_USERNAME')
-    password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
-    email = os.getenv('DJANGO_SUPERUSER_EMAIL')
+    username = os.getenv("DJANGO_SUPERUSER_USERNAME")
+    password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
+    email = os.getenv("DJANGO_SUPERUSER_EMAIL")
 
     # Check if credentials are provided
     if not username or not password or not email:
-        raise ValueError('You must provide DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, and DJANGO_SUPERUSER_EMAIL environment variables')
+        raise ValueError(
+            "You must provide DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, and DJANGO_SUPERUSER_EMAIL environment variables"
+        )
 
     # Create the superuser if it doesn't already exist
     if not User.objects.filter(username=username).exists():
         User.objects.create_superuser(username=username, email=email, password=password)
-        print(f'Superuser {username} created successfully.')
+        print(f"Superuser {username} created successfully.")
     else:
-        print(f'Superuser {username} already exists.')
+        print(f"Superuser {username} already exists.")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     create_superuser()

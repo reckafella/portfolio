@@ -9,4 +9,5 @@ titlecase~=2.4.1
 pillow~=10.2.0
 django-cors-headers~=4.3.1
 django-storages~=1.14.2
+django-cloudflare-images~=0.6.0
 cloudinary~=1.41.0

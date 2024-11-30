@@ -117,8 +117,7 @@ class ProjectsForm(forms.ModelForm):
         required=False,
         validators=[
             FileExtensionValidator(
-                allowed_extensions=allowed_extensions,
-                message=f'Allowed file extensions: {', '.join(allowed_extensions).capitalize()}.'
+                allowed_extensions=allowed_extensions
             )
         ],
         widget=forms.FileInput(attrs={'class': 'form-control'}),

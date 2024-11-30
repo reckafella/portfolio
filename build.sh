@@ -5,19 +5,19 @@ set -o errexit
 pip install -r requirements.txt
 
 # Collect static files
-python3.exe manage.py collectstatic --no-input --clear
+python3 manage.py collectstatic --no-input --clear
 
 # Apply database migrations
-python3.exe manage.py makemigrations --verbosity 3
-python3.exe manage.py makemigrations app --verbosity 3
-python3.exe manage.py makemigrations blog --verbosity 3
+python3 manage.py makemigrations --verbosity 3
+python3 manage.py makemigrations app --verbosity 3
+python3 manage.py makemigrations blog --verbosity 3
 
-python3.exe manage.py migrate --verbosity 3
-python3.exe manage.py migrate app --verbosity 3
-python3.exe manage.py migrate blog --verbosity 3
+python3 manage.py migrate --verbosity 3
+python3 manage.py migrate app --verbosity 3
+python3 manage.py migrate blog --verbosity 3
 
 # create superuser
-python3.exe ./createsuperuser.py
+#./createsuperuser.py
 
 # populate db
-#python3.exe ./add_projects.py
+#python3 ./add_projects.py

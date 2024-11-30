@@ -19,7 +19,7 @@ def error_400_view(request, exception=None):
         'error_code': '400',
         'error_title': 'Bad Request',
         'error_message': 'The request you made is invalid. Please check and try again.',
-        'error_image': f'{settings.ERROR_CODES['400']}',
+        'error_image': f"{settings.ERROR_CODES['400']}",
         'error_image_0': 'assets/images/errors/400.png'
     }
     return render(request, 'errors/http_errors.html', context, status=400)
@@ -36,7 +36,7 @@ def error_403_view(request, exception=None):
         'error_code': '403',
         'error_title': 'Permission Denied',
         'error_message': 'You do not have permission to access this page / resource.',
-        'error_image': f'{settings.ERROR_CODES['403']}',
+        'error_image': f"{settings.ERROR_CODES['403']}",
         'error_image_0': 'assets/images/errors/403.jpg'
     }
     return render(request, 'errors/http_errors.html', context, status=403)
@@ -53,7 +53,7 @@ def error_404_view(request, exception=None):
         'error_code': '404',
         'error_title': 'Not Found',
         'error_message': 'The page or resource you are looking for does not exist or has been moved.',
-        'error_image': f'{settings.ERROR_CODES['404']}',
+        'error_image': f"{settings.ERROR_CODES['404']}",
         'error_image_0': 'assets/images/errors/404.jpg'
     }
     return render(request, 'errors/http_errors.html', context, status=404)
@@ -70,7 +70,7 @@ def error_500_view(request):
         'error_code': '500',
         'error_title': 'Internal Server Error',
         'error_message': 'The server encountered an internal error. Please try again later.',
-        'error_image': f'{settings.ERROR_CODES['500']}',
+        'error_image': f"{settings.ERROR_CODES['500']}",
         'error_image_0': 'assets/images/errors/500.png'
     }
     return render(request, 'errors/http_errors.html', context, status=500)

@@ -13,11 +13,11 @@
                         <h2 class="fw-bold text-primary mb-0">{{ error_code }}: {{ error_title }}</h2>
                     </div>
                     <div class="card-body text-center py-5">
-                        <img src="{% static error_image %}" alt="{{ error_code }} Error" class="img-fluid mb-2">
+                        <img src="{{ error_image }}" alt="{{ error_code }} Error" class="img-fluid mb-2">
                         <p class="lead mb-4">{{ error_message }}. Go to?</p>
-                        <div class="links d-flex justify-content-center"> 
-                            <a class="btn btn-primary btn-secondary btn-lg" href="{% url 'app:home' %}">Home</a>
-                            <a class="btn btn-primary btn-secondary btn-lg" href="{% url 'blog:post_list' %}">Blog</a>
+                        <div class="links d-flex justify-content-between"> 
+                            <a class="btn btn-primary btn-outline-secondary btn-lg" href="{% url 'app:home' %}">Home</a>
+                            <a class="btn btn-primary btn-outline-secondary btn-lg" href="{% url 'blog:post_list' %}">Blog</a>
                         </div>
                     </div>
                 </div>

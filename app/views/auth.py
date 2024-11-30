@@ -97,8 +97,10 @@ def login_view(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    success_message = f"Login Successful. Welcome Back {
-                        username.capitalize()}!"
+                    user_name = username.capitalize()
+                    success_message = (
+                        f"Login Successful. Welcome Back {user_name}!"
+                    )
                     if is_ajax(request):
                         return JsonResponse(
                             {

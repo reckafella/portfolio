@@ -13,7 +13,7 @@
                         <h2 class="fw-bold text-primary mb-0">{{ code }}: {{ title }}</h2>
                     </div>
                     <div class="card-body text-center py-5">
-                        <img src="{{ image|default:'assets/images/errors/default.webp'|static }}" alt="{{ code }} Error" class="img-fluid mb-2">
+                        <img src="{{ image }}" alt="{{ code }} Error" class="img-fluid mb-2">
                         <p class="lead mb-4">{{ message }}.</p>
                         <div class="links d-flex justify-content-center gap-3 mt-4">
                             <a class="btn btn-primary btn-lg px-4 py-2" href="{% url 'app:home' %}">

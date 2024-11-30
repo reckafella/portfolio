@@ -17,7 +17,7 @@ python3 manage.py migrate app --verbosity 3
 python3 manage.py migrate blog --verbosity 3
 
 # create superuser
-#./createsuperuser.py
+python3 ./createsuperuser.py
 
 # populate db
 #python3 ./add_projects.py

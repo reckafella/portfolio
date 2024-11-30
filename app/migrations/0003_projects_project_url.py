@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0002_rename_url_projects_cloudinary_image_url_and_more'),
+        ("app", "0002_rename_url_projects_cloudinary_image_url_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projects',
-            name='project_url',
+            model_name="projects",
+            name="project_url",
             field=models.URLField(blank=True, null=True),
         ),
     ]

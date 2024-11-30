@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install dependencies
-pip install -r requirements.txt
+# Update pip && install dependencies
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 
 # Collect static files
 python3 manage.py collectstatic --no-input --clear
@@ -21,3 +22,6 @@ python3 ./createsuperuser.py
 
 # populate db
 #python3 ./add_projects.py
+
+# run autopep8 to fix code style
+autopep8 --in-place --aggressive --aggressive --recursive .

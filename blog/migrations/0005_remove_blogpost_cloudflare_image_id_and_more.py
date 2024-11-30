@@ -6,31 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0004_alter_blogpost_cover_image'),
+        ("blog", "0004_alter_blogpost_cover_image"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='blogpost',
-            name='cloudflare_image_id',
+            model_name="blogpost",
+            name="cloudflare_image_id",
         ),
         migrations.RemoveField(
-            model_name='blogpost',
-            name='cloudflare_image_url',
+            model_name="blogpost",
+            name="cloudflare_image_url",
         ),
         migrations.AddField(
-            model_name='blogpost',
-            name='cloudinary_image_id',
-            field=models.CharField(blank=True, default='image_id', max_length=200, null=True),
+            model_name="blogpost",
+            name="cloudinary_image_id",
+            field=models.CharField(
+                blank=True, default="image_id", max_length=200, null=True
+            ),
         ),
         migrations.AddField(
-            model_name='blogpost',
-            name='cloudinary_image_url',
-            field=models.URLField(blank=True, default='http://127.0.0.1', null=True),
+            model_name="blogpost",
+            name="cloudinary_image_url",
+            field=models.URLField(blank=True, default="http://127.0.0.1", null=True),
         ),
         migrations.AddField(
-            model_name='blogpost',
-            name='optimized_image_url',
-            field=models.URLField(blank=True, default='http://127.0.0.1', null=True),
+            model_name="blogpost",
+            name="optimized_image_url",
+            field=models.URLField(blank=True, default="http://127.0.0.1", null=True),
         ),
     ]

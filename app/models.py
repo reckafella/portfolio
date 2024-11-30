@@ -11,8 +11,10 @@ class Projects(models.Model):
     optimized_image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(max_length=100, blank=True, default='djangodbmodelsfieldscharfield')
-    #author_id = models.IntegerField()
+    slug = models.SlugField(
+        max_length=100, blank=True, default="djangodbmodelsfieldscharfield"
+    )
+    # author_id = models.IntegerField()
 
     class Meta:
         managed = True

@@ -1,7 +1,7 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-{% block title %}{{ error_title }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <section class="py-5 min-vh-100 d-flex align-items-center justify-content-center bg-white">
@@ -10,11 +10,11 @@
             <div class="col-md-8 col-lg-8 col-sm-11">
                 <div class="card border-0 shadow-lg">
                     <div class="card-header text-white text-center section-title py-4">
-                        <h2 class="fw-bold text-primary mb-0">{{ error_code }}: {{ error_title }}</h2>
+                        <h2 class="fw-bold text-primary mb-0">{{ code }}: {{ title }}</h2>
                     </div>
                     <div class="card-body text-center py-5">
-                        <img src="{{ error_image|default:'assets/images/errors/default.webp'|static }}" alt="{{ error_code }} Error" class="img-fluid mb-2">
-                        <p class="lead mb-4">{{ error_message }}.</p>
+                        <img src="{{ image|default:'assets/images/errors/default.webp'|static }}" alt="{{ code }} Error" class="img-fluid mb-2">
+                        <p class="lead mb-4">{{ message }}.</p>
                         <div class="links d-flex justify-content-center gap-3 mt-4">
                             <a class="btn btn-primary btn-lg px-4 py-2" href="{% url 'app:home' %}">
                                 <span>Home</span><i class="bi bi-house me-2"></i>

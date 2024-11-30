@@ -1,14 +1,14 @@
-from django.db import models
 from django.contrib.auth.models import User
-from django.utils.text import slugify
+from django.db import models
 from django.urls import reverse
-from django_ckeditor_5.fields import CKEditor5Field
+from django.utils.text import slugify
+from django_ckeditor_5.fields import CKEditor5Field as CK
 
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, max_length=200, blank=False)
-    content = CKEditor5Field()
+    content = CK()
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -17,8 +17,9 @@ class BlogPost(models.Model):
     cover_image = models.ImageField(blank=True, null=True)
 
     # cloudinary IMAGE FIELDS
-    cloudflare_image_id = models.CharField(max_length=200, blank=True, null=True)
-    cloudflare_image_url = models.URLField(blank=True, null=True)
+    cloudinary_image_id = models.CharField(max_length=200, blank=True, default='image_id', null=True)
+    cloudinary_image_url = models.URLField(blank=True, default='http://127.0.0.1', null=True)
+    optimized_image_url = models.URLField(blank=True, default='http://127.0.0.1', null=True)
 
     class Meta:
         managed = True

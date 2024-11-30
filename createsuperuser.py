@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+
 import django
+
 
 def create_superuser():
     # Set the Django settings module environment variable
@@ -17,7 +19,7 @@ def create_superuser():
     # these are set directly for local development
 
     username = 'ethan' # os.getenv('DJANGO_SUPERUSER_USERNAME')
-    password = 'admin' # os.getenv('DJANGO_SUPERUSER_PASSWORD')
+    password = '@100/Chem' # os.getenv('DJANGO_SUPERUSER_PASSWORD')
     email = 'ethan@admin.com' #os.getenv('DJANGO_SUPERUSER_EMAIL')
 
     # Check if credentials are provided

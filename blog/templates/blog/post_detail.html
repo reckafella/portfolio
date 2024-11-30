@@ -16,15 +16,15 @@
                                 {% if post.author.first_name and post.author.last_name %}
                                     {{ post.author.first_name }} {{ post.author.last_name }}
                                 {% else %}
-                                    {{ post.author.username|capfirst }}
+                                    {{ post.author.username | capfirst }}
                                 {% endif %}
                             </a>
-                            &nbsp;|&nbsp; {{ post.created_at|date:"N j, Y" }}
+                            &nbsp; | &nbsp; {{ post.created_at | date:"N j, Y" }}
                         </small>
                     </p>
                     {% if user.is_authenticated and user == post.author or user.is_staff %}
                     <div class="action-buttons mb-2">
-                        <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-sm btn-primary">Edit Post</a>
+                        <a href="{% url 'blog:update_post' post.slug %}" class="btn btn-sm btn-primary">Edit Post</a>
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             Delete Post
                         </button>
@@ -35,11 +35,11 @@
 
             <div class="card-body">
                 <!-- Cover Image -->
-                {% if post.cloudflare_image_url %}
-                <img src="{{ post.cloudflare_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+                {% if post.cloudinary_optimized_image_url %}
+                <img src="{{ post.cloudinary_optimized_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
                 {% endif %}
                 <div class="text-start">
-                    {{ post.content|safe }}
+                    {{ post.content | safe }}
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                 {% if post.author.first_name and post.author.last_name %}
                     {{ post.author.first_name }} {{ post.author.last_name }}
                 {% else %}
-                    {{ post.author.username|capfirst }}
+                    {{ post.author.username | capfirst }}
                 {% endif %}
             </h3>
             <div class="row">
@@ -63,7 +63,7 @@
                                 <a href="{% url 'blog:post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
                             </h5>
                             <p class="card-text">
-                                <small class="text-muted">{{ article.created_at|date:"N j, Y" }}</small>
+                                <small class="text-muted">{{ article.created_at | date:"N j, Y" }}</small>
                             </p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:post_delete' post.slug %}" method="post" style="display: inline;">
+                    <form action="{% url 'blog:delete_post' post.slug %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>

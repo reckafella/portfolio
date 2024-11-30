@@ -60,9 +60,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-Requested-With': 'XMLHttpRequest',
             }
         })
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                const errors = Array.isArray(data.errors)
+                    ? data.errors.join(', ')
+                    : typeof data.errors === 'object'
+                    ? JSON.stringify(data.errors)
+                    : data.errors;
+                throw new Error(errors || 'An error occurred');
+            }
+            return data;
+        })
+        .then(data => {
+            if (data.success) {
+                showToast('success', `${data.message}`);
+                window.location.href = data.redirect_url;
+            } else {
+                showToast('danger', `${data.errors}`);
+                console.log(data.errors);
+            }
+        })
+        .catch(error => {
+            showToast('danger', `An error occurred. ${error.message}`);
+        });
+    });        
+
+    // Add event listener to the close button
+    let closeButton = document.querySelector('.btn-close');
+    closeButton.addEventListener('click', closeAlert);
+});
+
+/* 
+document.addEventListener('DOMContentLoaded', function() {
+    let form = document.getElementById('other-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let formData = new FormData(form);
+
+        // Perform the fetch request
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok ' + response.status);
             }
             return response.json();
         })
@@ -83,8 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let closeButton = document.querySelector('.btn-close');
     closeButton.addEventListener('click', closeAlert);
 });
-
-/* 
 document.addEventListener('DOMContentLoaded', function() {
     let form = document.getElementById('search-form');
     form.addEventListener('submit', function(event) {

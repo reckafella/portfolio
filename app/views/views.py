@@ -1,12 +1,14 @@
 import os
+
 from django.conf import settings
-from django.http import JsonResponse, FileResponse, Http404
+from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import render
+
+from app.models import Projects
+from blog.models import BlogPost
 
 from ..forms import ContactForm
 from .helpers.helpers import is_ajax
-from app.models import Projects
-from blog.models import BlogPost
 
 
 def home_view(request):

@@ -95,7 +95,7 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if DEBUG:
+if not DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -241,9 +241,7 @@ else:
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
 
 # Image links for Error Codes 400, 403, 404, 500
-ERROR_CODES = {
-    "400": "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph",
-    "403": "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8",
-    "404": "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne",
-    "500": "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio",
-}
+ERROR_404 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"
+ERROR_500 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
+ERROR_403 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
+ERROR_400 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"

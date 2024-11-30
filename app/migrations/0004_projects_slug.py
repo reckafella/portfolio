@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='projects',
             name='slug',
-            field=models.SlugField(blank=True, default='', max_length=100, unique=True),
+            field=models.SlugField(blank=True, default='', max_length=100),
         ),
     ]

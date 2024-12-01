@@ -196,7 +196,6 @@ class ContactForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control focus-ring",
-                "id": "name-field",
                 "name": "name",
             }
         ),
@@ -209,7 +208,6 @@ class ContactForm(forms.Form):
         widget=forms.EmailInput(
             attrs={
                 "class": "form-control focus-ring",
-                "id": "email-field",
                 "name": "email",
             }
         ),
@@ -223,7 +221,6 @@ class ContactForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control focus-ring",
-                "id": "subject-field",
                 "name": "subject",
             }
         ),
@@ -235,7 +232,6 @@ class ContactForm(forms.Form):
         widget=CKEditor5Widget(
             attrs={
                 "class": "form-control focus-ring",
-                "id": "message-field",
                 "name": "message",
             }
         ),

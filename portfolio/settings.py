@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os.path
 from pathlib import Path
 
+from sympy import E
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +30,9 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
 #ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com', '.ethanmuthoni.me',
@@ -90,7 +95,21 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if not DEBUG:
+
+
+
+if (ENVIRONMENT == 'production' and not DEBUG):
+    DATABASES  = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("SUPABASE_DB_NAME"),
+            "USER": os.environ.get("SUPABASE_USER"),
+            "PASSWORD": os.environ.get("SUPABASE_DB_PW"),
+            "HOST": os.environ.get("SUPABASE_HOST"),
+            "PORT": os.environ.get("SUPABASE_PORT"),
+        }
+    }
+elif (ENVIRONMENT == 'development' and not DEBUG):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -100,12 +119,8 @@ if not DEBUG:
 else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("SUPABASE_DB_NAME"),
-            "USER": os.environ.get("SUPABASE_USER"),
-            "PASSWORD": os.environ.get("SUPABASE_DB_PW"),
-            "HOST": os.environ.get("SUPABASE_HOST"),
-            "PORT": os.environ.get("SUPABASE_PORT"),
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
@@ -207,24 +222,24 @@ APPEND_SLASH = False
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 if not DEBUG:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    CSRF_FAILURE_VIEW = "app.views.auth.csrf_failure"
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_REF = "no-referrer"
-    SECURE_REF_POLICY = "strict-origin-when-cross-origin"
+    CSRF_COOKIE_SECURE: bool = True
+    SESSION_COOKIE_SECURE: bool = True
+    SECURE_SSL_REDIRECT: bool = True
+    SECURE_BROWSER_XSS_FILTER: bool = True
+    SECURE_CONTENT_TYPE_NOSNIFF: bool = True
+    SECURE_HSTS_SECONDS: int = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS: bool = True
+    SECURE_HSTS_PRELOAD: bool = True
+    CSRF_FAILURE_VIEW: str = "app.views.auth.csrf_failure"
+    SECURE_PROXY_SSL_HEADER: tuple = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_REF: str = "no-referrer"
+    SECURE_REF_POLICY: str = "strict-origin-when-cross-origin"
 
 # CLOUDINARY CONFIG SETTINGS
-if not DEBUG:
-    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", None)
-    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", None)
-    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", None)
+if ENVIRONMENT == 'production':
+    CLOUDINARY_CLOUD_NAME: str = os.environ.get("CLOUDINARY_NAME", '')
+    CLOUDINARY_API_KEY: str = os.environ.get("CLOUDINARY_API_KEY", '')
+    CLOUDINARY_API_SECRET: str = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
     from app.views.helpers.helpers import get_cloudinary_id_and_secret
 
@@ -233,10 +248,10 @@ else:
     CLOUDINARY_API_SECRET: str = get_cloudinary_id_and_secret()[2]
 
 # Maximum upload size for images in bytes
-MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB or 5242880 bytes
 
 # Image links for Error Codes 400, 403, 404, 500
-ERROR_404 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"
-ERROR_500 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
-ERROR_403 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
-ERROR_400 = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"
+ERROR_404: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"
+ERROR_500: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
+ERROR_403: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
+ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"

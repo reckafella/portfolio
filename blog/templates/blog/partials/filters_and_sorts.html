@@ -1,0 +1,121 @@
+<div class="col-12">
+    <div class="row d-flex justify-content-between align-items-center">
+        <!-- Search Bar with Filters and Sorting -->
+        <div class="col-12 col-lg-8 mb-4 mb-lg-0">
+            {% if articles %}
+            <form method="get" class="row align-items-center g-3">
+                <!-- Search Input -->
+                <div class="col-12 col-md-6">
+                    <input type="text"
+                           class="form-control form-control-lg"
+                           placeholder="Type to search..."
+                           aria-label="Search"
+                           name="q"
+                           value="{{ q }}"
+                           required>
+                </div>
+                <!-- Collapsible Filters and Sorting -->
+                <div class="col-5">
+                    <button class="btn btn-outline-secondary btn-sm w-100 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterSortingCollapse" aria-expanded="false" aria-controls="filterSortingCollapse">
+                        More Options
+                    </button>
+                </div>
+                <div class="col-11 collapse d-md-flex d-lg-flex flex-lg-wrap" id="filterSortingCollapse">
+                    <!-- Filter Topic Options -->
+                    <div class="col-5 col-md-3">
+                        <label for="topic-select" class="form-label visually-hidden">Topic</label>
+                        <select class="form-select form-select-lg" name="topic" id="topic-select">
+                            {% for topic in topics %}
+                            <option value="{{ topic }}" {% if current_topic == topic %}selected{% endif %}>
+                                {{ topic | capfirst }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Sorting Options -->
+                    <div class="col-5 col-md-3">
+                        <label for="sort-select" class="form-label visually-hidden">Sort By</label>
+                        <select name="sort" id="sort-select" class="form-select form-select-lg">
+                            {% for key, value in sorting_options.items %}
+                            <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <!-- Search Button -->
+                <div class="col-3 col-md-auto d-flex justify-content-center align-items-center">
+                    <button type="submit"
+                            class="btn btn-primary btn-lg py-0 px-3 d-flex align-items-center justify-content-center w-75">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>            
+            {% endif %}
+        </div>
+
+        <!-- Filters and Sorting (Collapsible for Smaller Screens) -->
+        <div class="col-12 col-lg-4">
+            <div class="accordion" id="filtersAccordion">
+                <!-- Filters & Sorting Header -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFilters">
+                        <button class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapseFilters"
+                                aria-expanded="false"
+                                aria-controls="collapseFilters">
+                            Filters & Sorting
+                        </button>
+                    </h2>
+                    <!-- Collapsible Section -->
+                    <div id="collapseFilters"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="headingFilters"
+                         data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body">
+                            <!-- Filter Topics -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Topics</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="topic-select-form" method="GET" action="">
+                                        <select class="form-select" name="topic" onchange="this.form.submit()">
+                                            {% for topic in topics %}
+                                            <option value="{{ topic | urlencode }}" {% if current_topic == topic %}selected{% endif %}>
+                                                {{ topic | title }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <input type="hidden" name="sort" value="{{ current_sort }}">
+                                        <input type="hidden" name="q" value="{{ q }}">
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Sorting Options -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Sort By</h5>
+                                </div>
+                                <div class="card-body">
+                                    <select class="form-select"
+                                            onchange="window.location.href='?q={{ q }}&topic={{ current_topic }}&sort=' + this.value">
+                                        {% for key, value in sorting_options.items %}
+                                        <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
+                                            {{ value }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>

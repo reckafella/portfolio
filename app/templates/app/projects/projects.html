@@ -1,24 +1,30 @@
 {% extends "app/base.html" %}
 {% load static %}
-{% block title %} {{ page_title }} {% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<section id="section projects" class="mt-5 section projects"> <!--  bg-dark text-white -->
-    <div class="container">
+<section id="section projects" class="mt-5 section projects bg-secondary-subtle">
+    <div class="container col-11">
         <div class="section-title">
-            <h2 class="text-center text-dark mb-2">{{ form_title }}</h2>
+            <h2 class="text-center mb-2">{{ title }}</h2>
         </div>        
-        <div class="d-flex justify-content-center align-items-center w-100">
-            <div class="row justify-content-center col-lg-12">
+        <div class="d-flex justify-content-center col-11 align-items-center w-100">
+            <div class="row justify-content-center col-lg-11">
                 {% for project in projects %}
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4" data-aos="flip-left" data-aos-delay="50">
+                <div class="col-lg-4 col-md-5 col-sm-9 mb-4" data-aos="flip-left" data-aos-delay="50">
                     <div class="card h-100 d-flex justify-content-center">
-                        <div class="card-header text-center">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title fw-bold">
                                 <a href="{% url 'app:project_detail' project.id %}" class="text-decoration-none text-success">
                                     {{ project.title }}
                                 </a>
                             </h5>
+                            <!-- Icon for editing -->
+                            {% if user.is_staff  %}
+                            <a href="{% url 'app:update_project' project.id %}" class="btn btn-link text-decoration-none text-primary">
+                                <i class="bi bi-pencil-square bi-pencil-fill"></i>
+                            </a>
+                            {% endif %}
                         </div>
                         {% if project.optimized_image_url %}
                         <div class="card-body card-image"
@@ -33,8 +39,19 @@
                         </p>
                         <div class="card-footer text-center">
                             <a href="{% url 'app:project_detail' project.id %}" class="btn btn-outline-primary">
-                                <span>View Project</span>
+                                <span>Project Details</span>
                             </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-sm-10 col-lg-7 col-md-7 text-center mb-4 gap-2">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2rem;">
+                            <h3 class="alert-heading fw-bold">No projects found!</h3>
+                            {% if user.is_staff %}
+                            <a href="{% url 'app:add_project' %}" class="btn btn-outline-primary">Create project</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -46,7 +63,9 @@
         <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination pagination-sm pagination-lg justify-content-center">
                 {% if projects.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ projects.previous_page_number }}">&laquo; Previous</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects.previous_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">&laquo; Previous</a>
+                    </li>
                 {% else %}
                     <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
                 {% endif %}
@@ -55,12 +74,14 @@
                     {% if projects.number == i %}
                         <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
                 
                 {% if projects.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ projects.next_page_number }}">Next &raquo;</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects.next_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">Next &raquo;</a>
+                    </li>
                 {% else %}
                     <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
                 {% endif %}

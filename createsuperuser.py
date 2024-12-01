@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-
 import django
 
 
@@ -18,14 +17,14 @@ def create_superuser():
     # Retrieve superuser credentials from environment variables
     # these are set directly for local development
 
-    username = "ethan"  # os.getenv('DJANGO_SUPERUSER_USERNAME')
-    password = "@100/Chem"  # os.getenv('DJANGO_SUPERUSER_PASSWORD')
-    email = "ethan@admin.com"  # os.getenv('DJANGO_SUPERUSER_EMAIL')
+    username = os.getenv("DJANGO_SUPERUSER_USERNAME", "ethan")
+    password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "@100/Chem")
+    email = os.getenv("DJANGO_SUPERUSER_EMAIL", "ethan@admin.com")
 
     # Check if credentials are provided
     if not username or not password or not email:
         raise ValueError(
-            "You must provide DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, and DJANGO_SUPERUSER_EMAIL environment variables"
+            "You must provide \nDJANGO_SUPERUSER_USERNAME, \nDJANGO_SUPERUSER_PASSWORD, and \nDJANGO_SUPERUSER_EMAIL environment variables"
         )
 
     # Create the superuser if it doesn't already exist
@@ -33,7 +32,7 @@ def create_superuser():
         User.objects.create_superuser(username=username, email=email, password=password)
         print(f"Superuser {username} created successfully.")
     else:
-        print(f"Superuser {username} already exists.")
+        print(f"Superuser `{username}` already exists.")
 
 
 if __name__ == "__main__":

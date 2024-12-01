@@ -15,9 +15,7 @@ class ProjectListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Projects"
-        context["form_title"] = "Projects"
-        context["projects"] = context["projects"]
+        context["title"] = "Projects"
         return context
 
 
@@ -31,11 +29,8 @@ class ProjectDetailView(DetailView):
         project = self.get_object()
 
         # Fetch related projects (random selection)
-        context["related_projects"] = Projects.objects.exclude(id=project.id).order_by(
-            "?"
-        )[
-            :3
-        ]  # Get 3 random related projects
+        context["related_projects"] = Projects.objects.exclude(
+            id=project.id).order_by("?")[:3]
 
         # Additional context for page metadata
         context["page_title"] = project.title

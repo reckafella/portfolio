@@ -5,204 +5,69 @@
 
 {% block content %}
 <section class="py-5 mt-5">
-    <div class="container d-flex justify-content-center align-items-center card col-lg-11 col-md-12 col-sm-12">
+    <div class="container d-flex justify-content-center align-items-center card col-11">
         <div class="row justify-content-center d-flex justify-content-center align-items-center">
             <div class="w-100">
                 <div class="container row d-flex align-items-center justify-content-center">
                     <div class="row d-flex justify-content-center align-items-center">
-                        <div class="section-title mt-3">
+                        <div class="section-title mt-2">
                             <h2 class="text-center">
                                 {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
                             </h2>
                         </div>
-                        <!-- Search Form -->
-                        <form method="get" class="mb-4 row align-items-center g-3 w-75">
-                            <!-- Search Input -->
-                            <div class="col-12 col-md-4">
-                                <input type="text" 
-                                       class="form-control form-control-lg" 
-                                       placeholder="Type to search..." 
-                                       aria-label="Search" 
-                                       name="q" 
-                                       value="{{ q }}" 
-                                       required>
-                            </div>
-                        
-                            <!-- Filter Topic Options -->
-                            <div class="col-5 col-md-3">
-                                <select class="form-select form-select-lg" 
-                                        name="topic" 
-                                        id="topic-select">
-                                    {% for topic in topics %}
-                                    <option value="{{ topic }}" {% if current_topic == topic %}selected{% endif %}>
-                                        {{ topic | capfirst }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        
-                            <!-- Sorting Options -->
-                            <div class="col-6 col-md-3">
-                                <select name="sort" 
-                                        class="form-select form-select-lg">
-                                    {% for key, value in sorting_options.items %}
-                                    <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
-                                        {{ value }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        
-                            <!-- Search Button -->
-                            <div class="col-12 col-md-auto d-flex justify-content-center align-items-center">
-                                <button type="submit" 
-                                        class="btn btn-primary btn-lg py-0 px-3 d-flex align-items-center justify-content-center w-75">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
-                        </form>                        
+                        {% include 'blog/partials/filters_and_sorts.html' %}
                         <div class="row">
-                            <!-- Filters Sidebar -->
-                            <div id="filtersSidebar" class="col-md-2 mb-1">
-                                {% if articles %}
-                                    <!-- Topics Filter -->
-                                     {% comment %}
-                                    <div class="card mb-1">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Topics</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="nav flex-column nav-pills">
-                                                {% for topic in topics %}
-                                                    {% if current_topic == topic %}
-                                                    <a href="?topic={{ topic | urlencode }}&sort={{ current_sort }}"
-                                                    class="nav-link {% if current_topic == topic %}active{% endif %}">
-                                                        {{ topic | title }}
+                            <div class="row gx-4 gy-4 justify-content-start align-items-start">
+                                {% for article in articles %}
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="card text-black h-100">
+                                        <div class="card-header text-center pt-2">
+                                            <h5 class="card-title fw-bold">
+                                                <a href="{% url 'blog:post_detail' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                                            </h5>
+                                            <p class="card-text text-muted">
+                                                <small>
+                                                    By
+                                                    <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
+                                                        {% if article.author.first_name and article.author.last_name %}
+                                                            {{ article.author.first_name }} {{ article.author.last_name }}
+                                                        {% else %}
+                                                            {{ article.author.username | capfirst }}
+                                                        {% endif %}
                                                     </a>
-                                                    {% else %}
-                                                    <a href="?topic={{ topic | urlencode }}&sort={{ current_sort }}" class="nav-link">
-                                                        {{ topic | title }}
-                                                    </a>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
+                                                    &nbsp; | &nbsp; {{ article.created_at | date:"N j, Y" }}
+                                                </small>
+                                            </p>
                                         </div>
-                                    </div>
-                                    {% endcomment %}
-                                    <div class="card mb-2">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Topics</h5>
-                                        </div>
+                                        {% if article.optimized_image_url %}
                                         <div class="card-body">
-                                            <form id="topic-select-form" method="GET" action="">
-                                                <select class="form-select" name="topic" onchange="this.form.submit()">
-                                                    {% for topic in topics %}
-                                                    <option value="{{ topic | urlencode }}" {% if current_topic == topic %}selected{% endif %}>
-                                                        {{ topic | title }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
-                                                <input type="hidden" name="sort" value="{{ current_sort }}">
-                                            </form>
+                                            <img src="{{ article.optimized_image_url }}" class="card-img-top" alt="{{ article.title | default:'Post Image' }}" style="object-fit: cover; height: 200px;">
+                                        </div>
+                                        {% endif %}
+                                        <div class="card-body d-flex flex-column">
+                                            <p class="card-text">{{ article.content | truncatewords:20 | safe }}</p>
+                                        </div>
+                                        <div class="card-footer text-center">
+                                            <a href="{% url 'blog:post_detail' article.slug %}" class="btn btn-outline-primary">Read Article</a>
                                         </div>
                                     </div>
-
-                                    <!-- Sort Options -->
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Sort By</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <select class="form-select" onchange="window.location.href='?q={{ q }}&topic={{ current_topic }}&sort=' + this.value">
-                                                {% for key, value in sorting_options.items %}
-                                                    <option value="{{ key }}" {% if current_sort == key %}selected{% endif %}>
-                                                        {{ value }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Articles List -->
-                            <div class="col-lg-10 col-sm-11 col-md-10 d-flex align-items-center">
-                                <div class="row g-2 d-flex justify-content-center align-items-center">
-                                    {% for article in articles %}
-                                    <div class="col-lg-6 col-sm-11 col-md-6 mb-2 gap-2">
-                                        <div class="card text-black h-100" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-delay="150">
-                                            <div class="card-header text-center pt-2">
-                                                <h5 class="card-title fw-bold">
-                                                    <a href="{% url 'blog:post_detail' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
-                                                </h5>
-                                                <p class="card-text text-muted">
-                                                    <small class="text-muted">
-                                                        By
-                                                        <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
-                                                            {% if article.author.first_name and article.author.last_name %}
-                                                                {{ article.author.first_name }} {{ article.author.last_name }}
-                                                            {% else %}
-                                                                {{ article.author.username | capfirst }}
-                                                            {% endif %}
-                                                        </a>
-                                                        &nbsp; | &nbsp; {{ article.created_at | date:"N j, Y" }}
-                                                    </small>
-                                                </p>
-                                            </div>
-                                            {% if article.optimized_image_url %}
-                                            <div class="card-body">
-                                                <img src="{{ article.optimized_image_url }}" class="card-img-top" alt="{{ article.title | default:'Post Image' }}" style="object-fit: cover; height: 200px;">
-                                                {% endif %}
-                                                <div class="card-body d-flex flex-column">
-                                                    <p class="card-text">{{ article.content | truncatewords:20 | safe }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer text-center">
-                                                <a href="{% url 'blog:post_detail' article.slug %}" class="btn btn-outline-primary">
-                                                    <span>Read Article</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% empty %}
-                                    <div class="col-12 text-center">
-                                        <p>No articles found.</p>
-                                    </div>
-                                    {% endfor %}
                                 </div>
-
-                                <!-- Pagination -->
-                                {% if is_paginated %}
-                                <nav aria-label="Page navigation" class="mt-4">
-                                    <ul class="pagination justify-content-center">
-                                        {% if page_obj.has_previous %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&topic={{ current_topic }}&sort={{ current_sort }}{% if q %}&q={{ q }}{% endif %}">
-                                                Previous
-                                            </a>
-                                        </li>
-                                        {% endif %}
-
-                                        {% for num in page_obj.paginator.page_range %}
-                                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                                            <a class="page-link" href="?page={{ num }}&topic={{ current_topic }}&sort={{ current_sort }}{% if q %}&q={{ q }}{% endif %}">
-                                                {{ num }}
-                                            </a>
-                                        </li>
-                                        {% endfor %}
-
-                                        {% if page_obj.has_next %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&topic={{ current_topic }}&sort={{ current_sort }}{% if q %}&q={{ q }}{% endif %}">
-                                                Next
-                                            </a>
-                                        </li>
-                                        {% endif %}
-                                    </ul>
-                                </nav>
-                                {% endif %}
+                                {% empty %}
+                                <div class="col-11 text-center mb-4 gap-2">
+                                    <div class="alert alert-danger text-center" role="alert">
+                                        <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
+                                            <h3 class="alert-heading fw-bold">No articles found!</h3>
+                                            {% if user.is_staff %}
+                                            <a href="{% url 'blog:create_post' %}" class="btn btn-outline-primary">Create Article</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
+                        <!-- include the template for pagination -->
+                        {% include 'blog/partials/pagination.html' %}
                     </div>
                 </div>
             </div>

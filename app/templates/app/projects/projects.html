@@ -4,11 +4,11 @@
 
 {% block content %}
 <section id="section projects" class="mt-5 section projects bg-secondary-subtle">
-    <div class="container col-11">
+    <div class="container col-11 mb-5">
         <div class="section-title">
             <h2 class="text-center mb-2">{{ title }}</h2>
         </div>        
-        <div class="d-flex justify-content-center col-11 align-items-center w-100">
+        <div class="d-flex justify-content-center col-11 align-items-center w-100 mb-5">
             <div class="row justify-content-center col-lg-11">
                 {% for project in projects %}
                 <div class="col-lg-4 col-md-5 col-sm-9 mb-4" data-aos="flip-left" data-aos-delay="50">
@@ -29,7 +29,7 @@
                         {% if project.optimized_image_url %}
                         <div class="card-body card-image"
                             style="background-image: url('{{ project.optimized_image_url }}');
-                                background-size: cover; background-position: center; height: 200px; width: 100%;">
+                                background-size: cover; background-position: center; height: 150px; width: 100%;">
                         </div>
                         {% endif %}
                         <p class="card-body card-text text-start">
@@ -60,7 +60,7 @@
         </div>
         <!-- Pagination -->
         {% if projects.has_other_pages %}
-        <nav aria-label="Page navigation" class="mt-4">
+        <nav aria-label="Page navigation" class="mb-5">
             <ul class="pagination pagination-sm pagination-lg justify-content-center">
                 {% if projects.has_previous %}
                     <li class="page-item">

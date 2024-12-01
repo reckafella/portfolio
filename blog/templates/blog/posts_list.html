@@ -7,7 +7,7 @@
 <section class="py-5 mt-5">
     <div class="container d-flex justify-content-center align-items-center card col-11">
         <div class="row justify-content-center d-flex justify-content-center align-items-center">
-            <div class="w-100">
+            <div class="w-100 bg-light mb-5">
                 <div class="container row d-flex align-items-center justify-content-center">
                     <div class="row d-flex justify-content-center align-items-center">
                         <div class="section-title mt-2">
@@ -15,58 +15,15 @@
                                 {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
                             </h2>
                         </div>
+                        {% comment %} include the template for filters and sorts {% endcomment %}
                         {% include 'blog/partials/filters_and_sorts.html' %}
                         <div class="row">
-                            <div class="row gx-4 gy-4 justify-content-start align-items-start">
-                                {% for article in articles %}
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="card text-black h-100">
-                                        <div class="card-header text-center pt-2">
-                                            <h5 class="card-title fw-bold">
-                                                <a href="{% url 'blog:post_detail' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
-                                            </h5>
-                                            <p class="card-text text-muted">
-                                                <small>
-                                                    By
-                                                    <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
-                                                        {% if article.author.first_name and article.author.last_name %}
-                                                            {{ article.author.first_name }} {{ article.author.last_name }}
-                                                        {% else %}
-                                                            {{ article.author.username | capfirst }}
-                                                        {% endif %}
-                                                    </a>
-                                                    &nbsp; | &nbsp; {{ article.created_at | date:"N j, Y" }}
-                                                </small>
-                                            </p>
-                                        </div>
-                                        {% if article.optimized_image_url %}
-                                        <div class="card-body">
-                                            <img src="{{ article.optimized_image_url }}" class="card-img-top" alt="{{ article.title | default:'Post Image' }}" style="object-fit: cover; height: 200px;">
-                                        </div>
-                                        {% endif %}
-                                        <div class="card-body d-flex flex-column">
-                                            <p class="card-text">{{ article.content | truncatewords:20 | safe }}</p>
-                                        </div>
-                                        <div class="card-footer text-center">
-                                            <a href="{% url 'blog:post_detail' article.slug %}" class="btn btn-outline-primary">Read Article</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="col-11 text-center mb-4 gap-2">
-                                    <div class="alert alert-danger text-center" role="alert">
-                                        <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
-                                            <h3 class="alert-heading fw-bold">No articles found!</h3>
-                                            {% if user.is_staff %}
-                                            <a href="{% url 'blog:create_post' %}" class="btn btn-outline-primary">Create Article</a>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
+                            {% comment %} include the template for articles list
+                            this template contains the loop for articles
+                            {% endcomment %}
+                            {% include 'blog/partials/articles_list.html' %}
                         </div>
-                        <!-- include the template for pagination -->
+                        {% comment %} include the template for pagination {% endcomment %}
                         {% include 'blog/partials/pagination.html' %}
                     </div>
                 </div>

@@ -1,5 +1,0 @@
-<select id="sortSelect" class="form-select">
-    {% for key, value in sorting_options.items %}
-        <option value="{{ key }}" {% if key == current_sort %}selected{% endif %}>{{ value }}</option>
-    {% endfor %}
-</select>

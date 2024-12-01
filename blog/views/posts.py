@@ -82,6 +82,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class PostDetailView(DetailView):
     model = BlogPost
+    form_class = BlogPostForm
     template_name = "blog/post_detail.html"
     context_object_name = "post"
 
@@ -124,6 +125,7 @@ class PostDetailView(DetailView):
             )[: random.randint(3, 5)]
         else:
             context["other_posts"] = []
+        context["form"] = self.form_class(instance=project)
 
         return context
 

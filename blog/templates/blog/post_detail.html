@@ -24,10 +24,8 @@
                     </p>
                     {% if user.is_authenticated and user == post.author or user.is_staff %}
                     <div class="action-buttons mb-2">
-                        <a href="{% url 'blog:update_post' post.slug %}" class="btn btn-sm btn-primary">Edit Post</a>
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            Delete Post
-                        </button>
+                        <input type="submit" class="btn btn-sm btn-primary" value="Edit Post" data-bs-toggle="modal" data-bs-target="#editModal"/>
+                        <input type="submit" class="btn btn-sm btn-danger" value="Delete Post" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
                     </div>
                     {% endif %}
                 </div>
@@ -35,8 +33,8 @@
 
             <div class="card-body">
                 <!-- Cover Image -->
-                {% if post.cloudinary_optimized_image_url %}
-                <img src="{{ post.cloudinary_optimized_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+                {% if post.optimized_image_url %}
+                <img src="{{ post.optimized_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
                 {% endif %}
                 <div class="text-start">
                     {{ post.content | safe }}
@@ -45,57 +43,8 @@
         </div>
         
         <!-- Recommended Articles Section -->
-        {% if other_posts %}
-        <div class="mt-5">
-            <h3 class="text-center">More from 
-                {% if post.author.first_name and post.author.last_name %}
-                    {{ post.author.first_name }} {{ post.author.last_name }}
-                {% else %}
-                    {{ post.author.username | capfirst }}
-                {% endif %}
-            </h3>
-            <div class="row">
-                {% for article in other_posts %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card bg-white h-100" data-aos="fade-up" data-aos-delay="200">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="{% url 'blog:post_detail' article.slug %}" class="text-success text-decoration-none">{{ article.title }}</a>
-                            </h5>
-                            <p class="card-text">
-                                <small class="text-muted">{{ article.created_at | date:"N j, Y" }}</small>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
+        {% include 'blog/partials/recommended.html' %}
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    {% if user.is_authenticated and user == post.author or user.is_staff %}
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete "{{ post.title }}"? This action cannot be undone.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:delete_post' post.slug %}" method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+    {% include 'blog/partials/edit_delete_posts_modal.html' %}
 </section>
 {% endblock %}

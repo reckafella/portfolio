@@ -1,6 +1,7 @@
 from django.views.generic import DetailView, ListView
 
 from app.models import Projects
+from app.forms import ProjectsForm
 
 
 class ProjectListView(ListView):
@@ -21,6 +22,7 @@ class ProjectListView(ListView):
 
 class ProjectDetailView(DetailView):
     model = Projects
+    form_class = ProjectsForm
     template_name = "app/projects/project_detail.html"
     context_object_name = "project"
 
@@ -35,5 +37,6 @@ class ProjectDetailView(DetailView):
         # Additional context for page metadata
         context["page_title"] = project.title
         context["form_title"] = "Project Details"
+        context["form"] = self.form_class(instance=project)
 
         return context

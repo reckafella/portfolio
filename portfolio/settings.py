@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os.path
 from pathlib import Path
 
+from sympy import true
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -112,6 +114,9 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "PORT": os.environ.get("SUPABASE_PORT"),
         }
     }
+    PROJECTS_FOLDER = "portfolio/projests/live"
+    POSTS_FOLDER = "portfolio/posts/live"
+
 elif (ENVIRONMENT == 'development' and not DEBUG):
     DATABASES = {
         "default": {
@@ -119,6 +124,8 @@ elif (ENVIRONMENT == 'development' and not DEBUG):
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    PROJECTS_FOLDER = "portfolio/projests/dev"
+    POSTS_FOLDER = "portfolio/posts/dev"
 else:
     DATABASES = {
         "default": {
@@ -126,6 +133,8 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    PROJECTS_FOLDER = "portfolio/projests/dev"
+    POSTS_FOLDER = "portfolio/posts/dev"
 
 
 # CKEditor Config

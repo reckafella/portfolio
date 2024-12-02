@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
@@ -32,7 +33,7 @@ class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         # Handle image upload
         try:
             res: dict = handle_image_upload(
-                project, uploader, image, "portfolio/projects"
+                project, uploader, image, settings.PROJECTS_FOLDER
             )
             if res:
                 project.cloudinary_image_id = res["cloudinary_image_id"]

@@ -3,9 +3,9 @@
     {% if user.is_authenticated and user == post.author or user.is_staff %}
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+            <div class="modal-content card">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Post</h5>
+                    <h5 class="modal-title text-center fw-bold" id="editModalLabel">Edit Post</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body bg-light">
@@ -24,7 +24,7 @@
                         </div>
                         {% endfor %}
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" value="Close"/>
                             <input type="submit" class="btn btn-primary" value="Save Changes"/>
                         </div>
                     </form>

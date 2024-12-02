@@ -18,6 +18,7 @@ from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_up
 from app.views.helpers.helpers import handle_no_permissions, return_response
 from blog.forms import BlogPostForm
 from blog.models import BlogPost
+from portfolio import settings
 
 uploader = CloudinaryImageHandler()
 
@@ -46,7 +47,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                 instance=form.instance,
                 uploader=uploader,
                 image=cover_image,
-                folder="portfolio/blog",
+                folder=settings.POSTS_FOLDER,
             )
 
             if image_data:
@@ -120,12 +121,12 @@ class PostDetailView(DetailView):
                 # Assuming unpublished posts should be visible to staff
                 query |= Q(published=False)
 
-            context["other_posts"] = BlogPost.objects.filter(query).order_by(
+            context["other_posts"] = BlogPost.objects.filter(query).exclude(id=post.id).order_by(
                 "-created_at"
             )[: random.randint(3, 5)]
         else:
             context["other_posts"] = []
-        context["form"] = self.form_class(instance=project)
+        context["form"] = self.form_class(instance=post)
 
         return context
 
@@ -290,7 +291,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             try:
                 image = uploader.upload_image(
                     cover_image,
-                    folder="portfolio/blog",
+                    folder=settings.POSTS_FOLDER,
                     public_id=uploader.get_public_id(post.title),
                     overwrite=True,
                 )

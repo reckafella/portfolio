@@ -3,7 +3,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.conf import settings
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -56,7 +56,7 @@ class CreateProjectView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                     # Upload the image
                     image_data = self.cloudinary_handler.upload_image(
                         image,
-                        folder="portfolio/projects",
+                        folder=settings.PROJECTS_FOLDER,
                         public_id=public_id,
                         overwrite=True,
                     )
@@ -300,7 +300,7 @@ class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     # Upload the image
                     image_data = self.cloudinary_handler.upload_image(
                         image,
-                        folder="portfolio/projects",
+                        folder=settings.PROJECTS_FOLDER,
                         public_id=public_id,
                         overwrite=True,
                     )

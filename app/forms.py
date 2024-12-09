@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.forms.utils import ErrorList
 from django.core.validators import (
     EmailValidator,
     FileExtensionValidator,
@@ -9,6 +10,7 @@ from django.core.validators import (
     URLValidator,
 )
 from django_ckeditor_5.widgets import CKEditor5Widget
+from matplotlib.pylab import f
 
 from app.models import Message, Projects
 
@@ -269,3 +271,17 @@ class ContactFormAdminForm(admin.ModelAdmin):
     class Meta:
         model = Message
         fields = "__all__"
+
+
+class CustomErrorList(ErrorList):
+    """Custom Error List"""
+
+    def __str__(self):
+        return self.as_divs()
+
+    def as_divs(self):
+        if not self:
+            return ""
+        return "".join(
+            f'<div class="alert alert-danger" role="alert">{e}</div>' for e in self
+        )

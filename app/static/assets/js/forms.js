@@ -63,12 +63,31 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(async response => {
             const data = await response.json();
             if (!response.ok) {
-                const errors = Array.isArray(data.errors)
-                    ? data.errors.join(', ')
-                    : typeof data.errors === 'object'
-                    ? JSON.stringify(data.errors)
-                    : data.errors;
-                throw new Error(errors || 'An error occurred');
+                let errors = '';
+        
+                if (typeof data.errors === 'string') {
+                    // If errors is a string containing HTML, parse and clean it
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data.errors;
+        
+                    // Extract text content and format it
+                    errors = Array.from(tempDiv.querySelectorAll('li'))
+                        .map(li => li.textContent.trim())
+                        .join('\n');
+                } else if (Array.isArray(data.errors)) {
+                    // If errors is an array, join them
+                    errors = data.errors.join(', ');
+                } else if (typeof data.errors === 'object') {
+                    // If errors is an object, format each field's errors
+                    errors = Object.entries(data.errors)
+                        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+                        .join('\n');
+                } else {
+                    // Default to a string if errors are not in a standard format
+                    errors = data.errors || 'An error occurred';
+                }
+        
+                throw new Error(errors);
             }
             return data;
         })
@@ -90,6 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let closeButton = document.querySelector('.btn-close');
     closeButton.addEventListener('click', closeAlert);
 });
+
+
 
 /* 
 document.addEventListener('DOMContentLoaded', function() {
@@ -166,4 +187,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let closeButton = document.querySelector('.btn-close');
     closeButton.addEventListener('click', closeAlert);
 });
- */
+ .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                const errors = Array.isArray(data.errors)
+                    ? data.errors.join(', ')
+                    : typeof data.errors === 'object'
+                    ? JSON.stringify(data.errors)
+                    : data.errors;
+                throw new Error(errors || 'An error occurred');
+            }
+            return data;
+        })*/
+
+            

@@ -1,6 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %} {{ page_title }} {% if query %} - {{ query }} {% endif %} {% endblock %}
+{% block title %} {{ page_title }} {% if query %} - "{{ query }}" {% endif %} {% endblock %}
 
 {% block content %}
 <section id="section-search" class="mt-5 section section-bg search mb-5">
@@ -9,45 +9,51 @@
             <div class="col-lg-10">
                 <div class="card bg-light text-dark" data-aos="fade-up" data-aos-delay="150">
                     <div class="card-header">
-                        <h2 class="fw-bold text-dark mb-3 text-center">{{ page_title }}</h2>
-                        {% if query %}
-                        <h3 class="card-title mb-4">Results for: <span class="text-muted fst-italic">{{ query }}</span></h3>
-                        {% endif %}
+                        <h2 class="fw-bold text-dark mt-5 text-center">{{ page_title }}
+                            {% if query %}
+                                {% if not posts and not projects %}
+                                <span class="text-danger">- No results found</span>
+                                {% else %}
+                                <span class="text-success fw-normal">- {{ total_results }} results for  "{{ query }}"  found</span>
+                                {% endif %}
+                            {% endif %}
+                        </h2>
 
-                        <form id="search-form" action="{% url 'app:search' %}" method="GET" class="mb-4 d-flex flex-wrap align-items-center gap-3">
-                            <!-- Search Input -->
-                            <div class="flex-grow-1">
-                                <input type="text" class="form-control form-control-lg" placeholder="Type to search..." 
-                                       aria-label="Search" name="q" value="{{ query }}" required>
+                        <form id="search-form" action="{% url 'app:search' %}" method="GET" class="m-3">
+                            <div class="row g-2 d-flex justify-content-center align-items-center">
+                                <!-- Search Input -->
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <input type="text" class="form-control form-control-lg" placeholder="Type to search..."
+                                           aria-label="Search" name="q" value="{{ query }}" required>
+                                </div>
+
+                                <!-- Category Select -->
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <select class="form-select form-select-lg" name="category" id="category-select">
+                                        {% for key, value in filter_options.items %}
+                                        <option value="{{ key }}" {% if category == key %}selected{% endif %}>{{ value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- Sort Select -->
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <select class="form-select form-select-lg" name="sort">
+                                        {% for key, value in sort_options.items %}
+                                        <option value="{{ key }}" {% if sort == key %}selected{% endif %}>{{ value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="col-12 col-md-6 col-lg-2">
+                                    <button type="submit" class="btn btn-outline-success btn-lg w-100 d-flex align-items-center py-1 px-4 justify-content-center">
+                                        <i class="bi bi-search me-1"></i>
+                                        <span>Search</span>
+                                    </button>
+                                </div>
                             </div>
-                            
-                        
-                            <!-- Category Select -->
-                            <div>
-                                <select class="form-select form-select-lg" name="category" id="category-select">
-                                    {% for key, value in filter_options.items %}
-                                    <option value="{{ key }}" {% if category == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        
-                            <!-- Sort Select -->
-                            <div>
-                                <select class="form-select form-select-lg" name="sort">
-                                    {% for key, value in sort_options.items %}
-                                    <option value="{{ key }}" {% if sort == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        
-                            <!-- Submit Button -->
-                            <div>
-                                <button type="submit" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center">
-                                    <span class="d-inline d-lg-none me-3">Search</span>
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
-                        </form>                        
+                        </form>
                         {% if query %}
                         <ul class="nav nav-tabs card-header-tabs" id="searchTabs" role="tablist">
                             <li class="nav-item" role="presentation" id="posts-tab-container">
@@ -75,7 +81,7 @@
                                     </li>
                                     {% endfor %}
                                 </ul>
-                                {% include "app/search/search_pagination.html" with page_obj=posts %}
+                                {% include "app/pagination/search.html" with page_obj=posts %}
                                 {% else %}
                                 <div class="alert alert-danger" role="alert">
                                     No blog posts found
@@ -95,7 +101,7 @@
                                     </li>
                                     {% endfor %}
                                 </ul>
-                                {% include "app/search/search_pagination.html" with page_obj=projects %}
+                                {% include "app/pagination/search.html" with page_obj=projects %}
                                 {% else %}
                                 <div class="alert alert-danger" role="alert">
                                     No projects found

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from titlecase import titlecase
 
-from app.forms import ProjectsForm
+from app.forms import CustomErrorList, ProjectsForm
 from app.models import Projects
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, return_response
@@ -15,6 +15,7 @@ uploader = CloudinaryImageHandler()
 class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Projects
     form_class = ProjectsForm
+    error_class = CustomErrorList
     template_name = "app/projects/create_or_update.html"
     context_object_name = "view"
 

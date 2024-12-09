@@ -1,0 +1,231 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<section id="profile" class="profile section bg-image" style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+    <div class="mask d-flex align-items-center gradient-custom-3 mt-5">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                    <div class="card p-4" style="border-radius: 15px;">
+                        <div class="text-center section-title">
+                            <h2 class="card-title fw-bold">{{ form_title }}</h2>
+                        </div>
+                        
+                        <!-- Navigation Tabs -->
+                        <ul class="nav nav-tabs" id="auth-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="login-tab" href="#login" data-bs-toggle="tab" data-url="{{ login_url }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="signup-tab" href="#signup" data-bs-toggle="tab" data-url="{{ signup_url }}">Signup</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="login">
+                                {% include "./partials/login_form.html" %}
+                            </div>
+                            <div class="tab-pane fade" id="signup">
+                                {% include "./partials/signup_form.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    function handleTabSwitch(event) {
+        event.preventDefault();
+        const tabLink = event.target;
+        const target = tabLink.getAttribute('href').substring(1); // Get the target tab ID
+        const url = tabLink.dataset.url; // Get the URL from data-url attribute
+        const tabContent = document.querySelector(`#${target}`);
+
+        if (!url) {
+            console.error('URL is undefined for tab:', target);
+            return;
+        }
+
+        // Show loading spinner
+        tabContent.innerHTML = `
+            <div class="d-flex justify-content-center align-items-center" style="height: 100px;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `;
+
+        // Fetch the form content dynamically
+        fetch(url, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(data => {
+            tabContent.innerHTML = data;
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+            tabContent.classList.add('show', 'active');
+
+            // Reinitialize form handlers for dynamically loaded form
+            initFormHandlers();
+        })
+        .catch(error => {
+            console.error('Error loading form:', error);
+            tabContent.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Failed to load content. Please try again later.
+                </div>
+            `;
+        });
+    }
+
+    function initFormHandlers() {
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const submitButton = form.querySelector('button[type="submit"]');
+                const formData = new FormData(form);
+                const url = form.action;
+
+                submitButton.disabled = true;
+                submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = form.dataset.submitText;
+                    if (data.success) {
+                        alert(data.message);
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        }
+                    } else {
+                        alert(data.errors);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting form:', error);
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = form.dataset.submitText;
+                });
+            });
+        });
+    }
+
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('click', handleTabSwitch);
+    });
+
+    initFormHandlers();
+});
+
+</script>
+{% endblock %}
+{% endblock %}
+{% comment %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function handleTabSwitch(event) {
+        event.preventDefault();
+        const tabLink = event.target;
+        const target = tabLink.getAttribute('href').substring(1);
+        const url = tabLink.dataset.url;
+
+        // Update URL without reloading the page
+        window.history.pushState({ tab: target }, '', url);
+
+        // Fetch and load the form dynamically
+        fetch(url, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(response => response.text())
+        .then(data => {
+            const tabContent = document.querySelector(`#${target}`);
+            if (tabContent) {
+                tabContent.innerHTML = data;
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+                tabContent.classList.add('show', 'active');
+
+                // Reinitialize form handlers for the newly loaded form
+                initFormHandlers();
+            }
+        })
+        .catch(error => showToast('danger', `Error loading form: ${error}`));
+    }
+
+    // Handle form submissions dynamically
+    function handleFormSubmission(event) {
+        event.preventDefault();
+        const form = event.target;
+        const url = form.action;
+        const formData = new FormData(form);
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(response => response.json())
+        .then(data => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = form.dataset.submitText;
+            if (data.success) {
+                showToast('success', data.message);
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                }
+            } else {
+                showToast('danger', data.errors);
+            }
+        })
+        .catch(error => console.error('Error submitting form:', error));
+    }
+
+    // Initialize form handlers for forms
+    function initFormHandlers() {
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', handleFormSubmission);
+        });
+    }
+
+    // Attach tab switch handler
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('click', handleTabSwitch);
+    });
+
+    // Reinitialize form handlers on page load for the active tab
+    //initFormHandlers();
+
+    // Restore the correct tab on back/forward navigation
+    window.addEventListener('popstate', function (event) {
+        if (event.state && event.state.tab) {
+            const targetTab = event.state.tab;
+            const tabLink = document.querySelector(`[href="#${targetTab}"]`);
+            if (tabLink) {
+                tabLink.click();
+            }
+        }
+    });
+});
+</script>
+{% endcomment %}

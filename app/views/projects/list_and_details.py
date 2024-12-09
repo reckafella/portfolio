@@ -11,7 +11,7 @@ class ProjectListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        projects = Projects.objects.all().order_by("-created_at")
+        projects = Projects.objects.all().order_by("created_at")
         return projects
 
     def get_context_data(self, **kwargs):

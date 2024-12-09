@@ -10,7 +10,6 @@ from django.core.validators import (
     URLValidator,
 )
 from django_ckeditor_5.widgets import CKEditor5Widget
-from matplotlib.pylab import f
 
 from app.models import Message, Projects
 

@@ -87,7 +87,7 @@ def search_view(request):
             "redirect_url": reverse("search"),
         }
         return JsonResponse(response)
-
+    total_results = paginated_posts.paginator.count + paginated_projects.paginator.count
     context = {
         "query": query,
         "category": category,
@@ -95,6 +95,7 @@ def search_view(request):
         "posts": paginated_posts,
         "projects": paginated_projects,
         "page_title": "Search",
+        "total_results": total_results,
         "sort_options": {
             "relevance": "Relevance",
             "date_desc": "Date (Newest)",

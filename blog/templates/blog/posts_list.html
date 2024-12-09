@@ -1,30 +1,35 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-{% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username }} {% endif %} {% endblock %}
+{% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username }} {% endif %}{% endblock %}
 
 {% block content %}
 <section class="py-5 mt-5">
-    <div class="container d-flex justify-content-center align-items-center card col-11">
+    <div class="container d-flex justify-content-center align-items-center mt-4 card col-11">
         <div class="row justify-content-center d-flex justify-content-center align-items-center">
-            <div class="w-100 bg-light mb-5">
+            <div class="w-100 mb-2">
                 <div class="container row d-flex align-items-center justify-content-center">
                     <div class="row d-flex justify-content-center align-items-center">
-                        <div class="section-title mt-2">
-                            <h2 class="text-center">
-                                {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
-                            </h2>
+                        <div class="card-header bg-transparent">
+                            <div class="section-title py-2">
+                                <h2 class="text-center">
+                                    {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
+                                </h2>
+                            </div>
                         </div>
-                        {% comment %} include the template for filters and sorts {% endcomment %}
-                        {% include 'blog/partials/filters_and_sorts.html' %}
-                        <div class="row">
+                        <div class="row card-body d-flex justify-content-center align-items-center">
+                            {% comment %} include the template for filters and sorts {% endcomment %}
+                            {% include 'blog/partials/filters_and_sorts.html' %}
+
                             {% comment %} include the template for articles list
                             this template contains the loop for articles
                             {% endcomment %}
                             {% include 'blog/partials/articles_list.html' %}
                         </div>
-                        {% comment %} include the template for pagination {% endcomment %}
-                        {% include 'blog/partials/pagination.html' %}
+                        <div class="card-footer bg-transparent">
+                            {% comment %} include the template for pagination {% endcomment %}
+                            {% include 'app/pagination/articles.html' %}
+                        </div>
                     </div>
                 </div>
             </div>

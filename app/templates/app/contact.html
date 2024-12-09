@@ -5,19 +5,15 @@
 {% block content %}
 <section id="section contact" class="mt-5 section section-bg contact"
 style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
-    <div class="container">
-        <h2 class="text-center text-black fw-bold" data-aos="fade-up">{{ page_title }}</h2>
-        <div class="text-center text-black mb-2" data-aos="fade-up" data-aos-delay="100">
-            <p>Do you have any 
-                <strong>
-                    <span class="typed pacifico-regular" data-typed-items="questions?, compliments?, complaints?, suggestions?, collaboration opportunities?"></span>
-                </strong>
-            </p>
-        </div>
-
+    <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-9">
-                <div class="card bg-light text-dark p-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card bg-light text-dark p-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header bg-transparent border-success">
+                        <div class="section-title mb-0">
+                            <h2 class="text-center text-black fw-bold mb-0" data-aos="fade-up">{{ page_title }}</h2>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <h3 class="card-title text-center fw-bold mb-4">Send Me a Message</h3>
                         <form id="form" method="post" class="contact-form">

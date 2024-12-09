@@ -1,3 +1,4 @@
+from os import error
 import random
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -14,6 +15,7 @@ from django.views.generic import (
 )
 from titlecase import titlecase
 
+from app.forms import CustomErrorList
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, return_response
 from blog.forms import BlogPostForm
@@ -26,6 +28,7 @@ uploader = CloudinaryImageHandler()
 class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = BlogPost
     form_class = BlogPostForm
+    error_class = CustomErrorList
     template_name = "blog/create_post.html"
     context_object_name = "view"
 
@@ -84,6 +87,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class PostDetailView(DetailView):
     model = BlogPost
     form_class = BlogPostForm
+    error_class = CustomErrorList
     template_name = "blog/post_detail.html"
     context_object_name = "post"
 
@@ -275,6 +279,7 @@ class AuthorPostsView(ListView):
 class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
     form_class = BlogPostForm
+    error_class = CustomErrorList
     template_name = "blog/create_post.html"
 
     def form_valid(self, form):

@@ -1,6 +1,6 @@
 {% if page_obj.has_other_pages %}
 <nav aria-label="Pagination" class="mt-4">
-    <ul class="pagination justify-content-center">
+    <ul class="pagination pagination-sm pagination-lg justify-content-center">
         {% if page_obj.has_previous %}
             <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?q={{ query }}&category={{ category }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">&laquo; Previous</a></li>
         {% else %}
@@ -9,7 +9,7 @@
         
         {% for i in page_obj.paginator.page_range %}
             {% if page_obj.number == i %}
-                <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
             {% else %}
                 <li class="page-item"><a class="page-link" href="?q={{ query }}&category={{ category }}&sort={{ sort }}&page={{ i }}">{{ i }}</a></li>
             {% endif %}

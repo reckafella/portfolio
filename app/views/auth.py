@@ -9,7 +9,6 @@ from django.urls import reverse
 from app.forms import LoginForm, SignupForm
 from app.views.helpers.helpers import is_ajax
 
-
 def signup_view(request):
     if request.user.is_authenticated:
         return redirect("app:home")
@@ -21,60 +20,51 @@ def signup_view(request):
         if form.is_valid():
             username = form.cleaned_data.get("username")
             email = form.cleaned_data.get("email")
-            # password = form.cleaned_data.get('password1')
 
-            # Create user
+            # Check if the username or email already exists
             if User.objects.filter(username=username).exists():
                 error_message = "Username already exists. Try another."
                 if is_ajax(request):
-                    return JsonResponse(
-                        {"success": False, "errors": f"{error_message}"}
-                    )
+                    return JsonResponse({"success": False, "errors": error_message})
                 messages.error(request, error_message)
             elif User.objects.filter(email=email).exists():
                 error_message = "Email already exists. Try another."
                 if is_ajax(request):
-                    return JsonResponse(
-                        {"success": False, "errors": f"{error_message}"}
-                    )
+                    return JsonResponse({"success": False, "errors": error_message})
                 messages.error(request, error_message)
             else:
                 user = form.save(commit=False)
                 user.email = email
                 user.save()
                 login(request, user)
-                success_message = (
-                    "Account created successfully. Welcome to our platform!"
-                )
+                success_message = "Account created successfully. Welcome to our platform!"
                 if is_ajax(request):
-                    return JsonResponse(
-                        {
-                            "success": True,
-                            "message": success_message,
-                            "redirect_url": next_url,
-                        }
-                    )
+                    return JsonResponse({"success": True, "message": success_message, "redirect_url": next_url})
                 messages.success(request, success_message)
                 return redirect(next_url)
         else:
             if is_ajax(request):
-                return JsonResponse({"success": False, "errors": f"{form.errors}"})
+                return JsonResponse({"success": False, "errors": form.errors})
     else:
         form = SignupForm()
+
+    # Return form only for AJAX requests
+    if is_ajax(request):
+        return render(request, "auth/auth.html", {"form": form})
 
     context = {
         "form": form,
         "page_title": "Create an Account",
         "form_title": "Create Account",
         "submit_text": "Create Account",
+        "next": next_url,
         "extra_messages": [
             {
                 "text": "Already have an account?",
-                "link": f"{reverse('app:login')}?next={next_url}",
+                "link": reverse("app:login"),
                 "link_text": "Login",
             }
         ],
-        "next": next_url,
     }
     return render(request, "auth/auth.html", context)
 
@@ -88,48 +78,37 @@ def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            username: str = form.cleaned_data.get("username")
-            password: str = form.cleaned_data.get("password")
-
-            # Try to authenticate user
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    user_name = username.capitalize()
-                    success_message = (
-                        f"Login Successful. Welcome Back {user_name}!"
-                    )
+                    success_message = f"Login Successful. Welcome back, {username.capitalize()}!"
                     if is_ajax(request):
-                        return JsonResponse(
-                            {
-                                "success": True,
-                                "message": success_message,
-                                "redirect_url": next_url,
-                            }
-                        )
+                        return JsonResponse({"success": True, "message": success_message, "redirect_url": next_url})
                     messages.success(request, success_message)
                     return redirect(next_url)
                 else:
-                    error_message = "Disabled account"
+                    error_message = "Your account is disabled."
                     if is_ajax(request):
-                        return JsonResponse(
-                            {"success": False, "errors": f"{error_message}"}
-                        )
+                        return JsonResponse({"success": False, "errors": error_message})
                     messages.error(request, error_message)
             else:
-                error_message = "Invalid email or password. Try again."
+                error_message = "Invalid username or password."
                 if is_ajax(request):
-                    return JsonResponse(
-                        {"success": False, "errors": f"{error_message}"}
-                    )
+                    return JsonResponse({"success": False, "errors": error_message})
                 messages.error(request, error_message)
         else:
             if is_ajax(request):
                 return JsonResponse({"success": False, "errors": form.errors})
     else:
         form = LoginForm()
+
+    # Return form only for AJAX requests
+    if is_ajax(request):
+        return render(request, "auth/auth.html", {"form": form})
 
     context = {
         "form": form,

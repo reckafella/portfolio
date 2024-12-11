@@ -5,7 +5,7 @@ from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import render
 
 from app.models import Projects
-from blog.models import BlogPost
+from blog.models import BlogPostPage as BlogPost
 
 from ..forms import ContactForm
 from .helpers.helpers import is_ajax

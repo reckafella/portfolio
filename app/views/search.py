@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from app.models import Projects
 from app.views.helpers.helpers import is_ajax
-from blog.models import BlogPost
+from blog.models import BlogPostPage as BlogPost
 
 
 def get_filtered_results(query, category):

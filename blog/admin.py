@@ -1,6 +1,20 @@
-from django.contrib import admin
+from wagtail_modeladmin.options import ModelAdmin, ModelAdminGroup, modeladmin_register
+from .models import BlogPostPage
 
-from blog.forms import BlogPostAdmin
-from blog.models import BlogPost
 
-admin.site.register(BlogPost, BlogPostAdmin)
+class BlogPostPageAdmin(ModelAdmin):
+    model = BlogPostPage
+    menu_label = "Blog Posts"
+    menu_icon = "doc-full"
+    list_display = ("title", "author", "first_published_at", "topics")
+    search_fields = ("title", "content", "author__username")
+    ordering = ("-first_published_at",)
+
+
+class BlogGroupAdmin(ModelAdminGroup):
+    menu_label = "Blog"
+    menu_icon = "folder-open-inverse"
+    items = (BlogPostPageAdmin,)
+
+
+modeladmin_register(BlogGroupAdmin)

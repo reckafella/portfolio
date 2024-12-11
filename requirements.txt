@@ -12,3 +12,5 @@ django-storages~=1.14.2
 django-cloudflare-images~=0.6.0
 cloudinary~=1.41.0
 flake8~=7.1.1
+wagtail~=6.3.1
+wagtail-modeladmin~=2.1.0

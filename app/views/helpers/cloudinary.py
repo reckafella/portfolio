@@ -1,7 +1,10 @@
 import cloudinary
 import cloudinary.uploader
 from django.conf import settings
+from django.http import JsonResponse
 from django.utils.text import slugify
+
+from app.views.helpers.helpers import is_ajax
 
 
 class CloudinaryImageHandler:
@@ -123,5 +126,4 @@ def handle_image_upload(instance, uploader, image, folder):
             "optimized_image_url": uploader.get_optim_url(image_data["public_id"]),
         }
     except Exception as e:
-        print(f"Error uploading image: {str(e)}")
         raise Exception(f"Error uploading image: {str(e)}")

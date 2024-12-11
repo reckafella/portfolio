@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-/* 
+/*
+
 document.addEventListener('DOMContentLoaded', function() {
     let form = document.getElementById('other-form');
     form.addEventListener('submit', function(event) {

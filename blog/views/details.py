@@ -51,7 +51,7 @@ class PostDetailView(DetailView):
             context["other_posts"] = (
                 BlogPostPage.objects.filter(query)
                 .exclude(id=post.id)
-                .order_by("-created_at")[: random.randint(3, 5)]
+                .order_by("-first_published_at")[: random.randint(3, 5)]
             )
         else:
             context["other_posts"] = []

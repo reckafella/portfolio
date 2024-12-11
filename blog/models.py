@@ -5,13 +5,12 @@ this is the model for the blog post and it uses wagtail
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
 from wagtail.fields import RichTextField
-from wagtail.contrib.routable_page.models import RoutablePageMixin
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 
 
-class BlogIndexPage(RoutablePageMixin, Page):
+class BlogIndexPage(Page):
     subpage_types = ["blog.BlogPostPage"]
     max_count = 1
 
@@ -21,6 +20,7 @@ class BlogIndexPage(RoutablePageMixin, Page):
 
     def get_context(self, request):
         context = super().get_context(request)
+        context['page_title'] = 'self.title'
         context["posts"] = BlogPostPage.objects.live().order_by("-first_published_at")
         return context
 
@@ -33,13 +33,6 @@ class BlogPostPage(Page):
     published = models.BooleanField(default=False)
     topics = models.CharField(
         max_length=200, default="all", help_text="Comma-separated list of topics"
-    )
-    cover_image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
     )
     cloudinary_image_id = models.CharField(max_length=200, blank=True, null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
@@ -56,8 +49,7 @@ class BlogPostPage(Page):
                 FieldPanel("optimized_image_url", read_only=True),
             ],
             heading="Cloudinary Image Details",
-        ),
-        FieldPanel("cover_image"),
+        )
     ]
 
     class Meta:

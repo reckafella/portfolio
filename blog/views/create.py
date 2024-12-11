@@ -1,14 +1,16 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from titlecase import titlecase
 
+
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, return_response
-from blog.models import BlogPostPage
+from blog.models import BlogPostPage, BlogIndexPage
 from blog.forms import BlogPostForm
 from portfolio import settings
-
+from app.views.helpers.helpers import is_ajax
 
 uploader = CloudinaryImageHandler()
 
@@ -21,7 +23,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         # Set the author and title
-        post = post
+        post = form.instance
         post.author = self.request.user
         post.title = titlecase(post.title)
         cover_image = form.files.get("cover_image")
@@ -51,11 +53,28 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                 # Delete the image from Cloudinary if an error occurs
                 if post.cloudinary_image_id:
                     uploader.delete_image(post.cloudinary_image_id)
+
                 response = {"success": False, "errors": str(e)}
                 form.add_error(None, str(e))
-                return return_response(self.request, response, 400)
+                if is_ajax(self.request):
+                    return self.form_invalid(form, response)
+                return self.form_invalid(form, response)
 
+        parent_page = BlogIndexPage.objects.first()  # Or filter as needed
+        if not parent_page:
+            response = {"success": False, "errors": "No parent page (BlogIndexPage) found."}
+            form.add_error(None, "No parent page (BlogIndexPage) found.")
+            return self.form_invalid(form, response)
+
+        # Add the new page as a child of the parent page
+        parent_page.add_child(instance=post)
         return super().form_valid(form)
+
+    def form_invalid(self, form, response=None):
+        if is_ajax(self.request):
+            errors = response["errors"] if response else form.errors
+            return JsonResponse({"success": False, "errors": errors}, status=400)
+        return super().form_invalid(form)
 
     def test_func(self):
         return (

@@ -13,7 +13,7 @@
                     </div>
                     <div class="card-body">
                         <p class="text-center">Are you sure you want to delete "{{ object.title }}"? This action cannot be undone.</p>
-                        <form method="post" class="text-center justify-content-between">
+                        <form id="delete-form" method="post" class="text-center justify-content-between">
                             {% csrf_token %}
                             <a href="{% url 'app:project_detail' object.id %}" class="btn btn-outline-light">{{ cancel_text }}</a>
                             <button type="submit" class="btn btn-danger">{{ submit_text }}</button>

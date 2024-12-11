@@ -14,7 +14,7 @@ from .helpers.helpers import is_ajax
 def home_view(request):
     """View to render the home page"""
     featured_projects = Projects.objects.all()[:3]
-    recent_posts = BlogPost.objects.all().order_by("-created_at")[:3]
+    recent_posts = BlogPost.objects.all().order_by("-first_published_at")[:3]
 
     context = {
         "featured_projects": featured_projects,

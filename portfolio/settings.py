@@ -29,7 +29,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -86,10 +86,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
-
+# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
 ROOT_URLCONF = "portfolio.urls"
 
 TEMPLATES = [
@@ -228,7 +227,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_URL = "/media/"
@@ -240,7 +242,18 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = "Ethan Muthoni"
 WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
-WAGTAILDOCS_EXTENSIONS = ['CSV', 'DOC', 'DOCX', 'ODP', 'ODS', 'ODT', 'PDF', 'PPT', 'PPTX', 'RTF', 'TXT', 'XLS', 'XLSX']
+WAGTAILDOCS_EXTENSIONS = [
+    'csv',
+    'docx',
+    'key',
+    'odt',
+    'pdf',
+    'pptx',
+    'rtf',
+    'txt',
+    'xlsx',
+    'zip'
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -252,7 +265,7 @@ LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "/login"
 LOGOUT_REDIRECT_URL = "/"
 LOGOUT_URL = "/logout"
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 

@@ -4,7 +4,7 @@ from django.views.generic import UpdateView
 from titlecase import titlecase
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
-from app.views.helpers.helpers import handle_no_permissions, return_response
+from app.views.helpers.helpers import handle_no_permissions, is_ajax, return_response
 from blog.models import BlogPostPage
 from blog.forms import BlogPostForm
 from portfolio import settings
@@ -49,8 +49,11 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     )
 
             except Exception as e:
-                response = {"success": False, "errors": f"{str(e)}"}
-                form.add_error(None, f"{str(e)}")
+                errors = ", ".join(e) if isinstance(e, list) else str(e)
+                response = {"success": False, "errors": errors}
+                form.add_error(None, errors)
+                if is_ajax(self.request):
+                    return return_response(self.request, response, 400)
                 return return_response(self.request, response, 400)
 
         return super().form_valid(form)

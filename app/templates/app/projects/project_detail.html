@@ -1,0 +1,73 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<section id="section" class="mt-5 section projects bg-light">
+    <div class="container bg-white col-lg-8 col-md-10 col-sm-12">
+        <div class="card bg-white mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header text-center">
+                <div class="info-wrap mb-3" data-aos="fade-up">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted text-center">
+                            <a href="{% url 'app:projects' %}" class="text-decoration-none p-2 text-danger" title="Go back to Projects">
+                                <i class="bi bi-arrow-left-square"></i> Projects
+                            </a>
+                        </small>
+                        <h2 class="fw-bold">{{ project.title }}</h2>
+                        <!-- Icon for editing -->
+                        {% if user.is_staff  %}
+                        <a href="{% url 'app:update_project' project.id %}" class="btn btn-link text-decoration-none text-primary">
+                            <i class="bi bi-pencil-square bi-pencil-fill"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Created on {{ project.created_at | date:"N j, Y" }}
+                            {% if project.updated_at and project.updated_at != project.created_at %}
+                                &nbsp; | &nbsp; Last Updated: {{ project.updated_at | date:"N j, Y" }}
+                            {% endif %}
+                        </small>
+                    </p>
+
+                    {% if user.is_staff %}
+                    <div class="action-buttons mb-2">
+                        <input type="submit" class="btn btn-sm btn-primary" value="Edit Project" data-bs-toggle="modal" data-bs-target="#editModal"/>
+                        <input type="submit" class="btn btn-sm btn-danger" value="Delete Project" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Project Cover Image -->
+                {% if project.optimized_image_url %}
+                <img src="{{ project.optimized_image_url }}" class="img-fluid mb-4 project-hero-image" alt="{{ project.title }}" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 10px;">
+                {% endif %}
+
+                <!-- Project Description -->
+                <div class="text-start project-description">
+                    <h4 class="mb-3 text-center">Project Overview</h4>
+                    {{ project.description | safe }}
+                </div>
+
+                <!-- Project Links -->
+                <div class="project-links mt-4 d-flex justify-content-center">
+                    {% if project.project_url %}
+                    <a href="{{ project.project_url }}" target="_blank" class="btn btn-outline-success">
+                       <span class="mx-1">Visit Project</span><i class="bi bi-link-45deg"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Projects Section -->
+        {% include 'app/projects/related_projects.html' %}
+    </div>
+
+    <!-- Modal for editing and deleting projects -->
+    {% include 'app/projects/edit_delete_projects.html' with form=form %}
+</section>
+{% endblock %}

@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install dependencies
-pip install -r requirements.txt
+# Update pip && install dependencies
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 
 # Collect static files
-python manage.py collectstatic --no-input --clear
+python3 manage.py collectstatic --no-input --clear
+
+# Apply database migrations
+python3 manage.py makemigrations
+python3 manage.py makemigrations app
+python3 manage.py makemigrations blog
+
+python3 manage.py migrate
+python3 manage.py migrate app
+python3 manage.py migrate blog
+
+# create superuser
+python3 ./createsuperuser.py
+
+# populate db
+#python3 ./add_projects.py

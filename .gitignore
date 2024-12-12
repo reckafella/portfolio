@@ -58,8 +58,8 @@ cover/
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+*.sqlite3
+*.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -122,14 +122,14 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+*.env
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-staticfiles/staticfiles.json
+staticfiles/
 
 # Spyder project settings
 .spyderproject
@@ -149,6 +149,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Certification authorities
+*.pem
+
+# Configurations files
+*.conf
+
 # pytype static type analyzer
 .pytype/
 
@@ -160,7 +166,7 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
-/staticfiles/admin/
-/staticfiles/assets/
+.idea/
+
+cloudinary.json
 .vercel

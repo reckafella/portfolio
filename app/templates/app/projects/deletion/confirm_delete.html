@@ -1,0 +1,27 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<section class="mt-5 mb-5 section bg-body-secondary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-body-secondary">
+                    <div class="card-header">
+                        <h3 class="text-center">{{ form_title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-center">Are you sure you want to delete "{{ object.title }}"? This action cannot be undone.</p>
+                        <form id="delete-form" method="post" class="text-center justify-content-between">
+                            {% csrf_token %}
+                            <a href="{% url 'app:project_detail' object.id %}" class="btn btn-outline-light">{{ cancel_text }}</a>
+                            <button type="submit" class="btn btn-danger">{{ submit_text }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

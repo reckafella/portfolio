@@ -1,0 +1,32 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<section id="section" class="py-5 mt-5 section blog">
+    <div class="container d-flex justify-content-center align-items-center mt-4 card col-11">
+        <div class="row justify-content-center d-flex justify-content-center align-items-center">
+            <div class="w-100 mb-2">
+                <div class="container row d-flex align-items-center justify-content-center">
+                    <div class="row d-flex justify-content-center align-items-center">
+                        <div class="card-header bg-transparent w-100 section-title">
+                            <h2 class="text-center mb-2 py-2">{{ title }}</h2>
+                        </div>
+                        {% comment %}
+                            include the template for filters and sorts
+                            {% include 'blog/partials/filters_and_sorts.html' %}
+                        {% endcomment %}
+                        <div class="card-body m-4 p-1">
+                        {% include 'app/projects/partials/projects.html' %}
+                        </div>
+                        {% comment %} include the template for pagination {% endcomment %}
+                        <div class="card-footer w-100 p-0 bg-transparent">
+                            {% include 'app/pagination/projects.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

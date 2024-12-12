@@ -1,0 +1,31 @@
+<form id="signup-form" action="{{ signup_url }}" method="post" data-submit-text="{{ submit_text }}" enctype="multipart/form-data" class="p-3">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+            {% if field.help_text %}
+            <button type="button"
+                    class="btn btn-sm btn-link text-decoration-none p-0"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="{{ field.help_text }}">
+                <i class="bi bi-question-circle-fill text-primary"></i>
+            </button>
+            {% endif %}
+        </label>
+        {{ field }}
+        {% for error in field.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <div class="text-center mb-2 mt-2">
+        <button type="submit" class="btn btn-primary w-50">{{ submit_text }}</button>
+    </div>
+</form>
+<div class="text-center text-muted mt-2 mb-2">
+    {% for message in extra_messages %}
+    <p>{{ message.text }} <a href="{{ message.link }}">{{ message.link_text }}</a></p>
+    {% endfor %}
+</div>

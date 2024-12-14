@@ -1,6 +1,8 @@
 from django.urls import path
 from django.views.generic import RedirectView
+from django.contrib.sitemaps.views import sitemap
 
+from app.views.sitemap import BlogPostSitemap, WagtailSitemap
 from app.views import auth, messages, search, views
 from app.views.projects.create import CreateProjectView
 from app.views.projects.delete import DeleteProjectView
@@ -21,6 +23,7 @@ urlpatterns = [
     path("signup", auth.signup_view, name="signup"),
     path("logout", auth.logout_view, name="logout"),
     path("about", views.about_view, name="about"),
+    path('sitemap/', views.sitemap_view, name='html_sitemap'),
     path("projects", ProjectListView.as_view(), name="projects"),
     path("projects/new", CreateProjectView.as_view(), name="add_project"),
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="project_detail"),
@@ -31,8 +34,18 @@ urlpatterns = [
         "projects/delete/<int:pk>", DeleteProjectView.as_view(), name="delete_project"
     ),
     path("contact", views.contact_view, name="contact"),
-    path("search", search.search_view, name="search"),
+    path("search/", search.search_view, name="search"),
     path("resume", views.resume_pdf_view, name="resume"),
     path("resume-pdf", views.resume_pdf_view, name="resume_pdf"),
     path("messages", messages.view_messages, name="messages"),
+]
+
+
+sitemaps = {
+    'blog_posts': BlogPostSitemap,
+    'pages': WagtailSitemap,
+}
+
+urlpatterns += [
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]

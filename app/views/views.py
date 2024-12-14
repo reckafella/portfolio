@@ -1,5 +1,5 @@
 import os
-
+from wagtail.models import Page
 from django.conf import settings
 from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import render
@@ -9,6 +9,7 @@ from blog.models import BlogPostPage as BlogPost
 
 from ..forms import ContactForm
 from .helpers.helpers import is_ajax
+from blog.models import BlogPostPage
 
 
 def home_view(request):
@@ -81,3 +82,14 @@ def resume_pdf_view(request):
         content_type="application/pdf",
         headers={"Content-Disposition": 'inline; filename="resume.pdf"'},
     )
+
+
+def sitemap_view(request):
+    pages = Page.objects.live().specific()
+    blog_posts = BlogPostPage.objects.live().order_by('-first_published_at')
+    
+    context = {
+        'pages': pages,
+        'blog_posts': blog_posts,
+    }
+    return render(request, 'app/sitemaps/sitemap.html', context)

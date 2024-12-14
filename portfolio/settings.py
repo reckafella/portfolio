@@ -29,7 +29,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -50,14 +50,17 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'django.contrib.sites',
     "django.contrib.staticfiles",
     "crispy_forms",
     "corsheaders",
     "django_ckeditor_5",
     "app",
     "blog",
+    'robots',
 ]
 
+# Wagtail related apps
 INSTALLED_APPS += [
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -75,7 +78,6 @@ INSTALLED_APPS += [
     'taggit',
 ]
 
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -88,7 +90,9 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
-# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
+
+# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware", - removed because of wagtail failing to load
+
 ROOT_URLCONF = "portfolio.urls"
 
 TEMPLATES = [

@@ -72,5 +72,5 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f"Edit Post: {self.object.title}"
+        context.update({"title": "Update Blog Post", "submit_text": "Update Post"})
         return context

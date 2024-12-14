@@ -1,0 +1,94 @@
+{% extends "app/base.html" %}
+{% load wagtailimages_tags wagtailcore_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<section class="mt-5 blog-index container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4">{{ page.title }}</h1>
+            <p class="lead text-muted">Latest articles and insights</p>
+        </div>
+
+        <div class="col-12">
+            <div class="row g-4">
+                {% for post in posts %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if post.cloudinary_image_url %}
+                                <img src="{{ post.cloudinary_image_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ post.title }}">
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% pageurl post %}" class="text-decoration-none">
+                                        {{ post.title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted">
+                                    {% if post.content|length > 150 %}
+                                        {{ post.content|striptags|truncatechars:150 }}
+                                    {% else %}
+                                        {{ post.content|striptags }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            
+                            <div class="card-footer">
+                                <small class="text-muted">
+                                    By {{ post.author.username }} 
+                                    | {{ post.created_at|date:"F d, Y" }}
+                                </small>
+                                <div class="mt-2">
+                                    {% for topic in post.get_topics %}
+                                        <span class="badge bg-secondary me-1">{{ topic }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center">
+                        <p class="alert alert-info">No blog posts have been published yet.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if is_paginated %}
+            <div class="col-12 mt-4">
+                <nav aria-label="Blog post navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page.paginator.page_range %}
+                            {% if page.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

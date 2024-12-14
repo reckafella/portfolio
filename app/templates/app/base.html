@@ -57,7 +57,8 @@
                     <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>                           
+                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="/cms/" class="text-start" target="_blank"><span>Wagtail Admin</span></a></li>
                             <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
                             <li><a href="{% url 'blog:create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
                             <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Add New Project</span></a></li>
@@ -75,7 +76,7 @@
                           <span class="d-inline d-lg-none">Search</span>
                           <i class="bi bi-search"></i>
                         </a>
-                      </li>                      
+                      </li>
                 </ul>
                 <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -151,6 +152,10 @@
                 <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
                 <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
             </div>
+            <!-- site map -->
+            <div class="sitemap row d-flex">
+                <a href="{% url 'app:sitemap' %}" target="_blank" class="text-white text-center">Sitemap</a>
+            </div>
             <div class="credits">
                 Styled using
                 <a class="text-start" href="https://getbootstrap.com/" target="_blank">
@@ -160,7 +165,7 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- Preloader -->
     <div id="preloader"></div>
     <!-- Scroll Top -->
@@ -176,7 +181,7 @@
     <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
     <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
     <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-    
+
     <!-- Main & Forms JS Files -->
     <script src="{% static 'assets/js/main.js' %}"></script>
     <script src="{% static 'assets/js/forms.js' %}"></script>

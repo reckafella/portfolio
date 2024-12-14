@@ -2,15 +2,17 @@
 this is the model for the blog post and it uses wagtail
 """
 
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
+from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 
 
-class BlogIndexPage(Page):
+class BlogIndexPage(RoutablePageMixin, Page):
     subpage_types = ["blog.BlogPostPage"]
     max_count = 1
 
@@ -20,8 +22,22 @@ class BlogIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['page_title'] = 'self.title'
-        context["posts"] = BlogPostPage.objects.live().order_by("-first_published_at")
+        
+        # Paginate blog posts
+        posts = BlogPostPage.objects.live().order_by("-first_published_at")
+        paginator = Paginator(posts, 9)  # 9 posts per page
+        page_number = request.GET.get('page')
+        
+        try:
+            page_obj = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+        
+        context['posts'] = page_obj
+        context['is_paginated'] = page_obj.has_other_pages()
+        
         return context
 
 

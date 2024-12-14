@@ -53,6 +53,9 @@ class BlogPostPage(Page):
     cloudinary_image_id = models.CharField(max_length=200, blank=True, null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
+    """ cover_image = models.ImageField(
+        upload_to="blog_covers", blank=True, null=True, help_text="Cover image for the post"
+    ) """
 
     content_panels = Page.content_panels + [
         FieldPanel("author"),

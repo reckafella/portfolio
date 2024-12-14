@@ -29,7 +29,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -307,3 +307,11 @@ ERROR_404: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_aut
 ERROR_500: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
 ERROR_403: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
 ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"
+
+
+# check if the code is running in windows or linux and use python3.exe or python3
+import platform
+if platform.system() == 'Windows':
+    PYTHON_EXECUTABLE = 'python3.exe'
+else:
+    PYTHON_EXECUTABLE = 'python3'

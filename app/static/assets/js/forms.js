@@ -64,12 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             if (!response.ok) {
                 let errors = '';
-        
+
                 if (typeof data.errors === 'string') {
                     // If errors is a string containing HTML, parse and clean it
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = data.errors;
-        
+
                     // Extract text content and format it
                     errors = Array.from(tempDiv.querySelectorAll('li'))
                         .map(li => li.textContent.trim())
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Default to a string if errors are not in a standard format
                     errors = data.errors || 'An error occurred';
                 }
-        
+
                 throw new Error(errors);
             }
             return data;
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             showToast('danger', `An error occurred. ${error.message}`);
         });
-    });        
+    });
 
     // Add event listener to the close button
     let closeButton = document.querySelector('.btn-close');
@@ -200,5 +200,3 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return data;
         })*/
-
-            

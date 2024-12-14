@@ -40,5 +40,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("ckeditor/", include("django_ckeditor_5.urls")),
     path("", include("app.urls"), name="app"),
+    path('robots.txt', include('robots.urls')),
+    path("sitemap.xml", RedirectView.as_view(url="/sitemap.xml")),
     path("blog/", include("blog.urls"), name="blog"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

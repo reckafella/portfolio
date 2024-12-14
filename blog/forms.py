@@ -7,8 +7,9 @@ from blog.models import BlogPostPage
 
 
 class BlogPostForm(forms.ModelForm):
-    """Form for authors to update their blog posts"""
-
+    """
+    Form for authors to update their blog posts
+    """
     title = forms.CharField(
         label="Article Title",
         required=True,
@@ -16,7 +17,6 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         help_text="Enter the title of your article",
     )
-
     topics = forms.CharField(
         label="Relevant Topic(s)",
         required=True,
@@ -24,14 +24,12 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         help_text="Separate topics with commas (,)",
     )
-
     content = forms.CharField(
         label="Article Content",
         required=True,
         widget=forms.Textarea(attrs={"class": "form-control"}),
         help_text="Write the content of your article here",
     )
-
     cover_image = forms.ImageField(
         label="Article Cover Image",
         required=False,

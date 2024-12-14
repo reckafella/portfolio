@@ -1,5 +1,4 @@
 from django.urls import path
-
 from blog.views.create import CreatePostView
 from blog.views.delete import DeletePostView
 from blog.views.details import PostDetailView

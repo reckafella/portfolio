@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://ethanmuthoni.me/sitemap.xml
+Sitemap: https://rohn.live/sitemap.xml
+Crawl-delay: 10

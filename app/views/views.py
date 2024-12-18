@@ -2,6 +2,7 @@ import os
 from wagtail.models import Page
 from django.conf import settings
 from django.http import FileResponse, Http404, JsonResponse
+from django.views.generic.base import RedirectView
 from django.shortcuts import render
 
 from app.models import Projects
@@ -93,3 +94,19 @@ def sitemap_view(request):
         'blog_posts': blog_posts,
     }
     return render(request, 'app/sitemaps/sitemap.html', context)
+
+
+class CustomRedirectView(RedirectView):
+    """Custom RedirectView to handle redirections"""
+    permanent = False
+    query_string = True
+    redirect_to = "/"
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Method to get the redirect URL"""
+        redirect_to = self.redirect_to
+
+        query_params = self.request.GET.urlencode()
+        if query_params:
+            return f'{redirect_to}?{query_params}'
+        return redirect_to

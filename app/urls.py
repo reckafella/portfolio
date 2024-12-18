@@ -1,7 +1,7 @@
 from django.urls import path
-from django.views.generic import RedirectView
 from django.contrib.sitemaps.views import sitemap
 
+from app.views.views import CustomRedirectView
 from app.views.sitemap import BlogPostSitemap, WagtailSitemap
 from app.views import auth, messages, search, views
 from app.views.projects.create import CreateProjectView
@@ -12,12 +12,12 @@ from app.views.projects.update import UpdateProjectView
 app_name = "app"
 
 urlpatterns = [
-    path("home", RedirectView.as_view(url="/", permanent=True)),
-    path("accounts/register", RedirectView.as_view(url="/signup/", permanent=True)),
-    path("accounts/signup", RedirectView.as_view(url="/signup/", permanent=True)),
-    path("register", RedirectView.as_view(url="/signup/", permanent=True)),
-    path("accounts/login", RedirectView.as_view(url="/login/", permanent=True)),
-    path("accounts/logout", RedirectView.as_view(url="/logout/", permanent=True)),
+    path("home", CustomRedirectView.as_view(redirect_to="/", permanent=True)),
+    path("accounts/register", CustomRedirectView.as_view(redirect_to="/signup/", permanent=True)),
+    path("accounts/signup", CustomRedirectView.as_view(redirect_to="/signup/", permanent=True)),
+    path("register", CustomRedirectView.as_view(redirect_to="/signup/", permanent=True)),
+    path("accounts/login", CustomRedirectView.as_view(redirect_to="/login/", permanent=True)),
+    path("accounts/logout", CustomRedirectView.as_view(redirect_to="/logout/", permanent=True)),
     path("", views.home_view, name="home"),
     path("login", auth.login_view, name="login"),
     path("signup", auth.signup_view, name="signup"),

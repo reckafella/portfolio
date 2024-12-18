@@ -1,10 +1,7 @@
 import cloudinary
 import cloudinary.uploader
 from django.conf import settings
-from django.http import JsonResponse
 from django.utils.text import slugify
-
-from app.views.helpers.helpers import is_ajax
 
 
 class CloudinaryImageHandler:

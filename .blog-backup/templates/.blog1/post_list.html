@@ -19,7 +19,7 @@
                         <div class="card-text">
                             {{ post.content | safe | truncatewords_html:50 }}
                         </div>
-                        <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary mt-3">Read More</a>
+                        <a href="{% url 'blog:blog_post_details' post.slug %}" class="btn btn-primary mt-3">Read More</a>
                     </div>
                 </article>
             {% empty %}

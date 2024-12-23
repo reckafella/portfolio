@@ -12,7 +12,7 @@ uploader = CloudinaryImageHandler()
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPostPage
     template_name = "blog/deletion/confirm_delete.html"
-    success_url = reverse_lazy("blog:post_list")
+    success_url = reverse_lazy("blog:blog_posts_list")
 
     def delete(self, request, *args, **kwargs):
         post = self.get_object()

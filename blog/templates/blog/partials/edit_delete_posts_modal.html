@@ -5,11 +5,11 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content card">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center fw-bold" id="editModalLabel">Edit Post</h5>
+                    <h5 class="modal-title text-center fw-bold" id="editModalLabel">{{ page_title }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body bg-light">
-                    <form action="{% url 'blog:update_post' post.slug %}" method="post" enctype="multipart/form-data">
+                    <form id="other-form" action="{{ action_url }}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% for field in form %}
                         <div class="mb-3">
@@ -25,7 +25,7 @@
                         {% endfor %}
                         <div class="modal-footer">
                             <input type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" value="Close"/>
-                            <input type="submit" class="btn btn-primary" value="Save Changes"/>
+                            <input type="submit" class="btn btn-primary" value="{{ submit_text }}"/>
                         </div>
                     </form>
                 </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:delete_post' post.slug %}" method="post" style="display: inline;">
+                    <form action="{% url 'blog:delete_blog_post' post.slug %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-danger" value="Delete"/>
                     </form>

@@ -51,9 +51,16 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="col-12 text-center">
-                        <p class="alert alert-info">No blog posts have been published yet.</p>
+                <div class="col-11 text-center mb-4 gap-2">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
+                            <h3 class="alert-heading fw-bold">No articles found!</h3>
+                            {% if user.is_staff %}
+                            <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
+                            {% endif %}
+                        </div>
                     </div>
+                </div>
                 {% endfor %}
             </div>
         </div>

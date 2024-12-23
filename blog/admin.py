@@ -8,7 +8,7 @@ class BlogPostPageAdmin(ModelAdmin):
     menu_icon = "doc-full"
     list_display = ("title", "author", "first_published_at", "topics")
     search_fields = ("title", "content", "author__username")
-    ordering = ("-first_published_at",)
+    ordering = ("-first_published_at", "title", "author__username")
 
 
 class BlogGroupAdmin(ModelAdminGroup):

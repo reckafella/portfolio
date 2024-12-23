@@ -1,4 +1,6 @@
 {% load static %}
+{% load wagtailimages_tags %}
+{% load wagtailuserbar %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,15 +55,15 @@
                     </li>
                     <li><a href="{% url 'app:projects' %}" class="text-start"><span>Projects</span></a></li>
                     <li><a href="{% url 'app:contact' %}" class="text-start"><span>Contact</span></a></li>
-                    <li><a href="{% url 'blog:post_list' %}" class="text-start"><span>Blog</span></a></li>
+                    <li><a href="{% url 'blog:blog_posts_list' %}" class="text-start"><span>Blog</span></a></li>
                     <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            <li><a href="/cms/" class="text-start" target="_blank"><span>Wagtail Admin</span></a></li>
+                            <li><a href="{% url 'blog:create_blog_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
+                            <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Create Project</span></a></li>
                             <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
-                            <li><a href="{% url 'blog:create_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
-                            <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Add New Project</span></a></li>
+                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="/cms/admin" class="text-start"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
                             <li><a href="{% url 'app:logout' %}" class="text-start"><span>Logout</span></a></li>
@@ -73,7 +75,7 @@
                     </li>
                     <li>
                         <a href="#" onclick="toggleSearchBar(); return false;" class="text-start">
-                          <span class="d-inline d-lg-none">Search</span>
+                          <span class="d-inline d-md-inline d-lg-none">Search</span>
                           <i class="bi bi-search"></i>
                         </a>
                       </li>
@@ -163,6 +165,11 @@
                     <i class="bi bi-box-arrow-up-right ms-2"></i>
                 </a>
             </div>
+
+            {% if user.is_staff %}
+            {# Wagtail User Bar #}
+            {% wagtailuserbar 'bottom-left' %}
+            {% endif %}
         </div>
     </footer>
 

@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .join('\n');
                 } else {
                     // Default to a string if errors are not in a standard format
-                    errors = data.errors || 'An error occurred';
+                    errors = data.errors || 'An error occurred...';
                 }
 
                 throw new Error(errors);
@@ -94,14 +94,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 showToast('success', `${data.message}`);
-                window.location.href = data.redirect_url;
+                if (data.redirect_url !== undefined) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    window.location.reload();
+                }
             } else {
                 showToast('danger', `${data.errors}`);
                 console.log(data.errors);
             }
         })
         .catch(error => {
-            showToast('danger', `An error occurred. ${error.message}`);
+            showToast('danger', `An error occurred: ${error}`);
         });
     });
 

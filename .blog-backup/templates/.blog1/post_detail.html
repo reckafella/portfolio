@@ -19,8 +19,8 @@
             
             {% if user == post.author %}
                 <div class="mb-3">
-                    <a href="{% url 'blog:update_post' post.slug %}" class="btn btn-outline-primary">Edit</a>
-                    <a href="{% url 'blog:delete_post' post.slug %}" class="btn btn-outline-danger">Delete</a>
+                    <a href="{% url 'blog:update_blog_post' post.slug %}" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'blog:delete_blog_post' post.slug %}" class="btn btn-outline-danger">Delete</a>
                 </div>
             {% endif %}
             
@@ -31,7 +31,7 @@
     </article>
     
     <div class="mt-4">
-        <a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary">← Back to Posts</a>
+        <a href="{% url 'blog:blog_posts_list' %}" class="btn btn-outline-secondary">← Back to Posts</a>
     </div>
 </div>
 {% endblock %}

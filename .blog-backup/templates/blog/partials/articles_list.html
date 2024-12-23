@@ -4,12 +4,12 @@
         <div class="card text-black h-100">
             <div class="card-header text-center pt-2">
                 <h5 class="card-title fw-bold">
-                    <a href="{% url 'blog:post_detail' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                    <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
                 </h5>
                 <p class="card-text text-muted">
                     <small>
                         By
-                        <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
+                        <a href="{% url 'blog:posts_by_author' article.author.username %}" class="text-success text-decoration-none">
                             {% if article.author.first_name and article.author.last_name %}
                                 {{ article.author.first_name }} {{ article.author.last_name }}
                             {% else %}
@@ -29,7 +29,7 @@
                 <p class="card-text">{{ article.content | truncatewords:20 | safe }}</p>
             </div>
             <div class="card-footer text-center">
-                <a href="{% url 'blog:post_detail' article.slug %}" class="btn btn-outline-primary">Read Article</a>
+                <a href="{% url 'blog:blog_post_details' article.slug %}" class="btn btn-outline-primary">Read Article</a>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
                 <h3 class="alert-heading fw-bold">No articles found!</h3>
                 {% if user.is_staff %}
-                <a href="{% url 'blog:create_post' %}" class="btn btn-outline-primary">Create Article</a>
+                <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
                 {% endif %}
             </div>
         </div>

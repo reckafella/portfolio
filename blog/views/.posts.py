@@ -29,7 +29,7 @@ uploader = CloudinaryImageHandler()
 class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = BlogPostPage
     form_class = BlogPostForm
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
     context_object_name = "view"
 
     def form_valid(self, form):
@@ -81,13 +81,13 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
 
 class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPostPage
     form_class = BlogPostForm
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
 
     def form_valid(self, form):
         cover_image = form.files.get("cover_image")
@@ -122,7 +122,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author or self.request.user.is_staff
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
     def form_invalid(self, form, error=None):
         if error:
@@ -138,7 +138,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPostPage
     template_name = "blog/deletion/confirm_delete.html"
-    success_url = reverse_lazy("blog:post_list")
+    success_url = reverse_lazy("blog:blog_posts_list")
 
     def delete(self, request, *args, **kwargs):
         post = self.get_object()
@@ -164,7 +164,7 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class PostDetailView(DetailView):
     model = BlogPostPage
     form_class = BlogPostForm
-    template_name = "blog/post_detail.html"
+    template_name = "blog/blog_post_details.html"
     context_object_name = "post"
 
     def get_queryset(self):
@@ -213,7 +213,7 @@ class PostDetailView(DetailView):
 
 class PostListView(ListView):
     model = BlogPostPage
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -284,7 +284,7 @@ class PostListView(ListView):
 
 class AuthorPostsView(ListView):
     model = BlogPostPage
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -382,7 +382,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
     context_object_name = "view"
 
     def form_valid(self, form):
@@ -434,14 +434,14 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
 
 class PostDetailView(DetailView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/post_detail.html"
+    template_name = "blog/blog_post_details.html"
     context_object_name = "post"
 
     def get_queryset(self):
@@ -490,7 +490,7 @@ class PostDetailView(DetailView):
 
 class PostListView(ListView):
     model = BlogPost
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -561,7 +561,7 @@ class PostListView(ListView):
 
 class AuthorPostsView(ListView):
     model = BlogPost
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -633,7 +633,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
 
     def form_valid(self, form):
         cover_image = form.files.get("cover_image")
@@ -668,7 +668,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author or self.request.user.is_staff
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
     def form_invalid(self, form, error=None):
         if error:
@@ -684,7 +684,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
     template_name = "blog/deletion/confirm_delete.html"
-    success_url = reverse_lazy("blog:post_list")
+    success_url = reverse_lazy("blog:blog_posts_list")
 
     def delete(self, request, *args, **kwargs):
         post = self.get_object()
@@ -713,7 +713,7 @@ def edit_blog_post(request, post_id):
         form = BlogPostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save(user=request.user)
-            return redirect('blog_post_detail', slug=post.slug)
+            return redirect('blog_blog_post_details', slug=post.slug)
     else:
         form = BlogPostForm(instance=post)
     return render(request, 'blog/edit_blog_post.html', {'form': form, 'post': post})
@@ -724,30 +724,30 @@ def create_blog_post(request):
         form = BlogPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(user=request.user)
-            return redirect('blog_post_detail', slug=form.instance.slug)
+            return redirect('blog_blog_post_details', slug=form.instance.slug)
     else:
         form = BlogPostForm()
     return render(request, 'blog/create_blog_post.html', {'form': form})
 
-def blog_post_detail(request, slug):
+def blog_blog_post_details(request, slug):
     post = get_object_or_404(BlogPostPage, slug=slug)
-    return render(request, 'blog/blog_post_detail.html', {'post': post})
+    return render(request, 'blog/blog_blog_post_details.html', {'post': post})
 
-def blog_post_list(request):
+def blog_blog_posts_list(request):
     posts = BlogPostPage.objects.all()
-    return render(request, 'blog/blog_post_list.html', {'posts': posts})
+    return render(request, 'blog/blog_blog_posts_list.html', {'posts': posts})
 
-def blog_post_list_by_author(request, username):
+def blog_blog_posts_list_by_author(request, username):
     posts = BlogPostPage.objects.filter(author__username=username)
-    return render(request, 'blog/blog_post_list.html', {'posts': posts})
+    return render(request, 'blog/blog_blog_posts_list.html', {'posts': posts})
 
-def blog_post_list_by_topic(request, topic):
+def blog_blog_posts_list_by_topic(request, topic):
     posts = BlogPostPage.objects.filter(topics__icontains=topic)
-    return render(request, 'blog/blog_post_list.html', {'posts': posts})
+    return render(request, 'blog/blog_blog_posts_list.html', {'posts': posts})
 
 
-def blog_post_list_by_search(request):
+def blog_blog_posts_list_by_search(request):
     query = request.GET.get('q', '')
     posts = BlogPostPage.objects.filter(title__icontains=query) | BlogPostPage.objects.filter(content__icontains=query)
-    return render(request, 'blog/blog_post_list.html', {'posts': posts})
+    return render(request, 'blog/blog_blog_posts_list.html', {'posts': posts})
  """

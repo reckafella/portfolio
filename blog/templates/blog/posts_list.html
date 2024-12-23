@@ -1,4 +1,6 @@
 {% extends "app/base.html" %}
+{% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
+
 {% load static %}
 
 {% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username }} {% endif %}{% endblock %}

@@ -7,7 +7,7 @@
 style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-6">
                 <div class="card bg-light text-dark p-2" data-aos="fade-up" data-aos-delay="200">
                     <div class="card-header bg-transparent border-success">
                         <div class="section-title mb-0">
@@ -22,7 +22,7 @@ style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/
                                 {% for field in form %}
                                     {% if field.name == 'message' or field.name == 'subject' %}
                                     <div class="col-md-12">
-                                        <label for="{{ field.id_for_label }}" class="pb-2">{{ field.label }}</label>
+                                        <label for="{{ field.label }}" class="pb-2">{{ field.label }}</label>
                                         {{ field }}
                                     </div>
                                     {% else %}
@@ -32,9 +32,16 @@ style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/
                                     </div>
                                     {% endif %}
                                 {% endfor %}
+                                {% comment %} disable submit button if current user is admin in the website {% endcomment %}
+                                {% if user.is_staff %}
+                                <div class="col-md-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-success d-inline-flex align-items-center" disabled>{{ submit_text }}</button>
+                                </div>
+                                {% else %}
                                 <div class="col-md-12 text-center mt-4">
                                     <button type="submit" class="btn btn-success d-inline-flex align-items-center">{{ submit_text }}</button>
                                 </div>
+                                {% endif %}
                             </div>
                         </form>
                     </div>

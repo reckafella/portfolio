@@ -32,7 +32,7 @@ class ProjectDetailView(DetailView):
 
         # Fetch related projects (random selection)
         context["related_projects"] = Projects.objects.exclude(
-            id=project.id).order_by("?")[:3]
+            id=project.id).order_by("?")[:5]
 
         # Additional context for page metadata
         context["page_title"] = project.title

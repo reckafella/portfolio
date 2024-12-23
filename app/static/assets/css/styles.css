@@ -140,3 +140,51 @@ button[type=submit]:hover {
 .bg-opacity-90 {
   --bs-bg-opacity: 0.9;
 }
+
+.input-out-of-focus {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+}
+
+.input-out-of-focus:focus {
+  background-color: #fff;
+  border-color: #ced4da;
+}
+
+.input-out-of-focus::placeholder {
+  color: #6c757d;
+}
+
+.input-out-of-focus:focus::placeholder {
+  color: #6c757d;
+}
+
+.input-out-of-focus:disabled {
+  background-color: #e9ecef;
+}
+
+.input-out-of-focus:disabled::placeholder {
+  color: #6c757d;
+}
+
+.input-out-of-focus:disabled:focus {
+  background-color: #e9ecef;
+}
+
+.input-out-of-range {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.input-out-of-range:focus {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.input-out-of-range::placeholder {
+  color: #6c757d;
+}
+
+.input-out-of-range:focus::placeholder {
+  color: #6c757d;
+}

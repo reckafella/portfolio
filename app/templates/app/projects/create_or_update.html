@@ -1,5 +1,8 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load wagtailadmin_tags %}
+{% load wagtailcore_tags %}
+{% load wagtailuserbar %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -11,10 +14,10 @@
                 <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                     <div class="card" style="border-radius: 15px;">
                         <div class="card-body p-5">
-                            <div class="text-center mb-2 card card-header">
+                            <div class="text-center section-title card-header">
                                 <h2 class="fw-bold text-black">{{ title }}</h2>
                             </div>
-                            <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group card">
+                            <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group">
                                 {% csrf_token %}
                                 {% for field in form %}
                                 <div class="mb-3">

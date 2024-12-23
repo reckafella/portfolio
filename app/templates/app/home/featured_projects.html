@@ -10,12 +10,12 @@
                     <div class="card h-100 d-flex justify-content-center">
                         <div class="card-header justify-content-between d-flex">
                             <h5 class="card-title fw-bold">
-                                <a href="{% url 'app:project_detail' project.id %}" class="text-decoration-none text-success">{{ project.title }}
+                                <a href="{% url 'app:project_detail' project.slug %}" class="text-decoration-none text-success">{{ project.title }}
                                 </a>
                             </h5>
                             <!-- Icon for editing -->
                             {% if user.is_staff  %}
-                            <a href="{% url 'app:update_project' project.id %}" class="btn btn-link text-decoration-none text-primary">
+                            <a href="{% url 'app:update_project' project.slug %}" class="btn btn-link text-decoration-none text-primary">
                                 <i class="bi bi-pencil-square bi-pencil-fill"></i>
                             </a>
                             {% endif %}
@@ -34,7 +34,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="{% url 'app:project_detail' project.id %}" class="btn btn-outline-primary">
+                            <a href="{% url 'app:project_detail' project.slug %}" class="btn btn-outline-primary">
                                 <span>Project Details</span>
                             </a>
                         </div>

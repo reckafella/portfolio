@@ -52,3 +52,17 @@ def return_response(
     if is_ajax(request):
         return JsonResponse(response, status=status_code)
     return JsonResponse(response, status=status_code)
+
+
+
+def guess_file_type(file) -> str:
+    """
+    Guess the image type from the image content using the filetype module.
+    """
+    try:
+        import filetype
+
+        file_type = filetype.guess(file.read())
+        return file_type.mime
+    except Exception:
+        return None

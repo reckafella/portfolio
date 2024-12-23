@@ -43,7 +43,7 @@ class BlogPost(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("blog:post_detail", kwargs={"slug": self.slug})
+        return reverse("blog:blog_post_details", kwargs={"slug": self.slug})
 
     def get_topics(self):
         return [topic.strip() for topic in self.topics.split(",")]

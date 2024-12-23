@@ -29,7 +29,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -129,7 +129,7 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "PORT": os.environ.get("SUPABASE_PORT"),
         }
     }
-    PROJECTS_FOLDER = "portfolio/projests/live"
+    PROJECTS_FOLDER = "portfolio/projects/live"
     POSTS_FOLDER = "portfolio/posts/live"
 
 elif (ENVIRONMENT == 'development' and not DEBUG):
@@ -139,7 +139,7 @@ elif (ENVIRONMENT == 'development' and not DEBUG):
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-    PROJECTS_FOLDER = "portfolio/projests/dev"
+    PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
 else:
     DATABASES = {
@@ -148,7 +148,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-    PROJECTS_FOLDER = "portfolio/projests/dev"
+    PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
 
 
@@ -217,7 +217,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
@@ -253,6 +253,28 @@ WAGTAILDOCS_EXTENSIONS = [
     'xlsx',
     'zip'
 ]
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'bold', 'italic', 'link', 'ol', 'ul', 'hr']
+        }
+    },
+    'full': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
+                         'link', 'hr', 'code', 'document-link', 'blockquote']
+        }
+    },
+    'minimal': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['bold', 'italic', 'link']
+        }
+    },
+}    
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -296,6 +318,8 @@ else:
 
 # Maximum upload size for images in bytes
 MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB or 5242880 bytes
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff", "image/x-icon"]
+
 
 # Image links for Error Codes 400, 403, 404, 500
 ERROR_404: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"

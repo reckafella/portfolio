@@ -1,5 +1,8 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load wagtailadmin_tags %}
+{% load wagtailcore_tags %}
+{% load wagtailuserbar %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -14,12 +17,12 @@
                             <div class="text-center mb-2 card card-header">
                                 <h2 class="fw-bold text-black">{{ title }}</h2>
                             </div>
-                            <form id="other-form" method="post" enctype="multipart/form-data" class="form-control form-group card">
+                            <form id="other-form" action="{{ action_url }}" method="post" enctype="multipart/form-data" class="form-control form-group card">
                                 {% csrf_token %}
                                 {% for field in form %}
                                 <div class="form-group mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label">
-                                      {{ field.label }}
+                                      {{ field.label }} {% if field.field.required %} <span class="text-danger">*</span>{% endif %}
                                       {% if field.help_text %}
                                       <button type="button"
                                               class="btn btn-sm btn-link text-decoration-none p-0"
@@ -49,7 +52,6 @@
 
 {% comment %}
 {% extends "app/base.html" %}
-{% load wagtailadmin_tags %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}

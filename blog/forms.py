@@ -3,6 +3,9 @@ forms to allow users create/update blog posts
 """
 
 from django import forms
+#from wagtail.admin.rich_text import DraftailRichTextArea
+from wagtail.blocks import RichTextBlock
+
 from blog.models import BlogPostPage
 
 
@@ -69,10 +72,11 @@ class BlogPostAdminForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         help_text="Separate topics with commas (,)",
     )
-    content = forms.CharField(
+    content = RichTextBlock(
         label="Article Content",
         required=True,
-        widget=forms.Textarea(attrs={"class": "form-control"}),
+        features="full",
+        #widget=DraftailRichTextArea(attrs={"class": "form-control"}),
         help_text="Write the content of your article here",
     )
     cover_image = forms.ImageField(

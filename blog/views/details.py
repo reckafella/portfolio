@@ -11,7 +11,7 @@ from blog.forms import BlogPostForm
 class PostDetailView(DetailView):
     model = BlogPostPage
     form_class = BlogPostForm
-    template_name = "blog/post_detail.html"
+    template_name = "blog/blog_post_details.html"
     context_object_name = "post"
 
     def get_queryset(self):
@@ -56,5 +56,9 @@ class PostDetailView(DetailView):
         else:
             context["other_posts"] = []
         context["form"] = self.form_class(instance=post)
+        context['page_title'] = f'Update: {post.title}'
+        context['submit_text'] = 'Update Post'
+        context['action_url'] = reverse_lazy('blog:update_blog_post', kwargs={'slug': post.slug})
+        
 
         return context

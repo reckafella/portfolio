@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.conf.urls import handler400, handler403, handler404, handler500
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from wagtail.admin import urls as wagtailadmin_urls
@@ -35,13 +35,13 @@ handler400 = "app.views.errors.error_400_view"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("cms/", include(wagtailadmin_urls)),
+    path("cms/admin/", include(wagtailadmin_urls)),
     path("cms/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include("django.contrib.auth.urls")),
     path("ckeditor/", include("django_ckeditor_5.urls")),
     path('robots.txt', include('robots.urls')),
-    path("blog/", include("blog.urls"), name="blog"),
-    path("", include(wagtail_urls)),
-    path("", include("app.urls"), name="app"),
+    re_path(r"cms/", include(wagtail_urls)),
+    re_path(r"blog/", include("blog.urls"), name="blog"),
+    re_path(r"", include("app.urls"), name="app"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

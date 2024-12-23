@@ -26,14 +26,15 @@ urlpatterns = [
     path('sitemap/', views.sitemap_view, name='html_sitemap'),
     path("projects", ProjectListView.as_view(), name="projects"),
     path("projects/new", CreateProjectView.as_view(), name="add_project"),
-    path("projects/<int:pk>", ProjectDetailView.as_view(), name="project_detail"),
+    path("projects/<slug:slug>", ProjectDetailView.as_view(), name="project_detail"),
     path(
-        "projects/update/<int:pk>", UpdateProjectView.as_view(), name="update_project"
+        "projects/update/<slug:slug>", UpdateProjectView.as_view(), name="update_project"
     ),
     path(
-        "projects/delete/<int:pk>", DeleteProjectView.as_view(), name="delete_project"
+        "projects/delete/<slug:slug>", DeleteProjectView.as_view(), name="delete_project"
     ),
-    path("contact", views.contact_view, name="contact"),
+    path("contact", messages.contact_view, name="contact"),
+    path("contact/success", messages.contact_success_view, name="contact_success"),
     path("search/", search.search_view, name="search"),
     path("resume", views.resume_pdf_view, name="resume"),
     path("resume-pdf", views.resume_pdf_view, name="resume_pdf"),

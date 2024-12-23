@@ -29,7 +29,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
     context_object_name = "view"
 
     def form_valid(self, form):
@@ -81,14 +81,14 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
 
 class PostDetailView(DetailView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/post_detail.html"
+    template_name = "blog/blog_post_details.html"
     context_object_name = "post"
 
     def get_queryset(self):
@@ -137,7 +137,7 @@ class PostDetailView(DetailView):
 
 class PostListView(ListView):
     model = BlogPost
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -208,7 +208,7 @@ class PostListView(ListView):
 
 class AuthorPostsView(ListView):
     model = BlogPost
-    template_name = "blog/posts_list.html"
+    template_name = "blog/blog_posts_list.html"
     context_object_name = "articles"
     paginate_by = 6
 
@@ -280,7 +280,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
     form_class = BlogPostForm
     error_class = CustomErrorList
-    template_name = "blog/create_post.html"
+    template_name = "blog/create_blog_post.html"
 
     def form_valid(self, form):
         cover_image = form.files.get("cover_image")
@@ -315,7 +315,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author or self.request.user.is_staff
 
     def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
 
     def form_invalid(self, form, error=None):
         if error:
@@ -331,7 +331,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
     template_name = "blog/deletion/confirm_delete.html"
-    success_url = reverse_lazy("blog:post_list")
+    success_url = reverse_lazy("blog:blog_posts_list")
 
     def delete(self, request, *args, **kwargs):
         post = self.get_object()

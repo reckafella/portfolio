@@ -7,35 +7,36 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField
+from django.utils.timezone import now
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-from django.dispatch import receiver
-from django.db.models.signals import pre_save
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler
+
+
+uploader = CloudinaryImageHandler()
 
 
 def upload_to_cloudinary(instance, filename):
     """
     Upload image to Cloudinary and return Cloudinary ID.
     """
-    if filename:
-        pass
-
     if not instance.cover_image or not instance.cover_image.file:
         return None
-    cloudinary_handler = CloudinaryImageHandler()
 
-    public_id = cloudinary_handler.get_public_id(instance.title)
-    folder = settings.PROJECTS_FOLDER
-    image = instance.cover_image or instance.cover_image.file
+    public_id = uploader.get_public_id(instance.title)
+    folder = settings.POSTS_FOLDER
+    image = instance.cover_image
 
-    response = cloudinary_handler.upload_image(image=image,
-                                               folder=folder,
-                                               public_id=public_id,
-                                               overwrite=True)
+    response = uploader.upload_image(
+        image=image,
+        folder=folder,
+        display_name=instance.title,
+        public_id=public_id,
+        overwrite=True
+    )
     return response["public_id"]
 
 
@@ -53,7 +54,7 @@ class BlogIndexPage(RoutablePageMixin, Page):
 
         # Paginate blog posts
         posts = BlogPostPage.objects.live().order_by("-first_published_at")
-        paginator = Paginator(posts, 9)  # 9 posts per page
+        paginator = Paginator(posts, 6)  # 6 posts per page
         page_number = request.GET.get('page')
 
         try:
@@ -71,25 +72,36 @@ class BlogIndexPage(RoutablePageMixin, Page):
 
 class BlogPostPage(Page):
     author = models.ForeignKey(
-        User, on_delete=models.PROTECT, null=True, blank=True, related_name="blog_posts"
+        User,
+        on_delete=models.PROTECT,
+        null=True, blank=True,
+        related_name="blog_posts"
     )
     content = RichTextField()
-    published = models.BooleanField(default=False)
+    published = models.BooleanField(default=True)
+    post_created_at = models.DateTimeField(auto_now_add=True, null=True)
+    post_updated_at = models.DateTimeField(auto_now=True, null=True)
     topics = models.CharField(
-        max_length=200, default="all", help_text="Comma-separated list of topics"
+        max_length=200,
+        default="all",
+        help_text="Comma-separated list of topics"
     )
     cloudinary_image_id = models.CharField(max_length=200, blank=True, null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
-    cover_image = models.ImageField(
-        upload_to=upload_to_cloudinary, blank=True, null=True, help_text="Cover image for the post"
-    )
+
+    """ cover_image = models.ImageField(
+        upload_to=upload_to_cloudinary,
+        blank=True, null=True,
+        help_text="Cover image for the post"
+    ) 
+     FieldPanel("cover_image"),
+    """
 
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content"),
         FieldPanel("topics"),
-        FieldPanel("cover_image"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),
@@ -106,10 +118,6 @@ class BlogPostPage(Page):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        
-        # upload image
-        if self.cover_image:
-            upload_to_cloudinary(self, self.cover_image.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -118,11 +126,11 @@ class BlogPostPage(Page):
     def get_topics(self):
         return [topic.strip() for topic in self.topics.split(",")]
 
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["author"] = self.author
+        context["post"] = self
+        context["topics"] = self.get_topics()
+        context["date_published"] = self.first_published_at or self.post_created_at
 
-@receiver(pre_save, sender=BlogPostPage)
-def handle_cover_image_upload(sender, instance, **kwargs):
-    """
-    Update cover image if user selects a new one
-    """
-    if instance.cover_image:
-        upload_to_cloudinary(instance, instance.cover_image.name)
+        return context

@@ -1,5 +1,79 @@
+
 <section id="latest-posts" class="py-5">
-    <div class="container d-flex flex-column">
+    <div class="container justify-content-center align-items-center">
+        <div class="text-center mb-3 section-title">
+            <h2 class="text-center">Latest Blog Posts</h2>
+        </div>
+        <div class="row gx-4 gy-4 justify-content-center align-items-center">
+            {% for article in latest_posts %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-black h-100">
+                    <div class="card-header">
+                        <div class="justify-content-between align-items-center d-flex">
+                            <h5 class="card-title fw-bold">
+                                <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                            </h5>
+                            <!-- Icon for Editing -->
+                            {% if user.is_staff %}
+                            <a href="{% url 'blog:update_blog_post' article.slug %}" class="btn btn-link text-decoration-none text-primary">
+                                <i class="bi bi-pencil-square bi-pencil-fill"></i>
+                            </a>
+                            {% endif %} 
+                        </div>
+                        <p class="card-text text-center text-muted">
+                            <small>
+                                By
+                                <a href="{% url 'blog:posts_by_author' article.author.username %}" class="text-success text-decoration-none">
+                                    {% if article.author.first_name and article.author.last_name %}
+                                        {{ article.author.first_name }} {{ article.author.last_name }}
+                                    {% else %}
+                                        {{ article.author.username | capfirst }}
+                                    {% endif %}
+                                </a>
+                                &nbsp; | &nbsp; {{ article.first_published_at | date:"N j, Y" }}
+                            </small>
+                        </p>
+                    </div>
+                    {% if article.optimized_image_url %}
+                    <div class="card-body">
+                        <img src="{{ article.optimized_image_url }}" class="card-img-top" alt="{{ article.title | default:'Post Image' }}" style="object-fit: cover; height: 150px;">
+                    </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <p class="card-text">{{ article.content | safe | truncatechars:50 }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'blog:blog_post_details' article.slug %}" class="btn btn-outline-primary">Read Article</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-11 text-center mb-4 gap-2">
+                <div class="alert alert-danger text-center" role="alert">
+                    <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
+                        <h3 class="alert-heading fw-bold">No articles found!</h3>
+                        {% if user.is_staff %}
+                        <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if latest_posts %}
+        <div class="text-center mt-4">
+            <a href="{% url 'blog:blog_posts_list' %}" class="btn btn-outline-primary">View All Posts</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+
+
+
+{% comment %}
+<section id="latest-posts" class="py-5">
+    <div class="container justify-content-center align-items-center">
         <div class="text-center mb-3 section-title">
             <h2 class="text-center">Latest Blog Posts</h2>
         </div>
@@ -11,11 +85,11 @@
                         <div class="card-header text-center pt-2">
                             <div class="d-flex justify-content-between">
                                 <h5 class="card-title fw-bold">
-                                    <a href="{% url 'blog:post_detail' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                                    <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
                                 </h5>
                                 <!-- Icon for Editing -->
                                  {% if user.is_staff %}
-                                 <a href="{% url 'blog:update_post' article.slug %}" class="btn btn-link text-decoration-none text-primary">
+                                 <a href="{% url 'blog:update_blog_post' article.slug %}" class="btn btn-link text-decoration-none text-primary">
                                     <i class="bi bi-pencil-square bi-pencil-fill"></i>
                                 </a>
                                 {% endif %}
@@ -23,7 +97,7 @@
                             <p class="card-text text-muted">
                                 <small class="text-muted">
                                     By
-                                    <a href="{% url 'blog:author_posts' article.author.username %}" class="text-success text-decoration-none">
+                                    <a href="{% url 'blog:posts_by_author' article.author.username %}" class="text-success text-decoration-none">
                                         {% if article.author.first_name and article.author.last_name %}
                                             {{ article.author.first_name }} {{ article.author.last_name }}
                                         {% else %}
@@ -43,7 +117,7 @@
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="{% url 'blog:post_detail' article.slug %}" class="btn btn-outline-primary">
+                            <a href="{% url 'blog:blog_post_details' article.slug %}" class="btn btn-outline-primary">
                                 <span>Read Article</span>
                             </a>
                         </div>
@@ -55,7 +129,7 @@
                         <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2rem;">
                             <h3 class="alert-heading fw-bold">No articles found!</h3>
                             {% if user.is_staff %}
-                            <a href="{% url 'blog:create_post' %}" class="btn btn-outline-primary">Create Article</a>
+                            <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
                             {% endif %}
                         </div>
                     </div>
@@ -66,8 +140,9 @@
         <!-- If not posts hide this -->
          {% if latest_posts %}
         <div class="text-center mt-4">
-            <a href="{% url 'blog:post_list' %}" class="btn btn-outline-primary">View All Posts</a>
+            <a href="{% url 'blog:blog_posts_list' %}" class="btn btn-outline-primary">View All Posts</a>
         </div>
         {% endif %}
     </div>
 </section>
+{% endcomment %}

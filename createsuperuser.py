@@ -2,6 +2,7 @@
 
 import os
 import django
+from more_itertools import first
 
 
 def create_superuser():
@@ -19,7 +20,9 @@ def create_superuser():
 
     username = os.getenv("DJANGO_SUPERUSER_USERNAME", "ethan")
     password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "@100/Chem")
-    email = os.getenv("DJANGO_SUPERUSER_EMAIL", "ethan@admin.com")
+    email = os.getenv("DJANGO_SUPERUSER_EMAIL", "ethan@gmail.com")
+    first_name = os.getenv("DJANGO_SUPERUSER_FIRST_NAME", "Ethan")
+    last_name = os.getenv("DJANGO_SUPERUSER_LAST_NAME", "Wanyoike")
 
     # Check if credentials are provided
     if not username or not password or not email:
@@ -29,10 +32,18 @@ def create_superuser():
 
     # Create the superuser if it doesn't already exist
     if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username=username, email=email, password=password)
+        User.objects.create_superuser(
+            username=username, email=email, password=password,
+            first_name=first_name, last_name=last_name
+        )
         print(f"Superuser {username} created successfully.")
     else:
-        print(f"Superuser `{username}` already exists.")
+        print(f"Superuser `{username}` already exists. Updating details...")
+        User.objects.filter(username=username).update(
+            email=email, first_name=first_name, last_name=last_name
+        )
+        print(f"Superuser `{username}` details updated successfully.")
+        
 
 
 if __name__ == "__main__":

@@ -42,6 +42,6 @@ urlpatterns = [
     path("ckeditor/", include("django_ckeditor_5.urls")),
     path('robots.txt', include('robots.urls')),
     re_path(r"cms/", include(wagtail_urls)),
-    re_path(r"blog/", include("blog.urls"), name="blog"),
-    re_path(r"", include("app.urls"), name="app"),
+    path(r"blog/", include("blog.urls"), name="blog"),
+    path(r"", include("app.urls"), name="app"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

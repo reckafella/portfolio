@@ -2,7 +2,6 @@
 
 import os
 import django
-from more_itertools import first
 
 
 def create_superuser():

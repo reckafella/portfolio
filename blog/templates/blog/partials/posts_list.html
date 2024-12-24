@@ -1,6 +1,6 @@
 {% for post in articles %}
 <div class="col-lg-5 col-md-6 mb-4">
-    <div class="card bg-white text-black h-100" data-aos="flip-right" data-aos-easing="ease-out-cubic" data-aos-delay="250">
+    <div class="card   h-100" data-aos="flip-right" data-aos-easing="ease-out-cubic" data-aos-delay="250">
         <div class="card-header">
             <p class="card-title fw-bold">
                 <a href="{% url 'blog_post_details' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>

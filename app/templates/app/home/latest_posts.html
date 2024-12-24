@@ -7,12 +7,12 @@
         <div class="row gx-4 gy-4 justify-content-center align-items-center">
             {% for article in latest_posts %}
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <div class="card text-black h-100">
+                <div class="card  h-100">
                     <div class="card-header">
                         <div class="justify-content-between align-items-center d-flex">
-                            <h5 class="card-title fw-bold">
+                            <h3 class="card-title fs-6 fw-semibold text-start">
                                 <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
-                            </h5>
+                            </h3>
                             <!-- Icon for Editing -->
                             {% if user.is_staff %}
                             <a href="{% url 'blog:update_blog_post' article.slug %}" class="btn btn-link text-decoration-none text-primary">
@@ -20,7 +20,7 @@
                             </a>
                             {% endif %} 
                         </div>
-                        <p class="card-text text-center text-muted">
+                        <p class="card-text text-start text-muted">
                             <small>
                                 By
                                 <a href="{% url 'blog:posts_by_author' article.author.username %}" class="text-success text-decoration-none">
@@ -81,7 +81,7 @@
             <div class="row justify-content-center align-items-stretch col-lg-11 g-2 d-flex">
                 {% for article in latest_posts %}
                 <div class="col-lg-4 col-sm-10 col-md-6 mb-2">
-                    <div class="card text-black h-100" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-delay="150">
+                    <div class="card  h-100" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-delay="150">
                         <div class="card-header text-center pt-2">
                             <div class="d-flex justify-content-between">
                                 <h5 class="card-title fw-bold">

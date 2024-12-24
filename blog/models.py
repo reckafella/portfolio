@@ -7,7 +7,6 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField
-from django.utils.timezone import now
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
@@ -78,7 +77,7 @@ class BlogPostPage(Page):
         related_name="blog_posts"
     )
     content = RichTextField()
-    published = models.BooleanField(default=True)
+    published = models.BooleanField(default=False)
     post_created_at = models.DateTimeField(auto_now_add=True, null=True)
     post_updated_at = models.DateTimeField(auto_now=True, null=True)
     topics = models.CharField(

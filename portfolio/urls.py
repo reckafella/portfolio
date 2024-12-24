@@ -41,7 +41,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("ckeditor/", include("django_ckeditor_5.urls")),
     path('robots.txt', include('robots.urls')),
-    re_path(r"cms/", include(wagtail_urls)),
+    path("cms/", include(wagtail_urls)),
     path("blog/", include("blog.urls"), name="blog"),
     path("", include("app.urls"), name="app"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

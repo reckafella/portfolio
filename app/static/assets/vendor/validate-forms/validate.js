@@ -1,10 +1,10 @@
 /**
-* Email Form Validation
+* Form Validation
 */
 (function () {
   "use strict";
 
-  let forms = document.querySelectorAll('.php-email-form');
+  let forms = document.querySelectorAll('.other-form');
 
   forms.forEach( function(e) {
     e.addEventListener('submit', function(event) {
@@ -42,12 +42,12 @@
           displayError(thisForm, 'The reCaptcha javascript API url is not loaded!')
         }
       } else {
-        php_email_form_submit(thisForm, action, formData);
+        _form_submit(thisForm, action, formData);
       }
     });
   });
 
-  function php_email_form_submit(thisForm, action, formData) {
+  function _form_submit(thisForm, action, formData) {
     fetch(action, {
       method: 'POST',
       body: formData,
@@ -79,5 +79,4 @@
     thisForm.querySelector('.error-message').innerHTML = error;
     thisForm.querySelector('.error-message').classList.add('d-block');
   }
-
 })();

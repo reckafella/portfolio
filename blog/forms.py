@@ -1,8 +1,6 @@
 """
 forms to allow users create/update blog posts
 """
-
-from turtle import pu
 from django import forms
 #from wagtail.admin.rich_text import DraftailRichTextArea
 from wagtail.blocks import RichTextBlock

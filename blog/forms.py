@@ -2,6 +2,7 @@
 forms to allow users create/update blog posts
 """
 
+from turtle import pu
 from django import forms
 #from wagtail.admin.rich_text import DraftailRichTextArea
 from wagtail.blocks import RichTextBlock
@@ -39,6 +40,12 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
         help_text="Upload an image to be used as the cover image for this article",
     )
+    published = forms.BooleanField(
+        label="Publish Article",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        help_text="Check this box to publish the article",
+    )
 
     class Meta:
         model = BlogPostPage
@@ -52,6 +59,15 @@ class BlogPostForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get("title")
+        content = cleaned_data.get("content")
+        topics = cleaned_data.get("topics")
+        if not title or not content or not topics:
+            raise forms.ValidationError("Please fill in all required fields")
+        return cleaned_data
 
 
 class BlogPostAdminForm(forms.ModelForm):
@@ -96,3 +112,12 @@ class BlogPostAdminForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get("title")
+        content = cleaned_data.get("content")
+        topics = cleaned_data.get("topics")
+        if not title or not content or not topics:
+            raise forms.ValidationError("Please fill in all required fields")
+        return cleaned_data

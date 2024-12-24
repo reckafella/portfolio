@@ -1314,18 +1314,18 @@ section,
   color: var(--contrast-color);
 }
 
-.contact .contact-form {
+.contact .contact-form, .other .other-form {
   box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 90%);
   padding: 30px;
 }
 
 @media (max-width: 575px) {
-  .contact .contact-form {
+  .contact .contact-form, .other .other-form {
     padding: 20px;
   }
 }
 
-.contact .contact-form .error-message {
+.contact .contact-form .error-message, .other .other-form .error-message {
   display: none;
   background: #df1529;
   color: #ffffff;
@@ -1335,7 +1335,7 @@ section,
   font-weight: 600;
 }
 
-.contact .contact-form .sent-message {
+.contact .contact-form .sent-message, .other .other-form .sent-message {
   display: none;
   color: #ffffff;
   background: #059652;
@@ -1345,7 +1345,7 @@ section,
   font-weight: 600;
 }
 
-.contact .contact-form .loading {
+.contact .contact-form .loading, .other .other-form .loading {
   display: none;
   background: var(--background-color);
   text-align: center;
@@ -1353,7 +1353,7 @@ section,
   margin-bottom: 24px;
 }
 
-.contact .contact-form .loading:before {
+.contact .contact-form .loading:before, .other .other-form .loading:before {
   content: "";
   display: inline-block;
   border-radius: 50%;
@@ -1367,14 +1367,10 @@ section,
 
 .contact .contact-form input[type=text],
 .contact .contact-form input[type=email],
-.contact .contact-form input[type=tel],
-.contact .contact-form input[type=number],
-.contact .contact-form input[type=date],
-.contact .contact-form input[type=time],
-.contact .contact-form input[type=password],
-.contact .contact-form input[type=url],
-.contact .contact-form input,
-.contact .contact-form textarea {
+.contact .contact-form textarea,
+.other .other-form input[type=text],
+.other .other-form input[type=email],
+.other .other-form textarea {
   font-size: 14px;
   padding: 10px 15px;
   box-shadow: none;
@@ -1386,32 +1382,25 @@ section,
 
 .contact .contact-form input[type=text]:focus,
 .contact .contact-form input[type=email]:focus,
-.contact .contact-form input[type=tel]:focus,
-.contact .contact-form input[type=number]:focus,
-.contact .contact-form input[type=date]:focus,
-.contact .contact-form input[type=time]:focus,
-.contact .contact-form input[type=password]:focus,
-.contact .contact-form input[type=url]:focus,
-.contact .contact-form input:focus,
-.contact .contact-form textarea:focus {
+.contact .contact-form textarea:focus
+.other .other-form input[type=text]:focus,
+.other .other-form input[type=email]:focus,
+.other .other-form textarea:focus {
   border-color: var(--accent-color);
 }
 
 .contact .contact-form input[type=text]::placeholder,
 .contact .contact-form input[type=email]::placeholder,
-.contact .contact-form input[type=tel]::placeholder,
-.contact .contact-form input[type=number]::placeholder,
-.contact .contact-form input[type=date]::placeholder,
-.contact .contact-form input[type=time]::placeholder,
-.contact .contact-form input[type=password]::placeholder,
-.contact .contact-form input[type=url]::placeholder,
-.contact .contact-form input::placeholder,
-.contact .contact-form textarea::placeholder {
+.contact .contact-form textarea::placeholder,
+.other .other-form input[type=text]::placeholder,
+.other .other-form input[type=email]::placeholder,
+.other .other-form textarea::placeholder {
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
 
-.contact .contact-form button[type=submit], .contact .contact-form input[type=submit] {
+.contact .contact-form button[type=submit],
+.other .other-form button[type=submit] {
   color: var(--contrast-color);
   background: var(--accent-color);
   border: 0;
@@ -1431,7 +1420,8 @@ section,
 
 
 .search-submit:hover,
-.contact .contact-form button[type=submit]:hover {
+.contact .contact-form button[type=submit]:hover,
+.other .other-form button[type=submit]:hover {
   background: color-mix(in srgb, var(#fff), transparent 20%);
 }
 

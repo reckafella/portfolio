@@ -9,10 +9,10 @@
                 <div class="col-lg-4 col-md-6 col-sm-10 mb-2">
                     <div class="card h-100 d-flex justify-content-center">
                         <div class="card-header justify-content-between d-flex">
-                            <h5 class="card-title fw-bold">
+                            <h3 class="card-title fs-6 fw-semibold text-start">
                                 <a href="{% url 'app:project_detail' project.slug %}" class="text-decoration-none text-success">{{ project.title }}
                                 </a>
-                            </h5>
+                            </h3>
                             <!-- Icon for editing -->
                             {% if user.is_staff  %}
                             <a href="{% url 'app:update_project' project.slug %}" class="btn btn-link text-decoration-none text-primary">

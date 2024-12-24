@@ -141,7 +141,7 @@ class ProjectsForm(forms.ModelForm):
     )
     project_url = forms.URLField(
         label="Project URL",
-        required=False,
+        required=True,
         validators=[URLValidator()],
         widget=forms.URLInput(attrs={"class": "form-control"}),
         help_text="URL to the Project",

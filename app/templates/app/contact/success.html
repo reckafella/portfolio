@@ -1,38 +1,17 @@
-<!-- This template is rendered when a user has successfully sent a message -->
-<!-- It is a simple template that displays a success message -->
-<!-- It is a good practice to provide feedback to users when they perform an action -->
-<!-- This template is similar to the contact form template -->
-<!-- The difference is that this template does not have a form -->
-<!-- It only displays a success message -->
-<!-- The success message is passed to the template from the view -->
-<!-- The success message is displayed in a card -->
-<!-- The card has a title and a message -->
-<!-- The title is the page title -->
-<!-- The message is the success message -->
-<!-- The card is styled with Bootstrap classes -->
-<!-- The card has a light background and dark text -->
-<!-- The card has a padding of 2 -->
-<!-- The card has a margin of 2 -->
-<!-- The card has a border with a success color -->
-<!-- The card has a header with a light background and a border with a success color -->
-<!-- The header has a title -->
-<!-- The title is centered and bold -->
-<!-- The title has a margin of 0 -->
-
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %} {{ page_title }} {% endblock %}
 
 {% block content %}
 <section id="section contact" class="mt-5 section section-bg contact"
-style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+style="background-image: url('https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73');">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-sm-10 col-md-9">
-                <div class="card bg-light text-dark p-2" data-aos="fade-up" data-aos-delay="200">
+                <div class="card   p-2" data-aos="fade-up" data-aos-delay="200">
                     <div class="card-header bg-transparent border-success">
                         <div class="section-title mb-0 alert alert-success" role="alert">
-                            <h2 class="text-center text-black fw-bold mb-0" data-aos="fade-up">{{ page_title }}</h2>
+                            <h2 class="text-center  fw-bold mb-0" data-aos="fade-up">{{ page_title }}</h2>
                         </div>
                     </div>
                     <div class="card-body">

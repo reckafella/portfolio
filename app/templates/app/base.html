@@ -165,11 +165,12 @@
                     <i class="bi bi-box-arrow-up-right ms-2"></i>
                 </a>
             </div>
-
+            {% comment %} 
             {% if user.is_staff %}
             {# Wagtail User Bar #}
             {% wagtailuserbar 'bottom-left' %}
             {% endif %}
+            {% endcomment %}
         </div>
     </footer>
 

@@ -32,4 +32,4 @@ class ProjectsSitemap(Sitemap):
         return Projects.objects.all()
 
     def lastmod(self, obj):
-        return obj.updated_at
+        return obj.updated_at or obj.created_at

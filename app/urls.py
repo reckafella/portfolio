@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.sitemaps.views import sitemap
 
 from app.views.views import CustomRedirectView
-from app.views.sitemap import BlogPostSitemap, WagtailSitemap
+from app.views.sitemap import BlogPostSitemap, ProjectsSitemap, WagtailSitemap
 from app.views import auth, messages, search, views
 from app.views.projects.create import CreateProjectView
 from app.views.projects.delete import DeleteProjectView
@@ -44,6 +44,7 @@ urlpatterns = [
 
 sitemaps = {
     'blog_posts': BlogPostSitemap,
+    'projects': ProjectsSitemap,
     'pages': WagtailSitemap,
 }
 

@@ -15,7 +15,7 @@ def home_view(request):
     """View to render the home page"""
     n = 4
     featured_projects = Projects.objects.all()[:n]
-    recent_posts = BlogPost.objects.all().order_by("-first_published_at")[:n]
+    recent_posts = BlogPost.objects.live().order_by("-first_published_at")[:n]
 
     context = {
         "featured_projects": featured_projects,

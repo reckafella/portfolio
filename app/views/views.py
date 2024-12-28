@@ -57,10 +57,12 @@ def resume_pdf_view(request):
 
 def sitemap_view(request):
     pages = Page.objects.live().specific()
+    projects = Projects.objects.all()
     blog_posts = BlogPostPage.objects.live().order_by('-first_published_at')
     
     context = {
         'pages': pages,
+        'projects': projects,
         'blog_posts': blog_posts,
     }
     return render(request, 'app/sitemaps/sitemap.html', context)

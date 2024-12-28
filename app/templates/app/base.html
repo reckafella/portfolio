@@ -138,7 +138,7 @@
     </main>
 
     <footer id="footer" class="footer mt-auto py-3">
-        <div class="container container-fluid container-xl">
+        <div class="container container-fluid container-xl p-3">
             <div class="copyright text-center">
                 <p>
                     <span>All Rights Reserved</span>
@@ -154,17 +154,34 @@
                 <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
                 <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
             </div>
-            <!-- site map -->
-            <div class="sitemap row d-flex">
-                <a href="{% url 'app:sitemap' %}" target="_blank" class="text-white text-center">Sitemap</a>
-            </div>
-            <div class="credits">
+            <div>
+              <!-- site map -->
+              <div
+                class="sitemap row d-flex g-1 gap-2">
+                <a href="{% url 'app:sitemap' %}"
+                  target="_blank"
+                  class="text-white text-center">
+                    Sitemap.xml
+                </a>
+                <a href="{% url 'app:html_sitemap' %}"
+                  target="_blank"
+                  class="text-white text-center">
+                    Sitemaps
+               </a>
+             </div>
+             <div class="credits">
                 Styled using
-                <a class="text-start" href="https://getbootstrap.com/" target="_blank">
-                    <span class="text-white kalam-bold">Bootstrap 5</span>
-                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+               <a class="text-start" target="_blank"
+                 href="https://getbootstrap.com/">
+                 <span class="text-white
+                   pacifico-regular">
+                   Bootstrap
+                 </span>
+                 <i class="bi bi-box-arrow-up-right
+                   ms-2"></i>
                 </a>
             </div>
+          </div>
             {% comment %} 
             {% if user.is_staff %}
             {# Wagtail User Bar #}

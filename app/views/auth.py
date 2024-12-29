@@ -130,24 +130,29 @@ def login_view(request):
 @login_required
 def logout_view(request):
     """View to handle user logout"""
+    # Store user type before logout since request.user will be Anonymous after logout
+    is_staff_user = request.user.is_staff and hasattr(request.user, 'is_staff')
+    
+    # Perform logout
     logout(request)
+    
     success_message = "Successfully logged out. See you next time!"
-    if request.user.is_staff and hasattr(request.user, is_staff):
+    
+    # Determine redirect URL
+    if is_staff_user:
         redirect_url = reverse("app:login")
     else:
         redirect_url = reverse("app:home")
 
     if is_ajax(request):
-        return JsonResponse(
-            {
-                "success": True,
-                "message": success_message,
-                "redirect_url": redirect_url,
-            }
-        )
+        return JsonResponse({
+            "success": True,
+            "message": success_message,
+            "redirect_url": redirect_url,
+        })
+    
     messages.success(request, success_message)
-    return redirect("app:home")
-
+    return redirect(redirect_url) 
 
 def csrf_failure(request, reason=""):
     """View to handle CSRF failures"""

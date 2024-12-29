@@ -38,7 +38,6 @@ urlpatterns = [
     path("cms/admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("ckeditor/", include("djanlll
     path('robots.txt', include('robots.urls')),
     path("cms/", include(wagtail_urls)),
     path("blog/", include("blog.urls"), name="blog"),

@@ -242,9 +242,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# LOGIN REDIRECT URL
+LOGIN_REDIRECT_URL = "home"
+LOGIN_URL = "/login"
+LOGOUT_REDIRECT_URL = "/"
+LOGOUT_URL = "/logout"
+APPEND_SLASH = True
+
 
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = "Ethan Muthoni"
+WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
 WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
 WAGTAILDOCS_EXTENSIONS = [
     'csv',
@@ -286,12 +294,6 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# LOGIN REDIRECT URL
-LOGIN_REDIRECT_URL = "home"
-LOGIN_URL = "/login"
-LOGOUT_REDIRECT_URL = "/"
-LOGOUT_URL = "/logout"
-APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 

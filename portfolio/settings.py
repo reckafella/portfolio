@@ -152,41 +152,6 @@ else:
     POSTS_FOLDER = "portfolio/posts/dev"
 
 
-# CKEditor Config
-CKEDITOR_5_UPLOAD_PATH = "uploads/"
-CKEDITOR_5_IMAGE_BACKEND = "pillow"
-CKEDITOR_5_IMAGE_QUALITY = 90
-CKEDITOR_5_CONFIGS = {
-    "default": {
-        "toolbar": "Custom",
-        "toolbar_Custom": [
-            {
-                "name": "basicstyles",
-                "items": ["Bold", "Italic", "Underline", "Strike", "RemoveFormat"],
-            },
-            {
-                "name": "paragraph",
-                "items": ["NumberedList", "BulletedList", "-", "Blockquote"],
-            },
-            {"name": "links", "items": ["Link", "Unlink"]},
-            {"name": "styles", "items": ["Format", "Styles"]},
-            {"name": "colors", "items": ["TextColor", "BGColor"]},
-            {"name": "tools", "items": ["Maximize"]},
-            {"name": "editing", "items": ["Scayt"]},
-            {"name": "document", "items": ["Source"]},
-        ],
-        "width": "100%",
-        "extraPlugins": ",".join(
-            [
-                "uploadimage",
-                "autolink",
-                "image2",
-            ]
-        ),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -292,7 +257,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-if not DEBUG:
+if (ENVIRONMENT == 'production' and not DEBUG):
     CSRF_COOKIE_SECURE: bool = True
     SESSION_COOKIE_SECURE: bool = True
     SECURE_SSL_REDIRECT: bool = True

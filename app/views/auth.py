@@ -132,12 +132,17 @@ def logout_view(request):
     """View to handle user logout"""
     logout(request)
     success_message = "Successfully logged out. See you next time!"
+    if request.user.is_staff and hasattr(request.user, is_staff):
+        redirect_url = reverse("app:login")
+    else:
+        redirect_url = reverse("app:home")
+
     if is_ajax(request):
         return JsonResponse(
             {
                 "success": True,
                 "message": success_message,
-                "redirect_url": reverse("app:home"),
+                "redirect_url": redirect_url,
             }
         )
     messages.success(request, success_message)

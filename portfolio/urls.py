@@ -40,7 +40,7 @@ urlpatterns = [
     path("cms/admin/", include(wagtailadmin_urls)),
     path("cms/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("documents/", include(wagtaildocs_urls)),
-    path("accounts/", include("django_auth_urls")),
+    path("accounts/", include(django_auth_urls)),
     path('robots.txt', include('robots.urls')),
     path("cms/", include(wagtail_urls)),
     path("blog/", include("blog.urls"), name="blog"),

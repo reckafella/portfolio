@@ -24,7 +24,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from app.views.views import CustomRedirectView
+#from app.views.views import CustomRedirectView
 
 # Error handling
 handler404 = "app.views.errors.error_404_view"
@@ -35,12 +35,10 @@ handler400 = "app.views.errors.error_400_view"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("cms/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("cms/admin/", include(wagtailadmin_urls)),
-    path("cms/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("ckeditor/", include("django_ckeditor_5.urls")),
+    path("ckeditor/", include("djanlll
     path('robots.txt', include('robots.urls')),
     path("cms/", include(wagtail_urls)),
     path("blog/", include("blog.urls"), name="blog"),

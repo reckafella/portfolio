@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "corsheaders",
-    "django_ckeditor_5",
     "app",
     "blog",
     'robots',

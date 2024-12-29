@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.conf.urls import handler400, handler403, handler404, handler500
 from django.contrib import admin
+import django.contrib.auth.urls as django_auth_urls
 from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -24,7 +25,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-#from app.views.views import CustomRedirectView
+from app.views.views import CustomRedirectView
 
 # Error handling
 handler404 = "app.views.errors.error_404_view"
@@ -35,9 +36,11 @@ handler400 = "app.views.errors.error_400_view"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("cms/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("cms/admin/", include(wagtailadmin_urls)),
+    path("cms/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("documents/", include(wagtaildocs_urls)),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("django_auth_urls")),
     path('robots.txt', include('robots.urls')),
     path("cms/", include(wagtail_urls)),
     path("blog/", include("blog.urls"), name="blog"),

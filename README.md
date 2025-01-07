@@ -103,6 +103,8 @@ This project is a personal portfolio website that highlights my skills, projects
 
 - Wagtail admin panel is available at <http://127.0.0.1:8000/cms/admin/>
 
+- **Note: My website is available at <https://rohn.live> or <https://ethanmuthoni.me>**
+
 ## Project Structure
 
 ```markdown

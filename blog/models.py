@@ -1,5 +1,5 @@
 """
-this is the model for the blog post and it uses wagtail
+this is the model for the blog post using wagtail cms
 """
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -11,33 +11,6 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-
-from app.views.helpers.cloudinary import CloudinaryImageHandler
-
-
-uploader = CloudinaryImageHandler()
-
-
-def upload_to_cloudinary(instance, filename):
-    """
-    Upload image to Cloudinary and return Cloudinary ID.
-    """
-    if not instance.cover_image or not instance.cover_image.file:
-        return None
-
-    public_id = uploader.get_public_id(instance.title)
-    folder = settings.POSTS_FOLDER
-    image = instance.cover_image
-
-    response = uploader.upload_image(
-        image=image,
-        folder=folder,
-        display_name=instance.title,
-        public_id=public_id,
-        overwrite=True
-    )
-    return response["public_id"]
-
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -89,14 +62,6 @@ class BlogPostPage(Page):
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
 
-    """ cover_image = models.ImageField(
-        upload_to=upload_to_cloudinary,
-        blank=True, null=True,
-        help_text="Cover image for the post"
-    ) 
-     FieldPanel("cover_image"),
-    """
-
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content"),
@@ -107,7 +72,7 @@ class BlogPostPage(Page):
                 FieldPanel("cloudinary_image_url", read_only=True),
                 FieldPanel("optimized_image_url", read_only=True),
             ],
-            heading="Cloudinary Image Details",
+            heading="Cloudinary Image Details - Readonly",
         )
     ]
 

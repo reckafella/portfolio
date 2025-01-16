@@ -1,84 +1,92 @@
-from multiprocessing import context
+from django.views.generic import FormView, TemplateView, ListView
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-
+from django.contrib.auth.mixins import UserPassesTestMixin
 from app.models import Message
-from app.views.helpers.helpers import is_ajax
-from app.forms import ContactForm
+from app.forms.contact import ContactForm
+from captcha.helpers import captcha_image_url
+from django.core.exceptions import PermissionDenied
 
+class ContactView(FormView):
+    template_name = "app/contact/contact.html"
+    form_class = ContactForm
+    success_url = reverse_lazy('app:contact_success')
 
-def contact_view(request):
-    """View to render the contact page"""
-    form = ContactForm()
-    if request.method == "POST":
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data.get("name")
-            email = form.cleaned_data.get("email")
-            subject = form.cleaned_data.get("subject")
-            message = form.cleaned_data.get("message")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "page_title": "Contact",
+            "submit_text": "Send Message"
+        })
+        return context
 
-            if name and subject and email and message:
+    def form_valid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:
                 form.save()
                 message_data = {
-                    "name": name,
-                    "email": email,
-                    "subject": subject,
-                    "message": message,
+                    "name": form.cleaned_data.get("name"),
+                    "email": form.cleaned_data.get("email"),
+                    "subject": form.cleaned_data.get("subject"),
+                    "message": form.cleaned_data.get("message"),
                 }
-                response = {
+                return JsonResponse({
                     "success": True,
-                    'redirect_url': reverse_lazy('app:contact_success'),
+                    "redirect_url": self.success_url,
                     "message": "Message sent successfully",
                     "message_data": message_data
-                }
-
-            else:
-                response = {
+                })
+            except Exception as e:
+                return JsonResponse({
                     "success": False,
-                    "errors": "All fields are required"
+                    "errors": str(e)
+                })
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                "success": False,
+                "errors": form.errors
+            })
+        return super().form_invalid(form)
+
+class ContactSuccessView(TemplateView):
+    template_name = "app/contact/success.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Message Sent"
+        return context
+
+class MessagesView(UserPassesTestMixin, ListView):
+    model = Message
+    template_name = "app/messages.html"
+    context_object_name = "messages"
+    ordering = ["-created_at"]
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def handle_no_permission(self):
+        raise PermissionDenied
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Messages"
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            messages = self.get_queryset()
+            html = render_to_string(
+                self.template_name,
+                {
+                    "messages": messages,
+                    "page_title": "Messages"
                 }
+            )
+            return JsonResponse({"success": True, "html": html})
+        return super().get(request, *args, **kwargs)
 
-            if is_ajax(request):
-                return JsonResponse(response, status=200)
-    else:
-        form = ContactForm()
-
-    context = {"form": form, "page_title": "Contact", "submit_text": "Send Message"}
-    return render(
-        request=request,
-        template_name="app/contact/contact.html",
-        context=context, status=200
-    )
-
-
-def contact_success_view(request):
-    """View to render the contact success page"""
-    context = {
-        "page_title": "Message Sent"
-    }
-
-    return render(
-        request=request,
-        template_name="app/contact/success.html",
-        context=context,
-        status=200
-    )
-
-
-def view_messages(request):
-    """View to render the messages page"""
-    if not request.user.is_staff:
-        return render(request, "app/errors/403.html", status=404)
-
-    messages = Message.objects.all().order_by("-created_at")
-    if is_ajax(request):
-        messages_html = render_to_string(
-            "app/messages.html", {"messages": messages, "page_title": "Messages"}
-        )
-        return JsonResponse({"success": True, "html": messages_html})
-
-    context = {"messages": messages, "page_title": "Messages"}
-    return render(request, "app/messages.html", context)

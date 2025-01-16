@@ -3,7 +3,9 @@ from django.contrib.sitemaps.views import sitemap
 
 from app.views.views import CustomRedirectView
 from app.views.sitemap import BlogPostSitemap, ProjectsSitemap, WagtailSitemap
-from app.views import auth, messages, search, views
+from app.views import search, views
+from app.views.auth import SignupView, LoginView, LogoutView
+from app.views.messages import MessagesView, ContactSuccessView, ContactView
 from app.views.projects.create import CreateProjectView
 from app.views.projects.delete import DeleteProjectView
 from app.views.projects.list_and_details import ProjectDetailView, ProjectListView
@@ -19,26 +21,26 @@ urlpatterns = [
     path("accounts/login", CustomRedirectView.as_view(redirect_to="/login/", permanent=True)),
     path("accounts/logout", CustomRedirectView.as_view(redirect_to="/logout/", permanent=True)),
     path("", views.home_view, name="home"),
-    path("login", auth.login_view, name="login"),
-    path("signup", auth.signup_view, name="signup"),
-    path("logout", auth.logout_view, name="logout"),
+    path("login", LoginView.as_view(), name="login"),
+    path("signup", SignupView.as_view(), name="signup"),
+    path("logout", LogoutView.as_view(), name="logout"),
     path("about", views.about_view, name="about"),
     path('sitemap/', views.sitemap_view, name='html_sitemap'),
     path("projects", ProjectListView.as_view(), name="projects"),
     path("projects/new", CreateProjectView.as_view(), name="add_project"),
     path("projects/<slug:slug>", ProjectDetailView.as_view(), name="project_detail"),
     path(
-        "projects/update/<slug:slug>", UpdateProjectView.as_view(), name="update_project"
+        "projects/<slug:slug>/update", UpdateProjectView.as_view(), name="update_project"
     ),
     path(
-        "projects/delete/<slug:slug>", DeleteProjectView.as_view(), name="delete_project"
+        "projects/<slug:slug>/delete", DeleteProjectView.as_view(), name="delete_project"
     ),
-    path("contact", messages.contact_view, name="contact"),
-    path("contact/success", messages.contact_success_view, name="contact_success"),
+    path("contact", ContactView.as_view(), name="contact"),
+    path("contact/success", ContactSuccessView.as_view(), name="contact_success"),
+    path("messages", MessagesView.as_view(), name="messages"),
     path("search/", search.search_view, name="search"),
     path("resume", views.resume_pdf_view, name="resume"),
     path("resume-pdf", views.resume_pdf_view, name="resume_pdf"),
-    path("messages", messages.view_messages, name="messages"),
 ]
 
 

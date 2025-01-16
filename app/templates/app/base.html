@@ -63,7 +63,7 @@
                             <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Create Project</span></a></li>
                             <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
                             <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            <li><a href="/cms/admin" class="text-start"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="/wagtail/admin/" class="text-start" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
                             <li><a href="{% url 'app:logout' %}" class="text-start"><span>Logout</span></a></li>
@@ -125,12 +125,15 @@
                 <div class="toast-header d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center justify-content-around">
                         <i id="toastIcon" class="me-2"></i>
-                        <strong id="toastTitle" class=" me-auto me-2">Notification</strong>
+                        <strong id="toastTitle" class="me-auto me-2">Notification</strong>
                     </div>
-                <small id="alert-time" class="text-muted text-body-secondary">Just now</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <small id="alert-time" class="text-muted text-body-secondary">Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
-                <div id="toastBody" class="toast-body"></div>
+                <div id="toastBody" class="toast-body">
+                    <p id="toastMessage" class="mb-1"></p>
+                    <ul id="toastErrors" class="mb-0 ps-3"></ul>
+                </div>
             </div>
         </div>
         {% block content %}
@@ -209,10 +212,11 @@
 
     <!-- Main & Forms JS Files -->
     <script src="{% static 'assets/js/main.js' %}"></script>
-    <script src="{% static 'assets/js/forms.js' %}"></script>
+    <script type="module" src="{% static 'assets/js/toast.js' %}"></script>
     <script src="{% static 'assets/js/more_less.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
-
+    <script type="module" src="{% static 'assets/js/form-validator.js' %}"></script>
+    
     <!-- Form data validation -->
      {% block extra_js %} {% endblock %}
     {% comment %}<script src="{% static 'assets/js/input-validator.js' %}"></script>{% endcomment %}

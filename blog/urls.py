@@ -2,7 +2,7 @@ from django.urls import path
 from blog.views.create import CreatePostView
 from blog.views.delete import DeletePostView
 from blog.views.details import PostDetailView
-from blog.views.list import AuthorPostsView, PostListView
+from blog.views.list import AuthorPostsView, PostListView, TopicPostsView
 from blog.views.update import UpdatePostView
 
 app_name = "blog"
@@ -14,4 +14,5 @@ urlpatterns = [
     path("post/<slug:slug>/update", UpdatePostView.as_view(), name="update_blog_post"),
     path("post/<slug:slug>/delete", DeletePostView.as_view(), name="delete_blog_post"),
     path("authors/<str:username>", AuthorPostsView.as_view(), name="posts_by_author"),
+    path("topics/<str:topic>", TopicPostsView.as_view(), name="posts_by_topic"),
 ]

@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 from titlecase import titlecase
 
-from app.forms import CustomErrorList
+from app.forms.errors import CustomErrorList
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, return_response
 from blog.forms import BlogPostForm

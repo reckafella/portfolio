@@ -6,7 +6,8 @@ from django.views.generic import UpdateView
 from django.utils.text import slugify
 from titlecase import titlecase
 
-from app.forms import CustomErrorList, ProjectsForm
+from app.forms.errors import CustomErrorList
+from app.forms.projects import ProjectsForm
 from app.models import Projects
 from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, is_ajax, return_response

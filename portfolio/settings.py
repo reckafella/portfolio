@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "app",
     "blog",
     'robots',
+    'captcha',
 ]
 
 # Wagtail related apps
@@ -82,7 +83,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware"
 ]
 
 # "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware", - removed because of wagtail failing to load
@@ -294,9 +295,5 @@ ERROR_403: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_aut
 ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"
 
 
-# check if the code is running in windows or linux and use python3.exe or python3
-import platform
-if platform.system() == 'Windows':
-    PYTHON_EXECUTABLE = 'python3.exe'
-else:
-    PYTHON_EXECUTABLE = 'python3'
+# captcha settings
+CAPTCHA_CHALLENGE_FUNCT = 'app.views.helpers.math_challenge.math_challenge'

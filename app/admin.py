@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from app.forms import ContactFormAdminForm, ProjectsAdmin
+from app.forms.contact import ContactFormAdminForm
+from app.forms.projects import ProjectsAdmin
 from app.models import Message, Projects
 
 admin.site.register(Projects, ProjectsAdmin)

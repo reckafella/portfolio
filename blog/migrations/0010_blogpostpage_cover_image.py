@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blogpostpage',
             name='cover_image',
-            field=models.ImageField(blank=True, help_text='Cover image for the post', null=True, upload_to=blog.models.upload_to_cloudinary),
+            field=models.ImageField(blank=True, help_text='Cover image for the post', null=True),
         ),
     ]

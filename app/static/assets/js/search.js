@@ -78,10 +78,10 @@ document.addEventListener('DOMContentLoaded', function() {
           projectsTabContainer.style.display = 'block';
       }
   }
-
-  categorySelect.addEventListener('change', updateTabs);
-  updateTabs();
-
+  if (categorySelect) {
+    categorySelect.addEventListener('change', updateTabs);updateTabs();
+  }
+  
   var triggerTabList = [].slice.call(document.querySelectorAll('#searchTabs button'));
   triggerTabList.forEach(function (triggerEl) {
       var tabTrigger = new bootstrap.Tab(triggerEl);

@@ -19,18 +19,18 @@ class PostDetailView(DetailView):
 
         # If user is not authenticated, show only published posts
         if not self.request.user.is_authenticated:
-            queryset = queryset.filter(published=True)
+            queryset = queryset.filter(live=True)
 
         # If user is authenticated but not the author or staff
         elif not self.request.user.is_staff:
-            queryset = queryset.filter(Q(published=True) | Q(author=self.request.user))
+            queryset = queryset.filter(Q(live=True) | Q(author=self.request.user))
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.get_object()
 
-        # Only show other posts by the same author if:
+        # Only show other (unpublished) posts by the same author if:
         # 1. The post is published, OR
         # 2. The current user is the author, OR
         # 3. The current user is staff
@@ -41,12 +41,12 @@ class PostDetailView(DetailView):
         )
 
         if can_view_other_posts:
-            query = Q(author=post.author) & ~Q(id=post.id) & Q(published=True)
+            query = Q(author=post.author) & ~Q(id=post.id) & Q(live=True)
             if self.request.user.is_authenticated:
                 query |= Q(author=self.request.user)
             if self.request.user.is_authenticated and self.request.user.is_staff:
                 # Assuming unpublished posts should be visible to staff
-                query |= Q(published=False)
+                query |= Q(live=False)
 
             context["other_posts"] = (
                 BlogPostPage.objects.filter(query)

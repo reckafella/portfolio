@@ -1,7 +1,7 @@
 from django.views.generic import DetailView, ListView
 
 from app.models import Projects
-from app.forms import ProjectsForm
+from app.forms.projects import ProjectsForm
 
 
 class ProjectListView(ListView):

@@ -26,6 +26,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView
+from app.views.refresh_captcha import CaptchaRefreshView
 
 # Error handling
 handler404 = "app.views.errors.error_404_view"
@@ -36,13 +37,15 @@ handler400 = "app.views.errors.error_400_view"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("cms/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
-    path("cms/admin/", include(wagtailadmin_urls)),
-    path("cms/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include(django_auth_urls)),
-    path('robots.txt', include('robots.urls')),
-    path("cms/", include(wagtail_urls)),
-    path("blog/", include("blog.urls"), name="blog"),
+    path("robots.txt", include('robots.urls')),
+    re_path("wagtail/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
+    re_path("wagtail/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
+    re_path("wagtail/admin/", include(wagtailadmin_urls)),
+    re_path("wagtail/", include(wagtail_urls)),
+    path("blog", include("blog.urls"), name="blog"),
+    path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
+    path("captcha/", include("captcha.urls")),
     path("", include("app.urls"), name="app"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -8,7 +8,7 @@ from django.core.validators import (
     MaxLengthValidator,
     URLValidator,
 )
-from wagtail.blocks import RichTextBlock
+from captcha.fields import CaptchaField, CaptchaTextInput
 
 from app.models import Message, Projects
 
@@ -34,6 +34,8 @@ class LoginForm(forms.Form):
         ),
         help_text="Password must be at least 8 characters long",
     )
+
+    captcha = CaptchaField()
 
 
 class SignupForm(UserCreationForm):
@@ -93,6 +95,8 @@ class SignupForm(UserCreationForm):
         help_text="Password must be at least 8 characters long",
     )
 
+    captcha = CaptchaField()
+
     class Meta:
         model = User
         fields = [
@@ -102,6 +106,7 @@ class SignupForm(UserCreationForm):
             "email",
             "password1",
             "password2",
+            "captcha",
         ]
 
     def clean(self):
@@ -153,9 +158,11 @@ class ProjectsForm(forms.ModelForm):
         help_text="Upload an image for your project (jpg, jpeg, png, gif, webp)",
     )
 
+    captcha = CaptchaField()
+
     class Meta:
         model = Projects
-        fields = ["title", "description", "project_url", "image"]
+        fields = ["title", "description", "project_url", "image", "captcha"]
 
 
 class ContactForm(forms.Form):
@@ -182,6 +189,12 @@ class ContactForm(forms.Form):
         label="Message",
         widget=forms.Textarea(attrs={"class": "form-control focus-ring"}),
         help_text="Enter your message here",
+    )
+
+    captcha = CaptchaField(
+        label="Captcha",
+        help_text="Enter the characters shown in the image",
+        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
     )
 
     def clean(self):

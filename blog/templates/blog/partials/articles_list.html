@@ -3,8 +3,16 @@
     <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="card  h-100">
             <div class="card-header text-center pt-2">
-                <h5 class="card-title fw-bold">
+                <h5 class="card-title fw-bold {% if user.is_staff or user == article.author %} d-flex justify-content-between align-items-center {% endif %}">
                     <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                    {% comment %} indicate whether the article is published or not. only for staff/author {% endcomment %}
+                    {% if user.is_staff or user == article.author %}
+                        {% if article.is_live %}
+                            <span class="badge bg-success">Published</span>
+                        {% else %}
+                            <span class="badge bg-danger">Draft</span>
+                        {% endif %}
+                    {% endif %}
                 </h5>
                 <p class="card-text text-muted">
                     <small>

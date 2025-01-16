@@ -316,3 +316,13 @@ CAPTCHA_BACKGROUND_COLOR = '#fff'
 CAPTCHA_OUTPUT_FORMAT = 'png'
 CAPTCHA_IMAGE_BEFORE_FIELD = True
 CAPTCHA_REFRESH_CHALLENGE = True
+
+""" Session settings """
+# Browser session timeout (when user closes browser)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
+SESSION_COOKIE_AGE = 3600
+
+# Optional but recommended - update session on activity
+SESSION_SAVE_EVERY_REQUEST = True 

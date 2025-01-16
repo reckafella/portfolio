@@ -96,4 +96,4 @@ class SessionTimeout {
       });
     });
 
-export 
+export const SetSessionTimeout = new SessionTimeout();

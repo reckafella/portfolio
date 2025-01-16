@@ -10,6 +10,8 @@ from app.views.projects.create import CreateProjectView
 from app.views.projects.delete import DeleteProjectView
 from app.views.projects.list_and_details import ProjectDetailView, ProjectListView
 from app.views.projects.update import UpdateProjectView
+from app.views.sessions import check_session, update_session
+
 
 app_name = "app"
 
@@ -52,4 +54,6 @@ sitemaps = {
 
 urlpatterns += [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    path('session/', views.check_session, name='check_session'),
+    path('session/update', views.update_session, name='update_session'),
 ]

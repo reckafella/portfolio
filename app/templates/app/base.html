@@ -223,6 +223,15 @@
     <script type="module" src="{% static 'assets/js/form-validator.js' %}"></script>
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new SessionTimeout({
+                sessionLength: {{ request.session.get_expiry_age }},
+                warningTime: 300,  // 5 minutes warning
+                redirectUrl: '{% url "login" %}'
+            });
+        });
+    </script>
     
     <!-- Form data validation -->
      {% block extra_js %} {% endblock %}

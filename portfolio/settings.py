@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os.path
 from pathlib import Path
+import random
 
-from django.contrib import staticfiles
+def csrf_failure_view(request, reason=""):
+    from app.views.auth import CSRFFailureView
+    return CSRFFailureView.as_view()(request, reason=reason)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -266,10 +269,11 @@ if (ENVIRONMENT == 'production' and not DEBUG):
     SECURE_HSTS_SECONDS: int = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS: bool = True
     SECURE_HSTS_PRELOAD: bool = True
-    CSRF_FAILURE_VIEW: str = "app.views.auth.csrf_failure"
     SECURE_PROXY_SSL_HEADER: tuple = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_REF: str = "no-referrer"
     SECURE_REF_POLICY: str = "strict-origin-when-cross-origin"
+
+CSRF_FAILURE_VIEW = csrf_failure_view
 
 # CLOUDINARY CONFIG SETTINGS
 if ENVIRONMENT == 'production':
@@ -296,4 +300,19 @@ ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_aut
 
 
 # captcha settings
-CAPTCHA_CHALLENGE_FUNCT = 'app.views.helpers.math_challenge.math_challenge'
+CAPTCHA_CHOICES = (
+    'captcha.helpers.math_challenge',
+    'captcha.helpers.random_char_challenge',
+)
+CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
+CAPTCHA_TIMEOUT = 5
+CAPTCHA_LENGTH = 6
+#CAPTCHA_FONT_SIZE = 20
+#CAPTCHA_IMAGE_SIZE = (100, 40)
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots', 'captcha.helpers.noise_arcs')
+CAPTCHA_LETTER_ROTATION = (-20, 20)
+CAPTCHA_FOREGROUND_COLOR = '#333'
+CAPTCHA_BACKGROUND_COLOR = '#fff'
+CAPTCHA_OUTPUT_FORMAT = 'png'
+CAPTCHA_IMAGE_BEFORE_FIELD = True
+CAPTCHA_REFRESH_CHALLENGE = True

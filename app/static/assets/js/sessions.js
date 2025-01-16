@@ -1,8 +1,8 @@
 class SessionTimeout {
       constructor(options = {}) {
-        this.warningTime = options.warningTime || 5 * 60; // 5 minutes before expiry
-        this.redirectUrl = options.redirectUrl || '/accounts/login/';
-        this.sessionLength = options.sessionLength || 3600; // 1 hour
+        this.warningTime = options.warningTime || 5 * 60;
+        this.redirectUrl = options.redirectUrl || '/login/';
+        this.sessionLength = options.sessionLength || 3600;
         this.warningShown = false;
         this.startTimer();
       }
@@ -18,7 +18,7 @@ class SessionTimeout {
 
       resetTimer() {
         // Update last activity timestamp on server
-        fetch('/update-session/', {
+        fetch('/session/update', {
           method: 'POST',
           headers: {
             'X-CSRFToken': this.getCsrfToken(),
@@ -38,7 +38,7 @@ class SessionTimeout {
       }
 
       async checkSession() {
-        const response = await fetch('/check-session/');
+        const response = await fetch('/session/check/');
         const data = await response.json();
         
         const timeLeft = data.expires_in;
@@ -90,9 +90,9 @@ class SessionTimeout {
     // Initialize session timeout
     document.addEventListener('DOMContentLoaded', () => {
       new SessionTimeout({
-        sessionLength: 3600,    // 1 hour in seconds
-        warningTime: 300,       // Show warning 5 minutes before expiry
-        redirectUrl: '/accounts/login/'
+        sessionLength: 3600,
+        warningTime: 300,
+        redirectUrl: '/login/'
       });
     });
 

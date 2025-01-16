@@ -18,7 +18,7 @@ class SessionTimeout {
 
       resetTimer() {
         // Update last activity timestamp on server
-        fetch('/session/update', {
+        fetch('/session/update/', {
           method: 'POST',
           headers: {
             'X-CSRFToken': this.getCsrfToken(),

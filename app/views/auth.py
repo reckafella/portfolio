@@ -95,13 +95,19 @@ class LoginView(BaseAuthentication):
 
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
+        return self._handle_logout(request)
+    
+    def post(self, request):
+        return self._handle_logout(request)
+    
+    def _handle_logout(self, request):
         is_staff_user = request.user.is_staff and hasattr(request.user, 'is_staff')
         logout(request)
         success_message = "Successfully logged out. See you next time!"
         
         redirect_url = reverse("app:login") if is_staff_user else reverse("app:home")
         
-        if is_ajax(self.request):
+        if is_ajax(request):
             return JsonResponse({
                 "success": True,
                 "message": success_message,
@@ -110,6 +116,7 @@ class LogoutView(LoginRequiredMixin, View):
         
         messages.success(request, success_message)
         return redirect(redirect_url)
+
 
 class CSRFFailureView(TemplateView):
     template_name = "errors/errors.html"

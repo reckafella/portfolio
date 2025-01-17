@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -322,7 +322,7 @@ CAPTCHA_REFRESH_CHALLENGE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
-SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_AGE = 300
 
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True 

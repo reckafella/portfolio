@@ -10,8 +10,8 @@
     <meta name="keywords" content="">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="X-UA-Compatible" content="IE=7">
-
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,6 +41,10 @@
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-secondary-subtle">
+    {% if user.is_authenticated %}
+    <div id="user-logged-in" hidden></div>
+    {% endif %}
+    {% csrf_token %}
     <header id="header" class="header fixed-top d-flex align-items-center mb-5">
         <div class="container-fluid container-sm container-xl position-relative d-flex align-items-center justify-content-between">
             <a href="{% url 'app:home' %}" class="logo align-items-center d-flex">
@@ -201,7 +205,7 @@
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.js" integrity="sha512-M60HsJC4M4A8pgBOj7oC/lvJXuOc9CraWXdD4PF+KNmKl8/Mnz6AH9FANgi4SJM6D9rqPvgQt4KRFR1rPN+EUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Vendor JS Files -->
     <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
@@ -225,11 +229,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            new SessionTimeout({
-                sessionLength: {{ request.session.get_expiry_age }},
-                warningTime: 300,  // 5 minutes warning
-                redirectUrl: '{% url "login" %}'
-            });
+            function setupSessionTimeout() {
+                if (document.getElementById('user-logged-in')) {
+                    new sessionTimeout({
+                        sessionLength: '{{ request.session.get_expiry_age|default:0 }}',
+                        warningTime: 60,
+                        redirectUrl: '{% url "app:login" %}',
+                        logoutUrl: '{% url "app:logout" %}',
+                    });
+                }
+            }
+            setupSessionTimeout();
         });
     </script>
     

@@ -1,14 +1,17 @@
-// static/js/session-timeout.js
 class SessionTimeout {
   constructor(options = {}) {
       this.warningTime = options.warningTime || 300;
-      this.redirectUrl = options.redirectUrl || '/accounts/login/';
+      this.redirectUrl = options.redirectUrl || '/login';
       this.sessionLength = options.sessionLength || 3600;
-      this.logoutUrl = options.logoutUrl || '/logout/';
+      this.logoutUrl = options.logoutUrl || '/logout';
       this.warningShown = false;
       this.checkInterval = null;
       this.countdownInterval = null;
+      this.isLoggingOut = false;
+      this.boundResetTimer = this.resetTimer.bind(this);
       this.startTimer();
+
+      window.addEventListener('beforeunload', () => this.cleanup());
   }
 
   getCsrfToken() {
@@ -28,17 +31,25 @@ class SessionTimeout {
   }
 
   async resetTimer() {
+      if (this.isLoggingOut) {
+          return;
+      }
+
       try {
           const response = await fetch('/session/update', {
               method: 'POST',
               headers: {
                   'X-CSRFToken': this.getCsrfToken(),
                   'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest'
               },
               credentials: 'same-origin'
           });
           
           if (!response.ok) {
+              if (response.status === 401 || response.status === 403) {
+                  this.handleTimeout();
+              }
               console.error('Failed to update session');
           }
       } catch (error) {
@@ -47,9 +58,21 @@ class SessionTimeout {
   }
 
   async checkSession() {
+      if (this.isLoggingOut) {
+          return;
+      }
+
       try {
-          const response = await fetch('/session/check');
+          const response = await fetch('/session/check', {
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+              }
+          });
           if (!response.ok) {
+              if (response.status === 401 || response.status === 403) {
+                  this.handleTimeout();
+                  return;
+              }
               throw new Error('Session check failed');
           }
           
@@ -69,15 +92,19 @@ class SessionTimeout {
   async showWarning(timeLeft) {
       this.warningShown = true;
       let remainingSeconds = timeLeft;
+      const timeToSessionExp = 'Your session will expire in ';
+      const warning = 'When the timer runs out, you\'ll be logged out';
+      const callToAct = 'Would you like to extend your session?';
       
       const result = await Swal.fire({
           title: 'Session Expiring Soon!',
-          html: `Your session will expire in <b id="countdown">--:--</b><br>Would you like to continue your session?`,
+          html: `${timeToSessionExp}<b id="countdown">--:--</b><br>${warning}</br>${callToAct}`,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: 'Yes, extend session',
           cancelButtonText: 'Logout now',
           allowOutsideClick: false,
+          allowEscapeKey: false,
           didOpen: () => {
               const countdownElement = Swal.getHtmlContainer().querySelector('#countdown');
               this.countdownInterval = setInterval(() => {
@@ -100,299 +127,102 @@ class SessionTimeout {
       });
 
       if (result.isConfirmed) {
-          this.resetTimer();
+          await this.resetTimer();
           this.warningShown = false;
       } else {
+          await this.performLogout();
+      }
+  }
+
+  async performLogout() {
+      this.isLoggingOut = true;
+      await this.cleanup();
+      await this.logout();
+  }
+
+  async logout() {
+      try {
+          const response = await fetch(this.logoutUrl, {
+              method: 'POST',
+              headers: {
+                  'X-CSRFToken': this.getCsrfToken(),
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest'
+              },
+              credentials: 'same-origin'
+          });
+
+          if (!response.ok) {
+              throw new Error('Logout failed');
+          }
+
+          const data = await response.json();
+          if (data.success) {
+              // Use the redirect URL from the server response
+              window.location.href = data.redirect_url;
+          } else {
+              throw new Error(data.message || 'Logout failed');
+          }
+      } catch (error) {
+          console.error('Error during logout:', error);
+          // Fallback to GET logout
           window.location.href = this.logoutUrl;
       }
   }
 
-  handleTimeout() {
-      clearInterval(this.checkInterval);
-      clearInterval(this.countdownInterval);
+  async handleTimeout() {
+      this.isLoggingOut = true;
+      await this.cleanup();
       
-      Swal.fire({
+      await Swal.fire({
           title: 'Session Expired',
           text: 'Your session has expired. Please log in again.',
           icon: 'info',
           confirmButtonText: 'Login',
-          allowOutsideClick: false
-      }).then(() => {
-          window.location.href = this.logoutUrl;
+          allowOutsideClick: false,
+          allowEscapeKey: false
       });
+
+      await this.logout();
   }
 
   startTimer() {
       this.checkInterval = setInterval(() => this.checkSession(), 30000);
 
       ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-          document.addEventListener(event, () => this.resetTimer());
+          document.addEventListener(event, this.boundResetTimer);
       });
   }
-}
 
-export const sessionTimeout = new SessionTimeout;
-
-
-/*
-import { toastManager } from "./toast.js";
-
-class SessionTimeout {
-  constructor(options = {}) {
-    this.warningTime = options.warningTime || 60; // 5 minutes before expiry
-    this.redirectUrl = options.redirectUrl || '/login'; // Redirect to login page
-    this.sessionLength = options.sessionLength || 300; // 1 hour
-    this.warningShown = false;
-    this.logoutUrl = options.logoutUrl || "/logout";
-    this.countDownInterval = null;
-    this.checkInterval = null;
-    this.startTimer();
-  }
-
-  getCsrfToken() {
-    // Look for the token in cookie
-    const name = 'csrftoken';
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-
-  async showWarning(timeLeft) {
-    this.warningShown = true;
-    let remainingSeconds = timeLeft;
-    
-    const result = await Swal.fire({
-      title: 'Session Expiring Soon!',
-      html: `Your session will expire in <b id="countdown">--:--</b><br>Would you like to continue your session?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, extend session',
-      cancelButtonText: 'Logout now',
-      allowOutsideClick: false,
-      didOpen: () => {
-        // Start countdown when popup opens
-        const countdownElement = Swal.getHtmlContainer().querySelector('#countdown');
-        this.countdownInterval = setInterval(() => {
-          remainingSeconds--;
-          const minutes = Math.floor(remainingSeconds / 60);
-          const seconds = remainingSeconds % 60;
-          
-          countdownElement.textContent = 
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
-          
-          if (remainingSeconds <= 0) {
-            clearInterval(this.countdownInterval);
-            this.handleTimeout();
-          }
-        }, 1000);
-      },
-      willClose: () => {
-        // Clean up interval when popup closes
+  cleanup() {
+    return new Promise((resolve) => {
+        clearInterval(this.checkInterval);
         clearInterval(this.countdownInterval);
-      }
-    });
+        
+        ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.removeEventListener(event, this.boundResetTimer);
+        });
 
-    if (result.isConfirmed) {
-      this.resetTimer();
-      this.warningShown = false;
-    } else {
-      window.location.href = this.logoutUrl;
-    }
-  }
-
-  handleTimeout() {
-    clearInterval(this.checkInterval);
-    clearInterval(this.countdownInterval);  // Clear countdown if it's still running
-    
-    Swal.fire({
-      title: 'Session Expired',
-      text: 'Your session has expired. Please log in again.',
-      icon: 'info',
-      confirmButtonText: 'Login',
-      allowOutsideClick: false
-    }).then(() => {
-      // wait for user activity before redirecting.
-      window.location.href = this.logoutUrl;
-    });
-  }
-
-  async resetTimer() {
-    try {
-      const response = await fetch('/session/update', {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': this.getCsrfToken(),
-          'Content-Type': 'application/json',
-        },
-        credentials: 'same-origin'
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update session');
-      }
-    } catch (error) {
-      toastManager.show('danger', error.message);
-    }
-  }
-
-  async checkSession() {
-    try {
-      const response = await fetch('/session/check');
-      if (!response.ok) {
-        throw new Error('Session check failed');
-      }
-      
-      const data = await response.json();
-      const timeLeft = data.expires_in;
-      
-      if (timeLeft <= this.warningTime && !this.warningShown) {
-        this.showWarning(timeLeft);
-      } else if (timeLeft <= 0) {
-        this.handleTimeout();
-      }
-    } catch (error) {
-      toastManager.show('danger', error.message);
-    }
-  }
-
-  startTimer() {
-    // Check session every 30 seconds
-    this.checkInterval = setInterval(() => this.checkSession(), 30000);
-
-    // Reset timer on user activity
-    ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-      document.addEventListener(event, () => this.resetTimer());
+        // Give a small delay to ensure all pending operations are complete
+        setTimeout(resolve, 2000);
     });
   }
 }
-const userLoggedIn = document.getElementById('user-logged-in') !== null;
 
 // Initialize when document is ready
+let sessionTimeoutInstance = null;
+
 document.addEventListener('DOMContentLoaded', () => {
+  const userLoggedIn = document.getElementById('user-logged-in') !== null;
+  
   if (userLoggedIn) {
-    new SessionTimeout({
-      sessionLength: 300,
-      warningTime: 60,
-      redirectUrl: "/login",
-    });
+      sessionTimeoutInstance = new SessionTimeout({
+          sessionLength: 9800,
+          warningTime: 300,
+          redirectUrl: "/login",
+          logoutUrl: "/logout",
+      });
   }
 });
-class SessionTimeout {
-  constructor(options = {}) {
-    this.warningTime = options.warningTime || 60; // 5 minutes before expiry
-    this.redirectUrl = options.redirectUrl || '/login'; // Redirect to login page
-    this.sessionLength = options.sessionLength || 300; // 1 hour
-    this.warningShown = false;
-    this.logoutUrl = "/logout";
-    this.checkInterval = null;
-    this.startTimer();
-  }
 
-  startTimer() {
-    // Check session every 30 seconds
-    this.checkInterval = setInterval(() => this.checkSession(), 30000);
-
-    // Reset timer on user activity
-    ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-      document.addEventListener(event, () => this.resetTimer());
-    });
-  }
-
-  async resetTimer() {
-    try {
-      const response = await fetch('/session/update', {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': this.getCsrfToken(),
-        },
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to update session');
-      }
-    } catch (error) {
-      console.error('Error updating session:', error);
-    }
-  }
-
-  getCsrfToken() {
-    // Look for the token in cookie
-    const name = 'csrftoken';
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-
-  async checkSession() {
-    try {
-      const response = await fetch('/session/check');
-      if (!response.ok) {
-        throw new Error('Session check failed');
-      }
-      
-      const data = await response.json();
-      const timeLeft = data.expires_in;
-      
-      if (timeLeft <= this.warningTime && !this.warningShown) {
-        this.showWarning(timeLeft);
-      } else if (timeLeft <= 0) {
-        this.handleTimeout();
-      }
-    } catch (error) {
-      console.error('Error checking session:', error);
-    }
-  }
-
-  async showWarning(timeLeft) {
-    this.warningShown = true;
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-
-    const result = await Swal.fire({
-      title: 'Session Expiring Soon!',
-      html: `Your session will expire in ${minutes}:${seconds.toString().padStart(2, '0')} minute(s).<br>Would you like to continue your session?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Extend Session',
-      cancelButtonText: 'Logout now',
-      allowOutsideClick: false
-    });
-
-    if (result.isConfirmed) {
-      this.resetTimer();
-      this.warningShown = false;
-    } else {
-      window.location.href = this.logoutUrl;
-    }
-  }
-
-  handleTimeout() {
-    clearInterval(this.checkInterval);
-    Swal.fire({
-      title: 'Session Expired',
-      text: 'Your session has expired. Please log in again.',
-      icon: 'info',
-      confirmButtonText: 'Login'
-    }).then(() => {
-      window.location.href = this.redirectUrl;
-    });
-  }
-} */
+export const sessionTimeout = new SessionTimeout();

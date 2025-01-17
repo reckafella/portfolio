@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -312,8 +312,6 @@ CAPTCHA_CHOICES = (
 CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
 CAPTCHA_TIMEOUT = 5
 CAPTCHA_LENGTH = 6
-#CAPTCHA_FONT_SIZE = 20
-#CAPTCHA_IMAGE_SIZE = (100, 40)
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots', 'captcha.helpers.noise_arcs')
 CAPTCHA_LETTER_ROTATION = (-20, 20)
 CAPTCHA_FOREGROUND_COLOR = '#333'
@@ -326,8 +324,8 @@ CAPTCHA_REFRESH_CHALLENGE = True
 # Browser session timeout (when user closes browser)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
-SESSION_COOKIE_AGE = 300
+# Inactivity timeout in seconds (e.g. 3 hour = 9800 seconds)
+SESSION_COOKIE_AGE = 9800
 
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True 

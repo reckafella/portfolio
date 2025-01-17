@@ -36,6 +36,7 @@ handler400 = "app.views.errors.error_400_view"
 
 
 urlpatterns = [
+    path("admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("admin/", admin.site.urls),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include(django_auth_urls)),

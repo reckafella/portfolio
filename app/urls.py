@@ -54,6 +54,6 @@ sitemaps = {
 
 urlpatterns += [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
-    path('session/check/', check_session, name='check_session'),
-    path('session/update/', update_session, name='update_session'),
+    path('session/check', check_session, name='check_session'),
+    path('session/update', update_session, name='update_session'),
 ]

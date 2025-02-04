@@ -7,7 +7,8 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog ">
+
+<section id="section" class="mt-5 blog ">
     <div class="container  col-lg-7 col-md-9 col-sm-10">
         <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
             <div class="card-header text-center">
@@ -48,8 +49,8 @@
                     </p>
                     {% if user.is_authenticated and user == post.author or user.is_staff %}
                     <div class="action-buttons mb-2">
-                        <input type="submit" class="btn btn-sm btn-primary" value="Edit Post" data-bs-toggle="modal" data-bs-target="#editModal"/>
-                        <input type="submit" class="btn btn-sm btn-danger" value="Delete Post" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                        <input type="submit" id="submitButton" class="btn btn-sm btn-primary" value="Edit Post" data-bs-toggle="modal" data-bs-target="#editModal"/>
+                        <input type="submit" id="submitButton" class="btn btn-sm btn-danger" value="Delete Post" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
                     </div>
                     {% endif %}
                 </div>

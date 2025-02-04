@@ -3,70 +3,108 @@
 {% block title %}{{ project.title }}{% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section projects ">
-    <div class="container  col-lg-8 col-md-10 col-sm-12">
-        <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
-            <div class="card-header text-center">
-                <div class="info-wrap mb-3" data-aos="fade-up">
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted text-center">
-                            <a href="{% url 'app:projects' %}" class="text-decoration-none p-2 text-danger" title="Go back to Projects">
-                                <i class="bi bi-arrow-left-square"></i> Projects
-                            </a>
-                        </small>
-                        <h2 class="fw-bold">{{ project.title }}</h2>
-                        <!-- Icon for editing -->
-                        {% if user.is_staff  %}
-                        <a href="{% url 'app:update_project' project.slug %}" class="btn btn-link text-decoration-none text-primary">
-                            <i class="bi bi-pencil-square bi-pencil-fill"></i>
-                        </a>
+<section id="breadcrumbs" class="breadcrumbs">
+    <div class="container">
+        <ol>
+            <li><a href="{% url 'app:home' %}">Home</a></li>
+            <li><a href="{% url 'app:projects' %}">Projects</a></li>
+            <li>{{ project.title }}</li>
+        </ol>
+    </div>
+</section>
+
+<section id="portfolio-details" class="project portfolio-details">
+    <div class="container" data-aos="fade-up">
+        <div class="row gy-4">
+            <div class="col-lg-8">
+                <div class="portfolio-details-slider swiper">
+                    <div class="swiper-wrapper align-items-center">
+                        {% if project.images.all or project.videos.all %}
+                            {% for image in project.images.all %}
+                                <div class="swiper-slide">
+                                    <div class="project-item filter-{{ project.category|slugify }}">
+                                        {% if image.cloudinary_image_url %}
+                                        <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                        {% elif image.cloudinary_image_url %}
+                                        <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                        {% else %}
+                                        <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid">
+                                        {% endif %}
+                                        <div class="project-info">
+                                            <h4>{{ project.title }}</h4>
+                                            <p>Image</p>
+                                            <a href="{{ image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                                                <i class="bi bi-plus"></i>
+                                            </a>
+                                            <a href="#" class="details-link" title="{{ project.title }}">
+                                                <i class="bi bi-link"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% for video in project.videos.all %}
+                                <div class="swiper-slide">
+                                    <div class="project-item filter-{{ project.category|slugify }}">
+                                        <div class="align-items-stretch position-relative video-box" 
+                                            style="background-image: url('{{ video.thumbnail_url }}');"
+                                            data-aos="fade-right">
+                                            <a href="{{ video.youtube_url }}" class="glightbox play-btn mb-4"></a>
+                                        </div>
+                                        <div class="project-info">
+                                            <h4>{{ project.title }}</h4>
+                                            <p>YouTube Video</p>
+                                            <a href="{{ video.youtube_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }} - YouTube Video">
+                                                <i class="bi bi-plus"></i>
+                                            </a>
+                                            <a href="#" class="details-link" title="{{ project.title }} - YouTube Video">
+                                                <i class="bi bi-link"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="swiper-slide">
+                                <p>No Images/YouTube Videos uploaded for this project</p>
+                            </div>
                         {% endif %}
                     </div>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Created on {{ project.created_at | date:"N j, Y" }}
-                            {% if project.updated_at and project.updated_at != project.created_at %}
-                                &nbsp; | &nbsp; Last Updated: {{ project.updated_at | date:"N j, Y" }}
-                            {% endif %}
-                        </small>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="portfolio-info">
+                    <h3>Project Information</h3>
+                    <ul>
+                        <li><strong>Name:</strong> <span class="text-primary">{{ project.title }}</span></li>
+                        <li><strong>Category:</strong> <span class="text-primary">{{project.category|default:"Web Development" }}</span></li>
+                        <li><strong>Client:</strong> <span class="text-primary">{{ project.client| default:"Personal" }}</span></li>
+                        <li><strong>Project Date:</strong> <span class="text-primary">{{ project.created_at | date:"N j, Y" }}</span></li>
+                        {% if project.project_url %}
+                        <li><strong>Project URL:</strong>
+                            <a href="{{ project.project_url }}" target="_blank">
+                            <span class="mx-2">Visit Project</span></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="portfolio-description">
+                    <h2>Project Overview</h2>
+                    <p>
+                        {{ project.description }}
                     </p>
-
-                    {% if user.is_staff %}
-                    <div class="action-buttons mb-2">
-                        <input type="submit" class="btn btn-sm btn-outline-primary" value="Edit Project" data-bs-toggle="modal" data-bs-target="#editModal"/>
-                        <input type="submit" class="btn btn-sm btn-outline-danger" value="Delete Project" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
-                    </div>
-                    {% endif %}
                 </div>
-            </div>
-
-            <div class="card-body">
-                <!-- Project Cover Image -->
-                {% if project.optimized_image_url %}
-                <img src="{{ project.optimized_image_url }}" class="img-fluid mb-4 project-hero-image" alt="{{ project.title }}" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 10px;">
+                {% if user.is_staff %}
+                <div class="action-buttons mb-2">
+                    <input type="submit" id="submitButton" class="btn btn-sm btn-outline-primary" value="Edit Project" data-bs-toggle="modal" data-bs-target="#editModal"/>
+                    <input type="submit" id="submitButton" class="btn btn-sm btn-outline-danger" value="Delete Project" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                </div>
                 {% endif %}
-
-                <!-- Project Description -->
-                <div class="text-start project-description">
-                    <h4 class="mb-3 text-center">Project Overview</h4>
-                    {{ project.description | safe }}
-                </div>
-
-                <!-- Project Links -->
-                <div class="project-links mt-4 d-flex justify-content-center">
-                    {% if project.project_url %}
-                    <a href="{{ project.project_url }}" target="_blank" class="btn btn-outline-success">
-                       <span class="mx-1">Visit Project</span><i class="bi bi-link-45deg"></i>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
+            </div> 
         </div>
-        
-        <!-- Related Projects Section -->
-        {% include 'app/projects/related_projects.html' %}
     </div>
-
     <!-- Modal for editing and deleting projects -->
     {% include 'app/projects/edit_delete_projects.html' with form=form %}
 </section>

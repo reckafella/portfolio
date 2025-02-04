@@ -188,3 +188,23 @@ button[type=submit]:hover {
 .input-out-of-range:focus::placeholder {
   color: #6c757d;
 }
+
+.btn[data-bs-busy="true"] {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn[data-bs-busy="true"] .spinner-border {
+  position: relative;
+  margin-right: 8px;
+}
+
+/* Optional: Fade transition for state changes */
+.btn {
+  transition: all 0.5s ease;
+}
+
+/* Optional: Disable text selection during loading */
+.btn[data-bs-busy="true"] {
+  user-select: none;
+}

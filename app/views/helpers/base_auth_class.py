@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import JsonResponse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib import messages
 from django.views.generic import FormView
 
@@ -12,7 +13,10 @@ class BaseAuthentication(FormView):
     form_class = None
 
     def get_success_url(self):
-        return self.request.GET.get("next") or reverse("app:home")
+        next_url = self.request.GET.get("next") or self.request.POST.get("next")
+        if url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
+            return next_url
+        return reverse("app:home")
     
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:

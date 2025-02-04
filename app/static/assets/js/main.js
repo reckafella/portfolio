@@ -1,6 +1,39 @@
 (function() {
     "use strict";
-  
+
+    /**
+     * Easy selector helper function
+    */
+    const select = (el, all = false) => {
+      el = el.trim()
+      if (all) {
+        return [...document.querySelectorAll(el)]
+      } else {
+        return document.querySelector(el)
+      }
+    }
+
+    /**
+     * Easy event listener function
+    */
+    const on = (type, el, listener, all = false) => {
+      let selectEl = select(el, all)
+      if (selectEl) {
+        if (all) {
+          selectEl.forEach(e => e.addEventListener(type, listener))
+        } else {
+          selectEl.addEventListener(type, listener)
+        }
+      }
+    }
+
+    /**
+     * Easy on scroll event listener
+    */
+    const onscroll = (el, listener) => {
+      el.addEventListener('scroll', listener)
+    }
+    
     /**
      * Apply .scrolled class to the body as the page is scrolled down
      */
@@ -133,6 +166,40 @@
     new PureCounter();
   
     /**
+    * Project Isotope and filter
+    */
+  window.addEventListener('load', () => {
+    let projectContainer = select('.project-container');
+    if (projectContainer) {
+      let projectIsotope = new Isotope(projectContainer, {
+        itemSelector: '.project-item',
+        layoutMode: 'fitRows'
+      }); // fitRows
+  
+      let projectFilters = select('#project-filters li', true);
+  
+      on('click', '#project-filters li', function(e) {
+        e.preventDefault();
+        projectFilters.forEach(function(el) {
+          el.classList.remove('filter-active');
+        });
+        this.classList.add('filter-active');
+  
+        projectIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+      }, true);
+    }
+  });
+
+    /**
+     *  Initiate project lightbox
+     */
+    const projectLightbox = GLightbox({
+      selector: '.project-lightbox'
+    });
+
+    /**
      * Initiate glightbox
      */
     const glightbox = GLightbox({
@@ -199,7 +266,25 @@
     }
   
     window.addEventListener("load", initSwiper);
-  
+
+  /**
+   * Portfolio details slider
+   */
+  new Swiper('.portfolio-details-slider', {
+    speed: 400,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
+
+
     /**
      * Correct scrolling position upon page load for URLs containing hash links.
      */

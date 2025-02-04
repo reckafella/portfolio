@@ -1,3 +1,4 @@
+// toast.js
 class ToastManager {
     constructor() {
         this.container = document.getElementById('liveToast');
@@ -11,19 +12,17 @@ class ToastManager {
         }
     }
 
-    show(type, message, messages = null, errors = null) {
+    show(type, message, errors = null) {
         const toastBody = document.getElementById('toastBody');
-        const toastHeader = document.getElementById('toastHeader');
         const toastTitle = document.getElementById('toastTitle');
         const toastIcon = document.getElementById('toastIcon');
         const toastElement = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
-        const toastMessages = document.getElementById('toastMessages');
         const toastErrors = document.getElementById('toastErrors');
 
         // Configure toast appearance
-        toastBody.className = `alert toast-body p-1 alert-${type} text-bg-${type}`;
-        toastElement.className = `toast alert alert-${type} p-1 text-bg-${type} fade show`;
+        toastBody.className = `alert toast-body alert-${type} text-bg-${type}`;
+        toastElement.className = `toast alert alert-${type} fade show`;
 
         // Set title and icon based on type
         const config = {
@@ -35,14 +34,10 @@ class ToastManager {
 
         const { title = '', icon = '' } = config[type] || {};
         toastTitle.innerText = title;
-        toastIcon.className = `bi ${icon} me-2`;
+        toastIcon.className = `bi ${icon}`;
 
         // Set main message
         toastMessage.textContent = message;
-        if (messages) {
-            toastTitle.innerText = `${title} (${messages.length})`;
-            toastMessages.innerHTML = messages.map(message => `<li>${message}</li>`).join('');
-        }
 
         // Handle errors if present
         toastErrors.innerHTML = '';
@@ -62,11 +57,7 @@ class ToastManager {
         }
 
         // Update time and display
-        const time = document.getElementById('alert-time');
-        time.className = `text-white`;
-        time.textContent = new Date().toLocaleTimeString();
-        toastHeader.className = `d-flex justify-content-between p-0 align-center alert alet-${type} text-bg-${type}`;
-
+        document.getElementById('alert-time').textContent = new Date().toLocaleTimeString();
         this.container.style.display = 'grid';
         toastElement.style.display = 'grid';
 

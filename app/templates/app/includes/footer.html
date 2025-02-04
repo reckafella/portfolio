@@ -1,0 +1,54 @@
+{% load static %}
+<footer id="footer" class="footer mt-auto py-3">
+    <div class="container container-fluid container-xl p-3">
+        <div class="copyright text-center">
+            <p>
+                <span>All Rights Reserved</span>
+                &copy;
+                <strong class="sitename pacifico-regular">Ethan Wanyoike</strong>
+            </p>
+        </div>
+        <div class="container-fluid info-wrap social-links d-flex justify-content-center">
+            <a href="https://x.com/devrohn" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://instagram.com/reckafella" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
+            <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
+        </div>
+        <div>
+          <!-- site map -->
+          <div
+            class="sitemap row d-flex g-1 gap-2">
+            <a href="{% url 'app:sitemap' %}"
+              target="_blank"
+              class="text-white text-center">
+                Sitemap.xml
+            </a>
+            <a href="{% url 'app:html_sitemap' %}"
+              target="_blank"
+              class="text-white text-center">
+                Sitemaps
+           </a>
+         </div>
+         <div class="credits">
+            Styled using
+           <a class="text-start" target="_blank"
+             href="https://getbootstrap.com/">
+             <span class="text-white
+               pacifico-regular">
+               Bootstrap
+             </span>
+             <i class="bi bi-box-arrow-up-right
+               ms-2"></i>
+            </a>
+        </div>
+      </div>
+        {% comment %} 
+        {% if user.is_staff %}
+        {# Wagtail User Bar #}
+        {% wagtailuserbar 'bottom-left' %}
+        {% endif %}
+        {% endcomment %}
+    </div>
+</footer>

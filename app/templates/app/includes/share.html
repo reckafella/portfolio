@@ -1,0 +1,210 @@
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title" id="shareModalLabel">Share this post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-grid gap-2">
+                    <!-- Copy Link -->
+                    <button class="btn btn-light d-flex align-items-center gap-3 py-2" 
+                            onclick="copyToClipboard('{{ request.build_absolute_uri }}')">
+                        <i class="bi bi-link"></i>
+                        <span>Copy link</span>
+                    </button>
+
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                       class="btn btn-light d-flex align-items-center gap-3 py-2"
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <i class="bi bi-facebook text-primary"></i>
+                        <span>Share on Facebook</span>
+                    </a>
+
+                    <!-- Twitter -->
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title|urlencode }}"
+                       class="btn btn-light d-flex align-items-center gap-3 py-2"
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <i class="bi bi-twitter text-info"></i>
+                        <span>Share on Twitter</span>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}"
+                       class="btn btn-light d-flex align-items-center gap-3 py-2"
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <i class="bi bi-whatsapp text-success"></i>
+                        <span>Share on WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast for copy feedback -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+            <i class="bi bi-check-circle text-success me-2"></i>
+            Link copied to clipboard!
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show toast
+        const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+        toast.show();
+        
+        // Update button text temporarily
+        const button = event.currentTarget;
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-check"></i> <span>Copied!</span>';
+        
+        setTimeout(() => {
+            button.innerHTML = originalContent;
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Failed to copy text: ', err);
+    });
+}
+</script>
+
+<style>
+.modal-content {
+    border-radius: 1rem;
+}
+
+.btn-light {
+    text-align: left;
+    border-radius: 0.5rem;
+}
+
+.btn-light:hover {
+    background-color: #f0f0f0;
+}
+
+.toast {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+</style>
+
+{% comment %}
+<div class="dropdown share-dropdown">
+    <a class="btn btn-outline-secondary dropdown-toggle border-0" 
+            type="button" 
+            id="shareDropdown" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+        <i class="bi bi-share-fill"></i>
+    </a>
+    
+    <ul class="dropdown-menu" aria-labelledby="shareDropdown">
+        <!-- Copy Link Option -->
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" 
+               href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+               target="_blank" 
+               rel="noopener noreferrer">
+                <i class="bi bi-facebook text-primary"></i>
+                Share to Facebook
+            </a>
+        </li>
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-2"
+               href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title|urlencode }}"
+               target="_blank" 
+               rel="noopener noreferrer">
+                <i class="bi bi-twitter text-info"></i>
+                Share to Twitter
+            </a>
+        </li>
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-2"
+               href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}"
+               target="_blank" 
+               rel="noopener noreferrer">
+                <i class="bi bi-whatsapp text-success"></i>
+                Share to WhatsApp
+            </a>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+            <button class="dropdown-item d-flex align-items-center gap-2" 
+                    onclick="copyToClipboard('{{ request.build_absolute_uri }}')">
+                <i class="bi bi-link"></i>
+                <span>Copy link</span>
+            </button>
+        </li>
+    </ul>
+</div>
+
+<!-- Add this toast for the copy feedback -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 11111">
+    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+            <i class="bi bi-check-circle text-success"></i>
+            Link copied to clipboard!
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show toast
+        const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+        toast.show();
+        
+        // Update button text temporarily
+        const button = event.currentTarget;
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-check"></i> <span>Copied!</span>';
+        
+        setTimeout(() => {
+            button.innerHTML = originalContent;
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Failed to copy text: ', err);
+    });
+}
+</script>
+
+<style>
+.share-dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.share-dropdown .dropdown-item:hover i {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+
+/* Style for the toast */
+.toast {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.toast-body {
+    padding: 0.75rem;
+}
+</style>
+{% endcomment %}

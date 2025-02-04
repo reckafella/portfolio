@@ -1,100 +1,153 @@
+from django.contrib import messages
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
-from django.urls import reverse_lazy
 from django.views.generic import UpdateView
-from django.utils.text import slugify
 from titlecase import titlecase
 
-from app.forms.errors import CustomErrorList
-from app.forms.projects import ProjectsForm
-from app.models import Projects
-from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
-from app.views.helpers.helpers import handle_no_permissions, is_ajax, return_response
-
-uploader = CloudinaryImageHandler()
+from app.models import Image, Video
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
+from app.views.projects.create import BaseProjectView
 
 
-class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Projects
-    form_class = ProjectsForm
-    error_class = CustomErrorList
-    template_name = "app/projects/create_or_update.html"
-    context_object_name = "view"
-
+class UpdateProjectView(BaseProjectView, UpdateView):
     def form_valid(self, form):
-        project = form.instance
-        original_project = self.get_object()
-
-        # Update fields
+        project = form.save()
         project.title = titlecase(project.title)
         project.description = project.description.strip()
-        project.project_url = project.project_url.strip() if project.project_url else ""
+        project.project_url = project.project_url.strip()
+        project.project_type = project.project_type
+        project.live = project.live
+        project.client = project.client
+        project.youtube_urls = project.youtube_urls
+        project.save()
 
-        # Update slug if title changed
-        if project.title != original_project.title:
-            base_slug = slugify(project.title)
-            counter = 1
-            new_slug = base_slug
-            while Projects.objects.filter(slug=new_slug).exclude(id=project.id).exists():
-                new_slug = f"{base_slug}-{counter}"
-                counter += 1
-            project.slug = new_slug
-
-        image = form.files.get("image")
+        images = self.request.FILES.getlist('images', [])
+        youtube_urls = form.cleaned_data.get("youtube_urls", [])
 
         # Handle authorization
         if not self.test_func():
             handle_no_permissions(
-                self.request, "You do not have permission to update this project."
+                self.request, "You do not have permission to update a project."
             )
+        
+        success_messages = []
+        error_messages = []
 
         # Handle image upload
-        if image:
-            # Delete old image if it exists
-            if project.cloudinary_image_id:
-                uploader.delete_image(project.cloudinary_image_id)
-                
-            try:
-                res = handle_image_upload(
-                    project, uploader, image, settings.PROJECTS_FOLDER
-                )
-                if res:
-                    project.cloudinary_image_id = res["cloudinary_image_id"]
-                    project.cloudinary_image_url = res["cloudinary_image_url"]
-                    project.optimized_image_url = res["optimized_image_url"]
-            except Exception as e:
-                # Delete the image from Cloudinary if an error occurs
-                if project.cloudinary_image_id:
-                    uploader.delete_image(project.cloudinary_image_id)
-                response = {"success": False, "errors": f"An error occurred: {str(e)}"}
-                if is_ajax(self.request):
-                    return JsonResponse(response, status=400)
-                form.add_error(None, f"An error occurred: {str(e)}")
-                return return_response(self.request, response, 400)
+        if images:
+            self.handle_images(images, project, success_messages, error_messages)
+
+        if youtube_urls:
+            # First, delete existing videos if you want to replace them
+            Video.objects.filter(project=project).delete()
+            
+            # Create new video objects
+            self.handle_youtube_urls(youtube_urls, project, success_messages, error_messages)
+
+        if not images and not youtube_urls:
+            success_messages.append("Project Updated Successfully!")
 
         response = super().form_valid(form)
+        response_data = {
+            "success": True,
+            "messages": success_messages,
+            "errors": error_messages,
+            "redirect_url": self.get_success_url(),
+        }
 
         if is_ajax(self.request):
-            return JsonResponse({
-                "success": True,
-                'message': "Project updated successfully.",
-                "redirect_url": self.get_success_url()
-            })
-        
+            return JsonResponse(response_data)
+
+        if error_messages:
+            for error in error_messages:
+                messages.error(self.request, error)
+        for message in success_messages:
+            messages.success(self.request, message)
+
         return response
 
-    def test_func(self):
-        """
-        Check if the user is a staff or superuser.
-        """
-        return self.request.user.is_staff or self.request.user.is_superuser
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "title": "Update Project",
+            "submit_text": "Update Project",
+            "data_loading_text": "Updating Project...",
+        })
+        return context
 
-    def get_success_url(self):
-        """
-        Redirect to the project detail page after successfully updating the project.
-        """
-        return reverse_lazy("app:project_detail", kwargs={"slug": self.object.slug})
+
+'''
+class UpdateProjectView(BaseProjectView, UpdateView):
+    def form_valid(self, form):
+        project = form.save()
+        project.title = titlecase(project.title)
+        project.description = project.description.strip()
+        project.project_url = project.project_url.strip()
+        images = self.request.FILES.getlist('images')
+        youtube_urls = form.cleaned_data["youtube_urls"]
+
+        # Handle authorization
+        if not self.test_func():
+            handle_no_permissions(
+                self.request, "You do not have permission to create a project."
+            )
+        
+        success_messages = []
+        error_messages = []
+
+        project.save()
+        # Handle image upload
+        if images:
+            for image in images:
+                try:
+                    image_data = self.upload_image(project, image)
+                    Image.objects.update(
+                        project=project,
+                        cloudinary_image_id=image_data["cloudinary_image_id"],
+                        cloudinary_image_url=image_data["cloudinary_image_url"],
+                        optimized_image_url=image_data["optimized_image_url"]
+                    )
+                    success_messages.append(
+                        f"Image: {image.name} Uploaded Successfully!"
+                    )
+                except Exception as e:
+                    error_messages.append(
+                        f"Error Uploading '{image.name}': {str(e)}"
+                    )
+
+        if youtube_urls:
+            for url in youtube_urls:
+                try:
+                    Video.objects.update(
+                        project=project,
+                        youtube_url=url.strip()
+                    )
+                    success_messages.append(
+                        f"Video URL for '{url}' added successfully"
+                    )
+                except Exception as e:
+                    error_messages.append(
+                        f"Error adding video URL: {str(e)}"
+                    )
+
+        response = super().form_valid(form)
+        response_data = {
+            "success": len(error_messages) == 0,
+            "messages": success_messages,
+            "errors": error_messages,
+            "redirect_url": self.get_success_url(),
+        }
+
+        if is_ajax(self.request):
+            return JsonResponse(response_data)
+
+        if error_messages:
+            for error in error_messages:
+                messages.error(self.request, error)
+        for message in success_messages:
+            messages.success(self.request, message)
+
+        return response
 
     def get_context_data(self, **kwargs):
         """
@@ -106,3 +159,5 @@ class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             "submit_text": "Update Project"
         })
         return context
+
+'''

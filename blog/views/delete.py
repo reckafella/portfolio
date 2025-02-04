@@ -14,6 +14,23 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = "blog/deletion/confirm_delete.html"
     success_url = reverse_lazy("blog:blog_posts_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "title": "Delete Post",
+            "submit_text": "Delete",
+            "data_loading_text": "Deleting Post...",
+            "extra_messages": [
+                {
+                    "text": "Are you sure you want to delete this post?",
+                    "link": reverse_lazy("blog:blog_posts_list"),
+                    "link_text": "Cancel",
+                }
+            ],
+        })
+
+        return context
+
     def delete(self, request, *args, **kwargs):
         post = self.get_object()
 

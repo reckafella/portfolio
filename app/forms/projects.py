@@ -1,15 +1,18 @@
 from django import forms
 from django.contrib import admin
+from django.conf import settings
 from django.core.validators import (
     MaxLengthValidator,
     URLValidator,
 )
-from captcha.fields import CaptchaField, CaptchaTextInput
+from django.core.exceptions import ValidationError
 
 from app.models import Projects
+from app.views.helpers.helpers import guess_file_type
 
 
-class ProjectsForm(forms.ModelForm):
+class BaseProjectsForm(forms.ModelForm):
+    """ Form to handle project info """
     title = forms.CharField(
         label="Project Title",
         required=True,
@@ -24,6 +27,27 @@ class ProjectsForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"class": "form-control focus-ring"}),
         help_text="Enter a description for the project",
     )
+    project_type = forms.ChoiceField(
+        label="Project Type",
+        required=True,
+        choices=Projects.PROJECT_TYPES,
+        widget=forms.Select(attrs={"class": "form-control focus-ring"}),
+        help_text="Select whether this is a personal or professional project",
+    )
+    category = forms.ChoiceField(
+        label="Project Category",
+        required=True,
+        choices=settings.CATEGORY_CHOICES,
+        widget=forms.Select(attrs={"class": "form-control focus-ring"}),
+        help_text="Select the category of the project",
+    )
+    client = forms.CharField(
+        label="Client Name",
+        required=False,
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
+        help_text="Enter the client for the project (default: Personal)",
+    )
     project_url = forms.URLField(
         label="Project URL",
         required=True,
@@ -31,54 +55,81 @@ class ProjectsForm(forms.ModelForm):
         widget=forms.URLInput(attrs={"class": "form-control"}),
         help_text="URL to the Project",
     )
-    image = forms.ImageField(
-        label="Upload Image",
+    images = forms.FileField(
+        label="Upload Images",
         required=False,
-        widget=forms.FileInput(attrs={"class": "form-control"}),
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "type": "File",
+            "multiple": True
+        }),
         help_text="Upload an image for your project (jpg, jpeg, png, gif, webp)",
     )
-
-    captcha = CaptchaField(
-        label="Captcha",
-        help_text="Enter the characters shown in the image",
-        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
+    youtube_urls = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter YouTube URLs (one per line)',
+            'rows': 3
+        }),
+        required=False
     )
-
+    live = forms.BooleanField(
+        label="Live",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check form-switch form-check-input"}),
+    )
     class Meta:
         model = Projects
-        fields = ["title", "description", "project_url", "image", "captcha"]
+        fields = [
+            "title",
+            "description",
+            "project_type",
+            "category",
+            "client",
+            "project_url",
+            "images",
+            "youtube_urls",
+        ]
+
+    def clean_youtube_urls(self):
+        urls = self.cleaned_data.get('youtube_urls', '').strip().split('\n')
+        cleaned_urls = []
+        
+        for url in urls:
+            url = url.strip()
+            if url:
+                if not ('youtube.com' in url or 'youtu.be' in url):
+                    raise ValidationError(f"Invalid YouTube URL: {url}")
+                cleaned_urls.append(url)
+
+        return cleaned_urls
+
+    def clean(self):
+        cleaned_data = super().clean()
+        images = self.files.getlist('images')
+        youtube_urls = cleaned_data.get('youtube_urls', [])
+
+        if not images and not youtube_urls:
+            raise ValidationError("Please provide at least one image or YouTube URL")
+
+        if images:
+            for image in images:
+                if not guess_file_type(image).startswith('image/'):
+                    raise ValidationError(f"File {image.name} is not an image")
+
+        return cleaned_data
 
 
-class ProjectsAdminForm(forms.ModelForm):
+class ProjectsForm(BaseProjectsForm):
+    """form to handle project info"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class ProjectsAdminForm(BaseProjectsForm):
     """form to handle project info in admin"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    description = forms.CharField(
-        label="Project Description",
-        required=True,
-        widget=forms.Textarea(attrs={"class": "form-control"}),
-        help_text="Enter a description for the project",
-    )
-
-    project_url = forms.URLField(
-        label="Project URL",
-        required=True,
-        validators=[URLValidator()],
-        widget=forms.URLInput(attrs={"class": "form-control"}),
-        help_text="URL to the Project",
-    )
-
-    image = forms.ImageField(
-        label="Upload Image",
-        required=False,
-        widget=forms.FileInput(attrs={"class": "form-control"}),
-        help_text="Upload an image for your project (jpg, jpeg, png, gif, webp)",
-    )
-
-    captcha = CaptchaField(
-        label="Captcha",
-        help_text="Enter the characters shown in the image",
-        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
-    )
     class Meta:
         model = Projects
         fields = "__all__"

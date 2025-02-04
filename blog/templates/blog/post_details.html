@@ -1,0 +1,144 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+
+<section id="breadcrumbs" class="breadcrumbs">
+    <div class="container">
+        <ol>
+            <li><a href="{% url 'app:home' %}">Home</a></li>
+            <li><a href="{% url 'blog:blog_posts_list' %}">Blog Posts</a></li>
+            <li>{{ post.title }}</li>
+        </ol>
+    </div>
+</section>
+
+<section id="blog" class="blog">
+    <div class="container" data-aos="fade-up">
+        <div class="row">
+            <div class="col-lg-8 entries">
+                <article class="entry entry-single">
+                    <div class="entry-img">
+                        {% if post.optimized_image_url %}
+                        <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="img-fluid mb-1">
+                        {% endif %}
+                    </div>
+
+                    <h2 class="entry-title">
+                        <a href="{% url 'blog:blog_post_details' post.slug %}">{{ post.title }}</a>
+                    </h2>
+
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-person"></i>
+                                <a href="{% url 'blog:posts_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-clock"></i>
+                                <time datetime="{{ post.created_at }}">
+                                    {% if post.first_published_at %}
+                                        {{ post.first_published_at | date:"N j, Y" }}
+                                    {% else %}
+                                        {{ post.post_created_at | date:"N j, Y" }}
+                                    {% endif %}
+                                </time>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal">
+                                    <i class="bi bi-share-fill fs-6"></i>
+                                </a>
+                            </li>
+                            {% comment %}
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-chat-dots"></i>
+                                <a href="{% url 'blog:blog_post_details' post.slug %}#comments">post.comments.count Comments</a>
+                            </li>
+                            {% endcomment %}
+                    </div>
+                    <div class="entry-content">
+                        {{ post.content | richtext | safe }}
+                    </div>
+                    {% if user.is_authenticated and user == post.author or user.is_staff %}
+                    <div class="action-buttons mb-2">
+                        <input type="submit" class="btn btn-sm btn-primary" value="Edit Post" data-bs-toggle="modal" data-bs-target="#editModal"/>
+                        <input type="submit" class="btn btn-sm btn-danger" value="Delete Post" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                    </div>
+                    {% endif %}
+                    <div class="entry-footer">
+                        <i class="bi bi-tags"></i>
+                        <ul class="tags">
+                            {% for topic in post_topics %}
+                                <li><a href="{% url 'blog:posts_by_topic' topic %}">{{ topic }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="tags">
+                            <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal">
+                                <i class="bi bi-share-fill fs-6"></i>
+                            </a>
+                        </ul>
+                    </div>
+                </article>
+                <!-- End blog entry -->
+                <div class="blog-author d-flex align-items-center">
+                    <img src="{% static 'assets/img/blog/blog-author.jpg' %}" class="rounded-circle float-left" alt="">
+                    <div>
+                        <h4>{{ post.author.get_full_name | default:post.author.username }}</h4>
+                        <div class="social-links">
+                            <a href="https://twitter.com/{{ post.author.username }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                            <a href="https://facebook.com/{{ post.author.username }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="https://instagram.com/{{ post.author.username }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                        </div>
+                        <p>
+                            {{ post.author.profile.bio | default:"Author Bio" }}
+                        </p>
+                    </div>
+                </div>
+                <!-- End blog author -->
+                {% if request.user.is_staff or request.user == post.author %}
+                    {% include 'blog/partials/edit_delete_posts_modal.html' %}
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <h3 class="sidebar-title">Search Blog</h3>
+                    <div class="sidebar-item search-form">
+                        <form id="other-form" action="{% url 'blog:blog_posts_list' %}" method="get">
+                            <input type="text" name="q" class="form-control" placeholder="Search...">
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"><i class="bi bi-search"></i></button>
+                        </form>
+                    </div>
+                    <!-- End sidebar search form-->
+                    <div class="sidebar-item recent-posts">
+                        <h3 class="sidebar-title">Recent Posts</h3>
+                        {% for post in other_posts %}
+                        <div class="post-item clearfix">
+                            {% if post.optimized_image_url %}
+                            <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}">
+                            {% endif %}
+                            <h4><a href="{% url 'blog:blog_post_details' post.slug %}">{{ post.title }}</a></h4>
+                            <time datetime="{{ post.first_published_at }}">{{ post.first_published_at | date:"N j, Y" }}</time>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="sidebar-item tags">
+                       <h3 class="sidebar-title">Topics</h3>
+                       <ul>
+                           {% for topic, count in all_topics %}
+                           <li>
+                               <a href="{% url 'blog:posts_by_topic' topic %}">
+                               {{ topic }} <span>({{ count }})</span></a>
+                           </li>
+                           {% endfor %}
+                       </ul>
+                   </div>
+                    <!-- End sidebar tags-->
+                </div>
+                <!-- End sidebar -->
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

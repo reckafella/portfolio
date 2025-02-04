@@ -3,6 +3,71 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
+<section id="breadcrumbs" class="breadcrumbs">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li><a href="{% url 'app:projects' %}">{{ title }}</a></li>
+                <li>{{ title }}</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+{% if projects %}
+<section id="project" class="project py-3">
+    <div class="container" data-aos="fade-up">
+        <div class="section-title">
+            <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
+            <p class="lead mb-2">An inexhaustive list of personal & professional projects I have worked on.</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 d-flex justify-content-center">
+                <ul id="project-filters">
+                    <li data-filter="*" class="filter-active">All</li>
+                    {% for category in categories %}
+                    <li data-filter=".filter-{{ category|slugify }}">{{ category }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row project-container" data-aos="fade-up">
+            {% for project in projects %}
+                <div class="col-lg-4 col-md-5 card project-item gap-1 filter-{{ project.category|slugify }}" data-aos="fade-up" data-aos-delay="100">
+                    {% if project.first_image %}
+                        <img src="{{ project.first_image.cloudinary_image_url }}" class="img-fluid" alt="{{ project.title }}">
+                    {% else %}
+                        <img src="{% static 'assets/images/projects/default.png' %}" class="img-fluid" alt="{{ project.title }}">
+                    {% endif %}
+                    <div class="project-info">
+                        <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill {% if project.project_type == 'personal' %}bg-primary{% else %}bg-success{% endif %}">
+                            {{ project.project_type|title }}
+                        </span>
+                        <h4 class="mb-2">{{ project.title }}</h4>
+                        <a href="{% if project.first_image.optimized_image_url %} {{ project.first_image.cloudinary_image_url }} {% else %} {% static 'assets/images/projects/react-intro.png' %} {% endif %}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                            <i class="bi bi-plus"></i>
+                        </a>
+                        <a href="{% url 'app:project_detail' project.slug %}" class="details-link" title="More Details">
+                            <i class="bi bi-link"></i>
+                        </a>
+                        <p>{{ project.category }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-lg-12 d-flex justify-content-center">
+                    <p>No projects found</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+
+
+{% comment %}
 <section id="section" class="py-5 mt-5 section blog">
     <div class="container d-flex justify-content-center align-items-center mt-4 card col-11">
         <div class="row justify-content-center d-flex justify-content-center align-items-center">
@@ -12,14 +77,12 @@
                         <div class="card-header bg-transparent w-100 section-title">
                             <h2 class="text-center mb-2 py-2">{{ title }}</h2>
                         </div>
-                        {% comment %}
                             include the template for filters and sorts
                             {% include 'blog/partials/filters_and_sorts.html' %}
-                        {% endcomment %}
+                        
                         <div class="card-body m-4 p-1">
                         {% include 'app/projects/partials/projects.html' %}
                         </div>
-                        {% comment %} include the template for pagination {% endcomment %}
                         <div class="card-footer w-100 p-0 bg-transparent">
                             {% include 'app/pagination/projects.html' %}
                         </div>
@@ -29,4 +92,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
+{% endcomment %}

@@ -3,11 +3,11 @@
     <div class="card   h-100" data-aos="flip-right" data-aos-easing="ease-out-cubic" data-aos-delay="250">
         <div class="card-header">
             <p class="card-title fw-bold">
-                <a href="{% url 'blog_post_details' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>
+                <a href="{% url 'blog:blog_post_details' post.slug %}" class="text-success text-decoration-none">{{ post.title }}</a>
             </p>
             <p class="card-text">
                 <small class="text-muted">
-                    By <a href="{% url 'app:posts_by_author' post.author.username %}" class="text-success text-decoration-none">
+                    By <a href="{% url 'blog:posts_by_author' post.author.username %}" class="text-success text-decoration-none">
                         {{ post.author.get_full_name | default:post.author.username }}</a>
                     &nbsp; | &nbsp; <span class="text-muted">{{ post.created_at | date:"N j, Y" }}</span>
                 </small>
@@ -17,7 +17,7 @@
             <p class="card-text">{{ post.content | safe | truncatewords:20 }}</p>
         </div>
         <div class="card-footer text-center">
-            <a href="{% url 'app:blog_post_details' post.slug %}" class="btn btn-success">{{ submit_text }}</a>
+            <a href="{% url 'blog:blog_post_details' post.slug %}" class="btn btn-success">{{ submit_text }}</a>
         </div>
     </div>
 </div>

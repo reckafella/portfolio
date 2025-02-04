@@ -7,10 +7,10 @@
                     <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
                     {% comment %} indicate whether the article is published or not. only for staff/author {% endcomment %}
                     {% if user.is_staff or user == article.author %}
-                        {% if article.is_live %}
-                            <span class="badge bg-success">Published</span>
-                        {% else %}
+                        {% if article.has_unpublished_changes %}
                             <span class="badge bg-danger">Draft</span>
+                        {% else %}
+                            <span class="badge bg-success">Live</span>
                         {% endif %}
                     {% endif %}
                 </h5>

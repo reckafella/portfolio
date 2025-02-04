@@ -10,8 +10,8 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
-  --background-color: #d9dbdd; /* Background color for the entire website, including individual sections */
-  --default-color: #1c04f7; /* Default color used for the majority of the text content across the entire website */
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #040121; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #070127; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #25a19b; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --contrast-color: #ffffff; /* The contrast color is used for elements when the background color is one of the heading, accent, or default colors. Its purpose is to ensure proper contrast and readability when placed over these more dominant colors */
@@ -1274,6 +1274,7 @@ section,
   }
 }
 
+
 /*--------------------------------------------------------------
 # Contact Section
 --------------------------------------------------------------*/
@@ -1314,18 +1315,18 @@ section,
   color: var(--contrast-color);
 }
 
-.contact .contact-form {
+.contact .contact-form, .other .other-form {
   box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 90%);
   padding: 30px;
 }
 
 @media (max-width: 575px) {
-  .contact .contact-form {
+  .contact .contact-form, .other .other-form {
     padding: 20px;
   }
 }
 
-.contact .contact-form .error-message {
+.contact .contact-form .error-message, .other .other-form .error-message {
   display: none;
   background: #df1529;
   color: #ffffff;
@@ -1335,7 +1336,7 @@ section,
   font-weight: 600;
 }
 
-.contact .contact-form .sent-message {
+.contact .contact-form .sent-message, .other .other-form .sent-message {
   display: none;
   color: #ffffff;
   background: #059652;
@@ -1345,7 +1346,7 @@ section,
   font-weight: 600;
 }
 
-.contact .contact-form .loading {
+.contact .contact-form .loading, .other .other-form .loading {
   display: none;
   background: var(--background-color);
   text-align: center;
@@ -1353,7 +1354,7 @@ section,
   margin-bottom: 24px;
 }
 
-.contact .contact-form .loading:before {
+.contact .contact-form .loading:before, .other .other-form .loading:before {
   content: "";
   display: inline-block;
   border-radius: 50%;
@@ -1367,14 +1368,10 @@ section,
 
 .contact .contact-form input[type=text],
 .contact .contact-form input[type=email],
-.contact .contact-form input[type=tel],
-.contact .contact-form input[type=number],
-.contact .contact-form input[type=date],
-.contact .contact-form input[type=time],
-.contact .contact-form input[type=password],
-.contact .contact-form input[type=url],
-.contact .contact-form input,
-.contact .contact-form textarea {
+.contact .contact-form textarea,
+.other .other-form input[type=text],
+.other .other-form input[type=email],
+.other .other-form textarea {
   font-size: 14px;
   padding: 10px 15px;
   box-shadow: none;
@@ -1386,32 +1383,25 @@ section,
 
 .contact .contact-form input[type=text]:focus,
 .contact .contact-form input[type=email]:focus,
-.contact .contact-form input[type=tel]:focus,
-.contact .contact-form input[type=number]:focus,
-.contact .contact-form input[type=date]:focus,
-.contact .contact-form input[type=time]:focus,
-.contact .contact-form input[type=password]:focus,
-.contact .contact-form input[type=url]:focus,
-.contact .contact-form input:focus,
-.contact .contact-form textarea:focus {
+.contact .contact-form textarea:focus
+.other .other-form input[type=text]:focus,
+.other .other-form input[type=email]:focus,
+.other .other-form textarea:focus {
   border-color: var(--accent-color);
 }
 
 .contact .contact-form input[type=text]::placeholder,
 .contact .contact-form input[type=email]::placeholder,
-.contact .contact-form input[type=tel]::placeholder,
-.contact .contact-form input[type=number]::placeholder,
-.contact .contact-form input[type=date]::placeholder,
-.contact .contact-form input[type=time]::placeholder,
-.contact .contact-form input[type=password]::placeholder,
-.contact .contact-form input[type=url]::placeholder,
-.contact .contact-form input::placeholder,
-.contact .contact-form textarea::placeholder {
+.contact .contact-form textarea::placeholder,
+.other .other-form input[type=text]::placeholder,
+.other .other-form input[type=email]::placeholder,
+.other .other-form textarea::placeholder {
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
 
-.contact .contact-form button[type=submit], .contact .contact-form input[type=submit] {
+.contact .contact-form button[type=submit],
+.other .other-form button[type=submit] {
   color: var(--contrast-color);
   background: var(--accent-color);
   border: 0;
@@ -1488,7 +1478,7 @@ section,
     display: none;
   }
 }
-
+/*
 .portfolio-details .swiper-pagination {
   margin-top: 20px;
   position: relative;
@@ -1503,8 +1493,25 @@ section,
 
 .portfolio-details .swiper-pagination .swiper-pagination-bullet-active {
   background-color: var(--accent-color);
+}*/
+
+.portfolio-details .portfolio-details-slider .swiper-pagination {
+  margin-top: 20px;
+  position: relative;
 }
 
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  opacity: 1;
+  border: 1px solid #0880e8;
+}
+
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet-active {
+  background-color: #0880e8;
+}
+/* 
 .portfolio-details .portfolio-info h3 {
   font-size: 22px;
   font-weight: 700;
@@ -1619,8 +1626,46 @@ section,
   margin: 0 0 15px 0 0 0;
   padding: 0;
 }
+ */
 
-/*--------------------------------------------------------------
+ .portfolio-details .portfolio-info {
+  padding: 30px;
+  box-shadow: 0px 0 30px rgba(246, 176, 36, 0.08);
+}
+
+.portfolio-details .portfolio-info h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.portfolio-details .portfolio-info ul {
+  list-style: none;
+  padding: 0;
+  font-size: 15px;
+}
+
+.portfolio-details .portfolio-info ul li+li {
+  margin-top: 10px;
+}
+
+.portfolio-details .portfolio-description {
+  padding-top: 30px;
+}
+
+.portfolio-details .portfolio-description h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.portfolio-details .portfolio-description p {
+  padding: 0;
+}
+
+ /*--------------------------------------------------------------
 # Service Details Section
 --------------------------------------------------------------*/
 .service-details .services-list {

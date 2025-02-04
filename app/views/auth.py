@@ -23,6 +23,7 @@ class SignupView(BaseAuthentication):
             "page_title": "Create an Account",
             "form_title": "Create Account",
             "submit_text": "Create Account",
+            "data_loading_text": "Creating Account...",
             "next": self.get_success_url(),
             "extra_messages": [
                 {
@@ -65,6 +66,7 @@ class LoginView(BaseAuthentication):
             "page_title": "Login to Your Account",
             "form_title": "Sign in",
             "submit_text": "Login",
+            "data_loading_text": "Logging in...",
             "next": self.get_success_url(),
             "extra_messages": [
                 {

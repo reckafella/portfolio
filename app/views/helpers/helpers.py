@@ -61,8 +61,9 @@ def guess_file_type(file) -> str:
     """
     try:
         import filetype
-
+        file.seek(0)
         file_type = filetype.guess(file.read())
-        return file_type.mime
+        file.seek(0)
+        return file_type.mime if file_type else None
     except Exception:
         return None

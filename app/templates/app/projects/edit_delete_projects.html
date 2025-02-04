@@ -1,7 +1,7 @@
 <!-- Modal for editing and deleting projects -->
 <!-- Edit Project Modal -->
 {% if user.is_staff %}
-<div class="modal modal-fullscreen-sm modal-fullscreen-md fade contact" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal modal-fullscreen-sm modal-fullscreen-md fade other" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="other-form" class="contact-form" action="{% url 'app:update_project' project.slug %}" method="post" enctype="multipart/form-data">
+                <form id="other-form" class="other-form form-control" action="{% url 'app:update_project' project.slug %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in form %}
                     <div class="form-group mb-3">
@@ -49,14 +49,16 @@
                 <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body ">
-                Are you sure you want to delete "{{ project.title }}"? This action cannot be undone.
+            <div class="modal-body">
+                Are you sure you want to delete "{{ project.title }}"?
+                Notice that any associated images and YouTube video links will also be deleted.
+                This action cannot be undone.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form id="delete-form" action="{% url 'app:delete_project' project.slug %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-danger" value="Delete"/>
+                    <input type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger" value="Delete"/>
                 </form>
             </div>
         </div>

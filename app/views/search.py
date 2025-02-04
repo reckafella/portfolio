@@ -95,6 +95,7 @@ def search_view(request):
         "posts": paginated_posts,
         "projects": paginated_projects,
         "page_title": "Search",
+        "data_loading_text": "Searching...",
         "total_results": total_results,
         "sort_options": {
             "relevance": "Relevance",

@@ -1,0 +1,255 @@
+
+/*--------------------------------------------------------------
+# Projects
+--------------------------------------------------------------*/
+.project #project-filters {
+    padding: 0;
+    margin: 0 auto 25px auto;
+    list-style: none;
+    text-align: center;
+    border-radius: 50px;
+}
+  
+.project #project-filters li {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 18px 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    color: #444444;
+    margin: 0 3px 10px 3px;
+    transition: all ease-in-out 0.3s;
+    border-radius: 50px;
+}
+  
+.project #project-filters li:hover,
+.project #project-filters li.filter-active {
+    color: #fff;
+    background: #0880e8;
+}
+  
+.project #project-filters li:last-child {
+    margin-right: 0;
+}
+  
+.project .project-item {
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+  
+.project .project-item img, .project .project-item .video-box {
+    position: relative;
+    top: 0;
+    transition: all 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+  
+.project .project-item .video-box {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-height: 250px;
+    height: auto;
+    width: 100%;
+    position: relative;
+}
+
+
+.project .project-item .play-btn {
+    width: 94px;
+    height: 94px;
+    background: radial-gradient(#0880e8 50%, rgba(8, 128, 232, 0.4) 52%);
+    border-radius: 50%;
+    display: block;
+    position: absolute;
+    left: calc(50% - 47px);
+    top: calc(50% - 47px);
+    overflow: hidden;
+}
+  
+.project .project-item .play-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-40%) translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #fff;
+    z-index: 100;
+    transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+}
+  
+.project .project-item .play-btn::before {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    animation-delay: 0s;
+    animation: pulsate-btn 2s;
+    animation-direction: forwards;
+    animation-iteration-count: infinite;
+    animation-timing-function: steps;
+    opacity: 1;
+    border-radius: 50%;
+    border: 5px solid rgba(8, 128, 232, 0.7);
+    top: -15%;
+    left: -15%;
+    background: rgba(198, 16, 0, 0);
+}
+  
+.project .project-item .play-btn:hover::after {
+    border-left: 15px solid #0880e8;
+    transform: scale(20);
+}
+  
+.project .project-item .play-btn:hover::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-40%) translateY(-50%);
+    width: 0;
+    height: 0;
+    border: none;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #fff;
+    z-index: 200;
+    animation: none;
+    border-radius: 0;
+}
+
+@keyframes pulsate-btn {
+    0% {
+        transform: scale(0.4, 0.4);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.8, 0.8);
+        opacity: 0.5;
+    }
+    100% {
+      transform: scale(1, 1);
+      opacity: 0;
+    }
+}
+
+.project .project-item .project-info {
+    opacity: .5;
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: -50px;
+    z-index: 3;
+    transition: all ease-in-out 0.3s;
+    background: #282a2c;
+    padding: 15px 20px;
+}
+  
+.project .project-item .project-info h4 {
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
+}
+  
+.project .project-item .project-info p {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+  
+  .project .project-item .project-info .preview-link,
+.project .project-item .project-info .details-link {
+    position: absolute;
+    right: 50px;
+    font-size: 24px;
+    top: calc(50% - 18px);
+    color: white;
+    transition: ease-in-out 0.3s;
+}
+  
+  .project .project-item .project-info .preview-link:hover,
+.project .project-item .project-info .details-link:hover {
+    color: #8ec8fb;
+}
+  
+.project .project-item .project-info .details-link {
+    right: 15px;
+}
+  
+.project .project-item:hover img, .project .project-item:hover .video-box {
+    top: -30px;
+}
+  
+.project .project-item .project-info {
+    opacity: 1;
+    bottom: 0;
+}
+  
+  /*--------------------------------------------------------------
+  # Project Details
+  --------------------------------------------------------------*/
+.project-details {
+    padding-top: 40px;
+}
+  
+.project-details .project-details-slider img {
+    width: 100%;
+}
+  
+.project-details .project-details-slider .swiper-pagination {
+    margin-top: 20px;
+    position: relative;
+}
+  
+.project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    opacity: 1;
+    border: 1px solid #0880e8;
+}
+  
+.project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet-active {
+    background-color: #0880e8;
+}
+  
+.project-details .project-info {
+    padding: 30px;
+    box-shadow: 0px 0 30px rgba(246, 176, 36, 0.08);
+}
+  
+.project-details .project-info h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+  
+.project-details .project-info ul {
+    list-style: none;
+    padding: 0;
+    font-size: 15px;
+}
+  
+.project-details .project-info ul li+li {
+    margin-top: 10px;
+}
+  
+.project-details .project-description {
+    padding-top: 30px;
+}
+  
+.project-details .project-description h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+  
+.project-details .project-description p {
+    padding: 0;
+}

@@ -15,7 +15,7 @@
                         <p class="text-center">Are you sure you want to delete "{{ object.title }}"?</p>
                         <form method="post" class="text-center">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger">Confirm Delete</button>
                             <a href="{% url 'blog:blog_post_details' object.slug %}" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>

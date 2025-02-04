@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -324,3 +324,18 @@ SESSION_COOKIE_AGE = 3600
 
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True 
+
+""" Software Dev Project Categories """
+CATEGORY_CHOICES = [
+    ('Web Development', 'Web Development'),
+    ('Mobile Development', 'Mobile Development'),
+    ('Desktop Development', 'Desktop Development'),
+    ('Machine Learning', 'Machine Learning'),
+    ('Data Science', 'Data Science'),
+    ('DevOps', 'DevOps'),
+    ('Cyber Security', 'Cyber Security'),
+    ('Networking', 'Networking'),
+    ('Game Development', 'Game Development'),
+    ('UI/UX Design', 'UI/UX Design'),
+    ('Other', 'Other'),
+]

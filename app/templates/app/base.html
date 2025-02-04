@@ -36,6 +36,8 @@
 
     <!-- Main CSS File -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/projects.css' %}">
 
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
@@ -45,160 +47,18 @@
     <div id="user-logged-in" hidden></div>
     {% endif %}
     {% csrf_token %}
-    <header id="header" class="header fixed-top d-flex align-items-center mb-5">
-        <div class="container-fluid container-sm container-xl position-relative d-flex align-items-center justify-content-between">
-            <a href="{% url 'app:home' %}" class="logo align-items-center d-flex">
-                <h3 class="sitename pacifico-regular">Ethan</h3>
-            </a>
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="{% url 'app:home' %}" class="text-start active"><span>Home</span></a></li>
-                    <li class="dropdown"><a href="#"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="#" class="text-start"><span>About Me</span></a></li>
-                            <li><a href="{% url 'app:resume' %}" class="text-start" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                        </ul>
-                    </li>
-                    <li><a href="{% url 'app:projects' %}" class="text-start"><span>Projects</span></a></li>
-                    <li><a href="{% url 'app:contact' %}" class="text-start"><span>Contact</span></a></li>
-                    <li><a href="{% url 'blog:blog_posts_list' %}" class="text-start"><span>Blog</span></a></li>
-                    <li class="dropdown"><a href="#"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            {% if user.is_staff %}
-                            <li><a href="{% url 'blog:create_blog_post' %}" class="text-start"><span>Create Blog Post</span></a></li>
-                            <li><a href="{% url 'app:add_project' %}" class="text-start"><span>Create Project</span></a></li>
-                            <li><a href="{% url 'app:messages' %}" class="text-start"><span>Messages</span></a></li>
-                            <li><a href="{% url 'admin:index' %}" class="text-start" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            <li><a href="/wagtail/admin/" class="text-start" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            {% endif %}
-                            {% if user.is_authenticated %}
-                            <li><a href="{% url 'app:logout' %}" class="text-start"><span>Logout</span></a></li>
-                            {% else %}
-                            <li><a href="{% url 'app:login' %}" class="text-start"><span>Login</span></a></li>
-                            <li><a href="{% url 'app:signup' %}" class="text-start"><span>Register</span></a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#" onclick="toggleSearchBar(); return false;" class="text-start">
-                          <span class="d-inline d-md-inline d-lg-none">Search</span>
-                          <i class="bi bi-search"></i>
-                        </a>
-                      </li>
-                </ul>
-                <i class="header-toggle mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
-        </div>
-    </header>
+    {% include 'app/includes/header.html' %}
 
-    <div id="search-bar" class="search-bar position-fixed top-50 start-50 translate-middle w-100 h-100 w-md-75 h-md-75 w-lg-50 h-lg-50 bg-dark bg-opacity-90 d-none">
-        <div class="container h-100 d-lg-flex d-block align-items-center justify-content-center">
-            <form id="search-form" class="w-100 px-3" onsubmit="return performSearch()">
-                <div class="row input-group g-1">
-                    <div class="col-12 col-md-4">
-                        <input type="text" class="form-control" placeholder="Type to search..." aria-label="Search" required>
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <select id="search-bar-filterOption" class="form-select">
-                            <option value="all" selected>All</option>
-                            <option value="posts">Posts</option>
-                            <option value="projects">Projects</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <select id="search-bar-sortSelect" class="form-select">
-                            <option value="relevance" selected>Relevance</option>
-                            <option value="date_desc">Newest First</option>
-                            <option value="date_asc">Oldest First</option>
-                            <option value="title_asc">Title A-Z</option>
-                            <option value="title_desc">Title Z-A</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <button type="submit" class="w-100 btn-info">Search</button>
-                    </div>
-                    <div class="col-12 col-md-1 d-flex justify-content-center align-items-center" data-bs-theme="dark">
-                        <button type="button" class="btn btn-close" aria-label="Close" onclick="toggleSearchBar()"></button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+    {% include 'app/includes/searchbar.html' %}
 
     <main class="main flex-grow-1">
-        <div id="liveToast" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
-            <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center justify-content-around">
-                        <i id="toastIcon" class="me-2"></i>
-                        <strong id="toastTitle" class="me-auto me-2">Notification</strong>
-                    </div>
-                    <small id="alert-time" class="text-muted text-body-secondary">Just now</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div id="toastBody" class="toast-body">
-                    <p id="toastMessage" class="mb-1"></p>
-                    <ul id="toastErrors" class="mb-0 ps-3"></ul>
-                </div>
-            </div>
-        </div>
+        {% include 'app/includes/toast.html' %}
         {% block content %}
         {% endblock %}
+        {% include 'app/includes/share.html' %}
     </main>
 
-    <footer id="footer" class="footer mt-auto py-3">
-        <div class="container container-fluid container-xl p-3">
-            <div class="copyright text-center">
-                <p>
-                    <span>All Rights Reserved</span>
-                    &copy;
-                    <strong class="sitename pacifico-regular">Ethan Wanyoike</strong>
-                </p>
-            </div>
-            <div class="container-fluid info-wrap social-links d-flex justify-content-center">
-                <a href="https://x.com/devrohn" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
-                <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
-                <a href="https://instagram.com/reckafella" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
-                <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
-                <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
-                <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
-            </div>
-            <div>
-              <!-- site map -->
-              <div
-                class="sitemap row d-flex g-1 gap-2">
-                <a href="{% url 'app:sitemap' %}"
-                  target="_blank"
-                  class="text-white text-center">
-                    Sitemap.xml
-                </a>
-                <a href="{% url 'app:html_sitemap' %}"
-                  target="_blank"
-                  class="text-white text-center">
-                    Sitemaps
-               </a>
-             </div>
-             <div class="credits">
-                Styled using
-               <a class="text-start" target="_blank"
-                 href="https://getbootstrap.com/">
-                 <span class="text-white
-                   pacifico-regular">
-                   Bootstrap
-                 </span>
-                 <i class="bi bi-box-arrow-up-right
-                   ms-2"></i>
-                </a>
-            </div>
-          </div>
-            {% comment %} 
-            {% if user.is_staff %}
-            {# Wagtail User Bar #}
-            {% wagtailuserbar 'bottom-left' %}
-            {% endif %}
-            {% endcomment %}
-        </div>
-    </footer>
+    {% include 'app/includes/footer.html' %}
 
     <!-- Preloader -->
     <div id="preloader"></div>
@@ -225,6 +85,7 @@
     <script src="{% static 'assets/js/more_less.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/js/form-validator.js' %}"></script>
+    {% comment %}
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
 
     <script>
@@ -242,9 +103,9 @@
             setupSessionTimeout();
         });
     </script>
+    {% endcomment %}
     
     <!-- Form data validation -->
      {% block extra_js %} {% endblock %}
-    {% comment %}<script src="{% static 'assets/js/input-validator.js' %}"></script>{% endcomment %}
 </body>
 </html>

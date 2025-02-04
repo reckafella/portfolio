@@ -13,10 +13,10 @@
                     </div>
                     <div class="card-body">
                         <p class="text-center">Are you sure you want to delete "{{ object.title }}"? This action cannot be undone.</p>
-                        <form id="delete-form" method="post" class="text-center justify-content-between">
+                        <form id="other-form" method="post" class="d-flex align-items-center justify-content-around">
                             {% csrf_token %}
-                            <a href="{% url 'app:project_detail' object.id %}" class="btn btn-outline-light">{{ cancel_text }}</a>
-                            <button type="submit" class="btn btn-danger">{{ submit_text }}</button>
+                            <a href="{% url 'app:projects' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-outline-danger">{{ submit_text }}</button>
                         </form>
                     </div>
                 </div>

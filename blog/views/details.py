@@ -11,7 +11,7 @@ from blog.forms import BlogPostForm
 class PostDetailView(DetailView):
     model = BlogPostPage
     form_class = BlogPostForm
-    template_name = "blog/blog_post_details.html"
+    template_name = "blog/post_details.html"
     context_object_name = "post"
 
     def get_queryset(self):
@@ -29,6 +29,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.get_object()
+        posts = self.get_queryset()
 
         # Only show other (unpublished) posts by the same author if:
         # 1. The post is published, OR
@@ -55,10 +56,20 @@ class PostDetailView(DetailView):
             )
         else:
             context["other_posts"] = []
+        
+        context["post_topics"] = post.get_topics()
+        context["all_topics"] = self.add_topics(posts)
         context["form"] = self.form_class(instance=post)
         context['page_title'] = f'Update: {post.title}'
         context['submit_text'] = 'Update Post'
         context['action_url'] = reverse_lazy('blog:update_blog_post', kwargs={'slug': post.slug})
-        
 
         return context
+    
+    def add_topics(self, articles):
+        """ Returns a list of tuples for all topics in the queryset + total number of articles for each article """
+        if not articles.exists():
+            return []
+        topics = set(topic.strip() for post in articles for topic in post.get_topics())
+        return sorted([(topic, articles.filter(topics__icontains=topic).count()) for topic in topics])
+        

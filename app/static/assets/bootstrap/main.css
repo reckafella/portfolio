@@ -11,18 +11,18 @@
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #040121; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #070127; /* Color for headings, subheadings and title throughout the website */
+  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #25a19b; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --contrast-color: #ffffff; /* The contrast color is used for elements when the background color is one of the heading, accent, or default colors. Its purpose is to ensure proper contrast and readability when placed over these more dominant colors */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --nav-color: #ffffff;  /* The default color of the main navmenu links */
-  --nav-hover-color: #ffffff; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-dropdown-background-color: #010f1d; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #ffffff; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-color: #444444;  /* The default color of the main navmenu links */
+  --nav-hover-color: #34b7a7; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #34b7a7; /* Used for navigation links of the dropdown items in the navigation menu. */
   --nav-dropdown-hover-color: #fc7c05; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
@@ -31,10 +31,25 @@
   --alt-background-color: #076cdd;
 }
 
+/* Color presets - overide global colors when applied to any section or element, providing reuse of the same color scheme */
+.light-background {
+  --background-color: #e9e8e6;
+  --surface-color: #ffffff;
+}
+
+.dark-background {
+  --background-color: #060606;
+  --surface-color: #252525;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --contrast-color: #ffffff;
+}
+
 /* Smooth scroll */
 :root {
   scroll-behavior: smooth;
 }
+
 
 /*--------------------------------------------------------------
 # General
@@ -70,14 +85,12 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
-  --background-color: var(--nav-dropdown-background-color);
-  --default-color: #ffffff;
-  --heading-color: #f3eeee;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 15px 0;
   transition: all 0.5s;
   z-index: 997;
+  box-shadow: 0px 0 18px color-mix(in srgb, var(--background-color), transparent 85%);
 }
 
 .header .logo {
@@ -90,10 +103,49 @@ h6 {
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 32px;
   margin: 0;
-  font-weight: 700;
+  font-weight: 300;
   color: var(--heading-color);
+}
+
+.header .header-social-links {
+  padding-right: 15px;
+}
+
+.header .header-social-links a {
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  padding-left: 6px;
+  display: inline-block;
+  transition: 0.3s;
+  font-size: 16px;
+}
+
+.header .header-social-links a:hover {
+  color: var(--accent-color);
+}
+
+.header .header-social-links a i {
+  font-size: 20px;
+  line-height: 0;
+}
+
+@media (max-width: 1600px) {
+  .header .logo {
+    order: 1;
+  }
+
+  .header .header-social-links {
+    order: 2;
+  }
+
+  .header .search-icon {
+    order: 3;
+  }
+
+  .header .nav-menu {
+    order: 4;
+  }
 }
 
 .scrolled .header {
@@ -156,17 +208,13 @@ h6 {
   .navmenu>ul>li>a:before {
     content: "";
     position: absolute;
-    width: 100%;
+    width: 0;
     height: 2px;
     bottom: -6px;
     left: 0;
     background-color: var(--nav-hover-color);
-    /* font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal; */
     visibility: hidden;
-    width: 0px;
-    transition: all 0.3s ease-in-out 0s;
+    transition: all 0.3s ease-in-out 0.3s;
   }
 
   .navmenu a:hover:before,
@@ -182,13 +230,6 @@ h6 {
     color: var(--nav-hover-color);
   }
 
-  /* .navmenu li:hover>a, 
-  .navmenu .active:focus {
-    font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal;
-  } */
-   
   .navmenu .dropdown ul {
     margin: 0;
     padding: 10px 0;
@@ -202,7 +243,7 @@ h6 {
     transition: 0.3s;
     border-radius: 4px;
     z-index: 99;
-    box-shadow: 0px 0px 30px color-mix(in srgb, var(--default-color), transparent 85%);
+    box-shadow: 0px 0px 30px color-mix(in srgb, var(--background-color), transparent 85%);
   }
 
   .navmenu .dropdown ul li {
@@ -520,7 +561,7 @@ h6 {
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background-color: color-mix(in srgb, var(--accent-color), transparent 30%);
   color: var(--contrast-color);
 }
 

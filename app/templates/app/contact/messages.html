@@ -1,0 +1,96 @@
+{% extends 'app/base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ page_title }}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% for message in messages %}
+                <div class="card mb-3 message-card" data-id="{{ message.id }}">
+                    <div class="card-header d-flex justify-content-between align-items-center cursor-pointer toggle-message">
+                        <div>
+                            <h5 class="mb-0">{{ message.subject }}</h5>
+                            <small class="text-muted">From: {{ message.name }} ({{ message.email }})</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            {% if not message.is_read %}
+                            <span class="badge bg-primary me-2">New</span>
+                            {% endif %}
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                    </div>
+                    <div class="card-body message-content" style="display: none;">
+                        {{ message.message|safe }}
+                        <div class="mt-2">
+                            <small class="text-muted">Received: {{ message.created_at|date:"F j, Y, g:i a" }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body message-preview">
+                        {{ message.message|striptags|truncatechars:100 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageCards = document.querySelectorAll('.message-card');
+    
+    messageCards.forEach(card => {
+        const toggleButton = card.querySelector('.toggle-message');
+        const content = card.querySelector('.message-content');
+        const preview = card.querySelector('.message-preview');
+        const toggleIcon = card.querySelector('.toggle-icon');
+        const messageId = card.dataset.id;
+        
+        toggleButton.addEventListener('click', function() {
+            const isExpanded = content.style.display === 'block';
+            
+            // Toggle content visibility
+            content.style.display = isExpanded ? 'none' : 'block';
+            preview.style.display = isExpanded ? 'block' : 'none';
+            toggleIcon.classList.toggle('rotated');
+            
+            // If message is being expanded and has 'New' badge, mark as read
+            if (!isExpanded) {
+                const badge = card.querySelector('.badge');
+                if (badge) {
+                    markAsRead(messageId);
+                    badge.remove();
+                }
+            }
+        });
+    });
+    
+    function markAsRead(messageId) {
+        fetch(`/messages/${messageId}/mark-read/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

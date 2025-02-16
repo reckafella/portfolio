@@ -10,19 +10,19 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
-  --background-color: #d9dbdd; /* Background color for the entire website, including individual sections */
-  --default-color: #1c04f7; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #070127; /* Color for headings, subheadings and title throughout the website */
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #25a19b; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --contrast-color: #ffffff; /* The contrast color is used for elements when the background color is one of the heading, accent, or default colors. Its purpose is to ensure proper contrast and readability when placed over these more dominant colors */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --nav-color: #ffffff;  /* The default color of the main navmenu links */
-  --nav-hover-color: #ffffff; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-dropdown-background-color: #010f1d; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #ffffff; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-color: #444444;  /* The default color of the main navmenu links */
+  --nav-hover-color: #34b7a7; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #03b09c; /* Used for navigation links of the dropdown items in the navigation menu. */
   --nav-dropdown-hover-color: #fc7c05; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
@@ -31,10 +31,25 @@
   --alt-background-color: #076cdd;
 }
 
+/* Color presets - overide global colors when applied to any section or element, providing reuse of the same color scheme */
+.light-background {
+  --background-color: #e9e8e6;
+  --surface-color: #ffffff;
+}
+
+.dark-background {
+  --background-color: #060606;
+  --surface-color: #252525;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --contrast-color: #ffffff;
+}
+
 /* Smooth scroll */
 :root {
   scroll-behavior: smooth;
 }
+
 
 /*--------------------------------------------------------------
 # General
@@ -70,14 +85,12 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
-  --background-color: var(--nav-dropdown-background-color);
-  --default-color: #ffffff;
-  --heading-color: #f3eeee;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 15px 0;
   transition: all 0.5s;
   z-index: 997;
+  box-shadow: 0px 0 18px color-mix(in srgb, var(--background-color), transparent 85%);
 }
 
 .header .logo {
@@ -90,10 +103,49 @@ h6 {
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 32px;
   margin: 0;
-  font-weight: 700;
+  font-weight: 300;
   color: var(--heading-color);
+}
+
+.header .header-social-links {
+  padding-right: 15px;
+}
+
+.header .header-social-links a {
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  padding-left: 6px;
+  display: inline-block;
+  transition: 0.3s;
+  font-size: 16px;
+}
+
+.header .header-social-links a:hover {
+  color: var(--accent-color);
+}
+
+.header .header-social-links a i {
+  font-size: 20px;
+  line-height: 0;
+}
+
+@media (max-width: 1600px) {
+  .header .logo {
+    order: 1;
+  }
+
+  .header .header-social-links {
+    order: 2;
+  }
+
+  .header .search-icon {
+    order: 3;
+  }
+
+  .header .nav-menu {
+    order: 4;
+  }
 }
 
 .scrolled .header {
@@ -156,17 +208,13 @@ h6 {
   .navmenu>ul>li>a:before {
     content: "";
     position: absolute;
-    width: 100%;
+    width: 0;
     height: 2px;
     bottom: -6px;
     left: 0;
     background-color: var(--nav-hover-color);
-    /* font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal; */
     visibility: hidden;
-    width: 0px;
-    transition: all 0.3s ease-in-out 0s;
+    transition: all 0.3s ease-in-out 0.3s;
   }
 
   .navmenu a:hover:before,
@@ -182,13 +230,6 @@ h6 {
     color: var(--nav-hover-color);
   }
 
-  /* .navmenu li:hover>a, 
-  .navmenu .active:focus {
-    font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal;
-  } */
-   
   .navmenu .dropdown ul {
     margin: 0;
     padding: 10px 0;
@@ -202,7 +243,7 @@ h6 {
     transition: 0.3s;
     border-radius: 4px;
     z-index: 99;
-    box-shadow: 0px 0px 30px color-mix(in srgb, var(--default-color), transparent 85%);
+    box-shadow: 0px 0px 30px color-mix(in srgb, var(--background-color), transparent 85%);
   }
 
   .navmenu .dropdown ul li {
@@ -429,70 +470,51 @@ h6 {
 /*--------------------------------------------------------------
 # Preloader
 --------------------------------------------------------------*/
-/* #preloader {
+#preloader {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  overflow: hidden;
   background: var(--background-color);
-  transition: all 0.6s ease-out;
-}
-
-#preloader:before {
-  content: "";
-  position: fixed;
-  top: calc(50% - 30px);
-  left: calc(50% - 30px);
-  border: 6px solid #ffffff;
-  border-color: var(--accent-color) transparent var(--accent-color) transparent;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: animate-preloader 1.5s linear infinite;
-}
-
-@keyframes animate-preloader {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-} */
-
-#preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
   overflow: hidden;
-  background: #010f1d;
-  /*background: #040114;*/
+  transition: all 0.6s ease-out;
+  width: 100%;
+  height: 100vh;
 }
 
-#preloader:before {
+#preloader:before,
+#preloader:after {
   content: "";
-  position: fixed;
-  top: calc(50% - 30px);
-  left: calc(50% - 30px);
-  border: 6px solid #e85a08;
-  border-top-color: #f9b27c;
+  position: absolute;
+  border: 4px solid var(--accent-color);
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: animate-preloader 1s linear infinite;
+  animation: animate-preloader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+#preloader:after {
+  animation-delay: -0.5s;
 }
 
 @keyframes animate-preloader {
   0% {
-    transform: rotate(0deg);
+    top: calc(50% - 10px);
+    left: calc(50% - 10px);
+    width: 10px;
+    height: 10px;
+    opacity: 0;
   }
-
+  5% {
+    top: calc(50% - 10px);
+    left: calc(50% - 10px);
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+  }
   100% {
-    transform: rotate(360deg);
+    top: calc(50% - 40px);
+    left: calc(50% - 40px);
+    width: 80px;
+    height: 80px;
+    opacity: 0;
   }
 }
 
@@ -520,7 +542,7 @@ h6 {
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background-color: color-mix(in srgb, var(--accent-color), transparent 30%);
   color: var(--contrast-color);
 }
 
@@ -1274,6 +1296,7 @@ section,
   }
 }
 
+
 /*--------------------------------------------------------------
 # Contact Section
 --------------------------------------------------------------*/
@@ -1418,10 +1441,8 @@ section,
   border-radius: 10px;
 }
 
-
 .search-submit:hover,
-.contact .contact-form button[type=submit]:hover,
-.other .other-form button[type=submit]:hover {
+.contact .contact-form button[type=submit]:hover {
   background: color-mix(in srgb, var(#fff), transparent 20%);
 }
 
@@ -1479,20 +1500,26 @@ section,
   }
 }
 
-.portfolio-details .swiper-pagination {
+.portfolio-details .portfolio-details-slider .swiper-pagination {
   margin-top: 20px;
   position: relative;
 }
 
-.portfolio-details .swiper-pagination .swiper-pagination-bullet {
-  width: 10px;
-  height: 10px;
-  background-color: color-mix(in srgb, var(--default-color), transparent 85%);
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
   opacity: 1;
+  border: 1px solid #0880e8;
 }
 
-.portfolio-details .swiper-pagination .swiper-pagination-bullet-active {
-  background-color: var(--accent-color);
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet-active {
+  background-color: #0880e8;
+}
+
+ .portfolio-details .portfolio-info {
+  padding: 30px;
+  box-shadow: 0px 0 30px rgba(246, 176, 36, 0.08);
 }
 
 .portfolio-details .portfolio-info h3 {
@@ -1500,18 +1527,7 @@ section,
   font-weight: 700;
   margin-bottom: 20px;
   padding-bottom: 20px;
-  position: relative;
-}
-
-.portfolio-details .portfolio-info h3:after {
-  content: "";
-  position: absolute;
-  display: block;
-  width: 50px;
-  height: 3px;
-  background: var(--accent-color);
-  left: 0;
-  bottom: 0;
+  border-bottom: 1px solid #eee;
 }
 
 .portfolio-details .portfolio-info ul {
@@ -1520,29 +1536,12 @@ section,
   font-size: 15px;
 }
 
-.portfolio-details .portfolio-info ul li {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 15px;
+.portfolio-details .portfolio-info ul li+li {
+  margin-top: 10px;
 }
 
-.portfolio-details .portfolio-info ul strong {
-  text-transform: uppercase;
-  font-weight: 400;
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
-  font-size: 14px;
-}
-
-.portfolio-details .portfolio-info .btn-visit {
-  padding: 8px 40px;
-  background: var(--accent-color);
-  color: var(--contrast-color);
-  border-radius: 50px;
-  transition: 0.3s;
-}
-
-.portfolio-details .portfolio-info .btn-visit:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 20%);
+.portfolio-details .portfolio-description {
+  padding-top: 30px;
 }
 
 .portfolio-details .portfolio-description h2 {
@@ -1555,62 +1554,7 @@ section,
   padding: 0;
 }
 
-.portfolio-details .portfolio-description .testimonial-item {
-  padding: 30px 30px 0 30px;
-  position: relative;
-  background: color-mix(in srgb, var(--default-color), transparent 97%);
-  margin-bottom: 50px;
-}
-
-.portfolio-details .portfolio-description .testimonial-item .testimonial-img {
-  width: 90px;
-  border-radius: 50px;
-  border: 6px solid var(--background-color);
-  float: left;
-  margin: 0 10px 0 0;
-}
-
-.portfolio-details .portfolio-description .testimonial-item h3 {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 15px 0 5px 0;
-  padding-top: 20px;
-}
-
-.portfolio-details .portfolio-description .testimonial-item h4 {
-  font-size: 14px;
-  color: #6c757d;
-  margin: 0;
-}
-
-.portfolio-details .portfolio-description .testimonial-item .quote-icon-left,
-.portfolio-details .portfolio-description .testimonial-item .quote-icon-right {
-  color: color-mix(in srgb, var(--accent-color), transparent 50%);
-  font-size: 26px;
-  line-height: 0;
-}
-
-.portfolio-details .portfolio-description .testimonial-item .quote-icon-left {
-  display: inline-block;
-  left: -5px;
-  position: relative;
-}
-
-.portfolio-details .portfolio-description .testimonial-item .quote-icon-right {
-  display: inline-block;
-  right: -5px;
-  position: relative;
-  top: 10px;
-  transform: scale(-1, -1);
-}
-
-.portfolio-details .portfolio-description .testimonial-item p {
-  font-style: italic;
-  margin: 0 0 15px 0 0 0;
-  padding: 0;
-}
-
-/*--------------------------------------------------------------
+ /*--------------------------------------------------------------
 # Service Details Section
 --------------------------------------------------------------*/
 .service-details .services-list {

@@ -4,7 +4,7 @@
 
 {% block content %}
 <section id="breadcrumbs" class="breadcrumbs">
-    <div class="container">
+    <div class="container d-flex justify-content-end">
         <ol>
             <li><a href="{% url 'app:home' %}">Home</a></li>
             <li><a href="{% url 'app:projects' %}">Projects</a></li>
@@ -13,11 +13,11 @@
     </div>
 </section>
 
-<section id="portfolio-details" class="project portfolio-details">
+<section id="project" class="project project-details">
     <div class="container" data-aos="fade-up">
         <div class="row gy-4">
             <div class="col-lg-8">
-                <div class="portfolio-details-slider swiper">
+                <div class="project-details-slider swiper">
                     <div class="swiper-wrapper align-items-center">
                         {% if project.images.all or project.videos.all %}
                             {% for image in project.images.all %}
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="portfolio-info">
+                <div class="project-info">
                     <h3>Project Information</h3>
                     <ul>
                         <li><strong>Name:</strong> <span class="text-primary">{{ project.title }}</span></li>
@@ -88,21 +88,38 @@
                             </a>
                         </li>
                         {% endif %}
+                        <li class="d-flex justify-content-center">
+                            <a type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#shareModal"
+                                data-share-url="{% url 'app:project_detail' project.slug %}"
+                                data-share-title="{{ project.title }}"
+                                class="share-link">
+                                <i class="bi bi-share-fill fs-6"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
-                <div class="portfolio-description">
+                <div class="project-description">
                     <h2>Project Overview</h2>
                     <p>
                         {{ project.description }}
                     </p>
                 </div>
-                {% if user.is_staff %}
                 <div class="action-buttons mb-2">
-                    <input type="submit" id="submitButton" class="btn btn-sm btn-outline-primary" value="Edit Project" data-bs-toggle="modal" data-bs-target="#editModal"/>
-                    <input type="submit" id="submitButton" class="btn btn-sm btn-outline-danger" value="Delete Project" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                    {% if user.is_staff %}
+                    {% include 'app/includes/action-buttons.html' %}
+                    {% endif %}
+                    <a type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#shareModal"
+                        data-share-url="{% url 'app:project_detail' project.slug %}"
+                        data-share-title="{{ project.title }}"
+                        class="btn btn-sm btn-outline-secondary share-link">
+                            <span>Share Project <i class="bi bi-share-fill fs-6"></i></span>
+                    </a>
                 </div>
-                {% endif %}
-            </div> 
+            </div>
         </div>
     </div>
     <!-- Modal for editing and deleting projects -->

@@ -48,8 +48,7 @@
                     </p>
                     {% if user.is_authenticated and user == post.author or user.is_staff %}
                     <div class="action-buttons mb-2">
-                        <input type="submit" id="submitButton" class="btn btn-sm btn-primary" value="Edit Post" data-bs-toggle="modal" data-bs-target="#editModal"/>
-                        <input type="submit" id="submitButton" class="btn btn-sm btn-danger" value="Delete Post" data-bs-toggle="modal" data-bs-target="#deleteModal"/>
+                        {% include 'app/includes/action-buttons.html' %}
                     </div>
                     {% endif %}
                 </div>

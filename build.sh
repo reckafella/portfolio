@@ -19,5 +19,8 @@ python3 manage.py migrate blog
 # create superuser
 python3 ./createsuperuser.py
 
+# create users missing profiles
+python ./manage.py create_missing_profiles
+
 # populate db
 #python3 ./add_projects.py

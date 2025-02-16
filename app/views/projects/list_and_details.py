@@ -12,13 +12,13 @@ class ProjectListView(ListView):
     paginate_by = 4
 
     def get_queryset(self):
-        return Projects.objects.all().order_by("created_at")
+        return Projects.objects.filter(live=True).order_by("created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Projects"
         context["categories"] = list(dict.fromkeys([
-            category for category in Projects.objects.values_list('category', flat=True)
+            category for category in Projects.objects.filter(live=True).values_list('category', flat=True)
         ]))
         context["categories"].sort()
         return context
@@ -31,7 +31,7 @@ class ProjectDetailView(DetailView):
 
     def get_queryset(self):
         # Prefetching images and youtube urls/thumbnails to optimize database queries
-        return Projects.objects.prefetch_related(
+        return Projects.objects.filter(live=True).prefetch_related(
             Prefetch("images", queryset=Image.objects.filter(live=True)),
             Prefetch("videos", queryset=Video.objects.filter(live=True))
         )
@@ -44,29 +44,8 @@ class ProjectDetailView(DetailView):
         context["related_projects"] = Projects.objects.exclude(
             id=project.id).order_by("?")[:5]
         context["page_title"] = project.title
-        context["form_title"] = "Project Details"
+        context["form_title"] = f"Project Details - {project.title}"
         context["default_image_url"] = url
         context["form"] = self.form_class(instance=project)
 
         return context
-""" class ProjectDetailView(DetailView):
-    model = Projects
-    form_class = ProjectsForm
-    template_name = "app/projects/project_detail.html"
-    context_object_name = "project"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        project = self.get_object()
-
-        # Fetch related projects (random selection)
-        context["related_projects"] = Projects.objects.exclude(
-            id=project.id).order_by("?")[:5]
-
-        # Additional context for page metadata
-        context["page_title"] = project.title
-        context["form_title"] = "Project Details"
-        context["form"] = self.form_class(instance=project)
-
-        return context
- """

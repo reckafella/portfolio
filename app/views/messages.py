@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.views.generic import FormView, TemplateView, ListView
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -7,6 +8,9 @@ from app.models import Message
 from app.forms.contact import ContactForm
 from captcha.helpers import captcha_image_url
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_POST
+from django.utils.decorators import method_decorator
+
 
 class ContactView(FormView):
     template_name = "app/contact/contact.html"
@@ -90,3 +94,19 @@ class MessagesView(UserPassesTestMixin, ListView):
             return JsonResponse({"success": True, "html": html})
         return super().get(request, *args, **kwargs)
 
+
+@method_decorator(require_POST, name='dispatch')
+class MarkMessageReadView(UserPassesTestMixin, TemplateView):
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def handle_no_permission(self):
+        raise PermissionDenied
+
+    def post(self, request, message_id, *args, **kwargs):
+        message = get_object_or_404(Message, id=message_id)
+        message.mark_as_read()
+        return JsonResponse({
+            "success": True,
+            "message": "Message marked as read"
+        })

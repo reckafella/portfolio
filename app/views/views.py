@@ -31,6 +31,11 @@ def about_view(request):
     return render(request=request, template_name="app/about.html", status=200)
 
 
+def services(request):
+    """View to render the services page"""
+    return render(request=request, template_name="app/services/services.html", status=200)
+
+
 def resume_view(request):
     """View to render the resume page"""
     context = {"page_title": "Resume"}
@@ -56,7 +61,7 @@ def resume_pdf_view(request):
 
 
 def sitemap_view(request):
-    pages = Page.objects.live().specific()
+    pages = Page.objects.live().specific().order_by('-first_published_at')
     projects = Projects.objects.all()
     blog_posts = BlogPostPage.objects.live().order_by('-first_published_at')
     
@@ -70,7 +75,7 @@ def sitemap_view(request):
 
 class CustomRedirectView(RedirectView):
     """Custom RedirectView to handle redirections"""
-    permanent = False
+    permanent = True
     query_string = True
     redirect_to = "/"
 

@@ -135,6 +135,72 @@ class AuthorPostsView(ListView):
         return context
 
 
+class PostsByDateView(ListView):
+    """ Display blog posts by day, year and month """
+    model = BlogPostPage
+    template_name = "blog/posts_list.html"
+    context_object_name = "articles"
+    paginate_by = 6
+
+    def get_queryset(self):
+        year = self.kwargs["year"]
+        month = self.kwargs["month"]
+        day = self.kwargs["day"]
+        sort = self.request.GET.get("sort", "date_desc")
+        search_query = self.request.GET.get("q", "")
+
+        order_by = {
+            "date_desc": "-first_published_at",
+            "date_asc": "first_published_at",
+            "title_asc": "title",
+            "title_desc": "-title",
+            "author_asc": "author__username",
+            "author_desc": "-author__username",
+        }.get(sort, "-first_published_at")
+
+        posts = BlogPostPage.objects.live().filter(
+            first_published_at__year=year,
+            first_published_at__month=month,
+            first_published_at__day=day,
+        )
+
+        if search_query:
+            posts = posts.filter(title__icontains=search_query) | posts.filter(
+                content__icontains=search_query
+            )
+
+        return posts.order_by(order_by)
+
+    def add_topics(self, articles):
+        if not articles.exists():
+            return []
+        topics = set(topic.strip() for post in articles for topic in post.get_topics())
+        topics.add("all")
+        return sorted(topics)
+
+    def add_sorting_options(self):
+        return {
+            "date_desc": "Date (Newest First)",
+            "date_asc": "Date (Oldest First)",
+            "title_asc": "Title (A-Z)",
+            "title_desc": "Title (Z-A)",
+            "author_asc": "Author (A-Z)",
+            "author_desc": "Author (Z-A)",
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        articles = self.get_queryset()
+
+        context["page_title"] = f"Blog Posts on {self.kwargs['day']}/{self.kwargs['month']}/{self.kwargs['year']}"
+        context["topics"] = self.add_topics(articles)
+        context["current_topic"] = "all"
+        context["current_sort"] = self.request.GET.get("sort", "date_desc")
+        context["sorting_options"] = self.add_sorting_options()
+        context["submit_text"] = "Read Article"
+        context["q"] = self.request.GET.get("q", "")
+
+
 class TopicPostsView(ListView):
     model = BlogPostPage
     template_name = "blog/posts_list.html"

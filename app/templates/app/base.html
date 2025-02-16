@@ -26,6 +26,7 @@
     <link rel="apple-touch-icon" href="{% static 'assets/images/icons/favicon.png' %}">
 
     <!-- Bootstrap CSS -->
+    <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
@@ -42,7 +43,7 @@
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-secondary-subtle">
+<body>
     {% if user.is_authenticated %}
     <div id="user-logged-in" hidden></div>
     {% endif %}
@@ -51,7 +52,7 @@
 
     {% include 'app/includes/searchbar.html' %}
 
-    <main class="main flex-grow-1">
+    <main class="main">
         {% include 'app/includes/toast.html' %}
         {% block content %}
         {% endblock %}
@@ -63,7 +64,7 @@
     <!-- Preloader -->
     <div id="preloader"></div>
     <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top rounded-pill d-flex align-items-center justify-content-center px-1"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" id="scroll-top" class="scroll-top d-flex justify-content-center align-items-center"><i class="bi bi-arrow-up-short fw-bold"></i></a>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.js" integrity="sha512-M60HsJC4M4A8pgBOj7oC/lvJXuOc9CraWXdD4PF+KNmKl8/Mnz6AH9FANgi4SJM6D9rqPvgQt4KRFR1rPN+EUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -85,6 +86,58 @@
     <script src="{% static 'assets/js/more_less.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/js/form-validator.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSwitcher = document.getElementById('themeSwitcher');
+            const themeIcon = themeSwitcher.querySelector('.theme-icon');
+            const header = document.getElementById('header');
+            const footer = document.querySelector('footer');
+            const main = document.querySelector('main');
+            
+            // Check for saved theme preference
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            
+            // Function to update theme
+            function updateTheme(theme) {
+                // Update body
+                /* body.classList.remove('light-theme', 'dark-theme');
+                body.classList.add(`${theme}-background`); */
+                
+                // Update header
+                header.classList.remove('light-background', 'dark-background');
+                header.classList.add(`${theme}-background`);
+               
+                // Update footer if it exists
+                if (footer) {
+                    footer.classList.remove('light-background', 'dark-background');
+                    footer.classList.add(`${theme}-background`);
+                }
+
+                // Update main
+                if (main) {
+                    main.classList.remove('light-background', 'dark-background');
+                    main.classList.add(`${theme}-background`);
+                }
+                
+                // Update icon
+                themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
+                themeIcon.classList.add(theme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
+                
+                // Save preference
+                localStorage.setItem('theme', theme);
+            }
+            
+            // Set initial theme
+            updateTheme(currentTheme);
+            
+            // Theme switch event listener
+            themeSwitcher.addEventListener('click', function() {
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                updateTheme(newTheme);
+            });
+        });
+    </script>
     {% comment %}
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
 

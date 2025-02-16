@@ -94,6 +94,47 @@
     }
   
     /**
+     * Theme switcher
+    */
+    /* const themeSwitcher = document.getElementById('themeSwitcher');
+    const themeIcon = themeSwitcher.querySelector('.theme-icon');
+    const header = document.getElementById('header');
+    const footer = document.querySelector('footer');
+    
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    
+    // Function to update theme
+    function updateTheme(theme) {
+        // Update header
+        header.classList.remove('light-background', 'dark-background');
+        header.classList.add(`${theme}-background`);
+        
+        // Update footer if it exists
+        if (footer) {
+            footer.classList.remove('light-background', 'dark-background');
+            footer.classList.add(`${theme}-background`);
+        }
+        
+        // Update icon
+        themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
+        themeIcon.classList.add(theme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
+        
+        // Save preference
+        localStorage.setItem('theme', theme);
+    }
+    
+    // Set initial theme
+    updateTheme(currentTheme);
+    
+    // Theme switch event listener
+    themeSwitcher.addEventListener('click', function() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        updateTheme(newTheme);
+    }); */
+    
+    /**
      * Scroll top button
      */
     let scrollTop = document.querySelector('.scroll-top');

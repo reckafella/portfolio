@@ -19,7 +19,7 @@ class FormValidator {
         const refreshButton = document.createElement('button');
         refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         refreshButton.title = 'Refresh Captcha';
-        refreshButton.className = 'btn btn-sm btn-outline-secondary ms-2';
+        refreshButton.className = 'btn refresh-btn ms-2';
         captchaImage.parentNode.appendChild(refreshButton);
 
         refreshButton.addEventListener('click', (e) => {

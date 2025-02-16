@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     'django.contrib.sites',
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     "crispy_forms",
     "corsheaders",
     "app",
@@ -134,6 +135,7 @@ if (ENVIRONMENT == 'production' and not DEBUG):
     }
     PROJECTS_FOLDER = "portfolio/projects/live"
     POSTS_FOLDER = "portfolio/posts/live"
+    PROFILE_FOLDER = "portfolio/profiles/live"
 
 elif (ENVIRONMENT == 'development' and not DEBUG):
     DATABASES = {
@@ -144,6 +146,7 @@ elif (ENVIRONMENT == 'development' and not DEBUG):
     }
     PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
+    PROFILE_FOLDER = "portfolio/profiles/dev"
 else:
     DATABASES = {
         "default": {
@@ -153,6 +156,7 @@ else:
     }
     PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
+    PROFILE_FOLDER = "portfolio/profiles/dev"
 
 
 # Password validation
@@ -339,3 +343,5 @@ CATEGORY_CHOICES = [
     ('UI/UX Design', 'UI/UX Design'),
     ('Other', 'Other'),
 ]
+
+SITE_ID=1

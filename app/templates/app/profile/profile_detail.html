@@ -1,0 +1,264 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>Profile</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section profile">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                    {% if profile.optimized_image_url %}
+                    <img src="{{ profile.optimized_image_url }}" alt="Profile" class="rounded-circle">
+                    {% endif %}
+                    <h2>{{ user.get_full_name }}</h2>
+                    <h3>{{ profile.title|default:"Software Developer" }}</h3>
+                    <div class="social-links mt-2">
+                        {% with social=profile.social_media.first %}
+                            {% if social.twitter_x %}
+                                <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                            {% endif %}
+                            {% if social.facebook %}
+                                <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                            {% endif %}
+                            {% if social.instagram %}
+                                <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                            {% endif %}
+                            {% if social.linkedin %}
+                                <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                            {% endif %}
+                            {% if social.github %}
+                                <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                            {% endif %}
+                            {% if social.youtube %}
+                                <a href="{{ social.youtube }}" class="youtube"><i class="bi bi-youtube"></i></a>
+                            {% endif %}
+                            {% if social.website %}
+                                <a href="{{ social.website }}" class="website"><i class="bi bi-globe"></i></a>
+                            {% endif %}
+                            {% if social.whatsapp %}
+                                <a href="https://wa.me/{{ social.whatsapp }}" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-2">
+                        <!-- Profile Overview -->
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                            <h5 class="card-title">About</h5>
+                            <p class="small fst-italic">{{ profile.bio }}</p>
+
+                            <h5 class="card-title">Profile Details</h5>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Full Name</div>
+                                <div class="col-lg-9 col-md-8">{{ user.get_full_name }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Username</div>
+                                <div class="col-lg-9 col-md-8">{{ user.username }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Title</div>
+                                <div class="col-lg-9 col-md-8">{{ profile.title }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Country</div>
+                                <div class="col-lg-9 col-md-8">{{ profile.country }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">City</div>
+                                <div class="col-lg-9 col-md-8">{{ profile.city }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Email</div>
+                                <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Edit -->
+                        <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                            <form method="post" enctype="multipart/form-data" id="profile-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="profile">
+                                <div class="row mb-3">
+                                    <label class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        {% if profile.optimized_image_url %}
+                                            <img src="{{ profile.optimized_image_url }}" alt="Profile">
+                                        {% endif %}
+                                        <div class="pt-2">
+                                            <label class="btn btn-primary btn-sm" title="Upload new profile image">
+                                                <i class="bi bi-upload"></i>
+                                                <input type="file" name="profile_pic" style="display: none;" accept="image/*">
+                                            </label>
+                                            {% if profile.optimized_image_url %}
+                                                <button type="button" class="btn btn-danger btn-sm" title="Remove profile image"
+                                                        onclick="deleteProfilePic()">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% for field in form %}
+                                    {% if field != form.profile_pic %}
+                                    <div class="mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label">
+                                            {{ field.label }}
+                                            {% if field.field.required %}
+                                                <span class="text-danger"><i class="bi bi-asterisk"></i></span>
+                                            {% endif %}
+                                        </label>
+                                        {{ field }}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <h5 class="card-title">Social Links</h5>
+                                {{ social_form.as_p }}
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Settings -->
+                        <div class="tab-pane fade pt-3" id="profile-settings">
+                            <form method="post" action="{% url 'app:profile_detail' request.user %}">
+                                <div class="row mb-3">
+                                    <label class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="settings">
+                                        {% for field in settings_form %}
+                                            <div class="mb-3">
+                                                {{ field }}
+                                                <label for="{{ field.id_for_label }}" class="form-label">
+                                                    {{ field.label }}
+                                                    {% if field.field.required %}
+                                                        <span class="text-danger"><i class="bi bi-asterisk"></i></span>
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Change Password -->
+                        <div class="tab-pane fade pt-3" id="profile-change-password">
+                            <form method="post" action="{% url 'app:profile_detail' request.user %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="password">
+                                {% for field in password_form %}
+                                    <div class="mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label">
+                                            {{ field.label }}
+                                            {% if field.field.required %}
+                                                <span class="text-danger"><i class="bi bi-asterisk"></i></span>
+                                            {% endif %}
+                                        </label>
+                                        {{ field }}
+                                    </div>
+                                {% endfor %}
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_js %}
+<script>
+function deleteProfilePic() {
+    if (confirm('Are you sure you want to delete your profile picture?')) {
+        fetch('{% url "app:profile_detail" request.user %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'delete_profile_pic=true'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the profile picture.');
+        });
+    }
+}
+
+/* handle active tab persistence */
+document.addEventListener('DOMContentLoaded', function() {
+    const url = new URL(window.location.href);
+    const tab = url.searchParams.get('tab');
+    if (tab) {
+        const activeTab = document.querySelector(`.nav-link[data-bs-target="#${tab}"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+            const activeTabContent = document.querySelector(`.tab-pane[data-bs-target="#${tab}"]`);
+            if (activeTabContent) {
+                activeTabContent.classList.add('show', 'active');
+            }
+        }
+    }
+});
+
+// Handle file input change
+document.querySelector('input[name="profile_pic"]').addEventListener('change', function() {
+    document.getElementById('profile-form').submit();
+});
+</script>
+{% endblock %}
+{% endblock %}

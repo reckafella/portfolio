@@ -37,11 +37,11 @@ def get_filtered_results(query, category):
 def apply_sorting(post_results, project_results, sort):
     """Helper function to sort results"""
     if sort == "date_desc":
-        return post_results.order_by("-created_at"), project_results.order_by(
+        return post_results.order_by("-first_published_at"), project_results.order_by(
             "-created_at"
         )
     elif sort == "date_asc":
-        return post_results.order_by("created_at"), project_results.order_by(
+        return post_results.order_by("first_published_at"), project_results.order_by(
             "created_at"
         )
     elif sort == "title_asc":
@@ -64,10 +64,10 @@ def paginate_results(queryset, items_per_page, page):
 
 def search_view(request):
     """View to handle search"""
-    query = request.GET.get("q", "")
-    category = request.GET.get("category", "all")
-    sort = request.GET.get("sort", "relevance")
-    page = request.GET.get("page", 1)
+    query = request.GET.get("q", "") or request.POST.get("q", "")
+    category = request.GET.get("category", "all") or request.POST.get("category", "all")
+    sort = request.GET.get("sort", "relevance") or request.POST.get("sort", "relevance")
+    page = request.GET.get("page", 1) or request.POST.get("page", 1)
     items_per_page = 6
 
     # Get filtered results

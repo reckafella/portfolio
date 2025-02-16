@@ -1,60 +1,53 @@
 {% load static %}
 <header id="header" class="header d-flex align-items-center light-background sticky-top">
-    <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-around">
         <a href="{% url 'app:home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
-            <h3 class="sitename pacifico-regular">Ethan</h3>
+            <img src="{% static 'assets/images/icons/logo.png' %}" alt="Ethan" class="logo-img image-fluid">
         </a>
-        <button type="button" class="btn btn-outline-secondary search-icon"
-            href="#"
-            onclick="toggleSearchBar(); return false;">
-            <span class="d-md-inline d-lg-inline d-sm-none">Search</span>
-            <i class="bi bi-search"></i>
-        </button>
-        <nav id="navmenu" class="navmenu">
-            <ul>
-                <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
-                <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="#"><span>About Me</span></a></li>
-                        <li><a href="{% url 'app:resume' %}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                    </ul>
-                </li>
-                <li><a href="{% url 'app:projects' %}" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span></a></li>
-                <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
-                <li><a href="{% url 'blog:blog_posts_list' %}" class="{% if request.resolver_match.namespace == 'blog' %}active{% endif %}"><span>Blog</span></a></li>
-                <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        {% if user.is_staff %}
-                        <li><a href="{% url 'blog:create_blog_post' %}"><span>Create Blog Post</span></a></li>
-                        <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
-                        <li><a href="{% url 'app:messages' %}"><span>Messages</span></a></li>
-                        <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                        <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                        {% endif %}
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'app:logout' %}?next={{ request.path }}"><span>Logout</span></a></li>
-                        {% else %}
-                        <li><a href="{% url 'app:login' %}?next={{ request.path }}"><span>Login</span></a></li>
-                        <li><a href="{% url 'app:signup' %}?next={{ request.path }}"><span>Register</span></a></li>
-                        {% endif %}
-                    </ul>
-                </li>
-            </ul>
-            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-        </nav>
-        <div class="social-links">
-            <a href="https://x.com/devrohn" target="_blank" class="twitter">
-                <i class="bi bi-twitter-x"></i>
-            </a>
-            <a href="https://tiktok.com/@reckafella" target="_blank" class="tiktok">
-                <i class="bi bi-tiktok"></i>
-            </a>
-            <a href="https://facebook.com/reckafella" target="_blank" class="facebook">
-                <i class="bi bi-facebook"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/ethanwanyoike" target="_blank" class="linkedin">
-                <i class="bi bi-linkedin"></i>
-            </a>
+        <div class="search-nav-wrapper d-flex align-items-center justify-content-between gap-3">
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
+                    <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'app:resume' %}"><span>About Me</span></a></li>
+                            <li><a href="{% url 'app:resume_pdf' %}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'app:services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><span>Services</span></a></li>
+                    <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
+                    <li><a href="{% url 'app:projects' %}" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span></a></li>
+                    <li><a href="{% url 'blog:blog_posts_list' %}" class="{% if request.resolver_match.namespace == 'blog' %}active{% endif %}"><span>Blog</span></a></li>
+                    <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            {% if user.is_staff %}
+                            <li><a href="{% url 'blog:create_blog_post' %}"><span>Create Blog Post</span></a></li>
+                            <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
+                            <li><a href="{% url 'app:messages' %}"><span>Messages</span></a></li>
+                            <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="{% url 'app:profile_detail' request.user %}"><span>My Profile</span></a></li>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            <li><a href="{% url 'app:logout' %}?next={{ request.path }}"><span>Logout</span></a></li>
+                            {% else %}
+                            <li><a href="{% url 'app:login' %}?next={{ request.path }}"><span>Login</span></a></li>
+                            <li><a href="{% url 'app:signup' %}?next={{ request.path }}"><span>Register</span></a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+            <button type="button" class="btn bg-transparent border-0 p-0 m-0 search-icon"
+                data-bs-toggle="modal" 
+                data-bs-target="#searchModal">
+                <i class="bi bi-search"></i>
+            </button>
+            <!-- theme switcher -->
+            <button type="button" class="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
+                <i class="bi bi-sun-fill theme-icon"></i>
+            </button>
         </div>
     </div>
 </header>

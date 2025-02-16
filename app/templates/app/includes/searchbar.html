@@ -1,34 +1,49 @@
 {% load static %}
-<div id="search-bar" class="search-bar position-fixed top-50 start-50 translate-middle w-100 h-100 w-md-75 h-md-75 w-lg-50 h-lg-50 bg-dark bg-opacity-90 d-none">
-    <div class="container h-100 d-lg-flex d-block align-items-center justify-content-center">
-        <form id="search-form" class="w-100 px-3" onsubmit="return performSearch()">
-            <div class="row input-group g-1">
-                <div class="col-12 col-md-4">
-                    <input type="text" class="form-control" placeholder="Type to search..." aria-label="Search" required>
-                </div>
-                <div class="col-12 col-md-2">
-                    <select id="search-bar-filterOption" class="form-select">
-                        <option value="all" selected>All</option>
-                        <option value="posts">Posts</option>
-                        <option value="projects">Projects</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-3">
-                    <select id="search-bar-sortSelect" class="form-select">
-                        <option value="relevance" selected>Relevance</option>
-                        <option value="date_desc">Newest First</option>
-                        <option value="date_asc">Oldest First</option>
-                        <option value="title_asc">Title A-Z</option>
-                        <option value="title_desc">Title Z-A</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-2">
-                    <button type="submit" id="submitButton" class="w-100 btn-info">Search</button>
-                </div>
-                <div class="col-12 col-md-1 d-flex justify-content-center align-items-center" data-bs-theme="dark">
-                    <button type="button" class="btn btn-close" aria-label="Close" onclick="toggleSearchBar()"></button>
-                </div>
+<div class="modal fade p-5" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content pt-4 px-2 pb-5">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">Search Projects and Blog</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="search-form" onsubmit="return performSearch(event)">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-12 col-md-4">
+                <input type="search"
+                       id="search-input"
+                       name="q"
+                       class="form-control form-control-sm"
+                       placeholder="Search..."
+                       aria-label="Search"
+                       required>
+              </div>
+              <div class="col-4 col-md-3">
+                <select id="search-bar-filterOption" name="category" class="form-select form-select-sm">
+                  <option value="all" selected>All</option>
+                  <option value="posts">Posts</option>
+                  <option value="projects">Projects</option>
+                </select>
+              </div>
+              <div class="col-4 col-md-3">
+                <select id="search-bar-sortSelect" name="sort" class="form-select form-select-sm">
+                  <option value="relevance" selected>Relevance</option>
+                  <option value="date_desc">Newest First</option>
+                  <option value="date_asc">Oldest First</option>
+                  <option value="title_asc">Title A-Z</option>
+                  <option value="title_desc">Title Z-A</option>
+                </select>
+              </div>
+              <div class="col-4 col-md-2">
+                <button type="submit" class="btn btn-sm d-flex justify-content-between align-items-center">
+                    <span class="d-sm-none d-md-inline d-lg-inline">Search</span>
+                    <i class="bi bi-search d-md-none d-lg-none"></i>
+                </button>
+              </div>
             </div>
-        </form>
+          </form>
+        </div>
+      </div>
     </div>
-</div>
+  </div>

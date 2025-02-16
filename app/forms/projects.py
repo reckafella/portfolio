@@ -18,41 +18,60 @@ class BaseProjectsForm(forms.ModelForm):
         required=True,
         max_length=200,
         validators=[MaxLengthValidator(200)],
-        widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter the title of the project"
+        }),
         help_text="Enter the title of the project",
     )
     description = forms.CharField(
         label="Project Description",
         required=True,
-        widget=forms.Textarea(attrs={"class": "form-control focus-ring"}),
+        widget=forms.Textarea(attrs={
+            "class": "form-control",
+            "rows": 5,
+            "placeholder": "Enter a description for the project"
+        }),
         help_text="Enter a description for the project",
     )
     project_type = forms.ChoiceField(
         label="Project Type",
         required=True,
         choices=Projects.PROJECT_TYPES,
-        widget=forms.Select(attrs={"class": "form-control focus-ring"}),
+        widget=forms.Select(attrs={
+            "class": "form-control",
+            "placeholder": "Select the project type"
+        }),
         help_text="Select whether this is a personal or professional project",
     )
     category = forms.ChoiceField(
         label="Project Category",
         required=True,
         choices=settings.CATEGORY_CHOICES,
-        widget=forms.Select(attrs={"class": "form-control focus-ring"}),
+        widget=forms.Select(attrs={
+            "class": "form-control",
+            "placeholder": "Select the category of the project"
+        }),
         help_text="Select the category of the project",
     )
     client = forms.CharField(
         label="Client Name",
         required=False,
         max_length=200,
-        widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter the client for the project"
+        }),
         help_text="Enter the client for the project (default: Personal)",
     )
     project_url = forms.URLField(
         label="Project URL",
         required=True,
         validators=[URLValidator()],
-        widget=forms.URLInput(attrs={"class": "form-control"}),
+        widget=forms.URLInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter the URL to the Project"
+        }),
         help_text="URL to the Project",
     )
     images = forms.FileField(
@@ -63,20 +82,21 @@ class BaseProjectsForm(forms.ModelForm):
             "type": "File",
             "multiple": True
         }),
-        help_text="Upload an image for your project (jpg, jpeg, png, gif, webp)",
+        help_text="Upload image(s) (jpg, jpeg, png, gif, webp)",
     )
     youtube_urls = forms.CharField(
+        label="YouTube URLs",
         widget=forms.Textarea(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter YouTube URLs (one per line)',
-            'rows': 3
+            'placeholder': 'Type or Paste YouTube URLs (one per line)',
+            'rows': 5
         }),
         required=False
     )
     live = forms.BooleanField(
-        label="Live",
+        label="Publish Project",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check form-switch form-check-input"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
     )
     class Meta:
         model = Projects
@@ -89,6 +109,7 @@ class BaseProjectsForm(forms.ModelForm):
             "project_url",
             "images",
             "youtube_urls",
+            "live",
         ]
 
     def clean_youtube_urls(self):

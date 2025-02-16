@@ -33,7 +33,7 @@ class LoginForm(forms.Form):
     captcha = CaptchaField(
         label="Captcha",
         help_text="Enter the characters shown in the image",
-        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
+        widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )
 
 
@@ -99,7 +99,7 @@ class SignupForm(UserCreationForm):
     captcha = CaptchaField(
         label="Captcha",
         help_text="Enter the characters shown in the image",
-        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
+        widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )
 
     class Meta:
@@ -160,5 +160,5 @@ class AdminLoginForm(forms.Form):
     captcha = CaptchaField(
         label="Captcha",
         help_text="Enter the characters shown in the image",
-        widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
+        widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )

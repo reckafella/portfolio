@@ -3,20 +3,35 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-    <section id="profile" class="other section bg-image">
+    <div class="page-title">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1>{{ page_title }}</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="{% url 'app:home' %}">Home</a></li>
+                    <li>{{ page_title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <section id="profile" class="section">
         <div class="mask d-flex align-items-center gradient-custom-3 mt-5">
             <div class="container">
                 <div class="row d-flex justify-content-center align-items-center">
                     <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                         <div class="card p-4" style="border-radius: 15px;">
-                            <div class="card-body">
-                                <div class="text-center section-title">
+                            <div class="card-header">
+                                <div class="text-center">
                                     <h2  class="card-title fw-bold">{{ form_title }}</h2>
+                                    <p>{{ page_title }}</p>
                                 </div>
+                            </div>
+                            <div class="card-body p-4">
                                 <form id="other-form" method="post" enctype="multipart/form-data" class="other-form">
                                     {% csrf_token %}
                                     {% for field in form %}
-                                    <div class="form-group mb-3">
+                                    <div class="mb-3">
                                         <label for="{{ field.id_for_label }}" class="form-label">
                                             {{ field.label }}
                                             {% if field.field.required %}
@@ -39,14 +54,14 @@
                                     <input type="hidden" name="next" value="{{ request.GET.next }}">
 
                                     <div class="text-center mb-2 mt-2">
-                                        <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50">{{ submit_text }}</button>
-                                    </div>
-                                    <div class="text-center text-muted mt-2 mb-2">
-                                        {% for message in extra_messages %}
-                                        <p>{{ message.text }} <a href="{{ message.link }}">{{ message.link_text }}</a></p>
-                                        {% endfor %}
+                                        <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50 btn-outline-primary">{{ submit_text }}</button>
                                     </div>
                                 </form>
+                            </div>
+                            <div class="d-flex card-footer mt-2 mb-2">
+                                {% for message in extra_messages %}
+                                <p class="text-center">{{ message.text }} <a href="{{ message.link }}">{{ message.link_text }}</a></p>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

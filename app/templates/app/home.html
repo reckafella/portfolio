@@ -3,34 +3,26 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section id="hero" class="mt-5 py-5">
-    <div class="container card d-flex flex-column flex-lg-row align-items-center mt-5 justify-content-center p-5 h-100 col-lg-7 col-sm-11 col-md-8 border-secondary-subtle bg-body-secondary">
-        <!-- Profile Picture -->
-        <div class="mb-2 mb-lg-0 col-lg-5 col-md-7 col-sm-8 text-center text-lg-start">
-                <picture>
-                    <source srcset="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella" type="image/jpeg">
-                    <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella.webp" alt="Profile Picture" class="img-fluid rounded-circle w-75">
-                </picture>
-        </div>
+<section id="breadcrumbs" class="breadcrumbs">
+    <div class="container d-flex justify-content-end">
+        <ol>
+            <li><a href="{% url 'app:home' %}">Home</a></li>
+        </ol>
+    </div>
+</section>
 
-        <!-- About Text -->
-        <div class="mt-1 mt-lg-0 p-1 col-lg-6">
-            <div class="text-start mb-2">
-                <h3 class="pacifico-regular">Hello? You can call me <span class="text-success rounded-start-5 text-decoration-underline">Ethan</span></h3>
-            </div>
-
-            <div class="justify-content-center">
-                <p>Welcome to my portfolio website!</p>
-                <p>I specialize in
-                    <strong>
-                        <span class="text-decoration-underline text-success typed" data-typed-items=" FullStack Software Engineering, DevOps Engineering, Backend Development, API Development, Database Design" style="text-decoration-thickness: 10%;"></span>
-                    </strong>
-                    <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
-                </p>
-            </div>
-            <div class="d-flex justify-content-center justify-content-lg-start gap-2">
-                <a href="{% url 'app:contact' %}" class="btn btn-outline-success">Contact Me</a>
+<section id="hero" class="hero section py-1">
+    <picture class="hero-background animate__animated animate__fadeInDown scrollto">
+        <source srcset="{% static 'assets/images/8cf11ad4.jpeg' %}" type="image/jpeg">
+        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella.webp" alt="Profile Picture" data-aos="fade-in" data-aos-delay="300">
+    </picture>
+    <div class="overlay"></div>
+    <div class="container text-center animate__animated animate__fadeInUp scrollto">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="pacifico-regular animate__animated animate__fadeInRight animate__delay-1s">Ethan Wanyoike</h2>
+                <p class="animate__animated animate__fadeInLeft animate__delay-2s">I am a FullStack Software Engineer from Nairobi, Kenya</p>
+                <a href="{% url 'app:about' %}" class="btn-get-started animate__animated animate__fadeInRight animate__delay-3s">About Me</a>
             </div>
         </div>
     </div>
@@ -43,7 +35,7 @@
 {% include 'app/home/latest_posts.html' %}
 
 <!-- Skills & Technologies -->
-<section id="skills" class="py-5 bg-body-secondary">
+<section id="skills" class="py-5">
     <div class="container d-flex flex-column justify-content-center align-items-center w-100">
         <div class="text-center mb-3 section-title">
             <h2 class="text-center">Skills & Technologies</h2>

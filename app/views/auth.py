@@ -13,27 +13,9 @@ from app.views.helpers.base_auth_class import BaseAuthentication
 from app.views.helpers.helpers import is_ajax
 
 
-
 class SignupView(BaseAuthentication):
     form_class = SignupForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            "page_title": "Create an Account",
-            "form_title": "Create Account",
-            "submit_text": "Create Account",
-            "data_loading_text": "Creating Account...",
-            "next": self.get_success_url(),
-            "extra_messages": [
-                {
-                    "text": "Already have an account?",
-                    "link": reverse("app:login"),
-                    "link_text": "Login",
-                }
-            ],
-        })
-        return context
 
     def form_valid(self, form):
         username = form.cleaned_data.get("username")
@@ -52,9 +34,27 @@ class SignupView(BaseAuthentication):
         user.email = email
         user.save()
         login(self.request, user)
-        
+
         success_message = "Account created successfully. Welcome to our platform!"
         return self.handle_success(success_message)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "page_title": "Create an Account",
+            "form_title": "Create Account",
+            "submit_text": "Create Account",
+            "data_loading_text": "Creating Account...",
+            "next": self.get_success_url(),
+            "extra_messages": [
+                {
+                    "text": "Already have an account?",
+                    "link": reverse("app:login"),
+                    "link_text": "Login",
+                }
+            ],
+        })
+        return context
 
 
 class LoginView(BaseAuthentication):
@@ -98,31 +98,31 @@ class LoginView(BaseAuthentication):
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
         return self._handle_logout(request)
-    
+
     def post(self, request):
         return self._handle_logout(request)
-    
+
     def _handle_logout(self, request):
         is_staff_user = request.user.is_staff and hasattr(request.user, 'is_staff')
         logout(request)
         success_message = "Successfully logged out. See you next time!"
-        
+
         redirect_url = reverse("app:login") if is_staff_user else reverse("app:home")
-        
+
         if is_ajax(request):
             return JsonResponse({
                 "success": True,
                 "message": success_message,
                 "redirect_url": redirect_url,
             })
-        
+
         messages.success(request, success_message)
         return redirect(redirect_url)
 
 
 class CSRFFailureView(TemplateView):
     template_name = "errors/errors.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["errors"] = f"CSRF Failure: {self.kwargs.get('reason', '')}"

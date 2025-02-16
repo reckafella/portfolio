@@ -3,7 +3,19 @@
 {% block title %} {{ page_title }} {% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog mt-2">
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ page_title }}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="section" class="section about">
     <div class="container col-lg-7 col-md-9 col-sm-10">
         <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
             <div class="card-header text-center">
@@ -16,8 +28,9 @@
                 <embed  src="{% url 'app:resume_pdf' %}" width="100%" height="800px" />
                 {% else %}
                 <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-heading">No resume found!</h4>
+                    <h4 class="alert-heading">Resume Not found!</h4>
                     <p>Sorry, the resume is not available at the moment. Please check back later.</p>
+                    <p><a href="{% url 'app:resume_pdf' %}" target="_blank">View the PDF Version</a></p>
                 </div> 
                 {% endif %}
             </div>

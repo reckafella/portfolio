@@ -69,27 +69,54 @@ This project is a personal portfolio website that highlights my skills, projects
     ```sh
     pip install -r requirements.txt
     ```
+   
+4. Create a cloudinary account (used for image hosting)
+   - Copy the required details: name, api key and api secret into a file named "cloudinary.json"
+     - "CLOUDINARY_CLOUD_NAME": "your cloudinary name",
+     - "CLOUDINARY_API_KEY": "your cloudinary api key",
+     - "CLOUDINARY_API_SECRET": "your cloudinary api secret"
 
-4. Apply database migrations:
+   - These credentials are used for local development only
+
+   - If you're hosting your project on platforms like [Render](https://render.com),
+   you will need to store these credentials as environment variable
+
+   - For hosting on Render, you need [Render](https://render.com) & [Supabase](https://supabase.com) accounts.
+     - Use your GitHub account to create these accounts.
+     - With these accounts set up, create a new project on Render and import code from GitHub.
+
+   - Credentials to store in Render environment
+     - SUPABASE_URL
+     - SUPABASE_USER
+     - SUPABASE_HOST
+     - SUPABASE_PORT
+     - SUPABASE_DB_PW
+     - SUPABASE_DB_NAME
+     - ENVIRONMENT set to "production"
+     - plus the cloudinary details listed above
+   - the file [render.yaml](./render.yaml) is used for running your project hosted on Render.
+
+   - NOTE: You need to learn how to host your project on Render and how to create cloudinary details for image hosting.
+5. Apply database migrations:
 
     ```sh
     python manage.py makemigrations
     python manage.py migrate
     ```
 
-5. Create a superuser:
+6. Create a superuser:
 
     ```sh
     python manage.py createsuperuser
     ```
 
-6. Collect static files:
+7. Collect static files:
 
     ```sh
     python manage.py collectstatic
     ```
 
-7. Run the development server:
+8. Run the development server:
 
     ```sh
     python manage.py runserver

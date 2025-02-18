@@ -17,7 +17,7 @@ python3 manage.py migrate app
 python3 manage.py migrate blog
 
 # create superuser
-python3 ./createsuperuser.py
+python3 ./manage.py create_superuser
 
 # create users missing profiles
 python ./manage.py create_missing_profiles

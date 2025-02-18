@@ -3,13 +3,16 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section id="breadcrumbs" class="breadcrumbs">
-    <div class="container d-flex justify-content-end">
-        <ol>
-            <li><a href="{% url 'app:home' %}">Home</a></li>
-        </ol>
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>Home</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+            </ol>
+        </nav>
     </div>
-</section>
+</div>
 
 <section id="hero" class="hero section py-1">
     <picture class="hero-background animate__animated animate__fadeInDown scrollto">
@@ -27,12 +30,6 @@
         </div>
     </div>
 </section>
-
-<!-- Featured Projects -->
-{% include 'app/home/featured_projects.html' %}
-
-<!-- Latest Blog Posts -->
-{% include 'app/home/latest_posts.html' %}
 
 <!-- Skills & Technologies -->
 <section id="skills" class="py-5">
@@ -79,4 +76,11 @@
         <a href="{% url 'app:contact' %}" class="btn btn-outline-primary">Get in Touch</a>
     </div>
 </section>
+
+<!-- Featured Projects -->
+{% include 'app/home/featured_projects.html' %}
+
+<!-- Latest Blog Posts -->
+{% include 'app/home/latest_posts.html' %}
+
 {% endblock %}

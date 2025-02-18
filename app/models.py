@@ -48,6 +48,9 @@ class SocialLinks(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -58,6 +61,9 @@ class UserSettings(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s settings"
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
 
 class Projects(models.Model):
@@ -170,3 +176,30 @@ def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
     except Profile.DoesNotExist:
         Profile.objects.create(user=instance)
+
+""" create social links/settings when a user and profile are set up """
+@receiver(post_save, sender=Profile)
+def create_social_links(sender, instance, created, **kwargs):
+    if created:
+        SocialLinks.objects.create(profile=instance)
+    
+@receiver(post_save, sender=Profile)
+def create_user_settings(sender, instance, created, **kwargs):
+    if created:
+        UserSettings.objects.create(user=instance.user)
+
+""" 
+@receiver(post_save, sender=Profile)
+def save_social_links(sender, instance, **kwargs):
+    try:
+        instance.social_media.save()
+    except SocialLinks.DoesNotExist:
+        SocialLinks.objects.create(profile=instance.profile)
+
+@receiver(post_save, sender=Profile)
+def save_user_settings(sender, instance, **kwargs):
+    try:
+        instance.user_settings.save()
+    except UserSettings.DoesNotExist:
+        UserSettings.objects.create(user=instance.user)
+ """

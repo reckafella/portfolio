@@ -1,13 +1,32 @@
 {% load static %}
     <div class="widget-items-container">
-        <div class="blog-author widget-item">
+        <div class="blog-author-widget widget-item">
             <div class="d-flex flex-column align-items-center">
                 <div class="d-flex align-items-center w-100">
                     <img src="{% static 'assets/images/profile.jpg' %}" alt="" class="rounded-circle flex-shrink-0">
                     <div>
                         <h4>{{ post.author.get_full_name | default:post.author.username|capfirst }}</h4>
-                        <div class="social-links">
-                            
+                        <div class="social-links mt-2">
+                            {% with social=post.author.profile.social_media.first %}
+                                {% if social.twitter_x %}
+                                    <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                                {% endif %}
+                                {% if social.facebook %}
+                                    <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                                {% endif %}
+                                {% if social.linkedin %}
+                                    <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                                {% endif %}
+                                {% if social.github %}
+                                    <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                                {% endif %}
+                                {% if social.youtube %}
+                                    <a href="{{ social.youtube }}" class="youtube"><i class="bi bi-youtube"></i></a>
+                                {% endif %}
+                                {% if social.whatsapp %}
+                                    <a href="https://wa.me/{{ social.whatsapp }}" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
+                                {% endif %}
+                            {% endwith %}
                         </div>
                     </div>
                 </div>

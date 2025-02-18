@@ -475,6 +475,8 @@ h6 {
 #footer {
   color: var(--default-color);
   background-color: var(--background-color);
+  box-shadow: 0px 5px 5px 0px color-mix(in srgb, var(--default-color), transparent 70%);
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 70%);
   font-size: 14px;
   padding: 0 0 30px 0;
   position: relative;
@@ -1809,11 +1811,6 @@ Cards
 .card .card-body .refresh-btn:hover {
   background: color-mix(in srgb, var(--accent-color) 90%, white 20%);
 }
-
-.blog .entry {
-  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 90%);
-}
-
 
 
 /*--------------------------------------------------------------

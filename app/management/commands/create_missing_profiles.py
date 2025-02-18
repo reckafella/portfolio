@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Successfully created {created_profiles} out of {len(users)} profiles, '
+                f'Successfully created {created_profiles} profiles, '
                 f'{created_social_links} social links sets, and '
                 f'{created_settings} settings objects'
             )

@@ -107,7 +107,7 @@ button[type=submit]:hover {
 
 .bg-brown {
   background-color: #cccccb;
-}
+}/* 
 .search-bar {
   z-index: 1050;
 }
@@ -135,7 +135,7 @@ button[type=submit]:hover {
   .search-bar .btn {
       font-size: 1.25rem;
   }
-}
+} */
 
 .bg-opacity-90 {
   --bs-bg-opacity: 0.9;
@@ -160,4 +160,3 @@ button[type=submit]:hover {
 .btn[data-bs-busy="true"] {
   user-select: none;
 }
-

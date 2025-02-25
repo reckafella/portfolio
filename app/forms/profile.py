@@ -82,5 +82,5 @@ class UserSettingsForm(forms.ModelForm):
             'changes_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'new_products_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'marketing_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'security_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input', 'disabled': 'disabled'}),
+            'security_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input', 'disabled': True}),
         }

@@ -1,92 +1,93 @@
 {% load static %}
-<footer id="footer" class="footer light-background">
-  <div class="footer-top">
-      <div class="container py-2" data-bs="fade-up">
-          <div class="row d-flex justify-content-center align-items-start flex-wrap">
-              <div class="col-lg-3 col-sm-5 col-md-5 footer-links" data-aos="zoom-in" data-aos-delay="100">
-                  <h4 class="footer-title">Useful Links</h4>
-                  <ul class="list-unstyled">
-                      <li><a href="{% url 'app:about' %}"><i class="bi bi-chevron-right"></i> About Me</a></li>
-                      <li><a href="{% url 'blog:blog_posts_list' %}"><i class="bi bi-chevron-right"></i> Blog</a></li>
-                      <li><a href="{% url 'app:contact' %}"><i class="bi bi-chevron-right"></i> Contact</a></li>
-                      <li><a href="{% url 'app:projects' %}"><i class="bi bi-chevron-right"></i> Projects</a></li>
-                      <li><a href="{% url 'app:services' %}"><i class="bi bi-chevron-right"></i> Services</a></li>
-                      <li><a href="{% url 'app:sitemap' %}" target="_blank"><i class="bi bi-chevron-right"></i> Sitemaps <i class="bi bi-box-arrow-up-right"></i></a></li>
-                  </ul>
-              </div>
-              <div class="col-lg-3 col-md-5 col-sm-5 footer-links" data-aos="zoom-in" data-aos-delay="200">
-                  <h4 class="footer-title">Services Offered</h4>
-                  <ul class="list-unstyled">
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> Web Development</a></li>
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> Software Testing</a></li>
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> Website Maintenance</a></li>
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> SEO Optimization</a></li>
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> Domain Registration</a></li>
-                      <li><a href="#"><i class="bi bi-chevron-right"></i> Technical Writing</a></li>
-                  </ul>
-              </div>
-              <div class="col-lg-3 col-md-5 col-sm-5 footer-contact" data-aos="zoom-in" data-aos-delay="300">
-                <h4 class="footer-title">Contact Me</h4>
-                <a class="text-decoration-none">
-                    <p class="mb-0 fs-6"><i class="bi bi-geo-alt-fill"></i> Nairobi, Kenya</p>
-                </a>
-                <a href="tel:+254-719-272-150" class="text-decoration-none">
-                    <p class="mb-0 fs-6"><i class="bi bi-telephone-inbound-fill"></i> Call</p>
-                </a>
-                <a href="https://wa.me/254719272150" target="_blank" class="text-decoration-none">
-                    <p class="mb-0 fs-6"><i class="bi bi-whatsapp"></i> WhatsApp</p>
-                </a>
-                <a href="mailto:ethanmuthoni@gmail.com">
-                    <p class="mb-0 fs-6"><i class="bi bi-envelope-at-fill"></i> Send Email</p>
-                </a>
-              </div>
-              <div class="col-lg-3 col-md-5 col-sm-5 footer-info" data-aos="zoom-in" data-aos-delay="400">
-                  <h4 class="footer-title">Social Links</h4>
-                  <p>Connect with me on: </p>
-                  <div class="social-links d-flex flex-wrap justify-content-start align-items-center">
-                    <a href="https://x.com/devrohn" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
-                    <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
-                    <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
-                    <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+<footer id="footer" class="footer" data-bs="fade-up">
+    <div class="footer-top" data-aos="fade-up" data-aos-delay="100">
+        <div class="container py-2" data-aos="fade-up" data-aos-delay="100">
+            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-4 g-3 justify-content-center">
+                <!-- Social Links -->
+                <div class="col" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="footer-info h-100">
+                        <h4 class="footer-title">Social Links</h4>
+                        <p>Connect with me on: </p>
+                        <div class="social-links d-flex flex-wrap gap-2">
+                            <a href="https://x.com/devrohn" target="_blank" class="twitter"><i
+                                    class="bi bi-twitter-x"></i></a>
+                            <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i
+                                    class="bi bi-facebook"></i></a>
+                            <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
+                                    class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="container" data-aos="zoom-in" data-aos-delay="500">
-      <div class="copyright text-center m-2">
-          <strong><span>&copy;<script> document.write(new Date().getFullYear());</script></span> &mdash;
-          Ethan Wanyoike &mdash; All Rights Reserved.</strong>
-      </div>
-  </div>
-</footer>
+                <!-- Contact Me -->
+                <div class="col" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="footer-contact h-100">
+                        <h4 class="footer-title">Contact Me</h4>
+                        <ul>
+                            <li>
+                                <a href="tel:+254-719-272-150" class="text-decoration-none">
+                                    <p class="mb-0 fs-6"><i class="bi bi-telephone-inbound-fill"></i> Call</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://wa.me/254719272150" target="_blank" class="text-decoration-none">
+                                    <p class="mb-0 fs-6"><i class="bi bi-whatsapp"></i> WhatsApp</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="mailto:ethanmuthoni@gmail.com">
+                                    <p class="mb-0 fs-6"><i class="bi bi-envelope-at-fill"></i> Send Email</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-<!-- <footer id="footer" class="footer dark-background">
-    <div class="container">
-        <div class="social-links d-flex justify-content-center">
-            <a href="https://x.com/devrohn" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
-            <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://instagram.com/reckafella" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
-            <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://tiktok.com/@reckafella" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
-            <a href="https://youtube.com/reckafella" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
+                <!-- Useful Links -->
+                <div class="col" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="footer-links h-100">
+                        <h4 class="footer-title">Useful Links</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'app:about' %}"><i class="bi bi-chevron-right"></i> About Me</a></li>
+                            <li><a href="{% url 'blog:blog_posts_list' %}"><i class="bi bi-chevron-right"></i> Blog</a>
+                            </li>
+                            <li><a href="{% url 'app:contact' %}"><i class="bi bi-chevron-right"></i> Contact</a></li>
+                            <li><a href="{% url 'app:projects' %}"><i class="bi bi-chevron-right"></i> Projects</a></li>
+                            <li><a href="{% url 'app:services' %}"><i class="bi bi-chevron-right"></i> Services</a></li>
+                            <li><a href="{% url 'app:sitemap' %}" target="_blank"><i class="bi bi-chevron-right"></i>
+                                    Sitemaps <i class="bi bi-box-arrow-up-right"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Services Offered -->
+                <div class="col" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="footer-links h-100">
+                        <h4 class="footer-title">Services Offered</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> Web Development</a></li>
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> Software Testing</a></li>
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> Website Maintenance</a></li>
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> SEO Optimization</a></li>
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> Domain Registration</a></li>
+                            <li><a href="#"><i class="bi bi-chevron-right"></i> Technical Writing</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="container-fluid mt-2 mb-2">
-          <div class="sitemap d-flex justify-content-center align-items-center">
-            <a href="{% url 'app:sitemap' %}"
-              target="_blank"
-              class="text-center">
-                Sitemaps
-           </a>
-         </div>
-      </div>
-      <div class="copyright text-center">
-          <p>
-              &copy; <span>Copyright</span>
-              <strong class="px-1 sitename">Ethan Wanyoike</strong>
-              <span>All Rights Reserved</span>
-          </p>
-      </div>
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="copyright">
+                        <strong><span>&copy;
+                                <script> document.write(new Date().getFullYear());</script>
+                            </span> &mdash;
+                            Ethan Wanyoike &mdash; All Rights Reserved.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</footer> -->
+</footer>

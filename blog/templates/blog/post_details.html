@@ -38,16 +38,41 @@
                                 <i class="bi bi-person"></i>
                                 <a href="{% url 'blog:posts_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
                             </li>
+                            {% if post.first_published_at %}
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
-                                <time datetime="{{ post.created_at }}">
-                                    {% if post.first_published_at %}
-                                        {{ post.first_published_at | date:"N j, Y" }}
-                                    {% else %}
-                                        {{ post.post_created_at | date:"N j, Y" }}
-                                    {% endif %}
-                                </time>
+                                {% with year=post.first_published_at|date:"Y" month=post.first_published_at|date:"m" day=post.first_published_at|date:"d" %}
+                                <div class="date-links">
+                                    <a href="{% url 'blog:posts_by_date' year %}" title="View all posts from this year">
+                                        {{ post.first_published_at|date:"Y" }}
+                                    </a>
+                                    <span class="separator">/</span>
+                                    <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                        {{ post.first_published_at|date:"F" }}
+                                    </a>
+                                    <span class="separator">/</span>
+                                    <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
+                                        {{ post.first_published_at|date:"j" }}
+                                    </a>
+                                </div>
+                                {% endwith %}
                             </li>
+                            {% endif %}
+                            {% if user.is_authenticated and user == post.author or user.is_staff %}
+                            <li class="d-flex align-items-center position-relative">
+                                <div class="action-buttons">
+                                    {% include 'app/includes/action-buttons.html' %}
+                                </div>
+                                <!-- <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const li = document.querySelector('.bi-three-dots').parentElement;
+                                        const actionButtons = li.querySelector('.action-buttons');
+                                        li.addEventListener('mouseenter', () => actionButtons.classList.remove('d-none'));
+                                        li.addEventListener('mouseleave', () => actionButtons.classList.add('d-none'));
+                                    });
+                                </script> -->
+                            </li>
+                            {% endif %}
                             <li class="d-flex align-items-center">
                                 <a type="button"
                                     data-bs-toggle="modal"
@@ -58,29 +83,13 @@
                                     <i class="bi bi-share-fill fs-6"></i>
                                 </a>
                             </li>
-                            {% if user.is_authenticated and user == post.author or user.is_staff %}
-                            <li class="d-flex align-items-center position-relative">
-                                <i class="bi bi-three-dots"></i>
-                                <div class="action-buttons position-absolute d-none" style="bottom: -100%; right: -100%; z-index: 1000;">
-                                    {% include 'app/includes/action-buttons.html' %}
-                                </div>
-                                <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        const li = document.querySelector('.bi-three-dots').parentElement;
-                                        const actionButtons = li.querySelector('.action-buttons');
-                                        li.addEventListener('mouseenter', () => actionButtons.classList.remove('d-none'));
-                                        li.addEventListener('mouseleave', () => actionButtons.classList.add('d-none'));
-                                    });
-                                </script>
-                            </li>
-                            {% endif %}
                     </div>
                     <div class="entry-content">
                         {{ post.content | richtext | safe }}
                     </div>
                     <div class="entry-footer">
                         <i class="bi bi-tags"></i>
-                        <ul class="tags">
+                        <ul class="tags mx-2">
                             {% for topic in post_topics %}
                                 <li><a href="{% url 'blog:posts_by_topic' topic %}">{{ topic }}</a></li>
                             {% endfor %}
@@ -93,26 +102,18 @@
                     </div>
                 </article>
 
-                {% comment %}
-                <div class="blog-author d-flex align-items-center">
-                    <img src="{% static 'assets/images/profile.jpg' %}" class="rounded-circle float-left" alt="">
-                    <div>
-                        <h4>{{ post.author.get_full_name | default:post.author.username }}</h4>
-                        <div class="social-links">
-                            <a href="https://twitter.com/{{ post.author.username }}" class="twitter"><i class="bi bi-twitter"></i></a>
-                            <a href="https://facebook.com/{{ post.author.username }}" class="facebook"><i class="bi bi-facebook"></i></a>
-                            <a href="https://instagram.com/{{ post.author.username }}" class="instagram"><i class="bi bi-instagram"></i></a>
-                        </div>
-                        <p>
-                            {{ post.author.profile.bio | default:"Author Bio" }}
-                        </p>
-                    </div>
-                </div> <!-- End blog author -->
-                {% endcomment %}
-
-                {% if request.user.is_staff or request.user == post.author %}
+                <div class="edit-delete d-none">
+                    {% if request.user.is_staff or request.user == post.author %}
                     {% include 'blog/partials/edit_delete_posts_modal.html' %}
-                {% endif %}
+                    {% endif %}
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const editDelete = document.querySelector('.edit-delete');
+                        const editDeleteButton = document.querySelector('.action-buttons button');
+                        editDeleteButton.addEventListener('click', () => editDelete.classList.remove('d-none'));
+                    });
+                </script>
             </div>
             <div class="col-lg-4 sidebar">
                 {% include 'blog/partials/sidebar.html' with other_posts=other_posts %}

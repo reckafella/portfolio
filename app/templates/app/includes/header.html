@@ -1,10 +1,24 @@
 {% load static %}
-<header id="header" class="header d-flex align-items-center light-background sticky-top">
-    <div class="container-fluid position-relative d-flex align-items-center justify-content-around">
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid d-flex justify-content-around align-items-center">
         <a href="{% url 'app:home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
             <img src="{% static 'assets/images/icons/logo.png' %}" alt="Ethan" class="logo-img image-fluid">
         </a>
-        <div class="search-nav-wrapper d-flex align-items-center justify-content-between gap-3">
+        <div class="search-nav-wrapper d-flex justify-content-between align-items-center gap-1">
+            <div class="search-widget col-8 col-md-7 col-lg-6 search-bar">
+                <form class="d-flex align-items-center form-control form-control-sm" method="GET" action="{% url 'app:search' %}">
+                    <input type="search" name="q" value="{{ q }}" placeholder="Search" title="Enter search keyword" required/>
+                    <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+            <div class="d-block search-icon">
+                <a class="search-bar-toggle " href="#">
+                    <i class="bi bi-search"></i>
+                </a>
+            </div>
+            <button type="button" class="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
+                <i class="bi bi-sun-fill theme-icon"></i>
+            </button>
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
@@ -16,16 +30,29 @@
                     </li>
                     <li><a href="{% url 'app:services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><span>Services</span></a></li>
                     <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
+                    {% if user.is_staff %}
+                    <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'app:projects' %}"><span>Projects</span></a></li>
+                            <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a href="#" class="{% if request.resolver_match.app_name == 'blog' %}active{% endif %}"><span>Blog</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'blog:blog_posts_list' %}"><span>Blog</span></a></li>
+                            <li><a href="{% url 'blog:create_blog_post' %}"><span>Create Blog Post</span></a></li>
+                            <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                        </ul>
+                    </li>
+                    {% else %}
                     <li><a href="{% url 'app:projects' %}" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span></a></li>
-                    <li><a href="{% url 'blog:blog_posts_list' %}" class="{% if request.resolver_match.namespace == 'blog' %}active{% endif %}"><span>Blog</span></a></li>
+                    <li><a href="{% url 'blog:blog_posts_list' %}" class="{% if request.resolver_match.url_name == 'blog_posts_list' %}active{% endif %}"><span>Blog</span></a></li>
+                    {% endif %}
                     <li class="dropdown"><a href="#" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'blog:create_blog_post' %}"><span>Create Blog Post</span></a></li>
-                            <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
                             <li><a href="{% url 'app:messages' %}"><span>Messages</span></a></li>
                             <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
                             <li><a href="{% url 'app:profile_detail' request.user %}"><span>My Profile</span></a></li>
@@ -37,17 +64,9 @@
                         </ul>
                     </li>
                 </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
-            <button type="button" class="btn bg-transparent border-0 p-0 m-0 search-icon"
-                data-bs-toggle="modal" 
-                data-bs-target="#searchModal">
-                <i class="bi bi-search"></i>
-            </button>
-            <!-- theme switcher -->
-            <button type="button" class="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
-                <i class="bi bi-sun-fill theme-icon"></i>
-            </button>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </div>
     </div>
 </header>
+<div class="nav-overlay"></div>

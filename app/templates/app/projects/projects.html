@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="d-flex container flex-wrap justify-content-between align-items-center gap-2 project-container" data-aos="zoom-in">
-            {% for project in projects_ %}
+            {% for project in projects %}
                 <div class="col-lg-4 col-md-5 card project-item filter-{{ project.category|slugify }}" data-aos="fade-left" data-aos-delay="100">
                     {% if project.first_image %}
                         <img src="{{ project.first_image.cloudinary_image_url }}" class="img-fluid" alt="{{ project.title }}">
@@ -45,9 +45,11 @@
                             {{ project.project_type|title }}
                         </span>
                         <h4 class="mb-2">{{ project.title }}</h4>
-                        <a href="{% if project.first_image.optimized_image_url %} {{ project.first_image.cloudinary_image_url }} {% else %} {% static 'assets/images/projects/react-intro.png' %} {% endif %}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                        {% if project.first_image.optimized_image_url %} 
+                        <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
                             <i class="bi bi-plus"></i>
                         </a>
+                        {% endif %}
                         <a href="{% url 'app:project_detail' project.slug %}" class="details-link" title="More Details">
                             <i class="bi bi-link"></i>
                         </a>

@@ -16,6 +16,6 @@ urlpatterns = [
     path("post/<slug:slug>/update", UpdatePostView.as_view(), name="update_blog_post"),
     path("post/<slug:slug>/delete", DeletePostView.as_view(), name="delete_blog_post"),
     path("authors/<str:username>", AuthorPostsView.as_view(), name="posts_by_author"),
-    path("dates/<str:date>", PostsByDateView.as_view(), name="posts_by_date"),
+    path("dates/<str:date>/", PostsByDateView.as_view(), name="posts_by_date"),
     path("topics/<str:topic>", TopicPostsView.as_view(), name="posts_by_topic"),
 ]

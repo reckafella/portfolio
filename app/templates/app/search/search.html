@@ -1,67 +1,73 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block title %} {{ page_title }}
-{% if query %} - 
-    {% if not posts and not projects %}No results found for {{ query }}
-    {% else %}Results for "{{ query }}"
-    {% endif %}
-{% endif %}
 {% endblock %}
 
 {% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>Search</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
 <section id="section-search" class="section search">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card" data-aos="zoom-in">
                     <div class="card-header">
-                        <h2 class="fw-bold  mt-5 text-center section-title">{{ page_title }}
-                        {% if query %}
-                            Results for "{{ query }}"
-                        {% endif %}
+                        <h2 class="fw-bold mt-5 text-center section-title">{{ page_title }}
                         </h2>
-                        <div class="d-flex flex-column flex-lg-row gap-2 gap-lg-3 align-items-stretch align-items-lg-center">
-                            <!-- Filter and sort buttons -->
-                            <div class="d-flex gap-3 gap-lg-4">
-                                <button type="button"
-                                        class="btn btn-primary btn-sm flex-grow-1 flex-lg-grow-0"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#filterModal">
-                                    <i class="bi bi-funnel"></i>
-                                    <span class="d-inline">Filter</span>
-                                </button>
-                                <button type="button"
-                                        class="btn btn-success btn-sm flex-grow-1 flex-lg-grow-0"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#sortModal">
-                                    <i class="bi bi-sort-down"></i>
-                                    <span class="d-inline">Sort</span>
-                                </button>
-                            </div>
-
-                            <!-- Search Input Form -->
-                            <div class="search-widget col-lg-8">
-                                <form id="search-form" action="{% url 'app:search' %}" method="get">
-                                    <input type="search"
-                                        class="form-control"
-                                        placeholder="Type to search..."
-                                        aria-label="Search input"
+                        <div class="d-flex mb-5 py-2 flex-column flex-md-row flex-lg-row gap-2 gap-lg-3 justify-content-center align-items-stretch">
+                            <div class="search-widget col-md-7 col-lg-6">
+                                <form method="get" action="{% url 'app:search' %}">
+                                    <input id="SearchInput" type="search"
+                                        class="form-control form-control-sm"
+                                        placeholder="Search..."
+                                        aria-label="Search"
                                         name="q"
-                                        value="{{ query }}"
+                                        value="{{ q }}"
                                         required>
-                                    
-                                    <button type="submit" id="submitButton" aria-label="Search">
+                                    <button type="submit"
+                                        id="submitButton"
+                                        data-loading-text="{{ data_loading_text }}"
+                                        aria-labelledby="SearchInput"
+                                        aria-label="Search">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </form>
                             </div>
+                
+                            <!-- Filter and Sort Buttons - Compact on Mobile -->
+                            <div class="d-flex gap-3 col-md-3 col-lg-4">
+                                <button type="button" 
+                                        class="btn btn-outline-success btn-sm flex-grow-1"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#sortModal">
+                                    <i class="bi bi-sort-down"></i>
+                                    <span class="d-inline">Sort</span>
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-outline-primary btn-sm flex-grow-1"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#filterModal">
+                                    <i class="bi bi-funnel"></i>
+                                    <span class="d-inline">Filter</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body" data-aos="fade-up" data-aos-delay="250">
+                    <div class="card-body pt-3" data-aos="fade-up" data-aos-delay="250">
                         
-                        {% if query %}
+                        {% if q %} {# query #}
                             {% if posts or projects %}
-                            <ul class="nav nav-tabs card-header-tabs"
+                            <ul class="nav nav-tabs nav-tabs-bordered"
                                 id="searchTabs" role="tablist"
                                 data-aos="fade-up" data-aos-delay="150">
                                 {% if posts %}
@@ -96,7 +102,7 @@
                             </ul>
                             {% endif %}
 
-                            <div class="tab-content" id="searchTabContent" data-aos="fade-up">
+                            <div class="tab-content tab-content-bordered pt-2" id="searchTabContent" data-aos="fade-up">
                                 <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
                                     {% if posts %}
                                     <ul class="list-group list-group-flush">
@@ -104,17 +110,17 @@
                                         <li class="list-group-item" data-aos="fade-right" data-aos-delay="100">
                                             <a href="{% url 'blog:blog_post_details' post.slug %}" target="_blank" class="text-decoration-none">
                                                 <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
-                                                <p class="card-text text-muted">{{ post.content | safe | truncatewords:30 }}</p>
-                                                <small class="text-muted"><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>
+                                                <p class="card-text">{{ post.content | safe | truncatewords:30 }}</p>
+                                                <small><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>
                                             </a>
                                         </li>
+                                        {% empty %}
+                                        <div class="alert alert-danger" role="alert">
+                                            No blog posts found
+                                        </div>
                                         {% endfor %}
                                     </ul>
                                     {% include "app/pagination/search.html" with page_obj=posts %}
-                                    {% else %}
-                                    <div class="alert alert-danger" role="alert">
-                                        No blog posts found
-                                    </div>
                                     {% endif %}
                                 </div>
                                 <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
@@ -125,16 +131,16 @@
                                             <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
                                                 <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
                                                 <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
-                                                <small class="text-muted"><span class="fw-bold">Updated on:</span> {{ project.updated_at|date:"N d, Y" }}</small>
+                                                <small class=""><span class="fw-bold">Published on:</span> {{ project.created_at |date:"N d, Y" }}</small>
                                             </a>
                                         </li>
+                                        {% empty %}
+                                        <div class="alert alert-danger" role="alert">
+                                            No projects found
+                                        </div>
                                         {% endfor %}
                                     </ul>
                                     {% include "app/pagination/search.html" with page_obj=projects %}
-                                    {% else %}
-                                    <div class="alert alert-danger" role="alert">
-                                        No projects found
-                                    </div>
                                     {% endif %}
                                 </div>
                             </div>

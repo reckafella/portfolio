@@ -140,12 +140,30 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         self.request.session['active_tab'] = 'profile-change-password'
         return self.render_to_response(self.get_context_data(password_form=form))
     def handle_settings_update(self):
-        settings = UserSettings.objects.get_or_create(user=self.request.user)[0]
         settings, created = UserSettings.objects.get_or_create(user=self.request.user)
+        
+        # Create a copy of the form to check which fields are disabled
+        dummy_form = UserSettingsForm(instance=settings)
+        disabled_fields = [name for name, field in dummy_form.fields.items() 
+                        if field.widget.attrs.get('disabled')]
+        
+        # Store original values for disabled fields
+        original_values = {field: getattr(settings, field) for field in disabled_fields}
+        
+        # Process the form
         form = UserSettingsForm(self.request.POST, instance=settings)
         
         if form.is_valid():
-            form.save()
+            # Save but don't commit yet
+            settings_instance = form.save(commit=False)
+            
+            # Restore original values for all disabled fields
+            for field, value in original_values.items():
+                setattr(settings_instance, field, value)
+            
+            # Now save
+            settings_instance.save()
+
             messages.success(self.request, 'Settings updated successfully!')
             return redirect(self.get_success_url())
         

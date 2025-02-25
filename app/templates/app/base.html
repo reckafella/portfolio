@@ -66,6 +66,7 @@
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex justify-content-center align-items-center"><i class="bi bi-arrow-up-short fw-bold"></i></a>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.js" integrity="sha512-M60HsJC4M4A8pgBOj7oC/lvJXuOc9CraWXdD4PF+KNmKl8/Mnz6AH9FANgi4SJM6D9rqPvgQt4KRFR1rPN+EUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Vendor JS Files -->
@@ -86,58 +87,8 @@
     <script src="{% static 'assets/js/more_less.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/js/form-validator.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeSwitcher = document.getElementById('themeSwitcher');
-            const themeIcon = themeSwitcher.querySelector('.theme-icon');
-            const header = document.getElementById('header');
-            const footer = document.querySelector('footer');
-            const main = document.querySelector('main');
-            
-            // Check for saved theme preference
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            
-            // Function to update theme
-            function updateTheme(theme) {
-                // Update body
-                /* body.classList.remove('light-theme', 'dark-theme');
-                body.classList.add(`${theme}-background`); */
-                
-                // Update header
-                header.classList.remove('light-background', 'dark-background');
-                header.classList.add(`${theme}-background`);
-               
-                // Update footer if it exists
-                if (footer) {
-                    footer.classList.remove('light-background', 'dark-background');
-                    footer.classList.add(`${theme}-background`);
-                }
-
-                // Update main
-                if (main) {
-                    main.classList.remove('light-background', 'dark-background');
-                    main.classList.add(`${theme}-background`);
-                }
-                
-                // Update icon
-                themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
-                themeIcon.classList.add(theme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
-                
-                // Save preference
-                localStorage.setItem('theme', theme);
-            }
-            
-            // Set initial theme
-            updateTheme(currentTheme);
-            
-            // Theme switch event listener
-            themeSwitcher.addEventListener('click', function() {
-                const currentTheme = localStorage.getItem('theme') || 'light';
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                updateTheme(newTheme);
-            });
-        });
-    </script>
+    <script src="{% static 'assets/js/themes.js' %}"></script>
+    
     {% comment %}
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
 

@@ -27,9 +27,9 @@
                         </div>
                         {% endif %}
                         <div class="card-body d-flex flex-column">
-                            <p class="card-body card-text text-start">
-                                <span class="short-description">{{ project.description | safe | truncatechars:50 }}</span>
-                                <span class="full-description d-none" data-length="{{ project.description | safe | length }}">{{ project.description | safe }}</span>
+                            <p class="card-text text-start">
+                                <span class="short-description">{{ project.description | safe | truncatechars:20 }}</span>
+                                <span class="full-description d-none" data-length="{{ project.description | safe | length }}">{{ project.description | safe | truncatechars:100 }}</span>
                                 <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">More</button>
                             </p>
                         </div>

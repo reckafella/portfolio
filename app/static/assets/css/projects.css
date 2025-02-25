@@ -258,3 +258,23 @@
 .project-details .project-description p {
     padding: 0;
 }
+
+/* Search */
+.search {
+    margin-bottom: 30px;
+}
+
+.search input {
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid #e6e6e6;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    transition: all 0.3s;
+}
+
+.search input:focus {
+    border-color: #0880e8;
+}

@@ -3,32 +3,46 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<section id="breadcrumbs" class="breadcrumbs">
-    <div class="container d-flex justify-content-end">
-        <div class="d-flex justify-content-between align-items-center">
+<div class="page-title" data-aos="fade-up">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
                 <li><a href="{% url 'app:projects' %}">Projects</a></li>
                 <li>{{ title }}</li>
             </ol>
-        </div>
+        </nav>
     </div>
-</section>
+</div>
 
 <section id="project" class="section project" data-aos="fade-up">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card-header p-2">
-                        <h2 class="text-center card-title fw-bold mb-0">{{ title }}</h2>
+                    <div class="card-header">
+                        <div class="section-title p-1">
+                            <h2 class="text-center">{{ title }}</h2>
+                        </div>
                     </div>
                     <div class="card-body">
                         <form id="other-form" method="post" enctype="multipart/form-data" class="other-form">
                             {% csrf_token %}
                             {% for field in form %}
+                            <!-- form switch for publish -->
+                            {% if field.label == 'Publish Project' %}
+                            <div class="form-check form-switch">
+                                <input class="form-check form-check-input" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+                                <label class="form-check
+                                    form-switch-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                            {% else %}
                             <div class="form-group mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">
+                                <label for="{{ field.id_for_label }}"
+                                   class="form-label">
                                   {{ field.label }}
                                   {% if field.field.required %}
                                   <span class="text-danger"><i class="bi bi-asterisk"></i></span>
@@ -45,6 +59,7 @@
                                 </label>
                                 {{ field }}
                             </div>
+                            {% endif %}
                             {% endfor %}
                             <div class="text-center mb-2 mt-3">
                                 <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50">{{ submit_text }}</button>

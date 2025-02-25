@@ -8,7 +8,9 @@
 .blog .entry {
   padding: 30px;
   margin-bottom: 60px;
-  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 90%);
+  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 50%);
+  border-radius: 15px;
+  background-color: color-mix(in srgb, var(--background-color), transparent 88%);
 }
 
 
@@ -18,7 +20,8 @@
 }
 
 .blog .entry .entry-title {
-  font-size: 28px;
+  font-size: 20px;
+  line-height: 1;
   font-weight: bold;
   padding: 0;
 }
@@ -29,7 +32,7 @@
 }
 
 .blog .entry .entry-title a:hover {
-  color: #d28e06;
+  color: #feaa00;
 }
 
 .blog .entry .entry-meta {
@@ -40,6 +43,7 @@
 .blog .entry .entry-meta ul {
   display: flex;
   flex-wrap: wrap;
+  flex-shrink: calc(100% - 20px);
   list-style: none;
   align-items: center;
   padding: 0;
@@ -47,27 +51,27 @@
 }
 
 .blog .entry .entry-meta ul li:not(:first-child) {
-  padding-left: 20px;
+  padding-left: 15px;
 }
 
 .blog .entry .entry-meta i {
-  font-size: 16px;
+  font-size: 14px;
   margin-right: 8px;
   line-height: 0;
 }
 
 .blog .entry .entry-meta a {
-  color: #777777;
-  font-size: 14px;
+  color: var(--default-color);
+  font-size: 12px;
   display: inline-block;
   line-height: 1;
 }
 
 .blog .entry .entry-content p {
-  line-height: 24px;
+  line-height: 1;
 }
-
-.blog .entry .entry-content .read-more {
+/* 
+.blog .entry .entry-content a {
   display: flex;
   align-items: center;
   font-weight: 600;
@@ -77,7 +81,7 @@
   color: color-mix(in srgb, var(--heading-color), transparent 20%);
 }
 
-.blog .entry .entry-content .read-more a {
+.blog .entry .entry-content a {
   display: inline-block;
   background: #754f02;
   color: #fff;
@@ -87,10 +91,10 @@
   border-radius: 4px;
 }
 
-.blog .entry .entry-content .read-more a:hover {
-  background: #281b02;
+.blog .entry .entry-content a:hover {
+  background: #3d2903;
 }
-
+ */
 .blog .entry .entry-content h3 {
   font-size: 22px;
   margin-top: 30px;
@@ -99,7 +103,7 @@
 
 .blog .entry .entry-content blockquote {
   overflow: hidden;
-  background-color: #fafafa;
+  background-color: color-mix(in srgb, var(--background-color), transparent 48%);
   padding: 60px;
   position: relative;
   text-align: center;
@@ -107,7 +111,7 @@
 }
 
 .blog .entry .entry-content blockquote p {
-  color: #444444;
+  color: var(--default-color);
   line-height: 1.6;
   margin-bottom: 0;
   font-style: italic;
@@ -122,28 +126,48 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: var(--default-color);
+  background-color: var(--accent-color);
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
 .blog .entry .entry-footer {
   padding-top: 10px;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .blog .entry .entry-footer i {
-  color: #8ec8fb;
+  color: var(--default-color);
+  font-size: 14px;
+  margin-right: 5px;
   display: inline;
 }
 
 .blog .entry .entry-footer a {
-  color: #138df7;
+  font-size: 15px;
+  background: var(--default-color);
   transition: 0.3s;
+  color: var(--background-color);
+  border: none;
 }
 
-.blog .entry .entry-footer a:hover {
-  color: #f6b024;
+.blog .entry .entry-footer .share {
+  font-size: 16px;
+  border-radius: 4px;
+  transition: 0.3s;
+  background: color-mix(in srgb, var(--default-color), transparent 30%);
+  color: var(--background-color);
+  border: none;
+}
+
+.blog .entry .entry-footer a:hover,
+.blog .entry .entry-footer .share:hover {
+  background: var(--accent-color);
+}
+
+.blog .entry .entry-footer .share i {
+  padding-left: 5px;
+  color: var(--background-color);
 }
 
 .blog .entry .entry-footer .cats {
@@ -170,16 +194,8 @@
 
 .blog .entry .entry-footer .tags li+li::before {
   padding-right: 6px;
-  color: #6c757d;
+  color: var(--accent-color);
   content: ",";
-}
-
-.blog .entry .entry-footer .share {
-  font-size: 16px;
-}
-
-.blog .entry .entry-footer .share i {
-  padding-left: 5px;
 }
 
 .blog .entry-single {
@@ -426,18 +442,26 @@
 
 .search-widget form {
   background: var(--background-color);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 75%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 30%);
   padding: 3px 10px;
   position: relative;
-  border-radius: 50px;
+  border-radius: 10px;
   transition: 0.3s;
 }
 .search-widget form input[type=text],
 .search-widget form input[type=search] {
-  border: 0;
+  border: none;
   padding: 4px;
-  border-radius: 4px;
   width: calc(100% - 40px);
+  background-color: transparent;
+  color: var(--default-color);
+}
+
+.search-widget form input[type=text]:focus,
+.search-widget form input[type=search]:focus {
+  box-shadow: none;
+  border: none;
+  outline: none;
 }
 
 .search-widget form button {
@@ -448,43 +472,27 @@
   border: 0;
   background: none;
   font-size: 16px;
-  padding: 0 15px;
-  margin: -1px;
+  padding: 0 20px;
+  /* margin: -1px; */
   background: none;
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
   transition: 0.3s;
-  border-radius: 0 4px 4px 0;
   line-height: 0;
 }
+
 
 .search-widget form button i {
+  color: var(--accent-color);
   line-height: 0;
+  background: none;
 }
 
+
 .search-widget form button:hover {
-  color: var(--accent-color);
   transform: rotate(90deg);
   background: none;
 }
-.search-widget form input[type=text],
-.search-widget form input[type=search] {
-  border: 0;
-  padding: 2px 5px;
-  border-radius: 4px;
-  width: calc(100% - 40px);
-  background-color: var(--background-color);
-  color: var(--default-color);
-}
-
-/* placeholder */
-.search-widget form input[type=text]::placeholder,
-.search-widget form input[type=search]::placeholder {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.search-widget form input[type=text]:focus,
-.search-widget form input[type=search]:focus {
-  box-shadow: none;
+.search-widget form:is(:focus-within) {
   border-color: var(--accent-color);
 }
 
@@ -494,20 +502,6 @@
   border-radius: 4px;
   width: calc(100% - 40px);
 }
-
-
-
-.search-widget form button i {
-  line-height: 0;
-  background: none;
-}
-
-
-.search-widget form:is(:focus-within) {
-  border-color: var(--accent-color);
-}
-
-
 
 .recent-posts-widget .post-item {
   display: flex;

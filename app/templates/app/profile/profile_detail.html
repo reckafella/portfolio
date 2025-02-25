@@ -5,7 +5,7 @@
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1>Profile</h1>
+        <h1>{{ title }}</h1>
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
@@ -16,7 +16,7 @@
 </div>
 
 <section class="section profile">
-    <div class="row">
+    <div class="row justify-content-around align-items-stretch">
         <div class="col-xl-4">
             <div class="card">
                 <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <div class="col-xl-8">
+        <div class="col-xl-7">
             <div class="card">
                 <div class="card-body pt-3">
                     <ul class="nav nav-tabs nav-tabs-bordered">
@@ -79,7 +79,7 @@
                         <!-- Profile Overview -->
                         <div class="tab-pane fade show active profile-overview" id="profile-overview">
                             <h5 class="card-title">About</h5>
-                            <p class="small fst-italic">{{ profile.bio }}</p>
+                            <p class="small fst-italic">{{ profile.bio|default:"Bio empty" }}</p>
 
                             <h5 class="card-title">Profile Details</h5>
                             <div class="row">
@@ -166,15 +166,17 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="form_type" value="settings">
                                         {% for field in settings_form %}
-                                            <div class="mb-3">
-                                                {{ field }}
-                                                <label for="{{ field.id_for_label }}" class="form-label">
-                                                    {{ field.label }}
-                                                    {% if field.field.required %}
-                                                        <span class="text-danger"><i class="bi bi-asterisk"></i></span>
-                                                    {% endif %}
-                                                </label>
-                                            </div>
+                                        <div class="form-switch form-check mb-3">
+                                            <!-- Here's the improved version with proper disabled handling -->
+                                            {{ field }}
+                                            <label for="{{ field.id_for_label }}"
+                                                class="form-check-label {% if field.field.widget.attrs.disabled %}text-muted{% endif %}">
+                                                {{ field.label }}
+                                                {% if field.field.required %}
+                                                <span class="text-danger"><i class="bi bi-asterisk"></i></span>
+                                                {% endif %}
+                                            </label>
+                                        </div>
                                         {% endfor %}
                                     </div>
                                 </div>

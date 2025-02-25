@@ -3,52 +3,96 @@
 {% block title %} {{ page_title }} {% endblock %}
 
 {% block content %}
-    <section id="section" class="mt-5 section contact">
-        <div class="container mt-5">
-            <div class="row g-0">
-                <!-- Image Column -->
-                <div class="col-lg-6 col-md-6 col-sm-12">
+    <div class="page-title">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <div class="section-title p-0 m-0">
+                <h2 class="text-center fw-bold mb-0" data-aos="fade-left">{{ page_title }}</h2>
+            </div>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="{% url 'app:home' %}">Home</a></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <section id="section" class="section contact">
+        <div class="container" data-aos="fade-up">
+            <div class="info-wrap">
+                <div class="row gy-5" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-lg-4">
+                        <div class="info-item d-flex phone" data-aos="fade-up" data-aos-delay="300">
+                            <i class="bi bi-telephone"></i>
+                            <div>
+                                <h3>Call Me</h3>
+                                <p>+254-7-19-272-150</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- WhatsApp -->
+                    <div class="col-lg-4">
+                        <div class="info-item d-flex phone" data-aos="fade-up" data-aos-delay="400">
+                            <i class="bi bi-whatsapp"></i>
+                            <div>
+                                <h3>WhatsApp</h3>
+                                <p>+254-7-19-272-150</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="info-item d-flex email" data-aos="fade-up" data-aos-delay="500">
+                            <i class="bi bi-envelope"></i>
+                            <div>
+                                <h3>Email Me</h3>
+                                <p>ethanmuthoni@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Form Column -->
+            <div class="col-12">
+                <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
+                    <form id="other-form" method="post" class="contact-form">
+                        {% csrf_token %}
+                        <div class="row gy-4">
+                            {% for field in form %}
+                                {% if field.name == 'email' or field.name == 'name' %}
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                                    {{ field }}
+                                </div>
+                                {% else %}
+                                <div class="col-12">
+                                    <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                                    {{ field }}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if user.is_staff %}
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" id="submitButton"  class="btn btn-success d-inline-flex align-items-center" disabled>{{ submit_text }}</button>
+                            </div>
+                            {% else %}
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" id="submitButton"  data-loading-text="{{ data_loading_text }}" class="btn btn-success d-inline-flex align-items-center">{{ submit_text }}</button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% comment %}
                     <div class="h-100 contact-image" 
                         style="background-image: url('https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73');
                             background-size: cover;
                             background-position: center;
                             min-height: 300px;">
                     </div>
-                </div>
-
-                <!-- Form Column -->
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="card border-0 rounded-0 h-100" data-aos="fade-up" data-aos-delay="200">
-                        <div class="card-body p-4">
-                            <div class="section-title mb-0">
-                                <h2 class="text-center fw-bold mb-0" data-aos="fade-up">{{ page_title }}</h2>
-                            </div>
-                            <h3 class="card-title text-center fw-bold mb-4">Send Me a Message</h3>
-                            <form id="other-form" method="post" class="contact-form">
-                                {% csrf_token %}
-                                <div class="row gy-4">
-                                    {% for field in form %}
-                                        <div class="col-12">
-                                            <label for="{{ field.label }}" class="pb-2">{{ field.label }}</label>
-                                            {{ field }}
-                                        </div>
-                                    {% endfor %}
-                                    
-                                    {% if user.is_staff %}
-                                    <div class="col-12 text-center mt-4">
-                                        <button type="submit" id="submitButton"  class="btn btn-success d-inline-flex align-items-center" disabled>{{ submit_text }}</button>
-                                    </div>
-                                    {% else %}
-                                    <div class="col-12 text-center mt-4">
-                                        <button type="submit" id="submitButton"  data-loading-text="{{ data_loading_text }}" class="btn btn-success d-inline-flex align-items-center">{{ submit_text }}</button>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-{% endblock %}
+                    {% endcomment %}

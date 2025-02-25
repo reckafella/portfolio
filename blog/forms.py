@@ -41,7 +41,10 @@ class BlogPostForm(forms.ModelForm):
     published = forms.BooleanField(
         label="Publish Article",
         required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        widget=forms.CheckboxInput(attrs={
+            "class": "form-check-input",
+            "role": "switch"
+            }),
         help_text="Check this box to publish the article",
     )
 

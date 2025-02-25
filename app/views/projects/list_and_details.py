@@ -9,7 +9,7 @@ class ProjectListView(ListView):
     model = Projects
     template_name = "app/projects/projects.html"
     context_object_name = "projects"
-    paginate_by = 4
+    paginate_by = 6
 
     def get_queryset(self):
         return Projects.objects.filter(live=True).order_by("created_at")

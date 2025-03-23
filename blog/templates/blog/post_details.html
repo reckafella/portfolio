@@ -11,7 +11,7 @@
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
-                <li><a href="{% url 'blog:blog_posts_list' %}">Blog Posts</a></li>
+                <li><a href="{% url 'blog:list_articles' %}">Blog Posts</a></li>
             </ol>
         </nav>
     </div>
@@ -23,7 +23,7 @@
             <div class="col-lg-8">
                 <article class="entry entry-single">
                     <h2 class="entry-title">
-                        <a href="{% url 'blog:blog_post_details' post.slug %}">{{ post.title }}</a>
+                        <a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a>
                     </h2>
 
                     <div class="entry-img my-1">
@@ -36,22 +36,22 @@
                         <ul>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="{% url 'blog:posts_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
+                                <a href="{% url 'blog:articles_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
                             </li>
                             {% if post.first_published_at %}
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
                                 {% with year=post.first_published_at|date:"Y" month=post.first_published_at|date:"m" day=post.first_published_at|date:"d" %}
                                 <div class="date-links">
-                                    <a href="{% url 'blog:posts_by_date' year %}" title="View all posts from this year">
+                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
                                         {{ post.first_published_at|date:"Y" }}
                                     </a>
                                     <span class="separator">/</span>
-                                    <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
                                         {{ post.first_published_at|date:"F" }}
                                     </a>
                                     <span class="separator">/</span>
-                                    <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
                                         {{ post.first_published_at|date:"j" }}
                                     </a>
                                 </div>
@@ -77,7 +77,7 @@
                                 <a type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#shareModal"
-                                    data-share-url="{% url 'blog:blog_post_details' post.slug %}"
+                                    data-share-url="{% url 'blog:article_details' post.slug %}"
                                     data-share-title="{{ post.title }}"
                                     class="share-link">
                                     <i class="bi bi-share-fill fs-6"></i>
@@ -91,7 +91,7 @@
                         <i class="bi bi-tags"></i>
                         <ul class="tags mx-2">
                             {% for topic in post_topics %}
-                                <li><a href="{% url 'blog:posts_by_topic' topic %}">{{ topic }}</a></li>
+                                <li><a href="{% url 'blog:articles_by_topic' topic %}">{{ topic }}</a></li>
                             {% endfor %}
                         </ul>
                         <ul class="tags">

@@ -62,7 +62,7 @@ class PostDetailView(DetailView):
         context["form"] = self.form_class(instance=post)
         context['page_title'] = f'Update: {post.title}'
         context['submit_text'] = 'Update Post'
-        context['action_url'] = reverse_lazy('blog:update_blog_post', kwargs={'slug': post.slug})
+        context['action_url'] = reverse_lazy('blog:update_article', kwargs={'slug': post.slug})
 
         return context
     

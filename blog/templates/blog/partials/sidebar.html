@@ -37,7 +37,7 @@
         </div>
         <div class="widget-item search-widget">
             <h3 class="widget-title">Search Blog</h3>
-            <form id="search-form" action="{% url 'blog:blog_posts_list' %}" method="get">
+            <form id="search-form" action="{% url 'blog:list_articles' %}" method="get">
                 <input type="search" name="q" class="form-control" placeholder="Search..." required>
                 <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"><i class="bi bi-search"></i></button>
             </form>
@@ -52,7 +52,7 @@
                 <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0">
                 {% endif %}
                 <div>
-                    <h4><a href="{% url 'blog:blog_post_details' post.slug %}">{{ post.title }}</a></h4>
+                    <h4><a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a></h4>
                     <time datetime="{{ post.first_published_at }}">{{ post.first_published_at | date:"N j, Y" }}</time>
                 </div>
             </div>
@@ -63,7 +63,7 @@
            <ul>
                {% for topic, count in all_topics %}
                <li>
-                   <a href="{% url 'blog:posts_by_topic' topic %}">
+                   <a href="{% url 'blog:articles_by_topic' topic %}">
                    {{ topic }} <span>({{ count }})</span></a>
                </li>
                {% endfor %}

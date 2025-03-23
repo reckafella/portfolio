@@ -35,30 +35,42 @@
 
 .project .project-item {
     margin-bottom: 30px;
-    overflow: hidden;
+    overflow: visible;
 }
 
-.project .project-item img, .project .project-item .video-box {
+.project .project-item img,
+.project .project-item .video-box {
     position: relative;
     top: 0;
     transition: all 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.project .project-container .project-item img {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
 }
 
 .project .project-item .video-box {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    min-height: 250px;
-    height: auto;
+    height: max-content;
+    min-height: 450px;
     width: 100%;
     position: relative;
 }
 
+@media (max-width: 768px) {
+    .project .project-item .video-box {
+        min-height: 300px;
+    }
+}
 
 .project .project-item .play-btn {
     width: 94px;
     height: 94px;
-    background: radial-gradient(#0880e8 50%, rgba(8, 128, 232, 0.4) 52%);
+    background: radial-gradient(var(--default-color) 50%, var(--accent-color) 52%);
     border-radius: 50%;
     display: block;
     position: absolute;
@@ -77,7 +89,7 @@
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 15px solid #fff;
+    border-left: 15px solid var(--accent-color);
     z-index: 100;
     transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
 }
@@ -94,15 +106,16 @@
     animation-timing-function: steps;
     opacity: 1;
     border-radius: 50%;
-    border: 5px solid rgba(8, 128, 232, 0.7);
+    border: 3px solid var(--accent-color);
     top: -15%;
     left: -15%;
-    background: rgba(198, 16, 0, 0);
+    background: color-mix(in srgb, var(--default-color), transparent 80%);
 }
 
 .project .project-item .play-btn:hover::after {
-    border-left: 15px solid #0880e8;
-    transform: scale(20);
+    border-left: 15px solid transparent;
+    background: transparent;
+    transform: translateX(-50%) translateY(-50%) scale(10);
 }
 
 .project .project-item .play-btn:hover::before {
@@ -110,13 +123,13 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translateX(-40%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
     width: 0;
     height: 0;
     border: none;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 15px solid #fff;
+    border-left: 15px solid var(--accent-color);
     z-index: 200;
     animation: none;
     border-radius: 0;
@@ -145,18 +158,18 @@
     bottom: -50px;
     z-index: 3;
     transition: all ease-in-out 0.3s;
-    background: #282a2c;
+    background: var(--accent-color);
     padding: 15px 20px;
 }
 
 .project .project-item .project-info h4 {
     font-size: 18px;
-    color: #fff;
+    color: var(--default-color);
     font-weight: 600;
 }
 
 .project .project-item .project-info p {
-    color: #fff;
+    color: var(--default-color);
     font-size: 14px;
     margin-bottom: 0;
 }
@@ -168,16 +181,21 @@
     right: 85px;
     font-size: 24px;
     top: calc(50% - 18px);
-    color: white;
+    color: var(--default-color);
     transition: ease-in-out 0.3s;
 }
 
-  .project .project-item .project-info .preview-link:hover,
+.project .project-item .project-info .preview-link:hover,
 .project .project-item .project-info .details-link:hover,
 .project .project-item .project-info .share-link:hover {
-    color: #8ec8fb;
+    color: var(--contrast-color);
 }
-
+.project .project-item .project-info .preview-link i,
+.project .project-item .project-info .details-link i,
+.project .project-item .project-info .share-link i {
+    font-size: 24px;
+    color: inherit;
+}
 .project .project-item .project-info .details-link {
     right: 50px;
 }
@@ -203,6 +221,7 @@
 
 .project-details .project-details-slider img {
     width: 100%;
+    min-height: 300px;
 }
 
 .project-details .project-details-slider .swiper-pagination {
@@ -213,26 +232,27 @@
 .project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet {
     width: 12px;
     height: 12px;
-    background-color: #fff;
+    background-color: var(--default-color);
     opacity: 1;
-    border: 1px solid #0880e8;
+    border: 1px solid var(--accent-color);
 }
 
 .project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet-active {
-    background-color: #0880e8;
+    background-color: var(--accent-color);
 }
 
-.project-details .project-info {
-    padding: 30px;
-    box-shadow: 0px 0 30px rgba(246, 176, 36, 0.08);
+.project-details .project-info,
+.project-details .project-description {
+    padding: 20px;
+    box-shadow: 0px 0 10px var(--default-color);
 }
 
 .project-details .project-info h3 {
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--accent-color);
 }
 
 .project-details .project-info ul {
@@ -243,6 +263,11 @@
 
 .project-details .project-info ul li+li {
     margin-top: 10px;
+    font-weight: 600;
+}
+
+.project-details .project-info ul li span {
+    font-weight: 400;
 }
 
 .project-details .project-description {

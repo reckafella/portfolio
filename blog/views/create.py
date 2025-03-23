@@ -62,7 +62,7 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
         return self.form_invalid(form, response)
 
     def get_success_url(self):
-        return reverse_lazy("blog:blog_post_details", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:article_details", kwargs={"slug": self.object.slug})
 
 
 class CreatePostView(BasePostView, CreateView):
@@ -75,7 +75,7 @@ class CreatePostView(BasePostView, CreateView):
             "title": "Create New Post",
             "submit_text": "Create Post",
             "data_loading_text": "Creating Post...",
-            "action_url": reverse_lazy("blog:create_blog_post")
+            "action_url": reverse_lazy("blog:create_article")
         })
         return context
 

@@ -9,27 +9,27 @@
             <div class="modal-body">
                 <div class="d-grid gap-2">
                     <!-- Copy Link -->
-                    <button class="btn btn-light d-flex align-items-center gap-3 py-2" id="copyLinkBtn">
-                        <i class="bi bi-link"></i>
+                    <button class="btn special-btn d-flex align-items-center gap-3 py-2" id="copyLinkBtn">
+                        <i class="bi bi-copy"></i>
                         <span>Copy link</span>
                     </button>
 
                     <!-- Facebook -->
-                    <a href="#" class="btn btn-light d-flex align-items-center gap-3 py-2 share-facebook"
+                    <a href="#" class="btn special-btn d-flex align-items-center gap-3 py-2 share-facebook"
                        target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-facebook text-primary"></i>
                         <span>Share on Facebook</span>
                     </a>
 
                     <!-- Twitter -->
-                    <a href="#" class="btn btn-light d-flex align-items-center gap-3 py-2 share-twitter"
+                    <a href="#" class="btn special-btn d-flex align-items-center gap-3 py-2 share-twitter"
                        target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-twitter text-info"></i>
                         <span>Share on Twitter</span>
                     </a>
 
                     <!-- WhatsApp -->
-                    <a href="#" class="btn btn-light d-flex align-items-center gap-3 py-2 share-whatsapp"
+                    <a href="#" class="btn special-btn d-flex align-items-center gap-3 py-2 share-whatsapp"
                        target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-whatsapp text-success"></i>
                         <span>Share on WhatsApp</span>
@@ -39,93 +39,4 @@
         </div>
     </div>
 </div>
-
-<!-- Toast for copy feedback -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">
-            <i class="bi bi-check-circle text-success me-2"></i>
-            Link copied to clipboard!
-        </div>
-    </div>
-</div>
-
-<script>
-function setupShareModal(url, title) {
-    const modal = document.getElementById('shareModal');
-    
-    // Set up copy button
-    const copyBtn = modal.querySelector('#copyLinkBtn');
-    copyBtn.setAttribute('data-url', url);
-    
-    // Set up share links
-    const fbLink = modal.querySelector('.share-facebook');
-    fbLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    
-    const twitterLink = modal.querySelector('.share-twitter');
-    twitterLink.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
-    
-    const whatsappLink = modal.querySelector('.share-whatsapp');
-    whatsappLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
-    
-    // Update modal title
-    modal.querySelector('.modal-title').textContent = `Share ${title}`;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click listeners to all share links
-    document.querySelectorAll('.share-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            const url = window.location.origin + this.dataset.shareUrl;
-            const title = this.dataset.shareTitle;
-            setupShareModal(url, title);
-        });
-    });
-
-    // Add click listener to copy button
-    document.getElementById('copyLinkBtn').addEventListener('click', function() {
-        const url = this.getAttribute('data-url');
-        copyToClipboard(url);
-    });
-});
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(function() {
-        // Show toast
-        const toast = new bootstrap.Toast(document.getElementById('copyToast'));
-        toast.show();
-        
-        // Update button text temporarily
-        const button = event.currentTarget;
-        const originalContent = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-check"></i> <span>Copied!</span>';
-        
-        setTimeout(() => {
-            button.innerHTML = originalContent;
-        }, 2000);
-    }).catch(function(err) {
-        console.error('Failed to copy text: ', err);
-    });
-}
-</script>
-
-<style>
-.modal-content {
-    border-radius: 1rem;
-}
-
-.btn-light {
-    text-align: left;
-    border-radius: 0.5rem;
-}
-
-.btn-light:hover {
-    background-color: #f0f0f0;
-}
-
-.toast {
-    background-color: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-</style>
+<!-- End of Share Modal -->

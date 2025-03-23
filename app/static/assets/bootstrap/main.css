@@ -10,8 +10,7 @@
   --background-color: #e9e8e6; /* Background color for the entire website, including individual sections */
   --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #34b7a7; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --accent-color: #642789;
+  --accent-color: #011717; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
@@ -35,6 +34,8 @@
   --nav-hover-color: #34b7a7;
   --nav-dropdown-background-color: #e9e8e6;
   --nav-dropdown-color: #444444;
+  --contrast-color: #000;
+  --search-bar-background-color: #1d0723;
   --nav-dropdown-hover-color: #34b7a7;
 }
 
@@ -44,12 +45,14 @@
   --heading-color: #ffffff;
   --surface-color: #252525;
   --contrast-color: #ffffff;
-  --accent-color:#f6b024;
+  /* search bar background should have dim color like Twitter */
+  --search-bar-background-color: #15202b;
+  --accent-color:#f88b05;
   --nav-color: #ffffff;
-  --nav-hover-color: #05e6cb;
+  --nav-hover-color: #02ac98;
   --nav-dropdown-background-color: #252525;
   --nav-dropdown-color: #ffffff;
-  --nav-dropdown-hover-color: #06ceb7;
+  --nav-dropdown-hover-color: #03b7db; /* #06ceb7 */
   --nav-mobile-background-color: #474444;
 }
 
@@ -177,23 +180,52 @@ h6 {
   .header .search-nav-wrapper .search-bar {
     order: 1;
     position: fixed;
-    top: 50px;
-    left: 0;
-    right: 0;
-    padding: 30px 10px;
+    background: var(--search-bar-background-color);
+    top: 150px;
+    left: 50%;
+    width: 80%;
+    max-width: 500px;
+    padding: 50px 25px;
     z-index: 1090;
     visibility: hidden;
     opacity: 0;
+    border-radius: 10px;
     transition: all 0.3s;
-    box-shadow: 0px 0px 15px 0px color-mix(in srgb, var(--default-color), transparent 10%);
+    transform: translateX(-50%);
+    box-shadow: 0px 0px 5px 0px color-mix(in srgb, var(--accent-color), transparent 10%);
+  }
+
+  .header .search-nav-wrapper .search-bar .search-tips {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .search-tips h2 {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 700;
+    border-bottom: 1px solid #fff;
+    margin-bottom: 10px;
+  }
+
+  .search-tips ul li:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  .search-tips ul li i {
+    color: #fff;
+    margin-right: 5px;
+  }
+
+  .search-tips ul li:last-child {
+    margin-bottom: 0;
   }
 
   .header .search-nav-wrapper .search-bar-show {
     visibility: visible;
     opacity: 1;
     top: 60px;
-    right: 50%;
-    transform: translateX(50%) translateY(50%) scale(1);
   }
 
 /*--------------------------------------------------------------
@@ -501,7 +533,7 @@ h6 {
   background-color: var(--background-color);
   padding: 25px 0;
   position: relative;
-  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  /* border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%); */
 }
 
 #footer .footer-top .footer-info p {
@@ -544,9 +576,8 @@ h6 {
   font-size: 16px;
   font-weight: bold;
   color: var(--heading-color);
-  text-transform: uppercase;
   position: relative;
-  padding-bottom: 12px;
+  padding-bottom: 5px;
 }
 
 #footer .footer-top .footer-links {
@@ -605,8 +636,8 @@ h6 {
 # Preloader
 --------------------------------------------------------------*/
 #preloader {
-  --background-color: #030a3b;
-  --accent-color: #f5a300;
+  --background-color: #0c0e1e;
+  --accent-color: #ffd072;
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -636,14 +667,23 @@ h6 {
     height: 10px;
     top: calc(50% - 5px);
     left: calc(50% - 5px);
+    transform: scale(0.4, 0.4);
     opacity: 1;
   }
-
+  50% {
+    width: 72px;
+    height: 72px;
+    top: calc(50% - 36px);
+    left: calc(50% - 36px);
+    transform: scale(0.8, 0.8);
+    opacity: 0.5;
+  }
   100% {
     width: 72px;
     height: 72px;
     top: calc(50% - 36px);
     left: calc(50% - 36px);
+    transform: scale(1, 1);
     opacity: 0;
   }
 }
@@ -658,7 +698,7 @@ h6 {
   right: 15px;
   bottom: -15px;
   z-index: 99999;
-  background-color: var(--accent-color);
+  background-color: var(--default-color);
   width: 44px;
   height: 44px;
   border-radius: 50px;
@@ -667,13 +707,12 @@ h6 {
 
 .scroll-top i {
   font-size: 24px;
-  color: var(--contrast-color);
+  color: var(--background-color);
   line-height: 0;
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
-  color: var(--contrast-color);
+  background-color: color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .scroll-top.active {
@@ -824,7 +863,7 @@ section,
 .hero .overlay {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--background-color), transparent 40%);
+  background: color-mix(in srgb, var(--background-color) 80%, transparent 30%);
   z-index: 2;
 }
 
@@ -848,22 +887,18 @@ section,
 }
 
 .hero .btn-get-started {
-  color: var(--contrast-color);
-  background: var(--accent-color);
+  color: var(--default-color);
+  background: var(--surface-color);
   font-family: var(--heading-font);
-  text-transform: uppercase;
   font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 1px;
   display: inline-block;
-  padding: 12px 40px;
-  border-radius: 50px;
+  padding: 4px 8px;
   transition: 0.5s;
   margin-top: 30px;
 }
 
 .hero .btn-get-started:hover {
-  background: color-mix(in srgb, var(--accent-color) 90%, white 20%);
+  color: var(--surface-color);
 }
 
 @media (max-width: 768px) {
@@ -940,6 +975,46 @@ section,
   height: 10px;
   transition: 0.9s;
   background-color: var(--accent-color);
+}
+
+/*--------------------------------------------------------------
+# CTA Section
+--------------------------------------------------------------*/
+
+#cta {
+  background: linear-gradient(rgba(5, 74, 133, 0.8), rgba(5, 74, 133, 0.9)), url("../images/images/cta-bg.jpg") fixed center center;
+  background-size: cover;
+  padding: 120px 0;
+}
+
+#cta h1, #cta h2, #cta h3, #cta h4, #cta h5, #cta h6 {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+#cta p {
+  color: #fff;
+}
+
+#cta .cta-btn {
+  font-family: "Raleway", sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 5px;
+  transition: 0.5s;
+  margin: 10px;
+  background: var(--default-color);
+  border: 2px solid var(--accent-color);
+  color: var(--background-color);
+}
+
+#cta .cta-btn:hover {
+  background: var(--accent-color);
 }
 
 /*--------------------------------------------------------------
@@ -1972,4 +2047,109 @@ Cards
   border-color: var(--accent-color);
   box-shadow: none;
   border: 1px solid var(--accent-color);
+}
+
+.modal-btn {
+  background: var(--default-color);
+  color: var(--background-color);
+  border: var(--background-color);
+}
+
+.modal-btn:hover {
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+}
+
+/* special buttons with a sliding effect on hover */
+.special-btn {
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: var(--background-color);
+  color: var(--accent-color, #05090a); /* Default to #61dafb if var not set */
+  border: 2px solid var(--accent-color, #05090a);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: 0.25s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Create pseudo-elements for the sliding effect */
+.special-btn::before,
+.special-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--accent-color, #282c34);
+  transition: 0.3s ease-out;
+  z-index: -1;
+}
+
+.special-btn::before {
+  left: 0;
+}
+
+.special-btn::after {
+  right: 0;
+}
+
+/* Using a percentage-based approach for the hover effect */
+.special-btn:hover::before,
+.special-btn:hover::after,
+.special-btn:focus::before,
+.special-btn:focus::after {
+  width: 50%; /* Each side covers half the button */
+}
+
+.special-btn:hover,
+.special-btn:focus {
+  color: var(--background-color);
+  border: 2px solid var(--default-color);
+}
+
+/*--------------------------------------------------------------
+# HTTP Errors
+--------------------------------------------------------------*/
+.http-errors {
+  padding: 30px;
+}
+
+.http-errors h1 {
+  font-size: 180px;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 0;
+  line-height: 150px;
+}
+
+.http-errors h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--default-color);
+  margin-bottom: 30px;
+}
+
+.http-errors .btn {
+  background: var(--default-color);
+  color: var(--background-color);
+  border: 2px solid var(--accent-color);
+  padding: 4px 8px;
+  transition: 0.5s;
+  margin-top: 20px;
+}
+
+.http-errors .btn:hover {
+  color: var(--background-color);
+}
+
+@media (min-width: 992px) {
+  .http-errors img {
+    max-width: 50%;
+  }
 }

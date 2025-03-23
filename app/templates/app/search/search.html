@@ -108,7 +108,7 @@
                                     <ul class="list-group list-group-flush">
                                         {% for post in posts %}
                                         <li class="list-group-item" data-aos="fade-right" data-aos-delay="100">
-                                            <a href="{% url 'blog:blog_post_details' post.slug %}" target="_blank" class="text-decoration-none">
+                                            <a href="{% url 'blog:article_details' post.slug %}" target="_blank" class="text-decoration-none">
                                                 <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
                                                 <p class="card-text">{{ post.content | safe | truncatewords:30 }}</p>
                                                 <small><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>

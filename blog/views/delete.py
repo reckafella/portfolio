@@ -12,7 +12,7 @@ uploader = CloudinaryImageHandler()
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPostPage
     template_name = "blog/deletion/confirm_delete.html"
-    success_url = reverse_lazy("blog:blog_posts_list")
+    success_url = reverse_lazy("blog:list_articles")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -23,7 +23,7 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             "extra_messages": [
                 {
                     "text": "Are you sure you want to delete this post?",
-                    "link": reverse_lazy("blog:blog_posts_list"),
+                    "link": reverse_lazy("blog:list_articles"),
                     "link_text": "Cancel",
                 }
             ],

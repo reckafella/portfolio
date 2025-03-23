@@ -48,14 +48,17 @@
                     <div class="footer-links h-100">
                         <h4 class="footer-title">Useful Links</h4>
                         <ul class="list-unstyled">
-                            <li><a href="{% url 'app:about' %}"><i class="bi bi-chevron-right"></i> About Me</a></li>
-                            <li><a href="{% url 'blog:blog_posts_list' %}"><i class="bi bi-chevron-right"></i> Blog</a>
+                            <li><a href="{% url 'app:about' %}">About Me</a></li>
+                            <li><a href="{% url 'blog:list_articles' %}">Blog</a></li>
+                            <li><a href="{% url 'app:contact' %}">Contact</a></li>
+                            <li><a href="{% url 'app:projects' %}">Projects</a></li>
+                            <li><a href="{% url 'app:services' %}">Services</a></li>
+                            <li>
+                                <a href="{% url 'app:sitemap' %}"
+                                    target="_blank">Sitemaps
+                                    <i class="bi bi-box-arrow-up-right fs-6"></i>
+                                </a>
                             </li>
-                            <li><a href="{% url 'app:contact' %}"><i class="bi bi-chevron-right"></i> Contact</a></li>
-                            <li><a href="{% url 'app:projects' %}"><i class="bi bi-chevron-right"></i> Projects</a></li>
-                            <li><a href="{% url 'app:services' %}"><i class="bi bi-chevron-right"></i> Services</a></li>
-                            <li><a href="{% url 'app:sitemap' %}" target="_blank"><i class="bi bi-chevron-right"></i>
-                                    Sitemaps <i class="bi bi-box-arrow-up-right"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -65,12 +68,12 @@
                     <div class="footer-links h-100">
                         <h4 class="footer-title">Services Offered</h4>
                         <ul class="list-unstyled">
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> Web Development</a></li>
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> Software Testing</a></li>
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> Website Maintenance</a></li>
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> SEO Optimization</a></li>
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> Domain Registration</a></li>
-                            <li><a href="#"><i class="bi bi-chevron-right"></i> Technical Writing</a></li>
+                            <li><a href="#">Web Development</a></li>
+                            <li><a href="#">Software Testing</a></li>
+                            <li><a href="#">Website Maintenance</a></li>
+                            <li><a href="#">SEO Optimization</a></li>
+                            <li><a href="#">Domain Registration</a></li>
+                            <li><a href="#">Technical Writing</a></li>
                         </ul>
                     </div>
                 </div>

@@ -45,8 +45,7 @@ document.addEventListener('keydown', function(e) {
     // Open search modal with Ctrl/Cmd + K
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
-        searchModal.show();
+        select('.search-bar').classList.add('search-bar-show');
     }
 });
 

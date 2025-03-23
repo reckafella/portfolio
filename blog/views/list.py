@@ -176,7 +176,7 @@ class PostsByDateView(BasePostListView):
             title = date_obj.strftime('%B %d, %Y')
         elif month:
             date_obj = datetime(year, month, 1)
-            title = date_obj.strftime('%B %Y')
+            title = date_obj.strftime('%B, %Y')
         else:
             title = str(year)
             

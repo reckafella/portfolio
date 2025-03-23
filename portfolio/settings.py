@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -72,7 +72,6 @@ INSTALLED_APPS += [
     'wagtail.search',
     'wagtail.admin',
     'wagtail',
-    
     'modelcluster',
     'taggit',
 ]
@@ -87,10 +86,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware"
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "portfolio.middlewares.rate_limit.RateLimitMiddleware"
 ]
 
-# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware", - removed because of wagtail failing to load
+# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
+# - removed because of it interferes with wagtail's loading of pages
 
 ROOT_URLCONF = "portfolio.urls"
 
@@ -176,7 +177,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Africa/Nairobi"
@@ -337,3 +337,4 @@ CATEGORY_CHOICES = [
 ]
 
 SITE_ID=1
+RATELIMIT = 1000

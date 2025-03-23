@@ -29,10 +29,11 @@ from app.views.views import CustomRedirectView
 from app.views.refresh_captcha import CaptchaRefreshView
 
 # Error handling
-handler404 = "app.views.errors.error_404_view"
-handler500 = "app.views.errors.error_500_view"
-handler403 = "app.views.errors.error_403_view"
-handler400 = "app.views.errors.error_400_view"
+handler404 = "app.views.errors.handler_404"
+handler500 = "app.views.errors.handler_500"
+handler403 = "app.views.errors.handler_403"
+handler400 = "app.views.errors.handler_400"
+#handler429 = "app.views.errors.handler_429"
 
 
 urlpatterns = [

@@ -16,8 +16,8 @@
 </div>
 
 {% if projects %}
-<section id="portfolio" class="portfolio project section">
-    <div class="container" data-aos="zoom-out">
+<section id="project" class="section project">
+    <div class="container d-flex flex-column justify-content-between align-items-center w-100" data-aos="zoom-out">
         <div class="section-title">
             <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
             <p class="lead mb-2">An inexhaustive list of personal & professional projects I have worked on.</p>
@@ -32,43 +32,74 @@
                 </ul>
             </div>
         </div>
-        <div class="d-flex container flex-wrap justify-content-between align-items-center gap-2 project-container" data-aos="zoom-in">
-            {% for project in projects %}
-                <div class="col-lg-4 col-md-5 card project-item filter-{{ project.category|slugify }}" data-aos="fade-left" data-aos-delay="100">
+        <div class="d-flex flex-column justify-content-between w-100 align-items-start project-container" data-aos="fade-in">
+            <div class="d-flex flex-column justify-content-between align-items-stretch gap-2 gap-lg-3 col-lg-11 g-2 d-flex py-3 my-5">
+                {% for project in projects %}
+                <div class="col-lg-5 col-md-5 col-10 shadow project-item filter-{{ project.category|slugify }}">
                     {% if project.first_image %}
-                        <img src="{{ project.first_image.cloudinary_image_url }}" class="img-fluid" alt="{{ project.title }}">
+                    <img src="{{ project.first_image.cloudinary_image_url }}" class="img-fluid" alt="{{ project.title }}">
                     {% else %}
-                        <img src="{% static 'assets/images/projects/react-intro.png' %}" class="img-fluid" alt="{{ project.title }}">
+                    <img src="{% static default_image %}" class="img-fluid" alt="{{ project.title }}">
                     {% endif %}
                     <div class="project-info">
                         <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill {% if project.project_type == 'personal' %}bg-primary{% else %}bg-success{% endif %}">
                             {{ project.project_type|title }}
                         </span>
                         <h4 class="mb-2">{{ project.title }}</h4>
-                        {% if project.first_image.optimized_image_url %} 
-                        <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
-                            <i class="bi bi-plus"></i>
-                        </a>
-                        {% endif %}
-                        <a href="{% url 'app:project_detail' project.slug %}" class="details-link" title="More Details">
-                            <i class="bi bi-link"></i>
-                        </a>
-                        <a type="button" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#shareModal" 
-                            data-share-url="{% url 'app:project_detail' project.slug %}"
-                            data-share-title="{{ project.title }}"
-                            class="share-link">
-                                <i class="bi bi-share-fill fs-6"></i>
-                        </a>
+                        <div class="justify-content-between align-items-center p-0 m-0">
+                            <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                                <i class="bi bi-plus"></i>
+                            </a>
+                            <a href="{% url 'app:project_detail' project.slug %}" class="details-link" title="More Details">
+                                <i class="bi bi-link"></i>
+                            </a>
+                            <a type="button" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#shareModal" 
+                                data-share-url="{% url 'app:project_detail' project.slug %}"
+                                data-share-title="{{ project.title }}"
+                                class="share-link display-4">
+                                    <i class="bi bi-share-fill fs-6"></i>
+                            </a>
+                        </div>
                         <p>{{ project.category }}</p>
                     </div>
                 </div>
-            {% empty %}
+                {% empty %}
                 <div class="col-lg-12 d-flex justify-content-center">
                     <p>No projects found</p>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <!-- pagination -->
+        <div class="d-flex justify-content-center w-100 mt-4">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination
+                    {% if not page_obj.has_previous %}disabled{% endif %}">
+                    <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                        <a class="page-link" href="?page=1&sort_by={{ sort_by }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo; Previous</span>
+                        </a>
+                    </li>
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <li class="page-item active">
+                        <span class="page-link" href="?page={{ num }}&sort_by={{ sort_by }}">{{ num }}</span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&sort_by={{ sort_by }}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort_by={{ sort_by }}" aria-label="Next">
+                            <span aria-hidden="true">Next &raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </section>

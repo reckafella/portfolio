@@ -3,66 +3,89 @@
 {% block title %}{{ project.title }}{% endblock %}
 
 {% block content %}
-<section id="breadcrumbs" class="breadcrumbs">
-    <div class="container d-flex justify-content-end">
-        <ol>
-            <li><a href="{% url 'app:home' %}">Home</a></li>
-            <li><a href="{% url 'app:projects' %}">Projects</a></li>
-            <li>{{ project.title }}</li>
-        </ol>
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li><a href="{% url 'app:projects' %}">Projects</a></li>
+                <li>{{ project.title }}</li>
+            </ol>
+        </nav>
     </div>
-</section>
+</div>
 
 <section id="project" class="project project-details">
     <div class="container" data-aos="fade-up">
-        <div class="row gy-4">
+        <div class="row justify-content-center align-items-center gy-4">
             <div class="col-lg-8">
                 <div class="project-details-slider swiper">
-                    <div class="swiper-wrapper align-items-center">
+                    <div class="swiper-wrapper align-items-center shadow">
                         {% if project.images.all or project.videos.all %}
                             {% for image in project.images.all %}
-                                <div class="swiper-slide">
-                                    <div class="project-item filter-{{ project.category|slugify }}">
-                                        {% if image.cloudinary_image_url %}
-                                        <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
-                                        {% elif image.cloudinary_image_url %}
-                                        <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
-                                        {% else %}
-                                        <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid">
-                                        {% endif %}
-                                        <div class="project-info">
-                                            <h4>{{ project.title }}</h4>
-                                            <p>Image</p>
-                                            <a href="{{ image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
-                                                <i class="bi bi-plus"></i>
-                                            </a>
-                                            <a href="#" class="details-link" title="{{ project.title }}">
-                                                <i class="bi bi-link"></i>
-                                            </a>
-                                        </div>
+                            <div class="swiper-slide">
+                                <div class="project-item filter-{{ project.category|slugify }}">
+                                    {% if image.cloudinary_image_url %}
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                    {% elif image.cloudinary_image_url %}
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                    {% else %}
+                                    <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid">
+                                    {% endif %}
+                                    <div class="project-info">
+                                        <h4>{{ project.title }}</h4>
+                                        <p>Image</p>
+                                        <a href="{{ image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                        <a href="#" class="details-link" title="{{ project.title }}">
+                                            <i class="bi bi-link"></i>
+                                        </a>
+                                        <!-- share link -->
+                                        <a role="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#shareModal"
+                                            data-share-url="{% url 'app:project_detail' project.slug %}"
+                                            data-share-title="{{ project.title }}"
+                                            class="share-link display-4">
+                                            <i class="bi bi-share-fill"></i>
+                                        </a>
                                     </div>
                                 </div>
+                            </div>
                             {% endfor %}
                             {% for video in project.videos.all %}
-                                <div class="swiper-slide">
-                                    <div class="project-item filter-{{ project.category|slugify }}">
-                                        <div class="align-items-stretch position-relative video-box" 
-                                            style="background-image: url('{{ video.thumbnail_url }}');"
-                                            data-aos="fade-right">
-                                            <a href="{{ video.youtube_url }}" class="glightbox play-btn mb-4"></a>
-                                        </div>
-                                        <div class="project-info">
-                                            <h4>{{ project.title }}</h4>
-                                            <p>YouTube Video</p>
+                            <div class="swiper-slide">
+                                <div class="project-item filter-{{ project.category|slugify }}">
+                                    <div class="align-items-stretch position-relative video-box" 
+                                        style="background-image: url('{{ video.thumbnail_url }}');"
+                                        data-aos="fade-right">
+                                        <a href="{{ video.youtube_url }}" class="glightbox play-btn mb-4"></a>
+                                    </div>
+                                    <div class="project-info">
+                                        <h4>{{ project.title }}</h4>
+                                        <p>YouTube Video</p>
+                                        <div class="justify-content-between align-items-center">
                                             <a href="{{ video.youtube_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }} - YouTube Video">
                                                 <i class="bi bi-plus"></i>
                                             </a>
-                                            <a href="#" class="details-link" title="{{ project.title }} - YouTube Video">
+                                            <a href="{{ video.youtube_url }}" target="_blank" class="details-link" title="{{ project.title }} - YouTube Video">
                                                 <i class="bi bi-link"></i>
+                                            </a>
+                                            <!-- share link -->
+                                            <a role="button"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#shareModal"
+                                                data-share-url="{% url 'app:project_detail' project.slug %}"
+                                                data-share-title="{{ project.title }}"
+                                                class="share-link display-4">
+                                                <i class="bi bi-share-fill"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             {% endfor %}
                         {% else %}
                             <div class="swiper-slide">
@@ -73,10 +96,10 @@
                     <div class="swiper-pagination"></div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-10 col-md-12 col-lg-4 row d-flex row-cols-1 row-cols-md-2 row-cols-lg-1 gap-2 gap-md-3 gap-lg-4 flex-shrink-1 justify-content-center align-items-center">
                 <div class="project-info">
                     <h3>Project Information</h3>
-                    <ul>
+                    <ul class="list-unstyled">
                         <li><strong>Name:</strong> <span class="text-primary">{{ project.title }}</span></li>
                         <li><strong>Category:</strong> <span class="text-primary">{{project.category|default:"Web Development" }}</span></li>
                         <li><strong>Client:</strong> <span class="text-primary">{{ project.client| default:"Personal" }}</span></li>
@@ -88,14 +111,17 @@
                             </a>
                         </li>
                         {% endif %}
-                        <li class="d-flex justify-content-center">
+                        <li class="d-flex justify-content-between align-items-center">
+                            {% if user.is_staff %}
+                            {% include 'app/includes/action-buttons.html' %}
+                            {% endif %}
                             <a type="button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#shareModal"
                                 data-share-url="{% url 'app:project_detail' project.slug %}"
                                 data-share-title="{{ project.title }}"
-                                class="share-link">
-                                <i class="bi bi-share-fill fs-6"></i>
+                                class="btn btn-sm btn-outline-secondary share-link">
+                                    <span>Share <i class="bi bi-share-fill fs-6"></i></span>
                             </a>
                         </li>
                     </ul>
@@ -105,19 +131,6 @@
                     <p>
                         {{ project.description }}
                     </p>
-                </div>
-                <div class="action-buttons mb-2">
-                    {% if user.is_staff %}
-                    {% include 'app/includes/action-buttons.html' %}
-                    {% endif %}
-                    <a type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#shareModal"
-                        data-share-url="{% url 'app:project_detail' project.slug %}"
-                        data-share-title="{{ project.title }}"
-                        class="btn btn-sm btn-outline-secondary share-link">
-                            <span>Share Project <i class="bi bi-share-fill fs-6"></i></span>
-                    </a>
                 </div>
             </div>
         </div>

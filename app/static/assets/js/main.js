@@ -83,13 +83,37 @@
       });
     });
     /**
-     * Search bar toggle
+     * Search bar toggle show/hide
+     * Use ESC key to hide the search bar
+     * Use Ctrl/Cmd + K to show the search bar
+     * Use the search icon to show/hide the search bar
+     * Click outside the search bar to hide it
      */
     if (select('.search-bar-toggle')) {
       on('click', '.search-bar-toggle', function(e) {
         select('.search-bar').classList.toggle('search-bar-show')
-      })
+      });
     }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && select('.search-bar').classList.contains('search-bar-show')) {
+        select('.search-bar').classList.remove('search-bar-show');
+      }
+
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        select('.search-bar').classList.add('search-bar-show');
+      }
+    });
+    /* click outside to hide search bar */
+    document.addEventListener('click', function (e) {
+      if (select('.search-bar').classList.contains('search-bar-show') && 
+        !e.target.closest('.search-bar') && 
+        !e.target.closest('.search-bar-toggle')) {
+        select('.search-bar').classList.remove('search-bar-show');
+      }
+    });
+
     /**
      * Preloader
      */
@@ -169,8 +193,8 @@
       AOS.init({
         duration: 600,
         easing: 'ease-in-out',
-        once: true,
-        mirror: false
+        once: false,
+        mirror: true
       });
     }
     window.addEventListener('load', aosInit);
@@ -318,12 +342,12 @@
   /**
    * Portfolio details slider
    */
-  new Swiper('.portfolio-details-slider', {
+  new Swiper('.project-details-slider', {
     speed: 400,
     loop: true,
     autoplay: {
       delay: 5000,
-      disableOnInteraction: false
+      disableOnInteraction: true
     },
     pagination: {
       el: '.swiper-pagination',

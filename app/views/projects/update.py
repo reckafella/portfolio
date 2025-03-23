@@ -18,7 +18,6 @@ class UpdateProjectView(BaseProjectView, UpdateView):
         project.project_type = project.project_type
         project.live = project.live
         project.client = project.client
-        project.youtube_urls = project.youtube_urls
         project.save()
 
         images = self.request.FILES.getlist('images', [])
@@ -39,8 +38,7 @@ class UpdateProjectView(BaseProjectView, UpdateView):
 
         if youtube_urls:
             # First, delete existing videos if you want to replace them
-            Video.objects.filter(project=project).delete()
-            
+            #Video.objects.filter(project=project).delete()
             # Create new video objects
             self.handle_youtube_urls(youtube_urls, project, success_messages, error_messages)
 
@@ -74,4 +72,3 @@ class UpdateProjectView(BaseProjectView, UpdateView):
             "data_loading_text": "Updating Project...",
         })
         return context
-

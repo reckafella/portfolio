@@ -12,7 +12,7 @@
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
-                <li><a href="{% url 'blog:blog_posts_list' %}">Blog Posts</a></li>
+                <li><a href="{% url 'blog:list_articles' %}">Blog Posts</a></li>
                 <li>{{ page_title }}</li>
             </ol>
         </nav>
@@ -24,16 +24,16 @@
         <div class="row">
             <div class="section-title py-2">
                 <h2 class="text-center">
-                    {{ page_title }} {% if not all_authors %} by <a href="{% url 'blog:posts_by_author' author.username %}">{{ author.get_full_name | default:author.username | capfirst }}</a> {% endif %}
+                    {{ page_title }} {% if not all_authors %} by <a href="{% url 'blog:articles_by_author' author.username %}">{{ author.get_full_name | default:author.username | capfirst }}</a> {% endif %}
                 </h2>
             </div>
             <div class="entries">
                 {% include 'blog/partials/filters_and_sorts.html' %}
                 <div class="d-flex justify-content-around gap-3 flex-wrap align-items-center align-items-stretch">
                     {% for article in articles %}
-                    <article class="entry col-md-5 col-lg-4">
+                    <article class="entry col-md-8 col-lg-6 col-xl-7 col-xxl-5">
                         <h2 class="entry-title">
-                            <a href="{% url 'blog:blog_post_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
+                            <a href="{% url 'blog:article_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
                         </h2>
                         {% if article.optimized_image_url %}
                         <div class="entry-img my-2">
@@ -42,24 +42,25 @@
                         {% endif %}
                         <div class="entry-meta">
                             <ul>
-                                <li class="d-flex align-items-center">
+                                <li
+                                class="d-flex align-items-center">
                                     <i class="bi bi-person"></i>
-                                    <a href="{% url 'blog:posts_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                                    <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
                                 </li>
                                 {% if article.first_published_at %}
                                 <li class="d-flex align-items-center">
                                     <i class="bi bi-clock"></i>
                                     {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
                                     <span class="date-links">
-                                        <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
+                                        <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
                                             {{ article.first_published_at|date:"d" }}
                                         </a>
-                                        <span class="separator">/</span>
-                                        <a href="{% url 'blog:posts_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                        <span class="separator">-</span>
+                                        <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
                                             {{ article.first_published_at|date:"m" }}
                                         </a>
-                                        <span class="separator">/</span>
-                                        <a href="{% url 'blog:posts_by_date' year %}" title="View all posts from this year">
+                                        <span class="separator">-</span>
+                                        <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
                                             {{ article.first_published_at|date:"Y" }}
                                         </a>
                                     </span>
@@ -73,19 +74,19 @@
                         </div>
                         <div class="entry-footer d-flex justify-content-between align-items-stretch">
                             <a type="button"
-                                href="{% url 'blog:blog_post_details' article.slug %}"
-                                class="btn btn-sm btn-primary">
-                                Read Article
+                                href="{% url 'blog:article_details' article.slug %}"
+                                class="read-article btn btn-sm btn-primary">
+                                Read More
                             </a>
-                            <!-- share button -->
-                            <button type="button"
+                            <!-- share article button -->
+                            <a type="button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#shareModal"
-                                data-share-url="{% url 'blog:blog_post_details' article.slug %}"
+                                data-share-url="{% url 'blog:article_details' article.slug %}"
                                 data-share-title="{{ article.title }}"
-                                class="share btn btn-sm btn-success">
-                                Share Article <i class="bi bi-share-fill fs-6"></i>
-                            </button>
+                                class="btn share-link btn-sm btn-success">
+                                Share <i class="bi bi-share-fill fs-6"></i>
+                            </a>
                         </div>
                     </article>
 
@@ -95,7 +96,7 @@
                             <h3 class="alert-heading fw-bold">No articles found!</h3>
                             <p class="lead">No articles were found matching your search criteria.</p>
                             {% if user.is_staff %}
-                            <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
+                            <a href="{% url 'blog:create_article' %}" class="btn btn-outline-primary">Create Article</a>
                             {% endif %}
                         </div>
                     </article>
@@ -110,7 +111,7 @@
                     <h3 class="text-center fw-bold">Topics</h3>
                     <div class="d-flex flex-wrap justify-content-center">
                         {% for topic in topics %}
-                        <a href="{% url 'blog:posts_by_topic' topic %}" class="btn btn-outline-success btn-sm py-1 px-2 m-1">{{ topic }}</a>
+                        <a href="{% url 'blog:articles_by_topic' topic %}" class="btn btn-outline-success btn-sm py-1 px-2 m-1">{{ topic }}</a>
                         {% endfor %}
                     </div>
                     {% endif %}

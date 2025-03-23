@@ -145,29 +145,27 @@
 
 .blog .entry .entry-footer a {
   font-size: 15px;
-  background: var(--default-color);
   transition: 0.3s;
-  color: var(--background-color);
-  border: none;
 }
 
-.blog .entry .entry-footer .share {
+.blog .entry .entry-footer .share-link,
+.blog .entry .entry-footer .read-article{
   font-size: 16px;
   border-radius: 4px;
   transition: 0.3s;
-  background: color-mix(in srgb, var(--default-color), transparent 30%);
-  color: var(--background-color);
-  border: none;
 }
 
 .blog .entry .entry-footer a:hover,
-.blog .entry .entry-footer .share:hover {
+.blog .entry .entry-footer .share-link:hover,
+.blog .entry .entry-footer .read-article:hover {
   background: var(--accent-color);
 }
 
-.blog .entry .entry-footer .share i {
+.blog .entry .entry-footer .share-link i,
+.blog .entry .entry-footer .read-article i {
   padding-left: 5px;
-  color: var(--background-color);
+  color: inherit;
+  background: transparent;
 }
 
 .blog .entry .entry-footer .cats {
@@ -442,7 +440,7 @@
 
 .search-widget form {
   background: var(--background-color);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 30%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 0%);
   padding: 3px 10px;
   position: relative;
   border-radius: 10px;

@@ -71,7 +71,7 @@ class ToastManager {
         toastElement.style.display = 'grid';
 
         // Show toast
-        const toast = new bootstrap.Toast(toastElement, { autohide: false });
+        const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
         toast.show();
     }
 

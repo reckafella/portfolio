@@ -54,7 +54,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:delete_blog_post' post.slug %}" method="post" style="display: inline;">
+                    <form action="{% url 'blog:delete_article' post.slug %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger" value="Delete"/>
                     </form>

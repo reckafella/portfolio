@@ -63,7 +63,7 @@
                         <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
                             <h3 class="alert-heading fw-bold">No articles found!</h3>
                             {% if user.is_staff %}
-                            <a href="{% url 'blog:create_blog_post' %}" class="btn btn-outline-primary">Create Article</a>
+                            <a href="{% url 'blog:create_article' %}" class="btn btn-outline-primary">Create Article</a>
                             {% endif %}
                         </div>
                     </div>

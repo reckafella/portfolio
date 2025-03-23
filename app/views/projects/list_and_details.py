@@ -11,8 +11,28 @@ class ProjectListView(ListView):
     context_object_name = "projects"
     paginate_by = 6
 
+    def sorting_options(self):
+        return {
+            "date_asc": "Date (ASC)",
+            "date_desc": "Date (DESC)",
+            "title_asc": "Title (A-Z)",
+            "title_desc": "Title (Z-A)",
+            "category_asc": "Category (A-Z)",
+            "category_desc": "Category (Z-A)",
+        }
+
     def get_queryset(self):
-        return Projects.objects.filter(live=True).order_by("created_at")
+        sort = self.request.GET.get('sort_by')
+
+        sort_by = {
+            "date_asc": "created_at",
+            "date_desc": "-created_at",
+            "title_asc": "title",
+            "title_desc": "-title",
+            "category_asc": "category",
+            "category_desc": "-category",
+        }.get(sort, "-created_at")
+        return Projects.objects.filter(live=True).order_by(sort_by)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -20,7 +40,10 @@ class ProjectListView(ListView):
         context["categories"] = list(dict.fromkeys([
             category for category in Projects.objects.filter(live=True).values_list('category', flat=True)
         ]))
+        context["default_image"] = "assets/images/software-dev.webp"
         context["categories"].sort()
+        context["sorting_options"] = self.sorting_options()
+        context["sort_by"] = self.request.GET.get('sort_by', 'date_desc')
         return context
 
 class ProjectDetailView(DetailView):

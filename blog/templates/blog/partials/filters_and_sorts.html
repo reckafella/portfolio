@@ -2,7 +2,7 @@
             <!-- Search Bar -->
             {% if articles %}
             <div class="search-widget col-md-7 col-lg-6">
-                <form method="get" action="{% url 'blog:blog_posts_list' %}">
+                <form method="get" action="{% url 'blog:list_articles' %}">
                     <input id="SearchInput" type="search"
                         class="form-control form-control-sm p-0"
                         placeholder="Search..."

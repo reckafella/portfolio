@@ -27,7 +27,7 @@ class UpdatePostView(BasePostView, UpdateView):
             "submit_text": "Update Post",
             "data_loading_text": "Updating Post...",
             "action_url": reverse_lazy(
-                "blog:update_blog_post",
+                "blog:update_article",
                 kwargs={"slug": self.object.slug}
             )
         })

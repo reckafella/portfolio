@@ -15,14 +15,14 @@
                 <div class="info-wrap mb-2" data-aos="fade-up">
                     <div class="d-flex justify-content-between">
                         <small class="text-muted text-center">
-                            <a href="{% url 'blog:blog_posts_list' %}" class="text-decoration-none p-2 text-danger" title="View all articles">
+                            <a href="{% url 'blog:list_articles' %}" class="text-decoration-none p-2 text-danger" title="View all articles">
                                 <i class="bi bi-arrow-left-square"></i> Blog Posts
                             </a>
                         </small>
                         <h2 class="fw-bold text-success text-decoration-none">{{ post.title }}</h2>
                         <!-- Icon for editing -->
                         {% if user.is_authenticated and user == post.author or user.is_staff %}
-                        <a href="{% url 'blog:update_blog_post' post.slug %}" class="btn btn-link text-decoration-none text-primary">
+                        <a href="{% url 'blog:update_article' post.slug %}" class="btn btn-link text-decoration-none text-primary">
                             <i class="bi bi-pencil-square bi-pencil-fill"></i>
                         </a>
                         {% endif %}
@@ -30,7 +30,7 @@
                     <p class="card-text">
                         <small class="text-muted">
                             By 
-                            <a href="{% url 'blog:posts_by_author' post.author.username %}" class="text-success text-decoration-none">
+                            <a href="{% url 'blog:articles_by_author' post.author.username %}" class="text-success text-decoration-none">
                                 {% if post.author.first_name and post.author.last_name %}
                                     {{ post.author.first_name }} {{ post.author.last_name }}
                                 {% else %}

@@ -15,65 +15,64 @@
 </div>
 
 <section id="hero" class="hero section py-1">
-    <picture class="hero-background animate__animated animate__fadeInDown scrollto">
-        <source srcset="{% static 'assets/images/8cf11ad4.jpeg' %}" type="image/jpeg">
-        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella.webp" alt="Profile Picture" data-aos="fade-in" data-aos-delay="300">
-    </picture>
+    <div class="hero-background" data-aos="fade-in">
+        <img src="{% static 'assets/images/8cf11ad4.jpeg' %}" alt="" type="image/jpeg" data-aos="fade-in" data-aos-delay="300">
+    </div>
     <div class="overlay"></div>
-    <div class="container text-center animate__animated animate__fadeInUp scrollto">
+    <div class="container text-center" data-aos="fade-in" data-aos-delay="500">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h2 class="pacifico-regular animate__animated animate__fadeInRight animate__delay-1s">Ethan Wanyoike</h2>
-                <p class="animate__animated animate__fadeInLeft animate__delay-2s">I am a FullStack Software Engineer from Nairobi, Kenya</p>
-                <a href="{% url 'app:about' %}" class="btn-get-started animate__animated animate__fadeInRight animate__delay-3s">About Me</a>
+                <h2 class="pacifico-regular" data-aos="fade-in" data-aos-delay="600">Ethan Wanyoike</h2>
+                <p class="" data-aos="fade-out" data-aos-delay="700">I am a FullStack Software Engineer</p>
+                <a href="{% url 'app:about' %}" class="btn-get-started mt-5 py-2 special-btn" data-aos="zoom-in" data-aos-delay="800">About Me</a>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Skills & Technologies -->
-<section id="skills" class="py-5">
+<section id="skills" class="skills py-5">
     <div class="container d-flex flex-column justify-content-center align-items-center w-100">
         <div class="text-center mb-3 section-title">
             <h2 class="text-center">Skills & Technologies</h2>
         </div>
-        <div class="row justify-content-around text-center">
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-code-square fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">Web Development</p>
+        <div class="d-flex flex-wrap justify-content-around text-center">
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-code-square fs-1"></i>
+                <p class="fw-semibold mt-2">Web Development</p>
             </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-hdd-stack fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">DevOps</p>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-hdd-stack fs-1"></i>
+                <p class="fw-semibold mt-2">DevOps</p>
             </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-database fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">Backend Systems</p>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-database fs-1"></i>
+                <p class="fw-semibold mt-2">Backend Systems</p>
             </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-bug fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">Testing & QA</p>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-bug fs-1"></i>
+                <p class="fw-semibold mt-2">Testing & QA</p>
             </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-cloud fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">Server Maintenance</p>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-cloud fs-1"></i>
+                <p class="fw-semibold mt-2">Server Maintenance</p>
             </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-tools fs-1 text-primary"></i>
-                <p class="fw-semibold text-primary mt-2">Database Design</p>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1">
+                <i class="bi bi-tools fs-1"></i>
+                <p class="fw-semibold mt-2">Database Design</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Call to Action -->
-<section id="cta" class="py-5">
+<section id="cta" class="cta py-5">
     <div class="container text-center">
         <div class="text-center mb-2 section-title">
             <h2 class="">Ready to start your project?</h2>
         </div>
         <p class=" fw-normal mb-3">Let's collaborate and bring your ideas to life!</p>
-        <a href="{% url 'app:contact' %}" class="btn btn-outline-primary">Get in Touch</a>
+        <a href="{% url 'app:contact' %}" class="btn cta-btn special-btn animate__animated animate__fadeInRight">Get in Touch</a>
     </div>
 </section>
 

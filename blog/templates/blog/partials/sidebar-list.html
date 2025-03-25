@@ -1,0 +1,73 @@
+{% load static %}
+    <div class="widget-items-container">
+        <div class="widget-item search-widget gap-3">
+            <div class="col-12">
+                <h3 class="widget-title">Search Blog</h3>
+                <form
+                    id="search-form" method="get"
+                    action="{% url 'blog:list_articles' %}">
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ q }}"
+                        class="form-control"
+                        placeholder="Search..."
+                        required>
+                    <button
+                        type="submit"
+                        id="submitButton"
+                        data-loading-text="{{ data_loading_text }}">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+            <!-- Filter and Sort Buttons - Compact on Mobile -->
+            <div class="d-flex my-4 gap-3">
+                <button type="button" class="btn rounded-pill btn-outline-success btn-sm flex-grow-1" data-bs-toggle="modal"
+                    data-bs-target="#sortModal">
+                    <i class="bi bi-sort-down"></i>
+                    <span class="d-inline">Sort</span>
+                </button>
+                <button type="button" class="btn rounded-pill btn-outline-primary btn-sm flex-grow-1" data-bs-toggle="modal"
+                    data-bs-target="#filterModal">
+                    <i class="bi bi-funnel"></i>
+                    <span class="d-inline">Filter</span>
+                </button>
+            </div>
+            <!-- End Filter and Sort Buttons-->
+        </div>
+        <!-- End widget search form-->
+
+        <div class="widget-item tags-widget">
+           <h3 class="widget-title">Topics</h3>
+           <ul>
+               {% for topic, count in topics %}
+               <li>
+                   <a href="{% url 'blog:articles_by_topic' topic %}">
+                   {{ topic }} <span>({{ count }})</span></a>
+               </li>
+               {% endfor %}
+           </ul>
+       </div>
+    </div>
+    <!-- End widget tags-->
+
+    <div class="widget-item recent-posts-widget">
+        <h3 class="widget-title">Recent Posts</h3>
+        {% for post in recent_posts %}
+        <div class="post-item">
+            {% if post.optimized_image_url %}
+            <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0">
+            {% endif %}
+            <div>
+                <h4><a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a></h4>
+                <time datetime="{{ post.first_published_at }}">{{ post.first_published_at | date:"N j, Y" }}</time>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- End widget recent posts-->
+
+    {% include 'blog/partials/filter-sort-modals.html' with topics=topics q=q %}
+
+    <!-- End widget filter and sort modals-->

@@ -4,7 +4,7 @@ from blog.views.delete import DeletePostView
 from blog.views.details import PostDetailView
 from blog.views.list import (
     AuthorPostsView, PostListView,
-    PostsByDateView, TopicPostsView)
+    PostsByDateView, PostsByTopicView)
 from blog.views.update import UpdatePostView
 
 app_name = "blog"
@@ -17,5 +17,5 @@ urlpatterns = [
     path("post/<slug:slug>/delete", DeletePostView.as_view(), name="delete_article"),
     path("authors/<str:username>", AuthorPostsView.as_view(), name="articles_by_author"),
     path("dates/<str:date>/", PostsByDateView.as_view(), name="articles_by_date"),
-    path("topics/<str:topic>", TopicPostsView.as_view(), name="articles_by_topic"),
+    path("topics/<str:topic>", PostsByTopicView.as_view(), name="articles_by_topic"),
 ]

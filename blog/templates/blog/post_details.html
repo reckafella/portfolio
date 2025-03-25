@@ -2,12 +2,12 @@
 {% load static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ article.title }}{% endblock %}
 {% block content %}
 
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1>{{ post.title }}</h1>
+        <h1>{{ article.title }}</h1>
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
@@ -23,12 +23,12 @@
             <div class="col-lg-8">
                 <article class="entry entry-single">
                     <h2 class="entry-title">
-                        <a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a>
+                        <a href="{% url 'blog:article_details' article.slug %}">{{ article.title }}</a>
                     </h2>
 
                     <div class="entry-img my-1">
-                        {% if post.optimized_image_url %}
-                        <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="img-fluid mb-1">
+                        {% if article.optimized_image_url %}
+                        <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="img-fluid mb-1">
                         {% endif %}
                     </div>
 
@@ -36,29 +36,29 @@
                         <ul>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="{% url 'blog:articles_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
+                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
                             </li>
-                            {% if post.first_published_at %}
+                            {% if article.first_published_at %}
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
-                                {% with year=post.first_published_at|date:"Y" month=post.first_published_at|date:"m" day=post.first_published_at|date:"d" %}
+                                {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
                                 <div class="date-links">
-                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
-                                        {{ post.first_published_at|date:"Y" }}
+                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all articles from this year">
+                                        {{ article.first_published_at|date:"Y" }}
                                     </a>
                                     <span class="separator">/</span>
-                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
-                                        {{ post.first_published_at|date:"F" }}
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all articles from this month">
+                                        {{ article.first_published_at|date:"F" }}
                                     </a>
                                     <span class="separator">/</span>
-                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
-                                        {{ post.first_published_at|date:"j" }}
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all articles from this day">
+                                        {{ article.first_published_at|date:"j" }}
                                     </a>
                                 </div>
                                 {% endwith %}
                             </li>
                             {% endif %}
-                            {% if user.is_authenticated and user == post.author or user.is_staff %}
+                            {% if user.is_authenticated and user == article.author or user.is_staff %}
                             <li class="d-flex align-items-center position-relative">
                                 <div class="action-buttons">
                                     {% include 'app/includes/action-buttons.html' %}
@@ -77,15 +77,15 @@
                                 <a type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#shareModal"
-                                    data-share-url="{% url 'blog:article_details' post.slug %}"
-                                    data-share-title="{{ post.title }}"
+                                    data-share-url="{% url 'blog:article_details' article.slug %}"
+                                    data-share-title="{{ article.title }}"
                                     class="share-link">
                                     <i class="bi bi-share-fill fs-6"></i>
                                 </a>
                             </li>
                     </div>
                     <div class="entry-content">
-                        {{ post.content | richtext | safe }}
+                        {{ article.content | richtext | safe }}
                     </div>
                     <div class="entry-footer">
                         <i class="bi bi-tags"></i>
@@ -103,7 +103,7 @@
                 </article>
 
                 <div class="edit-delete d-none">
-                    {% if request.user.is_staff or request.user == post.author %}
+                    {% if request.user.is_staff or request.user == article.author %}
                     {% include 'blog/partials/edit_delete_posts_modal.html' %}
                     {% endif %}
                 </div>

@@ -1,5 +1,3 @@
-import random
-
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
@@ -12,64 +10,75 @@ class PostDetailView(DetailView):
     model = BlogPostPage
     form_class = BlogPostForm
     template_name = "blog/post_details.html"
-    context_object_name = "post"
+    context_object_name = "article"
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = BlogPostPage.objects.all()
 
         # If user is not authenticated, show only published posts
         if not self.request.user.is_authenticated:
             queryset = queryset.filter(live=True)
-
-        # If user is authenticated but not the author or staff
+        # If user is authenticated but not staff
         elif not self.request.user.is_staff:
+            # Show posts that are either live or authored by the current user
             queryset = queryset.filter(Q(live=True) | Q(author=self.request.user))
+        # If user is staff, show all posts
+        else:
+            queryset = queryset
         return queryset
+
+    def get_other_posts(self, article):
+        """ Returns a set of other posts in the recent posts section """
+        articles = self.get_queryset()
+        
+        # Start with base query excluding the current article
+        query = ~Q(id=article.id)
+        
+        # If user is not authenticated, show only published posts
+        if not self.request.user.is_authenticated:
+            query &= Q(live=True)
+        # If user is authenticated but not staff
+        elif not self.request.user.is_staff:
+            # Show posts that are either live or authored by the current user
+            query &= (Q(live=True) | Q(author=self.request.user))
+        # If user is staff, show all posts (already excluded current article)
+        
+        num_posts = 5
+        return set(
+            articles.filter(query)
+            .order_by("-first_published_at")[:num_posts]
+        )
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        post = self.get_object()
-        posts = self.get_queryset()
+        article = self.get_object()
+        articles = self.get_queryset()
 
-        # Only show other (unpublished) posts by the same author if:
-        # 1. The post is published, OR
-        # 2. The current user is the author, OR
-        # 3. The current user is staff
-        can_view_other_posts = (
-            post.published
-            or self.request.user == post.author
-            or (self.request.user.is_authenticated and self.request.user.is_staff)
-        )
-
-        if can_view_other_posts:
-            query = Q(author=post.author) & ~Q(id=post.id) & Q(live=True)
-            if self.request.user.is_authenticated:
-                query |= Q(author=self.request.user)
-            if self.request.user.is_authenticated and self.request.user.is_staff:
-                # Assuming unpublished posts should be visible to staff
-                query |= Q(live=False)
-
-            context["other_posts"] = (
-                BlogPostPage.objects.filter(query)
-                .exclude(id=post.id)
-                .order_by("-first_published_at")[: random.randint(3, 5)]
-            )
-        else:
-            context["other_posts"] = []
+        context["other_posts"] = self.get_other_posts(article)
         
-        context["post_topics"] = post.get_topics()
-        context["all_topics"] = self.add_topics(posts)
-        context["form"] = self.form_class(instance=post)
-        context['page_title'] = f'Update: {post.title}'
+        context["post_topics"] = article.get_topics()
+        context["all_topics"] = self.add_topics(articles)
+        context["form"] = self.form_class(instance=article)
+        context['page_title'] = f'Update: {article.title}'
         context['submit_text'] = 'Update Post'
-        context['action_url'] = reverse_lazy('blog:update_article', kwargs={'slug': post.slug})
+        context['action_url'] = reverse_lazy('blog:update_article', kwargs={'slug': article.slug})
+        context['delete_url'] = reverse_lazy('blog:delete_article', kwargs={'slug': article.slug})
 
         return context
     
     def add_topics(self, articles):
-        """ Returns a list of tuples for all topics in the queryset + total number of articles for each article """
+        """
+        Returns a list of tuples for all topics in the queryset
+        + total number of articles for each article
+        """
         if not articles.exists():
             return []
         topics = set(topic.strip() for post in articles for topic in post.get_topics())
-        return sorted([(topic, articles.filter(topics__icontains=topic).count()) for topic in topics])
-        
+        try:
+            topics.remove("all")
+        except KeyError:
+            pass
+        topic_count = ([(topic, articles.filter(topics__icontains=topic).count()) for topic in topics])
+        all_count = articles.count()
+        return sorted([("all", all_count)] + topic_count)

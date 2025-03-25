@@ -10,7 +10,7 @@
                                 <form method="GET" action="">
                                     <div class="row g-3">
                                         <div class="col-12 p-2">
-                                            <input type="hidden" name="q" value="{{ query }}">
+                                            <input type="hidden" name="q" value="{{ q }}">
                                             <select class="form-select form-select-sm" name="category">
                                                 {% for key, value in filter_options.items %}
                                                 <option value="{{ key }}" {% if category == key %}selected{% endif %}>
@@ -43,7 +43,7 @@
                                 <form method="GET" action="">
                                         <div class="row g-3">
                                             <div class="col-12 p-2">
-                                                <input type="hidden" name="q" value="{{ query }}">
+                                                <input type="hidden" name="q" value="{{ q }}">
                                                 <input type="hidden" name="category" value="{{ category }}">
                                                 <select class="form-select form-select-sm" name="sort">
                                                     {% for key, value in sort_options.items %}

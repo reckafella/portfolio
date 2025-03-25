@@ -5,9 +5,9 @@
                 <div class="d-flex align-items-center w-100">
                     <img src="{% static 'assets/images/profile.jpg' %}" alt="" class="rounded-circle flex-shrink-0">
                     <div>
-                        <h4>{{ post.author.get_full_name | default:post.author.username|capfirst }}</h4>
+                        <h4>{{ article.author.get_full_name | default:article.author.username|capfirst }}</h4>
                         <div class="social-links mt-2">
-                            {% with social=post.author.profile.social_media.first %}
+                            {% with social=article.author.profile.social_media.first %}
                                 {% if social.twitter_x %}
                                     <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
                                 {% endif %}
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <p>
-                    {{ post.author.profile.bio | default:"Author Bio" }}
+                    {{ article.author.profile.bio | default:"Author Bio" }}
                 </p>
             </div>
         </div>
@@ -48,12 +48,12 @@
             <h3 class="widget-title">Recent Posts</h3>
             {% for post in other_posts %}
             <div class="post-item">
-                {% if post.optimized_image_url %}
-                <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0">
+                {% if article.optimized_image_url %}
+                <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="flex-shrink-0">
                 {% endif %}
                 <div>
-                    <h4><a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a></h4>
-                    <time datetime="{{ post.first_published_at }}">{{ post.first_published_at | date:"N j, Y" }}</time>
+                    <h4><a href="{% url 'blog:article_details' article.slug %}">{{ article.title }}</a></h4>
+                    <time datetime="{{ article.first_published_at }}">{{ article.first_published_at | date:"N j, Y" }}</time>
                 </div>
             </div>
             {% endfor %}

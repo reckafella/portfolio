@@ -863,7 +863,7 @@ section,
 .hero .overlay {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--background-color) 80%, transparent 30%);
+  background: color-mix(in srgb, var(--surface-color) 80%, transparent 5%);
   z-index: 2;
 }
 
@@ -872,18 +872,26 @@ section,
   z-index: 3;
 }
 
+.hero h1 {
+  margin: 0;
+  font-size: 50px;
+  font-weight: 700;
+  /* text-shadow: 1px 1px 2px var(--default-color); */
+  line-height: 1.2;
+}
+
 .hero h2 {
   margin: 0;
-  font-size: 48px;
+  font-size: 44px;
   font-weight: 700;
-  text-shadow: 1px 1px 2px var(--default-color);
+  /* text-shadow: 1px 1px 2px var(--default-color); */
 }
 
 .hero p {
   margin: 10px 0 0 0;
   font-size: 24px;
   color: var(--heading-color);
-  text-shadow: 1px 1px 3px var(--default-color);
+  /* text-shadow: 1px 1px 3px var(--default-color); */
 }
 
 .hero .btn-get-started {
@@ -2104,7 +2112,7 @@ Cards
 .special-btn:hover::after,
 .special-btn:focus::before,
 .special-btn:focus::after {
-  width: 50%; /* Each side covers half the button */
+  width: 51%; /* Each side covers half the button */
 }
 
 .special-btn:hover,

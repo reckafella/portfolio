@@ -32,7 +32,7 @@ FALLBACK_SECRET_KEY = (
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
@@ -46,7 +46,6 @@ ALLOWED_HOSTS = [
 ]
 
 
-
 # Application definition
 if ENVIRONMENT == 'production':
     INSTALLED_APPS = []
@@ -54,37 +53,18 @@ else:
     INSTALLED_APPS = ['daphne']
 
 INSTALLED_APPS += [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    'django.contrib.sites',
-    "django.contrib.staticfiles",
-    "django.contrib.sitemaps",
-    "crispy_forms",
-    "corsheaders",
-    "app",
-    "blog",
-    'robots',
-    'captcha',
+    "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
+    "django.contrib.sessions", "django.contrib.messages", 'django.contrib.sites',
+    "django.contrib.staticfiles", "django.contrib.sitemaps", "crispy_forms",
+    "corsheaders", "app", "blog", 'robots', 'captcha',
 ]
 
 # Wagtail related apps
 INSTALLED_APPS += [
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail',
-    'modelcluster',
-    'taggit',
+    'wagtail.contrib.forms', 'wagtail.contrib.redirects', 'wagtail.embeds',
+    'wagtail.sites', 'wagtail.users', 'wagtail.snippets', 'wagtail',
+    'wagtail.images', 'wagtail.search', 'wagtail.admin',
+    'modelcluster', 'taggit', 'wagtail.documents',
 ]
 
 MIDDLEWARE = [

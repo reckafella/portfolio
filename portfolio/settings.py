@@ -46,8 +46,14 @@ ALLOWED_HOSTS = [
 ]
 
 
+
 # Application definition
-INSTALLED_APPS = [
+if ENVIRONMENT == 'production':
+    INSTALLED_APPS = []
+else:
+    INSTALLED_APPS = ['daphne']
+
+INSTALLED_APPS += [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -120,12 +126,12 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 
 
 if (ENVIRONMENT == 'production' and not DEBUG):
@@ -139,6 +145,7 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "PORT": os.environ.get("SUPABASE_PORT"),
         }
     }
+
     PROJECTS_FOLDER = "portfolio/projects/live"
     POSTS_FOLDER = "portfolio/posts/live"
     PROFILE_FOLDER = "portfolio/profiles/live"

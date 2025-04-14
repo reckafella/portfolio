@@ -3,19 +3,6 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% comment %}
-<div class="page-title">
-    <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1>Home</h1>
-        <nav class="breadcrumbs">
-            <ol>
-                <li><a href="{% url 'app:home' %}">Home</a></li>
-            </ol>
-        </nav>
-    </div>
-</div>
-{% endcomment %}
-
 <section id="hero" class="hero section py-4">
     <div class="hero-background" data-aos="fade-in">
         <img src="{% static 'assets/images/8cf11ad4.jpeg' %}" alt="" type="image/jpeg" data-aos="fade-in" data-aos-delay="100">
@@ -24,28 +11,154 @@
     <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="text-center pacifico-regular" data-aos="fade-in" data-aos-delay="300">Hello there! I am</h1>
-                <h2 class="pacifico-regular" data-aos="fade-in" data-aos-delay="400">Ethan Wanyoike</h2>
-                <p class="" data-aos="fade-out" data-aos-delay="500">I am a passionate web developer. I specialize in building custom solutions that cater to your unique needs. Whether it's a personal blog, a business website, or an e-commerce platform, I've got you covered!</p>
-                <p class="" data-aos="fade-out" data-aos-delay="600">I am excited to help you achieve your goals. Whether you're starting a new project or improving an existing one, I am here to help. Don't hesitate to reach out. I look forward to collaborating with you and bringing your vision to life!</p>
-                <p class="text-center mt-4" data-aos="fade-out" data-aos-delay="700">
-                    <strong>Let's get started on your project!</strong>
-                    <br>
-                    <a href="tel:254719272150" class="btn btn-outline-primary special-btn">Call Me</a>
-                    <a href="https://facebook.com/reckafella" class="btn btn-outline-primary special-btn"><i class="bi bi-facebook"></i></a>
-                    <a href="https://twitter.com/devrohn" class="btn btn-outline-primary special-btn"><i class="bi bi-twitter-x"></i></a>
-                    <a href="mailto:ethanmuthoni@gmail.com" class="btn btn-outline-primary special-btn">Email Me</a>
-                </p>
-                {% comment %}
-                <a href="{% url 'app:about' %}" class="btn-get-started mt-3 py-2 special-btn" data-aos="zoom-in" data-aos-delay="800">About Me</a>
-                {% endcomment %}
+                <h2 class="stix-two-text-bold">Ethan Wanyoike</h2>
+                <div>
+                    <p>
+                        <span class="text-decoration-underline typed source-serif-4-bold"
+                            data-typed-items="Software Engineer, DevOps Engineer, Backend Developer, Frontend Developer, Technical Writer"
+                            style="text-decoration-thickness: 5%;">
+                        </span>
+                    </p>
+                    <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
+                </div>
+                <div class="d-flex flex-column mt-3">
+                    <p><strong>Let's bring your project to life!</strong></p>
+                    <p><a href="{% url 'app:contact' %}" class="btn special-btn">Get in Touch</a></p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+<section id="about" class="about section">
+    <!-- section title -->
+    <div class="container section-title" data-aos="fade-up">
+        <h3>About Me</h3>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4 justify-content-center">
+            <div class="row d-lg-block justify-content-center align-items-center col-lg-4">
+                <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle w-75">
+            </div>
+            <div class="col-lg-8 content">
+                <h2>Software Engineer</h2>
+                <p class="fst-italic py-3">
+                    I am a passionate software engineer with a strong focus on backend development and DevOps practices. I have a knack for solving complex problems and delivering high-quality solutions that meet the needs of users and businesses alike.
+                </p>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i><strong>Birthday:</strong> <span>Dec. 1997</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>Whatsapp:</strong> <span>+254719272150</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>Phone:</strong> <span>+254719272150</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>City:</strong> <span>Nairobi, Kenya</span></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i><strong>Age:</strong> <span>27</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>Degree:</strong> <span>Bachelor's</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>Email:</strong> <span>ethanmuthoni@gmail.com</span></li>
+                            <li><i class="bi bi-chevron-right"></i><strong>Freelance:</strong> <span>Available</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="py-2">
+                    I am always eager to learn new technologies and improve my skills. I believe in the power of collaboration and enjoy working with teams to create innovative solutions that make a difference.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Skills Section -->
+<section id="skills" class="skills container section">
+    <!-- Section Title -->
+    <div class="section-title" data-aos="fade-up">
+        <h2>Skills</h2>
+        <p>My technical skills and expertise</p>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row row-cols-2 row-cols-md-3">
+            <div>
+                <h3>Languages</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> Python</li>
+                    <li><i class="bi bi-chevron-right"></i> JavaScript</li>
+                    <li><i class="bi bi-chevron-right"></i> TypeScript</li>
+                    <li><i class="bi bi-chevron-right"></i> C</li>
+                    <li><i class="bi bi-chevron-right"></i> HTML</li>
+                    <li><i class="bi bi-chevron-right"></i> CSS</li>
+                    <li><i class="bi bi-chevron-right"></i> SQL</li>
+                    <li><i class="bi bi-chevron-right"></i> Bash</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Frameworks</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> Django</li>
+                    <li><i class="bi bi-chevron-right"></i> Flask</li>
+                    <li><i class="bi bi-chevron-right"></i> Node.js</li>
+                    <li><i class="bi bi-chevron-right"></i> Express.js</li>
+                    <li><i class="bi bi-chevron-right"></i> Bootstrap</li>
+                    <li><i class="bi bi-chevron-right"></i> Tailwind CSS</li>
+                    <li><i class="bi bi-chevron-right"></i> RESTful APIs</li>
+                    <li><i class="bi bi-chevron-right"></i> Babel</li>
+                </ul>
+            </div>
+            <div>
+                <h3>DevOps & Cloud</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> Docker</li>
+                    <li><i class="bi bi-chevron-right"></i> AWS</li>
+                    <li><i class="bi bi-chevron-right"></i> CI/CD</li>
+                    <li><i class="bi bi-chevron-right"></i> Terraform</li>
+                    <li><i class="bi bi-chevron-right"></i> Ansible</li>
+                    <li><i class="bi bi-chevron-right"></i> Nginx & Apache</li>
+                    <li><i class="bi bi-chevron-right"></i> Git</li>
+                    <li><i class="bi bi-chevron-right"></i> GitHub Actions</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Databases</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> PostgreSQL</li>
+                    <li><i class="bi bi-chevron-right"></i> MySQL</li>
+                    <li><i class="bi bi-chevron-right"></i> MongoDB</li>
+                    <li><i class="bi bi-chevron-right"></i> SQLite</li>
+                    <li><i class="bi bi-chevron-right"></i> Redis</li>
+                    <li><i class="bi bi-chevron-right"></i> MongoDB Atlas</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Tools & Platforms</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> Git</li>
+                    <li><i class="bi bi-chevron-right"></i> GitHub</li>
+                    <li><i class="bi bi-chevron-right"></i> JIRA</li>
+                    <li><i class="bi bi-chevron-right"></i> Trello</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Soft Skills</h3>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-chevron-right"></i> Teamwork</li>
+                    <li><i class="bi bi-chevron-right"></i> Communication</li>
+                    <li><i class="bi bi-chevron-right"></i> Problem Solving</li>
+                    <li><i class="bi bi-chevron-right"></i> Adaptability</li>
+                    <li><i class="bi bi-chevron-right"></i> Attention to Detail</li>
+                    <li><i class="bi bi-chevron-right"></i> Leadership</li>
+                    <li><i class="bi bi-chevron-right"></i> Collaboration</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <p class="text-center py-2"> To learn more about my work, check out my <a href="{% url 'app:projects' %}">projects</a> or <a href="{% url 'blog:list_articles' %}">blog</a>. To view my resume click <a href="{% url 'app:resume' %}">here</a>.</p>
+</section>
+
 <!-- Services Offered -->
-<section id="skills" class="skills py-5">
+<section id="services" class="services py-5">
     <div class="container d-flex flex-column justify-content-center align-items-center w-100" data-aos="fade-up">
         <div class="text-center mb-3 section-title" data-aos="fade-up">
             <h2 class="text-center">Services Offered</h2>

@@ -209,7 +209,7 @@
 
 .project .project-item .project-info {
     opacity: 1;
-    bottom: 0;
+    bottom: -10px;
 }
 
   /*--------------------------------------------------------------

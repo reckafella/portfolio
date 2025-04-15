@@ -9,7 +9,7 @@ class ProjectListView(ListView):
     model = Projects
     template_name = "app/projects/projects.html"
     context_object_name = "projects"
-    # paginate_by = 6
+    #paginate_by = 6
 
     def sorting_options(self):
         return {

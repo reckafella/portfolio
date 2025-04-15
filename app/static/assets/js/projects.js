@@ -1,128 +1,252 @@
-document.addEventListener('DOMContentLoaded', function () {
-    /* settings */
-    const itemsPerPage = 4; /* matches values from the backend */
-    let currentPage = 1;
-    let currentFilter = '*';
+// Initialize when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Settings
+  const itemsPerPage = 6;
+  let currentPage = 1;
+  let currentFilter = '*';
+  let currentFilterValue = 'all';
 
-    /* get dom elements */
-    const projectContainer = document.querySelector('.project-container .row:last-child');
-    const filterButtons = document.querySelectorAll('#project-filters li');
-    const paginationContainer = document.querySelector('.pagination');
+  // Get DOM elements
+  const projectContainer = document.getElementById('project-container');
+  const filterButtons = document.querySelectorAll('#project-filters li');
+  const paginationContainer = document.querySelector('.pagination');
 
-    /* get all projects */
-    const allProjects = [...document.querySelectorAll('.project-item')];
+  // Check URL parameters for initial filter/page
+  checkUrlParams();
 
+  // Get all projects
+  const allProjects = [...document.querySelectorAll('.project-item')];
+
+  // Initial setup
+  updateView();
+
+  // Set up filter click handlers
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Update active filter button
+      filterButtons.forEach(btn => btn.classList.remove('filter-active'));
+      this.classList.add('filter-active');
+
+      // Set current filter
+      currentFilter = this.getAttribute('data-filter');
+
+      // Reset to first page when changing filters
+      currentPage = 1;
+
+      // Update the view
+      updateView();
+    });
+  });
+
+  // Handle browser back/forward navigation with popstate
+  window.addEventListener('popstate', function(event) {
+    // If state exists and was pushed by our code
+    if (event.state && event.state.managed) {
+      currentFilter = event.state.filter;
+      currentFilterValue = event.state.filterValue;
+      currentPage = event.state.page;
+
+      // Update UI to reflect state
+      updateActiveFilterButton();
+    } else {
+      // Otherwise check URL params
+      checkUrlParams();
+    }
+    
     updateView();
+  });
 
-    /* set up handlers for filter click */
-    filterButtons.forEach((button) => {
-        button.addEventListener('click', function () {
-            filterButtons.forEach(btn => btn.classList.remove('filter-active'));
-            this.classList.add('filter-active');
+  function updateActiveFilterButton() {
+    filterButtons.forEach(btn => {
+      const btnFilter = btn.getAttribute('data-filter');
+      if ((currentFilterValue === 'all' && btnFilter === '*') ||
+          (currentFilterValue !== 'all' && btnFilter === currentFilter)) {
+        btn.classList.add('filter-active');
+      } else {
+        btn.classList.remove('filter-active');
+      }
+    });
+  }
 
-            // set the current filter
-            currentFilter = this.getAttribute('data-filter');
+  function updateView() {
+    // First, filter projects
+    const filteredProjects = filterProjects(allProjects, currentFilter);
 
-            // reset the current page to 1 when changing filters
-            currentPage = 1; // reset to first page
-            updateView();
-        });
+    // Then paginate the filtered projects
+    const visibleProjects = paginateProjects(filteredProjects, currentPage, itemsPerPage);
+
+    // Clear and rebuild the layout properly
+    // First, hide all projects
+    allProjects.forEach(project => {
+      project.style.display = 'none';
     });
 
-    function updateView() {
-        /* filter projects */
-        const filteredProjects = filterProjects(allProjects, currentFilter);
+    // Then show only the visible ones
+    visibleProjects.forEach(project => {
+      project.style.display = '';
+    });
 
-        /* paginate the filtered projects */
-        const visibleProjects = paginateProjects(filteredProjects, currentPage, itemsPerPage);
+    // Update pagination UI
+    updatePagination(filteredProjects.length, itemsPerPage);
 
-        /* update visibility */
-        allProjects.forEach(project => project.classList.add('d-none'));
-        visibleProjects.forEach(project => project.classList.remove('d-none'));
-        /* update pagination */
+    // Update URL query params
+    updateUrlParams();
+  }
 
-        updatePagination(filteredProjects.length, itemsPerPage);
+  function filterProjects(projects, filter) {
+    if (filter === '*') {
+      return projects;
+    }
+    const filterClass = filter.substring(1);
+    return projects.filter(project => project.classList.contains(filterClass));
+  }
+
+  // URL Query Parameters functions
+  function updateUrlParams() {
+    let filterValue = 'all';
+    if (currentFilter !== '*') {
+      filterValue = currentFilter.replace(/^\.filter-/, '');
+      currentFilterValue = filterValue;
+    }
+    
+    // Create URL with query parameters
+    const url = new URL(window.location.href);
+    url.searchParams.set('filter', filterValue);
+    url.searchParams.set('page', currentPage);
+    
+    // Use pushState to update URL without reload
+    const state = { 
+      managed: true,
+      filter: currentFilter, 
+      filterValue: currentFilterValue, 
+      page: currentPage 
+    };
+    
+    window.history.pushState(state, '', url);
+  }
+
+  function checkUrlParams() {
+    // Get URL search params
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get filter from params
+    const filterValue = urlParams.get('filter');
+    if (filterValue) {
+      if (filterValue === 'all') {
+        currentFilter = '*';
+      } else {
+        // Make sure we don't keep adding filter- prefixes
+        currentFilter = '.filter-' + filterValue.replace(/^filter-/, '');
+        currentFilterValue = filterValue;
+      }
+
+      // Update active filter button
+      updateActiveFilterButton();
     }
 
-    function filterProjects(projects, filter) {
-        if (filter === '*') {
-            return projects;
-        }
-        return projects.filter(project => project.classList.contains(filter.substring(1)));
+    // Get page from params
+    const pageValue = urlParams.get('page');
+    if (pageValue && !isNaN(pageValue)) {
+      currentPage = parseInt(pageValue);
+    }
+  }
+
+  function paginateProjects(projects, page, perPage) {
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    return projects.slice(startIndex, endIndex);
+  }
+
+  function updatePagination(totalItems, perPage) {
+    // Calculate total pages
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    // Clear current pagination
+    paginationContainer.innerHTML = '';
+
+    // Don't show pagination if there's only one page
+    if (totalPages <= 1) {
+      return;
     }
 
-    function paginateProjects(projects, page, itemsPerPage) {
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        return projects.slice(start, end);
-    }
+    // Previous button
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    const prevLink = document.createElement('a');
+    prevLink.className = 'page-link';
+    prevLink.innerHTML = '&laquo; Previous';
+    
+    // Create URL with query parameters
+    const prevUrl = new URL(window.location.href);
+    prevUrl.searchParams.set('filter', currentFilterValue);
+    prevUrl.searchParams.set('page', currentPage - 1);
+    prevLink.href = prevUrl.toString();
 
-    function updatePagination(totalItems, itemsPerPage) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        paginationContainer.innerHTML = '';
+    prevLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        updateView();
+      }
+    });
+    prevLi.appendChild(prevLink);
+    paginationContainer.appendChild(prevLi);
 
-        if (totalPages <= 1) {
-            return; // No pagination needed
-        }
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+      const pageLi = document.createElement('li');
+      pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
 
-        /* previous button */
-        const prevButton = document.createElement('li');
-        prevButton.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        const prevLink = document.createElement('a');
-        prevLink.className = 'page-link';
-        prevLink.innerHTML = '&laquo; Previous';
-        prevLink.href = '#';
-        prevLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                updateView();
-            }
+      if (i === currentPage) {
+        const currentSpan = document.createElement('span');
+        currentSpan.className = 'page-link';
+        currentSpan.textContent = i;
+        pageLi.appendChild(currentSpan);
+      } else {
+        const pageLink = document.createElement('a');
+        pageLink.className = 'page-link';
+        pageLink.textContent = i;
+        
+        // Create URL with query parameters
+        const pageUrl = new URL(window.location.href);
+        pageUrl.searchParams.set('filter', currentFilterValue);
+        pageUrl.searchParams.set('page', i);
+        pageLink.href = pageUrl.toString();
+        
+        pageLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          currentPage = i;
+          updateView();
         });
+        pageLi.appendChild(pageLink);
+      }
 
-        prevButton.appendChild(prevLink);
-        paginationContainer.appendChild(prevButton);
-
-        /* page numbers */
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('li');
-            pageButton.className = `page-item ${currentPage === i ? 'active' : ''}`;
-
-            if (currentPage === i) {
-                const currentSpan = document.createElement('span');
-                currentSpan.className = 'page-link';
-                currentSpan.textContent = i;
-                pageButton.appendChild(currentSpan);
-            } else {
-                const pageLink = document.createElement('a');
-                pageLink.className = 'page-link';
-                pageLink.textContent = i;
-                pageLink.href = '#';
-                pageLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentPage = i;
-                    updateView();
-                });
-                pageButton.appendChild(pageLink);
-            }
-            paginationContainer.appendChild(pageButton);
-        }
-
-        /* next button */
-        const nextButton = document.createElement('li');
-        nextButton.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        const nextLink = document.createElement('a');
-        nextLink.className = 'page-link';
-        nextLink.innerHTML = 'Next &raquo;';
-        nextLink.href = '#';
-        nextLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage < totalPages) {
-                currentPage++;
-                updateView();
-            }
-        });
-        nextButton.appendChild(nextLink);
-        paginationContainer.appendChild(nextButton);
+      paginationContainer.appendChild(pageLi);
     }
+
+    // Next button
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    const nextLink = document.createElement('a');
+    nextLink.className = 'page-link';
+    nextLink.innerHTML = 'Next &raquo;';
+    
+    // Create URL with query parameters
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set('filter', currentFilterValue);
+    nextUrl.searchParams.set('page', currentPage + 1);
+    nextLink.href = nextUrl.toString();
+    
+    nextLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateView();
+      }
+    });
+    nextLi.appendChild(nextLink);
+    paginationContainer.appendChild(nextLi);
+  }
 });

@@ -13,14 +13,14 @@
 .project #project-filters li {
     cursor: pointer;
     display: inline-block;
-    padding: 8px 18px 10px 18px;
+    padding: 8px 18px 8px 18px;
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
     color: var(--default-color);
     margin: 0 3px 10px 3px;
     transition: all ease-in-out 0.3s;
-    border-radius: 50px;
+    border-radius: 10px;
 }
 
 .project #project-filters li:hover,

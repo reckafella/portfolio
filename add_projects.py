@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
-import json
 import os
-
+import json
 import django
-from django.conf import settings
 from titlecase import titlecase
+from django.conf import settings
+
+
+img = "https://res.cloudinary.com/dg4sl9jhw"
+loc = "/image/upload/v1732720607/cld-sample-4.webp"
 
 
 def add_projects():
@@ -31,9 +34,7 @@ def add_projects():
         project["description"] = titlecase(project["description"])
         project["image_id"] = project["image"].replace("app/", "")
         project["project_url"] = project["url"].replace("app/", "")
-        project["optimized_image_url"] = (
-            "https://res.cloudinary.com/dg4sl9jhw/image/upload/v1732720607/cld-sample-4.webp"
-        )
+        project["optimized_image_url"] = (f"{img}{loc}")
 
         Projects.objects.create(**project)
 

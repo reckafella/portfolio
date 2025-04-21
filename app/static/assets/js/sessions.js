@@ -36,7 +36,7 @@ class SessionTimeout {
       }
 
       try {
-          const response = await fetch('/session/update', {
+          const response = await fetch('/session', {
               method: 'POST',
               headers: {
                   'X-CSRFToken': this.getCsrfToken(),
@@ -63,7 +63,8 @@ class SessionTimeout {
       }
 
       try {
-          const response = await fetch('/session/check', {
+          const response = await fetch('/session', {
+              method: 'GET',
               headers: {
                   'X-Requested-With': 'XMLHttpRequest'
               }
@@ -75,7 +76,7 @@ class SessionTimeout {
               }
               throw new Error('Session check failed');
           }
-          
+
           const data = await response.json();
           const timeLeft = data.expires_in;
           

@@ -9,7 +9,7 @@ class ProjectListView(ListView):
     model = Projects
     template_name = "app/projects/projects.html"
     context_object_name = "projects"
-    #paginate_by = 6
+    # paginate_by = 6
 
     def sorting_options(self):
         return {
@@ -32,19 +32,25 @@ class ProjectListView(ListView):
             "category_asc": "category",
             "category_desc": "-category",
         }.get(sort, "-created_at")
-        return Projects.objects.filter(live=True).order_by(sort_by)
+        return Projects.objects.filter(live=True).prefetch_related(
+            Prefetch("images", queryset=Image.objects.filter(live=True)),
+            Prefetch("videos", queryset=Video.objects.filter(live=True))
+        ).order_by(sort_by)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Projects"
+        PROJECTS = Projects.objects.filter(live=True)
+        categories = PROJECTS.values_list('category', flat=True)
         context["categories"] = list(dict.fromkeys([
-            category for category in Projects.objects.filter(live=True).values_list('category', flat=True)
+            category for category in categories
         ]))
         context["default_image"] = "assets/images/software-dev.webp"
         context["categories"].sort()
         context["sorting_options"] = self.sorting_options()
         context["sort_by"] = self.request.GET.get('sort_by', 'date_desc')
         return context
+
 
 class ProjectDetailView(DetailView):
     model = Projects
@@ -53,7 +59,7 @@ class ProjectDetailView(DetailView):
     context_object_name = "project"
 
     def get_queryset(self):
-        # Prefetching images and youtube urls/thumbnails to optimize database queries
+        # Prefetching images & youtube thumbnails to optimize database queries
         return Projects.objects.filter(live=True).prefetch_related(
             Prefetch("images", queryset=Image.objects.filter(live=True)),
             Prefetch("videos", queryset=Video.objects.filter(live=True))
@@ -62,7 +68,8 @@ class ProjectDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         project = self.get_object()
-        url = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/mbaek/contact/zhgi2apdv9pxyrxmx9og"
+        # section below to be revisited
+        url = ""
 
         context["related_projects"] = Projects.objects.exclude(
             id=project.id).order_by("?")[:5]

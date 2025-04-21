@@ -14,9 +14,18 @@ import os.path
 from pathlib import Path
 import random
 
+from requests import get
+
+from app.views.helpers.helpers import get_error_files
+
+
 def csrf_failure_view(request, reason=""):
     from app.views.auth import CSRFFailureView
     return CSRFFailureView.as_view()(request, reason=reason)
+
+
+# IGNORE FLAKE8 RULES
+# flake8: noqa
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,19 +40,54 @@ FALLBACK_SECRET_KEY = (
 )
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
+0
+""" All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+# DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = False
 
-ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
+ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
-# ALLOWED_HOSTS = ['*']
+# Allowed hosts
+# SECURITY WARNING: define the correct hosts in production!
+# See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS",
+                               default="localhost").split(",")
+
+# Supabase settings
+SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
+SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
+SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
+SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
+SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
+
+# Redis settings
+if ENVIRONMENT == 'production':
+    REDIS_URL = os.environ.get("REDIS_URL", default="")
+    REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
+
+
+# CLOUDINARY CONFIG SETTINGS
+if ENVIRONMENT == 'production':
+    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
+    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
+    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
+else:
+    from app.views.helpers.helpers import get_cloudinary_creds
+
+    CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
+    CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
+    CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
+
+
+""" 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     ".onrender.com",
     ".ethanmuthoni.me",
     ".rohn.live",
-]
+] """
 
 
 # Application definition
@@ -118,11 +162,37 @@ if (ENVIRONMENT == 'production' and not DEBUG):
     DATABASES  = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("SUPABASE_DB_NAME"),
-            "USER": os.environ.get("SUPABASE_USER"),
-            "PASSWORD": os.environ.get("SUPABASE_DB_PW"),
-            "HOST": os.environ.get("SUPABASE_HOST"),
-            "PORT": os.environ.get("SUPABASE_PORT"),
+            "NAME": SUPABASE_DB_NAME,
+            "USER": SUPABASE_USER,
+            "PASSWORD": SUPABASE_DB_PW,
+            "HOST": SUPABASE_HOST,
+            "PORT": SUPABASE_PORT,
+        }
+    }
+
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": REDIS_PASSWORD,
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "SOCKET_KEEPALIVE": True,
+                "SOCKET_KEEPALIVE_OPTIONS": {
+                    "TCP_KEEPIDLE": 1,
+                    "TCP_KEEPINTVL": 1,
+                    "TCP_KEEPCNT": 5,
+                },
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 10,
+                    "retry_on_timeout": True,
+                },
+            },
         }
     }
 
@@ -137,6 +207,23 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+    # USE LOCAL REDIS INSTALLED ON PC
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "django_redis.client.DefaultClient",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+            }
+        }
+    }
+
     PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
@@ -264,17 +351,6 @@ if (ENVIRONMENT == 'production' and not DEBUG):
 
 CSRF_FAILURE_VIEW = csrf_failure_view
 
-# CLOUDINARY CONFIG SETTINGS
-if ENVIRONMENT == 'production':
-    CLOUDINARY_CLOUD_NAME: str = os.environ.get("CLOUDINARY_NAME", '')
-    CLOUDINARY_API_KEY: str = os.environ.get("CLOUDINARY_API_KEY", '')
-    CLOUDINARY_API_SECRET: str = os.environ.get("CLOUDINARY_API_SECRET", '')
-else:
-    from app.views.helpers.helpers import get_cloudinary_id_and_secret
-
-    CLOUDINARY_CLOUD_NAME: str = get_cloudinary_id_and_secret()[0]
-    CLOUDINARY_API_KEY: str = get_cloudinary_id_and_secret()[1]
-    CLOUDINARY_API_SECRET: str = get_cloudinary_id_and_secret()[2]
 
 # Maximum upload size for images in bytes
 MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB or 5242880 bytes
@@ -282,10 +358,10 @@ ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "im
 
 
 # Image links for Error Codes 400, 403, 404, 500
-ERROR_404: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"
-ERROR_500: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
-ERROR_403: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
-ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"
+ERROR_400: str = get_error_files()[0]
+ERROR_403: str = get_error_files()[1]
+ERROR_404: str = get_error_files()[2]
+ERROR_500: str = get_error_files()[3]
 
 
 # captcha settings
@@ -306,10 +382,10 @@ CAPTCHA_REFRESH_CHALLENGE = True
 
 """ Session settings """
 # Browser session timeout (when user closes browser)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
-SESSION_COOKIE_AGE = 3600
+# Inactivity timeout in seconds (e.g. 1/2 hour = 1800 seconds)
+SESSION_COOKIE_AGE = 1800
 
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True 

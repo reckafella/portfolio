@@ -171,3 +171,4 @@ cython_debug/
 
 cloudinary.json
 .vercel
+redis.json

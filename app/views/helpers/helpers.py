@@ -36,7 +36,7 @@ def get_cloudinary_creds() -> Tuple[str, str, str]:
 
 def get_error_files() -> Tuple[str, str, str, str]:
     """
-    Returns the urls for the images used in error pages. 
+    Returns the urls for the images used in error pages.
     * file named: error-files.json
     """
     file_path = os.path.join(

@@ -8,8 +8,6 @@ from django.shortcuts import render
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
 
-from blog.models import BlogPostPage
-
 
 def home_view(request):
     """View to render the home page"""
@@ -22,7 +20,8 @@ def home_view(request):
         "latest_posts": recent_posts,
     }
     return render(
-        request=request, template_name="app/home.html", context=context, status=200
+        request=request, template_name="app/home.html",
+        context=context, status=200
     )
 
 
@@ -33,14 +32,16 @@ def about_view(request):
 
 def services(request):
     """View to render the services page"""
-    return render(request=request, template_name="app/services/services.html", status=200)
+    return render(request=request, template_name="app/services/services.html",
+                  status=200)
 
 
 def resume_view(request):
     """View to render the resume page"""
     context = {"page_title": "Resume"}
     return render(
-        request=request, template_name="app/resume.html", context=context, status=200
+        request=request, template_name="app/resume.html", context=context,
+        status=200
     )
 
 
@@ -63,8 +64,8 @@ def resume_pdf_view(request):
 def sitemap_view(request):
     pages = Page.objects.live().specific().order_by('-first_published_at')
     projects = Projects.objects.all()
-    blog_posts = BlogPostPage.objects.live().order_by('-first_published_at')
-    
+    blog_posts = BlogPost.objects.live().order_by('-first_published_at')
+
     context = {
         'pages': pages,
         'projects': projects,

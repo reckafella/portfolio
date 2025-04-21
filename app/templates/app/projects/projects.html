@@ -34,55 +34,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center project-container">
-            <div class="col-lg-11">
-                <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
-                    {% for project in projects %}
-                    <div class="col project-item filter-{{ project.category|slugify }}">
-                        <div class="card shadow h-100">
-                            <img src="{% if project.first_image %}{{ project.first_image.cloudinary_image_url }}{% else %}{% static default_image %}{% endif %}"
-                                class="card-img h-100 img-fluid" alt="{{ project.title }}">
-                            <div class="project-info position-relative px-2 py-2">
-                                <!-- Project type badge with improved accessibility -->
-                                <span
-                                    class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}"
-                                    aria-label="{{ project.project_type|title }}">
-                                    {{ project.project_type|title }}
-                                </span>
-                            
-                                <!-- Project title -->
-                                <h4 class="mb-3">{{ project.title }}</h4>
-                            
-                                <!-- Action buttons with accessible titles -->
-                                <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
-                                    <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery"
-                                        class="project-lightbox preview-link" title="Preview {{ project.title }}">
-                                        <i class="bi bi-plus"></i>
-                                    </a>
-                                    <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
-                                        title="View details for {{ project.title }}">
-                                        <i class="bi bi-link"></i>
-                                    </a>
-                                    <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
-                                        data-share-url="{% url 'app:project_detail' project.slug %}" data-share-title="{{ project.title }}"
-                                        class="share-link" title="Share {{ project.title }}">
-                                        <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
-                                    </a>
-                                </div>
-                            
-                                <!-- Project category, centered -->
-                                <p class="mb-0 text-center">{{ project.category }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12 text-center">
-                        <p>No projects found</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+        {% include "app/projects/partials/projects.html" with projects=projects %}
 
         <!-- Client-side pagination (replaces server-side pagination) -->
         <div class="d-flex justify-content-center mt-4">

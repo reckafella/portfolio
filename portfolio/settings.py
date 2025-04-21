@@ -80,7 +80,7 @@ else:
     CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
 
 
-""" 
+"""
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
@@ -325,7 +325,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
                          'link', 'hr', 'code', 'document-link', 'blockquote']
         }
     },
-}    
+}
 
 
 # Default primary key field type
@@ -388,7 +388,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1800
 
 # Optional but recommended - update session on activity
-SESSION_SAVE_EVERY_REQUEST = True 
+SESSION_SAVE_EVERY_REQUEST = True
 
 """ Software Dev Project Categories """
 CATEGORY_CHOICES = [

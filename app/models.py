@@ -18,7 +18,8 @@ class Profile(models.Model):
     country = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     profile_pic = CloudinaryField('image', null=True, blank=True)
-    cloudinary_image_id = models.CharField(max_length=255, blank=True, null=True)
+    cloudinary_image_id = models.CharField(max_length=255, blank=True,
+                                           null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,7 +36,8 @@ class Profile(models.Model):
 
 
 class SocialLinks(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='social_media')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE,
+                                related_name='social_media')
     twitter_x = models.URLField(blank=True, null=True)
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
@@ -61,7 +63,7 @@ class UserSettings(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s settings"
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
@@ -74,8 +76,11 @@ class Projects(models.Model):
 
     title = models.CharField(unique=True, max_length=200)
     description = RichTextField()
-    project_type = models.CharField(max_length=20, choices=PROJECT_TYPES, default='personal')
-    category = models.CharField(max_length=100, choices=settings.CATEGORY_CHOICES, default='Web Development')
+    project_type = models.CharField(max_length=20,
+                                    choices=PROJECT_TYPES, default='personal')
+    category = models.CharField(max_length=100,
+                                choices=settings.CATEGORY_CHOICES,
+                                default='Web Development')
     client = models.CharField(max_length=200, default="Personal")
     project_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -89,11 +94,11 @@ class Projects(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     @property
     def first_image(self):
         return self.images.first() if self.images.first() else None
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -101,16 +106,19 @@ class Projects(models.Model):
 
 
 class Image(models.Model):
-    project = models.ForeignKey(Projects, on_delete=models.PROTECT, related_name='images')
+    project = models.ForeignKey(Projects, on_delete=models.PROTECT,
+                                related_name='images')
     image = CloudinaryField('image', null=True, blank=True)
-    cloudinary_image_id = models.CharField(max_length=255, blank=True, null=True)
+    cloudinary_image_id = models.CharField(max_length=255, blank=True,
+                                           null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
     live = models.BooleanField(default=True)
 
 
 class Video(models.Model):
-    project = models.ForeignKey(Projects, on_delete=models.PROTECT, related_name='videos')
+    project = models.ForeignKey(Projects, on_delete=models.PROTECT,
+                                related_name='videos')
     youtube_url = models.URLField(max_length=200, null=True,)
     thumbnail_url = models.URLField(max_length=200, null=True, blank=True)
     live = models.BooleanField(default=True)
@@ -126,14 +134,21 @@ class Video(models.Model):
                 match = re.search(pattern, self.youtube_url)
                 if match:
                     video_id = match.group(1)
-            
+
             if video_id:
-                resolutions = ['maxresdefault', '0', 'sddefault', 'hqdefault', 'mqdefault']
+                resolutions = 'maxresdefault,0,sddefault,hqdefault,mqdefault'
+                resolutions = resolutions.split(',')
+
+                # Check each resolution in order
                 for resolution in resolutions:
-                    self.thumbnail_url = f'https://img.youtube.com/vi/{video_id}/{resolution}.jpg'
+                    base_url = 'https://img.youtube.com/vi/'
+                    self.thumbnail_url = '{}{}/{}.jpg'.format(
+                        base_url, video_id, resolution
+                    )
+
                     if requests.get(self.thumbnail_url).status_code == 200:
                         break
-        
+
         super().save(*args, **kwargs)
 
 
@@ -144,7 +159,7 @@ class Message(models.Model):
     message = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)  # Add this field
-    
+
     def mark_as_read(self):
         self.is_read = True
         self.save()
@@ -162,28 +177,39 @@ class Message(models.Model):
         return reverse_lazy("app:contact")
 
 
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    """Create a Profile instance when a new User is created"""
+    """
+    Create a Profile instance when a new User is created
+    """
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    """Save the Profile instance when the User is saved"""
+    """
+    Save the Profile instance when the User is saved
+    """
     try:
         instance.profile.save()
     except Profile.DoesNotExist:
         Profile.objects.create(user=instance)
 
-""" create social links/settings when a user and profile are set up """
+
 @receiver(post_save, sender=Profile)
 def create_social_links(sender, instance, created, **kwargs):
+    """
+    Create a SocialLinks instance when a new Profile is created
+    """
     if created:
         SocialLinks.objects.create(profile=instance)
-    
+
+
 @receiver(post_save, sender=Profile)
 def create_user_settings(sender, instance, created, **kwargs):
+    """
+    Create a UserSettings instance when a new Profile is created
+    """
     if created:
         UserSettings.objects.create(user=instance.user)

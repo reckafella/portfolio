@@ -1,51 +1,53 @@
-<div class="d-flex justify-content-center align-items-center w-100">
-    <div class="row justify-content-center align-items-stretch col-lg-11 g-2 d-flex">
-        {% for project in projects %}
-        <div class="col-lg-4 col-md-6 col-sm-10 mb-2">
-            <div class="card h-100 d-flex justify-content-center">
-                <div class="card-header justify-content-between d-flex">
-                    <h5 class="card-title fw-bold">
-                        <a href="{% url 'app:project_detail' project.slug %}" class="text-decoration-none text-success">{{ project.title }}
-                        </a>
-                    </h5>
-                    <!-- Icon for editing -->
-                    {% if user.is_staff  %}
-                    <a href="{% url 'app:update_project' project.slug %}" class="btn btn-link text-decoration-none text-primary">
-                        <i class="bi bi-pencil-square bi-pencil-fill"></i>
-                    </a>
-                    {% endif %}
-                </div>
-                {% if project.optimized_image_url %}
-                <div class="card-body card-image"
-                    style="background-image: url('{{ project.optimized_image_url }}');
-                        background-size: cover; background-position: center; height: 150px; width: 100%;">
-                </div>
-                {% endif %}
-                <div class="card-body d-flex flex-column">
-                    <p class="card-body card-text text-start">
-                        <span class="short-description">{{ project.description | safe | truncatechars:50 }}</span>
-                        <span class="full-description d-none" data-length="{{ project.description | safe | length }}">{{ project.description | safe }}</span>
-                        <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">More</button>
-                    </p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="{% url 'app:project_detail' project.slug %}" class="btn btn-outline-primary">
-                        <span>Project Details</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-sm-10 col-lg-7 col-md-7 text-center mb-4 gap-2">
-            <div class="alert alert-danger text-center" role="alert">
-                <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2rem;">
-                    <h3 class="alert-heading fw-bold">No projects found!</h3>
-                    {% if user.is_staff %}
-                    <a href="{% url 'app:add_project' %}" class="btn btn-outline-primary">Create project</a>
-                    {% endif %}
+{% load static %}
+{% load i18n %}
+
+<div class="row justify-content-center project-container">
+    <div class="col-lg-11">
+        <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
+            {% for project in projects %}
+            <div class="col project-item filter-{{ project.category|slugify }}">
+                <div class="card shadow h-100">
+                    <img src="{% if project.first_image %}{{ project.first_image.cloudinary_image_url }}{% else %}{% static default_image %}{% endif %}"
+                        class="card-img h-100 img-fluid" alt="{{ project.title }}">
+                    <div class="project-info position-relative px-2 py-2">
+                        <!-- Project type badge with improved accessibility -->
+                        <span
+                            class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}"
+                            aria-label="{{ project.project_type|title }}">
+                            {{ project.project_type|title }}
+                        </span>
+
+                        <!-- Project title -->
+                        <h4 class="mb-3">{{ project.title }}</h4>
+
+                        <!-- Action buttons with accessible titles -->
+                        <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                            <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery"
+                                class="project-lightbox preview-link" title="Preview {{ project.title }}">
+                                <i class="bi bi-plus"></i>
+                            </a>
+                            <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
+                                title="View details for {{ project.title }}">
+                                <i class="bi bi-link"></i>
+                            </a>
+                            <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                data-share-url="{% url 'app:project_detail' project.slug %}"
+                                data-share-title="{{ project.title }}" class="share-link"
+                                title="Share {{ project.title }}">
+                                <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
+                            </a>
+                        </div>
+
+                        <!-- Project category, centered -->
+                        <p class="mb-0 text-center">{{ project.category }}</p>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No projects found</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>

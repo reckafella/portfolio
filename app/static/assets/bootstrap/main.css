@@ -10,7 +10,7 @@
   --background-color: #e9e8e6; /* Background color for the entire website, including individual sections */
   --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #fa327b; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --accent-color: #5239cf; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
@@ -1643,11 +1643,11 @@ Cards
 }
 
 .card .card-footer {
-  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 65%);
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 25%);
 }
 
 .card .card-header {
-  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 65%);
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 25%);
 }
 
 .card .card-header h4 {
@@ -1663,20 +1663,21 @@ Cards
 
 .card .card-header a,
 .card .card-footer a {
-  color: var(--default-color);
+  color: color-mix(in srgb, var(--accent-color), transparent 10%);
   font-weight: 300;
   transition: 0.3s;
 }
 
 .card .card-header a:hover,
 .card .card-footer a:hover {
-  color: var(--default-color);
-  font-weight: 600;
+  color: var(--accent-color);
+  text-decoration: underline;
+  font-weight: 400;
 }
 
 .card .card-header i,
 .card .card-footer i {
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  color: color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .card .card-header i:hover,
@@ -2024,24 +2025,6 @@ Cards
   background: color-mix(in srgb, var(--default-color), transparent 20%);
 }
 
-/* modal form
-.modal-body form input[type=text],
-.modal-body form input[type=search],
-.modal-body form textarea {
-  font-size: 14px;
-  padding: 10px 15px;
-  box-shadow: none;
-  border-radius: 0;
-  color: var(--default-color);
-  background-color: color-mix(in srgb, var(--background-color), transparent 50%);
-  border-color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.modal-body form input[type=text]:focus,
-.modal-body form input[type=search]:focus,
-.modal-body form textarea:focus {
-  border-color: var(--accent-color);
-} */
 
 .modal-body form select {
   font-size: 14px;
@@ -2165,4 +2148,8 @@ Cards
   .http-errors img {
     max-width: 50%;
   }
+}
+
+.text-accent {
+  color: var(--accent-color);
 }

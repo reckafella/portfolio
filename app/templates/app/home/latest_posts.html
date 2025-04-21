@@ -1,8 +1,11 @@
-{% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
+{% load static wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
 
 <section id="blog" class="blog">
-    <div class="container" data-aos="fadeup">
+    <div class="container">
         <div class="row">
+            <div class="section-title" data-aos="fade-up" data-aos-delay="100">
+                <h2 class="text-center">Latest Posts</h2>
+            </div>
             <div class="entries">
                 <div class="d-flex gap-1 justify-content-around align-items-stretch flex-wrap">
                     {% for article in latest_posts %}

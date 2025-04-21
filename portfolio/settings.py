@@ -14,8 +14,6 @@ import os.path
 from pathlib import Path
 import random
 
-from requests import get
-
 from app.views.helpers.helpers import get_error_files
 
 
@@ -51,15 +49,23 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 # Allowed hosts
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS",
-                               default="localhost").split(",")
 
-# Supabase settings
-SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
-SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
-SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
-SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
-SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
+
+DEFAULT_HOSTS = "127.0.0.1,localhost"
+if ENVIRONMENT == 'production':
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+else:
+    ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
+
+
+if ENVIRONMENT == 'production':
+    # Supabase settings
+    SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
+    SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
+    SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
+    SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
+    SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
+
 
 # Redis settings
 if ENVIRONMENT == 'production':
@@ -80,16 +86,6 @@ else:
     CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
 
 
-"""
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    ".onrender.com",
-    ".ethanmuthoni.me",
-    ".rohn.live",
-] """
-
-
 # Application definition
 if ENVIRONMENT == 'production':
     INSTALLED_APPS = []
@@ -101,6 +97,7 @@ INSTALLED_APPS += [
     "django.contrib.sessions", "django.contrib.messages", 'django.contrib.sites',
     "django.contrib.staticfiles", "django.contrib.sitemaps", "crispy_forms",
     "corsheaders", "app", "blog", 'robots', 'captcha',
+    "django_redis",
 ]
 
 # Wagtail related apps
@@ -215,7 +212,7 @@ else:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "django_redis.client.DefaultClient",
+            "LOCATION": "redis://localhost:6379/0",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "SOCKET_CONNECT_TIMEOUT": 5,

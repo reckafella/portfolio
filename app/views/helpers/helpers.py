@@ -93,3 +93,21 @@ def guess_file_type(file) -> str:
         return file_type.mime if file_type else None
     except Exception:
         return None
+
+
+def get_redis_creds() -> Tuple[str, str]:
+    """
+    Get the Redis url and password from redis.json
+        located at the root of the project.
+    """
+    file_path = os.path.join(settings.BASE_DIR, "redis.json")
+
+    try:
+        with open(file_path, "r") as fl:
+            data = json.load(fl)
+            redis_url: str = data.get("URL", "")
+            redis_password: str = data.get("PASSWORD", "")
+    except FileNotFoundError:
+        raise FileNotFoundError("redis.json file not found")
+
+    return redis_url, redis_password

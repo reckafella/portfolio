@@ -41,8 +41,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 0
 """ All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.environ.get("DEBUG", "False") == "True"
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+# DEBUG = False
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
@@ -71,6 +71,10 @@ if ENVIRONMENT == 'production':
 if ENVIRONMENT == 'production':
     REDIS_URL = os.environ.get("REDIS_URL", default="")
     REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
+else:
+    from app.views.helpers.helpers import get_redis_creds
+    REDIS_URL = get_redis_creds()[0]
+    REDIS_PASSWORD = get_redis_creds()[1]
 
 
 # CLOUDINARY CONFIG SETTINGS
@@ -167,31 +171,6 @@ if (ENVIRONMENT == 'production' and not DEBUG):
         }
     }
 
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-    SESSION_CACHE_ALIAS = "default"
-
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "PASSWORD": REDIS_PASSWORD,
-                "SOCKET_CONNECT_TIMEOUT": 5,
-                "SOCKET_TIMEOUT": 5,
-                "SOCKET_KEEPALIVE": True,
-                "SOCKET_KEEPALIVE_OPTIONS": {
-                    "TCP_KEEPIDLE": 1,
-                    "TCP_KEEPINTVL": 1,
-                    "TCP_KEEPCNT": 5,
-                },
-                "CONNECTION_POOL_KWARGS": {
-                    "max_connections": 10,
-                    "retry_on_timeout": True,
-                },
-            },
-        }
-    }
 
     PROJECTS_FOLDER = "portfolio/projects/live"
     POSTS_FOLDER = "portfolio/posts/live"
@@ -205,25 +184,36 @@ else:
         }
     }
 
-    # USE LOCAL REDIS INSTALLED ON PC
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-    SESSION_CACHE_ALIAS = "default"
-
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://localhost:6379/0",
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "SOCKET_CONNECT_TIMEOUT": 5,
-                "SOCKET_TIMEOUT": 5,
-            }
-        }
-    }
-
     PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
+
+# sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://" + REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": REDIS_PASSWORD,
+            "SOCKET_CONNECT_TIMEOUT": 5,
+            "SOCKET_TIMEOUT": 5,
+            "SOCKET_KEEPALIVE": True,
+            "SOCKET_KEEPALIVE_OPTIONS": {
+                "TCP_KEEPIDLE": 1,
+                "TCP_KEEPINTVL": 1,
+                "TCP_KEEPCNT": 5,
+            },
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 10,
+                "retry_on_timeout": True,
+            },
+        },
+    }
+}
 
 
 # Password validation

@@ -1,8 +1,6 @@
-from ast import Import
 from django.core.cache import cache
 import time
 from django.conf import settings
-
 
 
 class RateLimitExceeded(Exception):
@@ -12,7 +10,7 @@ class RateLimitExceeded(Exception):
 class RateLimitMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-    
+
     def __call__(self, request):
         ip = request.META.get('REMOTE_ADDR')
         key = f'ratelimit:{ip}'
@@ -30,7 +28,7 @@ class RateLimitMiddleware:
             from app.views.errors import handler_429 as _429
             return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
 
-        data['count']+= 1
+        data['count'] += 1
         cache.set(key, data, timeout=3600)
 
         response = self.get_response(request)

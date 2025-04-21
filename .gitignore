@@ -171,9 +171,4 @@ cython_debug/
 
 cloudinary.json
 .vercel
-staticfiles/
-.env.local
-venv/
-cloudinary.json
 redis.json
-node_modules/

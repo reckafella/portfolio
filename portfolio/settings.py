@@ -22,12 +22,8 @@ def csrf_failure_view(request, reason=""):
     return CSRFFailureView.as_view()(request, reason=reason)
 
 
-# IGNORE FLAKE8 RULES
-# flake8: noqa
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -38,27 +34,22 @@ FALLBACK_SECRET_KEY = (
 )
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
-0
 """ All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-# DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False")
+DEBUG = False if DEBUG == "False" else True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
-# Allowed hosts
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-
-
-DEFAULT_HOSTS = "127.0.0.1,localhost"
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0"
 if ENVIRONMENT == 'production':
+    # Allowed hosts
     ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-else:
-    ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
+    # Installed Apps
+    INSTALLED_APPS = []
 
-
-if ENVIRONMENT == 'production':
     # Supabase settings
     SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
     SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
@@ -66,42 +57,35 @@ if ENVIRONMENT == 'production':
     SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
     SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
-
-# Redis settings
-if ENVIRONMENT == 'production':
+    # Redis settings
     REDIS_URL = os.environ.get("REDIS_URL", default="")
     REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
-else:
-    from app.views.helpers.helpers import get_redis_creds
-    REDIS_URL = get_redis_creds()[0]
-    REDIS_PASSWORD = get_redis_creds()[1]
 
-
-# CLOUDINARY CONFIG SETTINGS
-if ENVIRONMENT == 'production':
+    # CLOUDINARY CONFIG SETTINGS
     CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
     CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
     CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
-    from app.views.helpers.helpers import get_cloudinary_creds
+    ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
+    INSTALLED_APPS = []  # 'daphne'
+    from app.views.helpers.helpers import get_redis_creds
+    REDIS_URL = get_redis_creds()[0]
+    REDIS_PASSWORD = get_redis_creds()[1]
 
+    # CLOUDINARY CONFIG SETTINGS
+    from app.views.helpers.helpers import get_cloudinary_creds
     CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
     CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
     CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
 
 
-# Application definition
-if ENVIRONMENT == 'production':
-    INSTALLED_APPS = []
-else:
-    INSTALLED_APPS = ['daphne']
-
 INSTALLED_APPS += [
-    "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
-    "django.contrib.sessions", "django.contrib.messages", 'django.contrib.sites',
-    "django.contrib.staticfiles", "django.contrib.sitemaps", "crispy_forms",
+    "django.contrib.admin", "django.contrib.auth",
+    "django.contrib.contenttypes", 'django.contrib.sites',
+    "django.contrib.sessions", "django.contrib.messages",
+    "django.contrib.staticfiles", "django.contrib.sitemaps",
     "corsheaders", "app", "blog", 'robots', 'captcha',
-    "django_redis",
+    "django_redis", "crispy_forms",
 ]
 
 # Wagtail related apps
@@ -126,7 +110,7 @@ MIDDLEWARE = [
     "portfolio.middlewares.rate_limit.RateLimitMiddleware"
 ]
 
-# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
+# portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
 # - removed because of it interferes with wagtail's loading of pages
 
 ROOT_URLCONF = "portfolio.urls"
@@ -157,10 +141,8 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-
 if (ENVIRONMENT == 'production' and not DEBUG):
-    DATABASES  = {
+    DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": SUPABASE_DB_NAME,
@@ -170,7 +152,6 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "PORT": SUPABASE_PORT,
         }
     }
-
 
     PROJECTS_FOLDER = "portfolio/projects/live"
     POSTS_FOLDER = "portfolio/posts/live"
@@ -218,25 +199,32 @@ CACHES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/4.2/topics/auth/passwords/
+# declared this way to avoid flake8 errors
+_p = "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+_min = "django.contrib.auth.password_validation.MinimumLengthValidator"
+_common = "django.contrib.auth.password_validation.CommonPasswordValidator"
+_numeric = "django.contrib.auth.password_validation.NumericPasswordValidator"
+_complex = "app.views.helpers.password_validator.ComplexPasswordValidator"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": _p,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": _min,
         "OPTIONS": {
             "min_length": 8,
         },
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": _common,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": _numeric,
     },
     {
-        "NAME": "app.views.helpers.password_validator.ComplexPasswordValidator",
+        "NAME": _complex,
     },
 ]
 
@@ -259,24 +247,33 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 STATIC_URL = "/static/"
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# LOGIN REDIRECT URL
 LOGIN_REDIRECT_URL = "home"
+
 LOGIN_URL = "/login"
+
 LOGOUT_REDIRECT_URL = "/"
+
 LOGOUT_URL = "/logout"
+
 APPEND_SLASH = True
 
 
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = "Ethan Muthoni"
+
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
+
 WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
+
 WAGTAILDOCS_EXTENSIONS = [
     'csv',
     'docx',
@@ -294,22 +291,25 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
-                         'link', 'hr', 'code', 'document-link', 'blockquote']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
         }
     },
     'full': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
-                         'link', 'hr', 'code', 'document-link', 'blockquote']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
+                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
         }
     },
     'minimal': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
-                         'link', 'hr', 'code', 'document-link', 'blockquote']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
+                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
         }
     },
 }
@@ -338,16 +338,23 @@ if (ENVIRONMENT == 'production' and not DEBUG):
 
 CSRF_FAILURE_VIEW = csrf_failure_view
 
-
 # Maximum upload size for images in bytes
-MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB or 5242880 bytes
-ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff", "image/x-icon"]
+MAX_UPLOAD_SIZE: int = 15 * 1024 * 1024  # 15MB or 15 * 1024 * 1024 bytes
+
+# Allowed image types
+# Note: This is a list of MIME types. You can add more types as needed.
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif",
+                       "image/webp", "image/svg+xml", "image/bmp",
+                       "image/tiff", "image/x-icon"]
 
 
 # Image links for Error Codes 400, 403, 404, 500
 ERROR_400: str = get_error_files()[0]
+
 ERROR_403: str = get_error_files()[1]
+
 ERROR_404: str = get_error_files()[2]
+
 ERROR_500: str = get_error_files()[3]
 
 
@@ -356,15 +363,20 @@ CAPTCHA_CHOICES = (
     'captcha.helpers.math_challenge',
     'captcha.helpers.random_char_challenge',
 )
+
 CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
+
 CAPTCHA_TIMEOUT = 5
+CAPTCHA_IMAGE_SIZE = (300, 100)
 CAPTCHA_LENGTH = 6
-CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots', 'captcha.helpers.noise_arcs')
-CAPTCHA_LETTER_ROTATION = (-20, 20)
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
+                           'captcha.helpers.noise_arcs')
+CAPTCHA_LETTER_ROTATION = (-30, 30)
 CAPTCHA_FOREGROUND_COLOR = '#333'
 CAPTCHA_BACKGROUND_COLOR = '#fff'
+CAPTCHA_FONT_SIZE = 40
 CAPTCHA_OUTPUT_FORMAT = 'png'
-CAPTCHA_IMAGE_BEFORE_FIELD = True
+CAPTCHA_IMAGE_BEFORE_FIELD = False
 CAPTCHA_REFRESH_CHALLENGE = True
 
 """ Session settings """
@@ -377,20 +389,43 @@ SESSION_COOKIE_AGE = 1800
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True
 
-""" Software Dev Project Categories """
-CATEGORY_CHOICES = [
-    ('Web Development', 'Web Development'),
-    ('Mobile Development', 'Mobile Development'),
-    ('Desktop Development', 'Desktop Development'),
-    ('Machine Learning', 'Machine Learning'),
-    ('Data Science', 'Data Science'),
-    ('DevOps', 'DevOps'),
-    ('Cyber Security', 'Cyber Security'),
-    ('Networking', 'Networking'),
-    ('Game Development', 'Game Development'),
-    ('UI/UX Design', 'UI/UX Design'),
-    ('Other', 'Other'),
-]
+PROJECT_TYPES = [
+        ('personal', 'Personal'),
+        ('professional', 'Professional'),
+    ]
 
-SITE_ID=1
-RATELIMIT = 1000
+# Software Development Project Categories
+CATEGORY_CHOICES = [('Web Development', 'Web Development'),
+                    ('Software Development', 'Software Development'),
+                    ('Database Management', 'Database Management'),
+                    ('DevOps', 'DevOps'),
+                    ('Networking', 'Networking'),
+                    ('UI/UX Design', 'UI/UX Design'),
+                    ('Cyber Security', 'Cyber Security'),
+                    ('Cloud Computing', 'Cloud Computing'),
+                    ('Machine Learning', 'Machine Learning'),
+                    ('Data Science', 'Data Science'),
+                    ('Artificial Intelligence', 'Artificial Intelligence'),
+                    ('Internet of Things', 'Internet of Things'),
+                    ('Game Development', 'Game Development'),
+                    ('Other', 'Other')
+                    ]
+
+SITE_ID = 1
+
+# get rate limit value from environment variable, default == 1000
+RATELIMIT = os.environ.get("RATELIMIT", default=1000)
+
+# if RATELIMIT is not an integer, set it to 1000
+try:
+    RATELIMIT = int(RATELIMIT)
+except ValueError:
+    RATELIMIT = 1000
+except TypeError:
+    RATELIMIT = 1000
+except Exception:
+    RATELIMIT = 1000
+
+# if RATELIMIT is less than 1000, set it to 1000
+if RATELIMIT < 1000:
+    RATELIMIT = 1000

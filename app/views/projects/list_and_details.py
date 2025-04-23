@@ -45,7 +45,7 @@ class ProjectListView(ListView):
         context["categories"] = list(dict.fromkeys([
             category for category in categories
         ]))
-        context["default_image"] = "assets/images/software-dev.webp"
+        # context["default_image"] = "assets/images/software-dev.webp"
         context["categories"].sort()
         context["sorting_options"] = self.sorting_options()
         context["sort_by"] = self.request.GET.get('sort_by', 'date_desc')

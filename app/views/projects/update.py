@@ -1,10 +1,10 @@
 from django.contrib import messages
-from django.conf import settings
+# from django.conf import settings
 from django.http import JsonResponse
 from django.views.generic import UpdateView
 from titlecase import titlecase
 
-from app.models import Image, Video
+# from app.models import Image, Video
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from app.views.projects.create import BaseProjectView
 
@@ -28,19 +28,21 @@ class UpdateProjectView(BaseProjectView, UpdateView):
             handle_no_permissions(
                 self.request, "You do not have permission to update a project."
             )
-        
+
         success_messages = []
         error_messages = []
 
         # Handle image upload
         if images:
-            self.handle_images(images, project, success_messages, error_messages)
+            self.handle_images(images, project,
+                               success_messages, error_messages)
 
         if youtube_urls:
             # First, delete existing videos if you want to replace them
-            #Video.objects.filter(project=project).delete()
+            # Video.objects.filter(project=project).delete()
             # Create new video objects
-            self.handle_youtube_urls(youtube_urls, project, success_messages, error_messages)
+            self.handle_youtube_urls(youtube_urls, project,
+                                     success_messages, error_messages)
 
         if not images and not youtube_urls:
             success_messages.append("Project Updated Successfully!")

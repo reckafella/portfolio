@@ -4,7 +4,7 @@ from cloudinary.models import CloudinaryField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy as reverse
 from django.utils.text import slugify
 from wagtail.fields import RichTextField
 from django.db.models.signals import post_save
@@ -69,17 +69,16 @@ class UserSettings(models.Model):
 
 
 class Projects(models.Model):
-    PROJECT_TYPES = [
-        ('personal', 'Personal'),
-        ('professional', 'Professional'),
-    ]
+    PROJECT_TYPES = settings.PROJECT_TYPES
+    CATEGORY_CHOICES = settings.CATEGORY_CHOICES
 
     title = models.CharField(unique=True, max_length=200)
     description = RichTextField()
     project_type = models.CharField(max_length=20,
-                                    choices=PROJECT_TYPES, default='personal')
+                                    choices=PROJECT_TYPES,
+                                    default='personal')
     category = models.CharField(max_length=100,
-                                choices=settings.CATEGORY_CHOICES,
+                                choices=CATEGORY_CHOICES,
                                 default='Web Development')
     client = models.CharField(max_length=200, default="Personal")
     project_url = models.URLField(blank=True, null=True)
@@ -174,7 +173,7 @@ class Message(models.Model):
         super().save(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy("app:contact")
+        return reverse("app:contact")
 
 
 @receiver(post_save, sender=User)

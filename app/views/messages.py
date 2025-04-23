@@ -3,13 +3,12 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import FormView, TemplateView, ListView
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy as reverse
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib import messages
 
 from app.models import Message
 from app.forms.contact import ContactForm
-from captcha.helpers import captcha_image_url
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
@@ -20,7 +19,7 @@ from app.views.helpers.helpers import is_ajax
 class ContactView(FormView):
     template_name = "app/contact/contact.html"
     form_class = ContactForm
-    success_url = reverse_lazy('app:contact_success')
+    success_url = reverse('app:contact_success')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,7 +64,7 @@ class ContactView(FormView):
 
 class ContactSuccessView(TemplateView):
     template_name = "app/contact/success.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Message Sent"
@@ -84,8 +83,10 @@ class MessagesView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def test_func(self):
         return self.request.user.is_staff or self.request.user.is_superuser
 
-    """ def handle_no_permission(self):
-        raise PermissionDenied("You do not have permission to view this page") """
+    """
+    def handle_no_permission(self):
+            raise PermissionDenied("No permission to view this page")
+    """
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

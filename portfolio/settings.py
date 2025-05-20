@@ -18,7 +18,7 @@ from app.views.helpers.helpers import get_error_files
 
 
 def csrf_failure_view(request, reason=""):
-    from app.views.auth import CSRFFailureView
+    from authentication.views.auth.auth import CSRFFailureView
     return CSRFFailureView.as_view()(request, reason=reason)
 
 
@@ -38,6 +38,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False")
 DEBUG = False if DEBUG == "False" else True
+DEBUG = True
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
@@ -67,7 +68,7 @@ if ENVIRONMENT == 'production':
     CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
-    INSTALLED_APPS = []  # 'daphne'
+    INSTALLED_APPS = ['daphne']
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
@@ -84,7 +85,7 @@ INSTALLED_APPS += [
     "django.contrib.contenttypes", 'django.contrib.sites',
     "django.contrib.sessions", "django.contrib.messages",
     "django.contrib.staticfiles", "django.contrib.sitemaps",
-    "corsheaders", "app", "blog", 'robots', 'captcha',
+    "corsheaders", "app", "authentication", "blog", 'robots', 'captcha',
     "django_redis", "crispy_forms",
 ]
 

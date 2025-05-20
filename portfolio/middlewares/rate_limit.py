@@ -25,7 +25,7 @@ class RateLimitMiddleware:
         # check limit (set in settings.py, DEFAULT to 100)
         rate_limit = settings.RATELIMIT if settings.RATELIMIT >= 100 else 100
         if (data['count'] >= rate_limit):
-            from app.views.errors import handler_429 as _429
+            from authentication.views.auth.errors import handler_429 as _429
             return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
 
         data['count'] += 1

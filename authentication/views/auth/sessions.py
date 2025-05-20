@@ -9,7 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class SessionManagementView(LoginRequiredMixin, View):
+class ManageSessionView(LoginRequiredMixin, View):
     """
     Handles session management for checking and updating session expiration.
     * Inherits from LoginRequiredMixin to ensure the user is authenticated.

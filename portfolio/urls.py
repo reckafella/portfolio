@@ -14,6 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# ignore linting errors
+# flake8: noqa
 
 from django.conf.urls import handler400, handler403, handler404, handler500
 from django.contrib import admin
@@ -26,14 +28,13 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView
-from app.views.refresh_captcha import CaptchaRefreshView
+from authentication.views.auth.captcha import CaptchaRefreshView
 
 # Error handling
-handler404 = "app.views.errors.handler_404"
-handler500 = "app.views.errors.handler_500"
-handler403 = "app.views.errors.handler_403"
-handler400 = "app.views.errors.handler_400"
-#handler429 = "app.views.errors.handler_429"
+handler404 = "authentication.views.auth.errors.handler_404"
+handler500 = "authentication.views.auth.errors.handler_500"
+handler403 = "authentication.views.auth.errors.handler_403"
+handler400 = "authentication.views.auth.errors.handler_400"
 
 
 urlpatterns = [
@@ -50,4 +51,5 @@ urlpatterns = [
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
     path("", include("app.urls"), name="app"),
+    path("", include("authentication.urls"), name="auth"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

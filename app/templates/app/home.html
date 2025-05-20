@@ -33,7 +33,7 @@
 <section id="about" class="about section">
     <!-- section title -->
     <div class="container section-title" data-aos="fade-up">
-        <h3>About Me</h3>
+        <h2>About Me</h2>
     </div>
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -76,7 +76,7 @@
     <!-- Section Title -->
     <div class="section-title" data-aos="fade-up">
         <h2>Skills</h2>
-        <p>My technical skills and expertise</p>
+        <p>Technical Skills and Expertise</p>
     </div>
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -153,8 +153,18 @@
                 </ul>
             </div>
         </div>
+        <div class="row card mt-4">
+            <div class="col-lg-12">
+                <p class="text-center py-2">
+                    To learn more about my work, check out my
+                    <a href="{% url 'app:projects' %}">projects</a>
+                    or
+                    <a href="{% url 'blog:list_articles' %}">blog</a>.
+                    To view my resume click <a href="{% url 'app:resume' %}">here</a>.
+                </p>
+                
+            </div>
     </div>
-        <p class="text-center py-2"> To learn more about my work, check out my <a href="{% url 'app:projects' %}">projects</a> or <a href="{% url 'blog:list_articles' %}">blog</a>. To view my resume click <a href="{% url 'app:resume' %}">here</a>.</p>
 </section>
 
 <!-- Services Offered -->

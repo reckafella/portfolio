@@ -35,7 +35,7 @@ class FormValidator {
 
         // Remove any existing states
         this.submitButton.classList.remove('btn-primary', 'btn-success', 'btn-danger');
-        
+
         const states = {
             loading: {
                 html: `
@@ -63,7 +63,7 @@ class FormValidator {
         };
 
         const newState = states[state] || states.default;
-        
+
         // Update button state
         this.submitButton.innerHTML = newState.html;
         this.submitButton.disabled = newState.disabled;
@@ -86,13 +86,13 @@ class FormValidator {
         try {
             const response = await fetch('/captcha/refresh/');
             if (!response.ok) throw new Error('Failed to refresh captcha');
-            
+
             const data = await response.json();
             if (!data.key || !data.image_url) throw new Error('Invalid captcha data');
 
             const captchaImage = this.form.querySelector('.captcha');
             const captchaInput = this.form.querySelector('[name="captcha_0"]');
-            
+
             captchaImage.src = data.image_url;
             captchaInput.value = data.key;
         } catch (error) {
@@ -110,6 +110,10 @@ class FormValidator {
 
     displayFieldErrors(errors) {
         if (!errors) return;
+
+        // Check if errors is an empty list or object
+        if (Array.isArray(errors) && errors.length === 0) return;
+        if (typeof errors === 'object' && Object.keys(errors).length === 0) return;
 
         if (typeof errors === 'string') {
             toastManager.show('danger', errors);
@@ -131,7 +135,7 @@ class FormValidator {
     async handleSubmit(e) {
         e.preventDefault();
         this.clearFieldErrors();
-        
+
         // Set button to loading state before the request
         this.setButtonState('loading');
 
@@ -145,7 +149,7 @@ class FormValidator {
             });
 
             const data = await response.json();
-            
+
             if (data.success) {
                 this.setButtonState('success');
                 toastManager.show('success', data.message, data.messages);
@@ -163,7 +167,7 @@ class FormValidator {
                 if (this.captchaRefreshButton) {
                     this.captchaRefreshButton.click();
                 }
-                
+
                 this.displayFieldErrors(data.errors);
                 toastManager.show(
                     'danger',

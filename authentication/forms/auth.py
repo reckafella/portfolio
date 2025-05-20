@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib import admin
+# from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import (
@@ -25,7 +25,8 @@ class LoginForm(forms.Form):
         min_length=8,
         max_length=60,
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "id": "password1"}, render_value=True
+            attrs={"class": "form-control", "id": "password1"},
+            render_value=True
         ),
         help_text="Password must be at least 8 characters long",
     )

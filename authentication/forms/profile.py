@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 
-from app.models import Profile, SocialLinks, UserSettings
+from authentication.models import Profile, SocialLinks, UserSettings
 
 
 class ProfileForm(forms.ModelForm):
@@ -35,17 +35,20 @@ class SocialLinksForm(forms.ModelForm):
 
 
 class UserPasswordChangeForm(PasswordChangeForm):
-    old_password = forms.CharField(
-        label='Old Password', required=True, min_length=8, max_length=50,
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    old_password = forms.CharField(label='Old Password', required=True,
+                                   min_length=8, max_length=50,
+                                   widget=forms.PasswordInput(
+                                       attrs={'class': 'form-control'}))
 
-    new_password1 = forms.CharField(
-        label='New Password', required=True, min_length=8, max_length=50,
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password1 = forms.CharField(label='New Password', required=True,
+                                    min_length=8, max_length=50,
+                                    widget=forms.PasswordInput(
+                                        attrs={'class': 'form-control'}))
 
-    new_password2 = forms.CharField(
-        label='Confirm New Password', required=True, min_length=8, max_length=50,
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(label='Confirm New Password',
+                                    required=True, min_length=8, max_length=50,
+                                    widget=forms.PasswordInput(
+                                        attrs={'class': 'form-control'}))
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
@@ -73,14 +76,17 @@ class UserPasswordChangeForm(PasswordChangeForm):
         return self.user
 
 
-
 class UserSettingsForm(forms.ModelForm):
     class Meta:
         model = UserSettings
         exclude = ['user']
         widgets = {
-            'changes_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'new_products_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'marketing_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'security_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input', 'disabled': True}),
+            'changes_notifications': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}),
+            'new_products_notifications': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}),
+            'marketing_notifications': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}),
+            'security_notifications': forms.CheckboxInput(
+                attrs={'class': 'form-check-input', 'disabled': True}),
         }

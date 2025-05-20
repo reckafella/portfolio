@@ -13,16 +13,17 @@ class BaseAuthentication(FormView):
     form_class = None
 
     def get_success_url(self):
-        next_url = self.request.GET.get("next") or self.request.POST.get("next")
+        next_url = self.request.GET.get("next")\
+            or self.request.POST.get("next")
         if url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
             return next_url
         return reverse("app:home")
-    
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect("app:home")
         return super().dispatch(request, *args, **kwargs)
-    
+
     def form_invalid(self, form):
         if is_ajax(self.request):
             return JsonResponse({"success": False, "errors": form.errors})

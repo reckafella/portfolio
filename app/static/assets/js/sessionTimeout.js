@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
             new sessionTimeout({
                 sessionLength: '{{ request.session.get_expiry_age|default:0 }}',
                 warningTime: 60,
-                redirectUrl: '{% url "app:login" %}',
-                logoutUrl: '{% url "app:logout" %}',
+                redirectUrl: '{% url "authentication:login" %}',
+                logoutUrl: '{% url "authentication:logout" %}',
             });
         }
     }

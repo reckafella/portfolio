@@ -43,17 +43,19 @@ class ContactForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        if not all(cleaned_data.get(field) for field in ["name", "email", "subject", "message"]):
+        fields = ["name", "email", "subject", "message"]
+        if not all(cleaned_data.get(field) for field in fields):
             raise forms.ValidationError("All fields are required!")
         return cleaned_data
-    
+
     def save(self):
         name = self.cleaned_data.get("name")
         email = self.cleaned_data.get("email")
         subject = self.cleaned_data.get("subject")
         message = self.cleaned_data.get("message")
         if name and subject and email and message:
-            Message.objects.create(name=name, email=email, subject=subject, message=message)
+            Message.objects.create(name=name, email=email,
+                                   subject=subject, message=message)
         else:
             raise forms.ValidationError("All fields are required!")
 

@@ -20,7 +20,8 @@ class HomeView(TemplateView):
         context["projects"] = Projects.objects.all()[:n]
         # latest blog posts
 
-        posts = BlogPost.objects.live().order_by("-first_published_at")[:n]
+        posts = BlogPost.objects.live()\
+            .filter().order_by("-first_published_at")[:n]
         context["posts"] = posts
         return context
 

@@ -10,7 +10,6 @@ from wagtail.fields import RichTextField
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -58,7 +57,8 @@ class BlogPostPage(Page):
         default="all",
         help_text="Comma-separated list of topics"
     )
-    cloudinary_image_id = models.CharField(max_length=200, blank=True, null=True)
+    cloudinary_image_id = models.CharField(max_length=200, blank=True,
+                                           null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
 
@@ -84,6 +84,10 @@ class BlogPostPage(Page):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
+    @property
+    def first_image(self):
+        return self.images.first() if self.images.first() else None
+
     def __str__(self):
         return self.title + " by " + self.author.username
 
@@ -95,15 +99,31 @@ class BlogPostPage(Page):
         context["author"] = self.author
         context["post"] = self
         context["topics"] = self.get_topics()
-        context["date_published"] = self.first_published_at or self.post_created_at
+        context["date_published"] = self.first_published_at or\
+            self.post_created_at
 
         return context
+
+
+class BlogPostImage(models.Model):
+    post = models.ForeignKey(
+        BlogPostPage,
+        on_delete=models.PROTECT,
+        related_name="images"
+    )
+    cloudinary_image_id = models.CharField(max_length=255, blank=True,
+                                           null=True)
+    cloudinary_image_url = models.URLField(blank=True, null=True)
+    optimized_image_url = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.post.title} - Image"
 
 
 class BlogPostComment(models.Model):
     post = models.ForeignKey(
         BlogPostPage,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="comments"
     )
     author = models.ForeignKey(
@@ -120,3 +140,25 @@ class BlogPostComment(models.Model):
 
     def __str__(self):
         return f"{self.author.username} on {self.post.title}"
+
+
+class BlogPostCommentReply(models.Model):
+    comment = models.ForeignKey(
+        BlogPostComment,
+        on_delete=models.PROTECT,
+        related_name="replies"
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="replies_to_comments"
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author.username} on {self.comment.post.title}"

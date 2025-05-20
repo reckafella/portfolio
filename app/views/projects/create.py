@@ -6,7 +6,7 @@ from django.views.generic import CreateView
 from titlecase import titlecase
 from django.http import JsonResponse
 
-from app.forms.errors import CustomErrorList
+from authentication.forms.errors import CustomErrorList
 from app.forms.projects import ProjectsForm
 from app.models import Image, Projects, Video
 from app.views.helpers.cloudinary import (

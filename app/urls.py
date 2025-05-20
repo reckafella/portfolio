@@ -10,9 +10,6 @@ from app.views.views import (
     SitemapView,
     CustomRedirectView as crv
 )
-from app.views.auth import SignupView, LoginView, LogoutView
-from app.views.profile.profile import ProfileView as PV
-from app.views.sessions import SessionManagementView as SMV
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
 from app.views.projects.update import UpdateProjectView as UPV
@@ -32,12 +29,6 @@ app_name = "app"
 """ redirects """
 urlpatterns = [
     path("home", crv.as_view(redirect_to="/")),
-    path("accounts/register", crv.as_view(redirect_to="/signup/")),
-    path("accounts/signup", crv.as_view(redirect_to="/signup/")),
-    path("register", crv.as_view(redirect_to="/signup/")),
-    path("accounts/login", crv.as_view(redirect_to="/login/")),
-    path("accounts/logout", crv.as_view(redirect_to="/logout/")),
-    path('profile/<str:username>', PV.as_view(), name='profile_detail'),
     path("sitemap.xml", crv.as_view(redirect_to="/sitemap/")),
     path("projects", PLV.as_view(), name="projects"),
     path("projects/new", CPV.as_view(), name="add_project"),
@@ -45,16 +36,12 @@ urlpatterns = [
     path("projects/<slug:slug>/update", UPV.as_view(), name="update_project"),
     path("projects/<slug:slug>/delete", DPV.as_view(), name="delete_project"),
     path("", HomeView.as_view(), name="home"),
-    path("login", LoginView.as_view(), name="login"),
-    path("signup", SignupView.as_view(), name="signup"),
-    path("logout", LogoutView.as_view(), name="logout"),
     path("services", ServicesView.as_view(), name="services"),
     path("about", AboutView.as_view(), name="about"),
     path("sitemap/", SitemapView.as_view(), name="sitemap"),
     path("search", search.SearchView.as_view(), name="search"),
     path("resume", ResumeView.as_view(), name="resume"),
     path("resume-pdf", ResumePDFView.as_view(), name="resume_pdf"),
-    path("session", SMV.as_view(), name="manage_session"),
     path("contact", ContactView.as_view(), name="contact"),
     path("contact/success", CSV.as_view(), name="contact_success"),
     path("messages/inbox", MessagesView.as_view(), name="messages"),

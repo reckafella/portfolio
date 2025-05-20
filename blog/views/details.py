@@ -21,7 +21,9 @@ class PostDetailView(DetailView):
         # If user is authenticated but not staff
         elif not self.request.user.is_staff:
             # Show posts that are either live or authored by the current user
-            queryset = queryset.filter(Q(live=True) | Q(author=self.request.user))
+            queryset = queryset.filter(
+                Q(live=True) | Q(author=self.request.user)
+            )
         # If user is staff, show all posts
         else:
             queryset = queryset
@@ -30,10 +32,10 @@ class PostDetailView(DetailView):
     def get_other_posts(self, article):
         """ Returns a set of other posts in the recent posts section """
         articles = self.get_queryset()
-        
+
         # Start with base query excluding the current article
         query = ~Q(id=article.id)
-        
+
         # If user is not authenticated, show only published posts
         if not self.request.user.is_authenticated:
             query &= Q(live=True)
@@ -42,13 +44,12 @@ class PostDetailView(DetailView):
             # Show posts that are either live or authored by the current user
             query &= (Q(live=True) | Q(author=self.request.user))
         # If user is staff, show all posts (already excluded current article)
-        
+
         num_posts = 5
         return set(
             articles.filter(query)
             .order_by("-first_published_at")[:num_posts]
         )
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,17 +57,19 @@ class PostDetailView(DetailView):
         articles = self.get_queryset()
 
         context["other_posts"] = self.get_other_posts(article)
-        
+
         context["post_topics"] = article.get_topics()
         context["all_topics"] = self.add_topics(articles)
         context["form"] = self.form_class(instance=article)
         context['page_title'] = f'Update: {article.title}'
         context['submit_text'] = 'Update Post'
-        context['action_url'] = reverse_lazy('blog:update_article', kwargs={'slug': article.slug})
-        context['delete_url'] = reverse_lazy('blog:delete_article', kwargs={'slug': article.slug})
+        context['action_url'] = reverse_lazy('blog:update_article',
+                                             kwargs={'slug': article.slug})
+        context['delete_url'] = reverse_lazy('blog:delete_article',
+                                             kwargs={'slug': article.slug})
 
         return context
-    
+
     def add_topics(self, articles):
         """
         Returns a list of tuples for all topics in the queryset
@@ -74,11 +77,17 @@ class PostDetailView(DetailView):
         """
         if not articles.exists():
             return []
-        topics = set(topic.strip() for post in articles for topic in post.get_topics())
+        topics = set(
+            topic.strip() for post in articles for topic in post.get_topics()
+        )
         try:
             topics.remove("all")
         except KeyError:
             pass
-        topic_count = ([(topic, articles.filter(topics__icontains=topic).count()) for topic in topics])
+        topic_count = (
+            [(topic,
+              articles.filter(topics__icontains=topic).count()
+              ) for topic in topics])
+
         all_count = articles.count()
         return sorted([("all", all_count)] + topic_count)

@@ -37,6 +37,8 @@
   --contrast-color: #000;
   --search-bar-background-color: #1d0723;
   --nav-dropdown-hover-color: var(--accent-color);
+  --skills-bg: #e9e8e6;
+  --about-bg: #ebe8e6;
 }
 
 [data-bs-theme="dark"] {
@@ -54,6 +56,8 @@
   --nav-dropdown-color: #ffffff;
   --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
   --nav-mobile-background-color: #474444;
+  --skills-bg: #252525;
+  --about-bg: #253525;
 }
 
 /* theme-transition.css */
@@ -922,6 +926,11 @@ section,
 /*--------------------------------------------------------------
 # About Section
 --------------------------------------------------------------*/
+.about {
+  background: var(--about-bg);
+  padding: 60px 0;
+}
+
 .about .content h2 {
   font-weight: 700;
   font-size: 24px;
@@ -952,6 +961,11 @@ section,
 /*--------------------------------------------------------------
 # Skills Section
 --------------------------------------------------------------*/
+.skills {
+  background: var(--skills-bg);
+  padding: 60px 0;
+}
+
 .skills .progress {
   height: 60px;
   display: block;

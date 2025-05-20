@@ -43,6 +43,17 @@
 
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
+    <!-- SEO -->
+    <meta name="description" content="{% block description %} Base {% endblock %}">
+    <meta name="keywords" content="{% block keywords %} Base {% endblock %}">
+    <meta name="author" content="Ethan Wanyoike">
+    <meta name="robots" content="index, follow">
+    <meta name="google" content="translate">
+    <meta name="googlebot" content="index, follow">
+    <meta name="googlebot-web" content="index, follow">
+    <meta name="googlebot-image" content="index, follow">
+    <meta name="googlebot-video" content="index, follow">
+    <meta name="googlebot-mobile" content="index, follow">
 </head>
 <body>
     {% if user.is_authenticated %}
@@ -100,8 +111,8 @@
                     new sessionTimeout({
                         sessionLength: '{{ request.session.get_expiry_age|default:0 }}',
                         warningTime: 300,
-                        redirectUrl: '{% url "app:login" %}',
-                        logoutUrl: '{% url "app:logout" %}',
+                        redirectUrl: '{% url "authentication:login" %}',
+                        logoutUrl: '{% url "authentication:logout" %}',
                     });
                 }
             }

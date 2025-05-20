@@ -9,9 +9,9 @@ from django.http import JsonResponse
 from django.conf import settings
 
 
-from app.models import Profile, SocialLinks, UserSettings
+from authentication.models import Profile, SocialLinks, UserSettings
 from app.views.helpers.helpers import handle_no_permissions
-from app.forms.profile import (
+from authentication.forms.profile import (
     ProfileForm, SocialLinksForm,
     UserPasswordChangeForm, UserSettingsForm
 )
@@ -25,7 +25,7 @@ uploader = CloudinaryImageHandler()
 class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
-    template_name = 'app/profile/profile_detail.html'
+    template_name = 'auth/profile/profile_detail.html'
 
     def test_func(self):
         return (
@@ -221,4 +221,5 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         """Redirect to the profile detail page after successful update"""
         _username = self.request.user.username
-        return reverse('app:profile_detail', kwargs={'username': _username})
+        return reverse('authentication:profile_detail',
+                       kwargs={'username': _username})

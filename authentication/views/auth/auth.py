@@ -8,14 +8,13 @@ from django.urls import reverse
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 
-from app.forms.auth import LoginForm, SignupForm
-from app.views.helpers.base_auth_class import BaseAuthentication
+from authentication.forms.auth import LoginForm, SignupForm
+from authentication.views.auth.base import BaseAuthentication
 from app.views.helpers.helpers import is_ajax
 
 
 class SignupView(BaseAuthentication):
     form_class = SignupForm
-
 
     def form_valid(self, form):
         username = form.cleaned_data.get("username")
@@ -35,7 +34,7 @@ class SignupView(BaseAuthentication):
         user.save()
         login(self.request, user)
 
-        success_message = "Account created successfully. Welcome to our platform!"
+        success_message = "Account created successfully. Welcome!"
         return self.handle_success(success_message)
 
     def get_context_data(self, **kwargs):
@@ -49,7 +48,7 @@ class SignupView(BaseAuthentication):
             "extra_messages": [
                 {
                     "text": "Already have an account?",
-                    "link": reverse("app:login"),
+                    "link": reverse("authentication:login"),
                     "link_text": "Login",
                 }
             ],
@@ -71,7 +70,7 @@ class LoginView(BaseAuthentication):
             "extra_messages": [
                 {
                     "text": "Don't have an account?",
-                    "link": reverse("app:signup"),
+                    "link": reverse("authentication:signup"),
                     "link_text": "Register",
                 }
             ],
@@ -86,7 +85,8 @@ class LoginView(BaseAuthentication):
         if user is not None:
             if user.is_active:
                 login(self.request, user)
-                success_message = f"Login Successful. Welcome back, {username.capitalize()}!"
+                _user = username.capitalize()
+                success_message = f"Login Successful. Welcome back, {_user}!"
                 return self.handle_success(success_message)
             else:
                 error_message = "Your account is disabled."
@@ -95,7 +95,9 @@ class LoginView(BaseAuthentication):
             error_message = "Invalid username or password."
             return self.handle_error(error_message)
 
+
 class LogoutView(LoginRequiredMixin, View):
+
     def get(self, request):
         return self._handle_logout(request)
 
@@ -103,11 +105,9 @@ class LogoutView(LoginRequiredMixin, View):
         return self._handle_logout(request)
 
     def _handle_logout(self, request):
-        is_staff_user = request.user.is_staff and hasattr(request.user, 'is_staff')
+        redirect_url = reverse("app:home")
         logout(request)
         success_message = "Successfully logged out. See you next time!"
-
-        redirect_url = reverse("app:login") if is_staff_user else reverse("app:home")
 
         if is_ajax(request):
             return JsonResponse({

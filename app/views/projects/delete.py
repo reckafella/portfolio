@@ -18,7 +18,7 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = "app/projects/deletion/confirm_delete.html"
     context_object_name = "view"
     success_url = reverse_lazy("app:projects")
-    login_url = reverse_lazy("app:login")
+    login_url = reverse_lazy("authentication:login")
     redirect_field_name = "next"
 
     def get_context_data(self, **kwargs):
@@ -35,116 +35,71 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         return self.request.user.is_staff
 
-    def delete(self, request, **_):
-        project = self.get_object()
+    def post(self, request, *args, **kwargs):
+        """
+        Override post instead of delete to properly handle the protected\
+            relationships
+        """
+        self.object = self.get_object()
+        self.object_id = self.object.pk
+        project = self.object
         success_messages = []
         error_messages = []
 
-        if not self.test_func():
-            _message = "You do not have permission to delete this project."
-            error_messages.append(_message)
-
-            response_data = {
-                "success": False,
-                "messages": [],
-                "errors": error_messages,
-                "redirect_url": None,
-            }
-            if is_ajax(request):
-                return JsonResponse(response_data, status=403)
-            messages.error(request, _message)
-            return self.render_to_response(self.get_context_data())
-
         try:
             with transaction.atomic():
-                # 1. Delete images from Cloudinary and database
+                # 1. Delete ALL images first (they are protected)
                 images = list(project.images.all())
                 for image in images:
                     try:
                         if image.cloudinary_image_id:
                             uploader.delete_image(image.cloudinary_image_id)
                         image.delete()
-                        _message = "Delete Image Success..."
-                        success_messages.append(_message)
-
-                        response_data = {
-                            "success": True,
-                            "messages": success_messages,
-                            "errors": [],
-                            "redirect_url": None,
-                        }
-                        if is_ajax(request):
-                            return JsonResponse(response_data)
+                        success_messages.append("Deleted image successfully.")
                     except Exception as e:
-                        _message = f"Delete Image Failed: {str(e)}"
+                        _message = f"Failed to delete image: {str(e)}"
                         error_messages.append(_message)
-                        response_data = {
-                            "success": False,
-                            "messages": [],
-                            "errors": error_messages,
-                            "redirect_url": None,
-                        }
-                        if is_ajax(request):
-                            return JsonResponse(response_data, status=400)
-                        raise Exception(f"Error deleting image: {str(e)}")
+                        raise
 
-                # 2. Delete video records
+                # 2. Delete ALL videos (they are protected)
                 videos = list(project.videos.all())
                 for video in videos:
                     try:
                         video.delete()
-                        success_messages.append("Success: Video link removed.")
-                        response_data = {
-                            "success": True,
-                            "messages": success_messages,
-                            "errors": [],
-                            "redirect_url": None,
-                        }
-                        if is_ajax(request):
-                            return JsonResponse(response_data)
-
+                        _message = "Deleted video link successfully."
+                        success_messages.append(_message)
                     except Exception as e:
-                        error_messages.append(
-                            f"Video link deletion failed: {str(e)}"
-                        )
-                        raise Exception(f"Error removing video: {str(e)}")
+                        _message = f"Failed to delete video link: {str(e)}"
+                        error_messages.append(_message)
+                        raise
 
-                # 3. Finally delete the project
+                # 3. Only after ALL protected relations are deleted,\
+                # delete the project
                 try:
                     project.delete()
                     success_messages.append("Project deleted successfully!")
-                    response_data = {
-                        "success": True,
-                        "messages": success_messages,
-                        "errors": [],
-                        "redirect_url": self.get_success_url(),
-                    }
-                    if is_ajax(request):
-                        return JsonResponse(response_data)
-                except ProtectedError as e:
-                    # Extract the protected objects from the error
-                    protected_objects = list(e.protected_objects)
+                except ProtectedError as pe:
+                    # If we still get a protected error,\
+                    # show the remaining protected objects
+                    protected_objects = list(pe.protected_objects)
                     protected_details = [f"{obj.__class__.__name__}\
                                          (ID: {obj.pk})"
                                          for obj in protected_objects]
 
                     error_message = f"Cannot delete project because it's still\
-                        referenced by {len(protected_objects)}\
-                            objects: {', '.join(protected_details)}"
+                        referenced by {len(protected_objects)} objects:\
+                            {', '.join(protected_details)}"
                     error_messages.append(error_message)
-                    response_data = {
-                        "success": False,
-                        "messages": [],
-                        "errors": error_messages,
-                        "redirect_url": None,
-                    }
-                    if is_ajax(request):
-                        return JsonResponse(response_data, status=400)
-                    raise Exception(error_message)
+                    raise
+                except Exception as e:
+                    _message = f"Failed to delete project: {str(e)}"
+                    error_messages.append(_message)
+                    raise
 
         except Exception as e:
-            transaction.set_rollback(True)  # Ensure transaction is rolled back
-            error_messages.append(f"Error during deletion process: {str(e)}")
+            # If any error occurs, rollback and return the error response
+            error_messages = list(set(error_messages))
+            error_messages.append(str(e))
             response_data = {
                 "success": False,
                 "messages": success_messages,
@@ -155,7 +110,7 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             if is_ajax(request):
                 return JsonResponse(response_data, status=400)
 
-            for error in error_messages:
+            for error in error_messages if error_messages else [str(e)]:
                 messages.error(request, error)
             return self.render_to_response(self.get_context_data())
 
@@ -163,17 +118,19 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         response_data = {
             "success": True,
             "messages": success_messages,
-            "errors": [],
             "redirect_url": self.get_success_url(),
         }
-
-        if is_ajax(request):
-            return JsonResponse(response_data)
 
         for message in success_messages:
             messages.success(request, message)
 
+        if is_ajax(request):
+            return JsonResponse(response_data, status=200)
+
         return self.render_to_response(self.get_context_data())
 
     def get_success_url(self):
-        return reverse_lazy("app:projects")
+        """
+        Override get_success_url to redirect to the success URL
+        """
+        return self.success_url

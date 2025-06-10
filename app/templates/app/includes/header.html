@@ -39,7 +39,7 @@
                     <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'app:resume' %}"><span>About Me</span></a></li>
+                            <li><a href="{% url 'app:about' %}"><span>About Me</span></a></li>
                             <li><a href="{% url 'app:resume_pdf' %}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                         </ul>
                     </li>
@@ -66,16 +66,29 @@
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             {% if user.is_staff %}
-                            <li><a href="{% url 'app:messages' %}"><span>Messages</span></a></li>
+                            <li><a href="{% url 'app:messages' %}"><span>Messages</span><i class="bi bi-chat-square-text-fill"></i></a></li>
                             <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url 'authentication:profile_detail' request.user %}"><span>My Profile</span></a></li>
-                            <li><a href="{% url 'authentication:logout' %}?next={{ request.path }}"><span>Logout</span></a></li>
+                            <li>
+                                <a href="{% url 'authentication:logout' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <span>Logout</span>
+                                    <i class="bi bi-box-arrow-left"></i>
+                                </a>
+                            </li>
                             {% else %}
-                            <li><a href="{% url 'authentication:login' %}?next={{ request.path }}"><span>Login</span></a></li>
-                            <li><a href="{% url 'authentication:signup' %}?next={{ request.path }}"><span>Register</span></a></li>
-                            {% endif %}
+                            <li>
+                                <a href="{% url 'authentication:login' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    <span>Login</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'authentication:signup' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <i class="bi bi-person"></i>
+                                    <span>Register</span>
+                                </a>
+                            </li>{% endif %}
                         </ul>
                     </li>
                 </ul>

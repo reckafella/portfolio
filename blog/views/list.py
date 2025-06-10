@@ -1,10 +1,8 @@
 from datetime import datetime
-from unittest.mock import Base
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from django.shortcuts import get_object_or_404
 
 from blog.models import BlogPostPage
 
@@ -21,12 +19,15 @@ class BasePostListView(ListView):
     def add_topics(self, articles):
         if not articles.exists():
             return []
-        topics = set(topic.strip() for post in articles for topic in post.get_topics())
+        topics = set(
+            topic.strip() for post in articles for topic in post.get_topics())
         try:
             topics.remove("all")
         except KeyError:
             pass
-        topic_counts = [(topic, articles.filter(topics__icontains=topic).count()) for topic in topics]
+        topic_counts = [(topic,
+                         articles.filter(topics__icontains=topic).count())
+                        for topic in topics]
         # Add "all" entry with total count of all articles
         all_count = articles.count()
         return sorted([("all", all_count)] + topic_counts)
@@ -84,7 +85,7 @@ class PostListView(BasePostListView):
             articles = articles.filter(topics__icontains=topic)
 
         return articles.order_by(order_by)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         articles = self.get_queryset()
@@ -110,9 +111,8 @@ class AuthorPostsView(BasePostListView):
         articles = BlogPostPage.objects.live().filter(author=self.author)
 
         if search_query:
-            articles = articles.filter(title__icontains=search_query) | articles.filter(
-                content__icontains=search_query
-            )
+            articles = articles.filter(title__icontains=search_query) |\
+                articles.filter(content__icontains=search_query)
 
         if topic != "all":
             articles = articles.filter(topics__icontains=topic)
@@ -129,7 +129,7 @@ class AuthorPostsView(BasePostListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        articles = self.get_queryset()
+        # articles = self.get_queryset()
 
         context["author"] = self.author
         # context["sorting_options"] = self.add_sorting_options()
@@ -157,14 +157,14 @@ class PostsByDateView(BasePostListView):
             return redirect('blog:posts_list')
 
         articles = BlogPostPage.objects.live()
-        
+
         # Build date filter
         date_filter = {'first_published_at__year': year}
         if month:
             date_filter['first_published_at__month'] = month
         if day:
             date_filter['first_published_at__day'] = day
-            
+
         articles = articles.filter(**date_filter)
 
         # Apply sorting
@@ -183,7 +183,7 @@ class PostsByDateView(BasePostListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         year, month, day = self.get_date_components()
-        
+
         # Format the page title based on date components
         if day:
             date_obj = datetime(year, month, day)
@@ -193,13 +193,14 @@ class PostsByDateView(BasePostListView):
             title = date_obj.strftime('%B, %Y')
         else:
             title = str(year)
-            
+
         context["page_title"] = f'Posts from {title}'
         # context["current_sort"] = self.request.GET.get("sort", "date_desc")
         # context["sorting_options"] = self.add_sorting_options()
         context["all_authors"] = True
-        
+
         return context
+
 
 class PostsByTopicView(BasePostListView):
     def get_queryset(self):
@@ -216,12 +217,12 @@ class PostsByTopicView(BasePostListView):
             "author_desc": "-author__username",
         }.get(sort, "-first_published_at")
 
-        articles = BlogPostPage.objects.live() if topic == 'all' else BlogPostPage.objects.live().filter(topics__icontains=topic)
+        articles = BlogPostPage.objects.live() if topic == 'all' else\
+            BlogPostPage.objects.live().filter(topics__icontains=topic)
 
         if search_query:
-            articles = articles.filter(title__icontains=search_query) | articles.filter(
-                content__icontains=search_query
-            )
+            articles = articles.filter(title__icontains=search_query) |\
+                articles.filter(content__icontains=search_query)
 
         return articles.order_by(order_by)
 

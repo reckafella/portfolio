@@ -39,6 +39,7 @@ class SignupView(BaseAuthentication):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        _next = self.request.GET.get("next") or "/"
         context.update({
             "page_title": "Create an Account",
             "form_title": "Create Account",
@@ -48,7 +49,7 @@ class SignupView(BaseAuthentication):
             "extra_messages": [
                 {
                     "text": "Already have an account?",
-                    "link": reverse("authentication:login"),
+                    "link": f'{reverse("authentication:login")}?next={_next}',
                     "link_text": "Login",
                 }
             ],
@@ -61,6 +62,7 @@ class LoginView(BaseAuthentication):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        _next = self.request.GET.get("next") or "/"
         context.update({
             "page_title": "Login to Your Account",
             "form_title": "Sign in",
@@ -70,7 +72,7 @@ class LoginView(BaseAuthentication):
             "extra_messages": [
                 {
                     "text": "Don't have an account?",
-                    "link": reverse("authentication:signup"),
+                    "link": f'{reverse("authentication:signup")}?next={_next}',
                     "link_text": "Register",
                 }
             ],
@@ -105,7 +107,8 @@ class LogoutView(LoginRequiredMixin, View):
         return self._handle_logout(request)
 
     def _handle_logout(self, request):
-        redirect_url = reverse("app:home")
+        _next = request.GET.get("next") or "/"
+        redirect_url = f'{reverse("authentication:login")}?next={_next}'
         logout(request)
         success_message = "Successfully logged out. See you next time!"
 

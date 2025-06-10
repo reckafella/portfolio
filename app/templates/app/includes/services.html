@@ -1,0 +1,60 @@
+{% load static %}
+
+<!-- Services Offered -->
+<section id="services" class="services py-5">
+    <div class="container d-flex flex-column justify-content-center align-items-center w-100" data-aos="fade-up">
+        <div class="text-center mb-3 section-title" data-aos="fade-up">
+            <h2 class="text-center">Services Offered</h2>
+        </div>
+        <div class="d-flex flex-wrap justify-content-around text-center">
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="100">
+                <i class="bi bi-code-square fs-1"></i>
+                <p class="fw-semibold mt-2">Website Development</p>
+                <p class="lead text-start">Custom-built websites tailored to your needs. This ensures that you have a
+                    responsive and engaging online presence.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="200">
+                <i class="bi bi-hdd-stack fs-1"></i>
+                <p class="fw-semibold mt-2">Website Hosting</p>
+                <p class="lead text-start">Reliable and secure hosting solutions to ensure your website is always up and
+                    running.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="300">
+                <i class="bi bi-database fs-1"></i>
+                <p class="fw-semibold mt-2">Backend and API Development</p>
+                <p class="lead text-start">Robust backend systems and APIs to power your applications and services.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="400">
+                <i class="bi bi-bug fs-1"></i>
+                <p class="fw-semibold mt-2">Web & Application Testing</p>
+                <p class="lead text-start">Thorough testing to ensure your applications are bug-free and perform
+                    optimally so that users can enjoy smooth experience.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="500">
+                <i class="bi bi-cloud fs-1"></i>
+                <p class="fw-semibold mt-2">Maintenance & Support</p>
+                <p class="lead text-start">Ongoing support and maintenance to keep your systems and projects running
+                    smoothly.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-10 mb-4 card px-1 mx-1" data-aos="fade-up" data-aos-delay="600">
+                <i class="bi bi-tools fs-1"></i>
+                <p class="fw-semibold mt-2">Database Design</p>
+                <p class="lead text-start">Designing efficient and scalable databases to store and manage your data
+                    effectively.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section id="cta" class="cta py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <div class="text-center mb-2 section-title">
+            <h2 class="">Ready to start your project?</h2>
+        </div>
+        <p class="fw-normal mb-3" data-aos="fade-up" data-aos-delay="100">Let's collaborate and bring your ideas to
+            life!</p>
+        <a href="{% url 'app:contact' %}" class="btn cta-btn special-btn" data-aos="fade-up" data-aos-delay="200">Get in
+            Touch</a>
+    </div>
+</section>

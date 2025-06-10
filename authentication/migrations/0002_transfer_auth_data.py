@@ -7,54 +7,61 @@ from django.db import migrations
 """ no longer needed """
 def transfer_auth_data(apps, schema_editor):
     # Get the models
-    OldProfile = apps.get_model('app', 'Profile')
-    NewProfile = apps.get_model('authentication', 'Profile')
-    OldSocialLinks = apps.get_model('app', 'SocialLinks')
-    NewSocialLinks = apps.get_model('authentication', 'SocialLinks')
-    OldUserSettings = apps.get_model('app', 'UserSettings')
-    NewUserSettings = apps.get_model('authentication', 'UserSettings')
-    # User = apps.get_model('auth', 'User')
+    try:
+        OldProfile = apps.get_model('app', 'Profile')
+        NewProfile = apps.get_model('authentication', 'Profile')
+        OldSocialLinks = apps.get_model('app', 'SocialLinks')
+        NewSocialLinks = apps.get_model('authentication', 'SocialLinks')
+        OldUserSettings = apps.get_model('app', 'UserSettings')
+        NewUserSettings = apps.get_model('authentication', 'UserSettings')
+    except LookupError:
+        pass
 
-    # Transfer Profile data
-    for old_profile in OldProfile.objects.all():
-        new_profile = NewProfile.objects.create(
-            user_id=old_profile.user_id,
-            title=old_profile.title,
-            bio=old_profile.bio,
-            country=old_profile.country,
-            city=old_profile.city,
-            profile_pic=old_profile.profile_pic,
-            cloudinary_image_id=old_profile.cloudinary_image_id,
-            cloudinary_image_url=old_profile.cloudinary_image_url,
-            optimized_image_url=old_profile.optimized_image_url
-        )
-        new_profile.save()
+    if OldProfile.objects.exists():
+        # Transfer Profile data
+        for old_profile in OldProfile.objects.all():
+            new_profile = NewProfile.objects.create(
+                user_id=old_profile.user_id,
+                title=old_profile.title,
+                bio=old_profile.bio,
+                country=old_profile.country,
+                city=old_profile.city,
+                profile_pic=old_profile.profile_pic,
+                cloudinary_image_id=old_profile.cloudinary_image_id,
+                cloudinary_image_url=old_profile.cloudinary_image_url,
+                optimized_image_url=old_profile.optimized_image_url
+            )
+            new_profile.save()
 
-    # Transfer SocialLinks data
-    for old_social in OldSocialLinks.objects.all():
-        new_social = NewSocialLinks.objects.create(
-            profile_id=old_social.profile_id,
-            twitter_x=old_social.twitter_x,
-            facebook=old_social.facebook,
-            instagram=old_social.instagram,
-            linkedin=old_social.linkedin,
-            github=old_social.github,
-            youtube=old_social.youtube,
-            tiktok=old_social.tiktok,
-            whatsapp=old_social.whatsapp,
-            website=old_social.website
-        )
-        new_social.save()
-    # Transfer UserSettings data
-    for old_settings in OldUserSettings.objects.all():
-        new_settings = NewUserSettings.objects.create(
-            user_id=old_settings.user_id,
-            changes_notifications=old_settings.changes_notifications,
-            new_products_notifications=old_settings.new_products_notifications,
-            marketing_notifications=old_settings.marketing_notifications,
-            security_notifications=old_settings.security_notifications
-        )
-        new_settings.save()
+    if OldProfile.objects.exists() and OldSocialLinks.objects.exists():
+       # Transfer SocialLinks data
+        for old_social in OldSocialLinks.objects.all():
+            new_social = NewSocialLinks.objects.create(
+                profile_id=old_social.profile_id,
+                twitter_x=old_social.twitter_x,
+                facebook=old_social.facebook,
+                instagram=old_social.instagram,
+                linkedin=old_social.linkedin,
+                github=old_social.github,
+                youtube=old_social.youtube,
+                tiktok=old_social.tiktok,
+                whatsapp=old_social.whatsapp,
+                website=old_social.website
+            )
+            new_social.save()
+    
+    if OldUserSettings.objects.exists():
+        # Transfer UserSettings data
+        for old_settings in OldUserSettings.objects.all():
+            new_settings = NewUserSettings.objects.create(
+                user_id=old_settings.user_id,
+                changes_notifications=old_settings.changes_notifications,
+                new_products_notifications=old_settings.new_products_notifications,
+                marketing_notifications=old_settings.marketing_notifications,
+                security_notifications=old_settings.security_notifications
+            )
+            new_settings.save()
+
 
 
 def noop(apps, schema_editor):

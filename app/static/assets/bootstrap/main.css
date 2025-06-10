@@ -37,7 +37,7 @@
   --contrast-color: #000;
   --search-bar-background-color: #1d0723;
   --nav-dropdown-hover-color: var(--accent-color);
-  --skills-bg: #e9e8e6;
+  --skills-bg: #b4b1aa;
   --about-bg: #ebe8e6;
 }
 
@@ -56,7 +56,7 @@
   --nav-dropdown-color: #ffffff;
   --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
   --nav-mobile-background-color: #474444;
-  --skills-bg: #252525;
+  --skills-bg: #292121;
   --about-bg: #253525;
 }
 
@@ -963,7 +963,7 @@ section,
 --------------------------------------------------------------*/
 .skills {
   background: var(--skills-bg);
-  padding: 60px 0;
+  /* padding: 60px 0; */
 }
 
 .skills .progress {

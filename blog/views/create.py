@@ -2,15 +2,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView
 from django.utils.text import slugify
 from titlecase import titlecase
 
-from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
+from app.views.helpers.cloudinary import (
+    CloudinaryImageHandler, handle_image_upload)
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from blog.models import BlogPostPage, BlogIndexPage
 from blog.forms import BlogPostForm
 from portfolio import settings
+from blog.models import BlogPostImage
 
 
 uploader = CloudinaryImageHandler()
@@ -21,6 +23,9 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
     form_class = BlogPostForm
     template_name = "blog/create_or_update_post.html"
     context_object_name = "view"
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
 
     def form_invalid(self, form, response=None):
         if is_ajax(self.request):
@@ -33,18 +38,32 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
             }, status=400)
         return super().form_invalid(form)
 
-    def upload_image(self, post, image):
-        image_data = handle_image_upload(
+    def upload_image(self, post, cover_image):
+        return handle_image_upload(
             instance=post,
             uploader=uploader,
-            image=image,
+            image=cover_image,
             folder=settings.POSTS_FOLDER,
         )
 
-        if image_data:
-            post.cloudinary_image_id = image_data["cloudinary_image_id"]
-            post.cloudinary_image_url = image_data["cloudinary_image_url"]
-            post.optimized_image_url = image_data["optimized_image_url"]
+    def save_image_to_db(self, post, cover_image):
+        """
+        Save the image data to the post and create a BlogPostImage instance.
+        """
+        if not post:
+            raise ValueError("Post instance is required.")
+        if not cover_image:
+            raise ValueError("Cover image is required.")
+        image_data = self.upload_image(post, cover_image)
+        try:
+            BlogPostImage.objects.create(
+                post=post,
+                cloudinary_image_id=image_data["cloudinary_image_id"],
+                cloudinary_image_url=image_data["cloudinary_image_url"],
+                optimized_image_url=image_data["optimized_image_url"]
+            )
+        except Exception as e:
+            raise ValueError(f"Error saving image: {str(e)}")
 
     def publish_post(self, post, should_publish):
         if should_publish:
@@ -54,7 +73,7 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
     def handle_image_error(self, post, form, e):
         if post.cloudinary_image_id:
             uploader.delete_image(post.cloudinary_image_id)
-        
+
         response = {"success": False, "errors": str(e)}
         form.add_error(None, str(e))
         if is_ajax(self.request):
@@ -62,12 +81,13 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
         return self.form_invalid(form, response)
 
     def get_success_url(self):
-        return reverse_lazy("blog:article_details", kwargs={"slug": self.object.slug})
+        return reverse_lazy("blog:article_details",
+                            kwargs={"slug": self.object.slug})
 
 
 class CreatePostView(BasePostView, CreateView):
     def test_func(self):
-        return self.request.user.is_staff
+        return super().test_func()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -83,7 +103,8 @@ class CreatePostView(BasePostView, CreateView):
         parent_page = BlogIndexPage.objects.first()
 
         if not parent_page:
-            existing_page = BlogIndexPage.objects.filter(slug='blog-home').first()
+            existing_page = BlogIndexPage.objects.filter(slug='blog-home')\
+                .first()
 
             if existing_page:
                 parent_page = existing_page
@@ -102,15 +123,17 @@ class CreatePostView(BasePostView, CreateView):
         parent_page.add_child(instance=post)
 
     def form_valid(self, form):
+        if not self.test_func():
+            handle_no_permissions(self.request,
+                                  "Not allowed to create a blog post.")
         post = form.instance
         post.author = self.request.user
         post.title = titlecase(post.title)
         post.slug = slugify(post.title)
         cover_image = form.files.get("cover_image")
-        should_publish = form.cleaned_data.get('published', False)
+        should_publish: bool = form.cleaned_data.get('published', False)
 
-        if not self.test_func():
-            handle_no_permissions(self.request, "Not allowed to create a blog post.")
+        self.save_post_to_parent(post)
 
         if cover_image:
             try:
@@ -119,8 +142,6 @@ class CreatePostView(BasePostView, CreateView):
                 BlogPostPage.delete(post, using="default")
                 return self.handle_image_error(post, form, e)
 
-        self.save_post_to_parent(post)
-
         with transaction.atomic():
             post.save()
             self.publish_post(post, should_publish)
@@ -128,9 +149,16 @@ class CreatePostView(BasePostView, CreateView):
         response = super().form_valid(form)
 
         if is_ajax(self.request):
+            if should_publish:
+                message = "Blog Post Created and Published Successfully"
+            else:
+                message = "Blog Post Draft Created Successfully"
             return JsonResponse({
                 "success": True,
-                "message": "Post Created and Published Successfully" if should_publish else "Post created as Draft",
+                "message": message,
                 "redirect_url": self.get_success_url()
             })
         return response
+
+    def get_success_url(self):
+        return super().get_success_url()

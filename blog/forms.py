@@ -36,7 +36,7 @@ class BlogPostForm(forms.ModelForm):
         label="Article Cover Image",
         required=False,
         widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
-        help_text="Upload an image to be used as the cover image for this article",
+        help_text="Upload the cover image for this article",
     )
     published = forms.BooleanField(
         label="Publish Article",

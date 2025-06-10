@@ -5,14 +5,15 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.utils.text import slugify
 
-from app.views.helpers.cloudinary import CloudinaryImageHandler
+from app.views.helpers.cloudinary import (
+    CloudinaryImageHandler)  # handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.models import BlogPostPage
+from blog.models import BlogPostPage as BlogPost, BlogPostImage
 from blog.views.create import BasePostView
+# from portfolio import settings
 
 
-uploader = CloudinaryImageHandler()
-
+Uploader = CloudinaryImageHandler()
 
 
 class UpdatePostView(BasePostView, UpdateView):
@@ -34,50 +35,77 @@ class UpdatePostView(BasePostView, UpdateView):
         return context
 
     def update_post_slug(self, original_post, current_post):
-        if original_post.title != current_post.title:
-            current_post.title = titlecase(current_post.title)
-            base_slug = slugify(current_post.title)
+        cp = current_post
+        if original_post.title != cp.title:
+            cp.title = titlecase(cp.title)
+            base_slug = slugify(cp.title)
             counter = 1
-            new_slug = base_slug
-            while BlogPostPage.objects.filter(slug=new_slug).exclude(id=current_post.id).exists():
-                new_slug = f"{base_slug}-{counter}"
+            ns = base_slug
+
+            while BlogPost.objects.filter(slug=ns).exclude(id=cp.id).exists():
+                ns = f"{base_slug}-{counter}"
                 counter += 1
-            current_post.slug = new_slug
+            cp.slug = ns
 
     def form_valid(self, form):
+        """
+        Handle the form submission and save the post.
+        """
+        if not self.test_func():
+            handle_no_permissions(
+                self.request,
+                "Not Allowed to edit this post."
+            )
+
+        post = form.instance
+        original_post = self.get_object()
+        should_publish = form.cleaned_data.get('published', False)
+        post.author = self.request.user
+        cover_image = form.files.get("cover_image")
+
+        self.update_post_slug(original_post, post)
+
+        if cover_image:
+            self.save_image_to_db(post, form, cover_image)
+
+        with transaction.atomic():
+            response = super().form_valid(form)
+            self.publish_post(post, should_publish)
+
+        if is_ajax(self.request):
+            if should_publish:
+                message = "Post Updated and Published Successfully"
+            else:
+                message = "Post updated as Draft"
+            return JsonResponse({
+                "success": True,
+                "message": message,
+                "redirect_url": self.get_success_url()
+            })
+        return response
+
+    def save_image_to_db(self, post, form, cover_image):
+        """
+        Save the image data to the post and create a BlogPostImage instance.
+        """
+        if not post:
+            raise ValueError("Post instance is required.")
+        if not cover_image:
+            raise ValueError("No image provided.")
+
+        if post.cloudinary_image_id:
+            try:
+                Uploader.delete_image(post.cloudinary_image_id)
+            except Exception as e:
+                return self.handle_image_error(post, form, e)
+
+        image_data = self.upload_image(post, cover_image)
         try:
-            post = form.instance
-            original_post = self.get_object()
-            should_publish = form.cleaned_data.get('published', False)
-            
-            self.update_post_slug(original_post, post)
-            post.author = self.request.user
-
-            if not self.test_func():
-                handle_no_permissions(self.request, "Not Allowed to edit this post.")
-
-            cover_image = form.files.get("cover_image")
-            
-            if cover_image:
-                try:
-                    if post.cloudinary_image_id:
-                        uploader.delete_image(post.cloudinary_image_id)
-                    self.upload_image(post, cover_image)
-                except Exception as e:
-                    return self.handle_image_error(post, form, e)
-
-            with transaction.atomic():
-                response = super().form_valid(form)
-                self.publish_post(post, should_publish)
-
-            if is_ajax(self.request):
-                return JsonResponse({
-                    "success": True,
-                    "message": "Post Updated and Published Successfully" if should_publish else "Post updated as Draft",
-                    "redirect_url": self.get_success_url()
-                })
-            return response
-
+            BlogPostImage.objects.update_or_create(
+                post=post,
+                cloudinary_image_id=image_data["cloudinary_image_id"],
+                cloudinary_image_url=image_data["cloudinary_image_url"],
+                optimized_image_url=image_data["optimized_image_url"]
+            )
         except Exception as e:
-            response = {"success": False, "errors": str(e)}
-            return JsonResponse(response, status=400)
+            raise ValueError(f"Error saving image: {str(e)}")

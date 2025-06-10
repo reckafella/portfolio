@@ -50,9 +50,13 @@ class ManageSessionView(LoginRequiredMixin, View):
         if cache.get(cache_key):
             return JsonResponse({'status': 'skipped'}, status=200)
         try:
-            request.session['last_activity'] = int(now().timestamp())
+            request.session['last_activity'] = now().isoformat()
             request.session.modified = True
             cache.set(cache_key, True, 30)
             return JsonResponse({'status': 'success'})
         except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.exception(f'Error in POST /session for user\
+                             {user_id}: {str(e)}')
             return JsonResponse({'error': str(e)}, status=400)

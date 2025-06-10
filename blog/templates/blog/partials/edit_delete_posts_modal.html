@@ -1,6 +1,6 @@
 
     <!-- Edit Post Modal -->
-    {% if user.is_authenticated and user == post.author or user.is_staff %}
+    {% if user.is_authenticated and user == article.author or user.is_staff %}
     <div class="modal modal-fullscreen-sm modal-fullscreen-md fade contact" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content card">
@@ -50,11 +50,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete "{{ post.title }}"? This action cannot be undone.
+                    Are you sure you want to delete "{{ article.title }}"? This action cannot be undone.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:delete_article' post.slug %}" method="post" style="display: inline;">
+                    <form action="{% url 'blog:delete_article' article.slug %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger" value="Delete"/>
                     </form>

@@ -10,7 +10,7 @@
     <meta name="keywords" content="">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="X-UA-Compatible" content="IE=7">
-    
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.css" rel="stylesheet">
 
     <!-- Google Fonts -->
@@ -100,14 +100,15 @@
     <script src="{% static 'assets/js/moreLess.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/js/formValidator.js' %}"></script>
-    <script src="{% static 'assets/js/themes.js' %}"></script>    
+    <script src="{% static 'assets/js/themes.js' %}"></script>
 
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             function setupSessionTimeout() {
-                if (document.getElementById('user-logged-in')) {
+                let userLoggedIn = document.getElementById('user-logged-in');
+                if (userLoggedIn !== null) {
                     new sessionTimeout({
                         sessionLength: '{{ request.session.get_expiry_age|default:0 }}',
                         warningTime: 300,
@@ -119,7 +120,11 @@
             setupSessionTimeout();
         });
     </script>
-    
+
+    {% comment %}
+    <script src="{% static 'assets/js/sessionTimeout.js' %}"></script>
+    {% endcomment %}
+
     <!-- Form data validation -->
      {% block extra_js %} {% endblock %}
 </body>

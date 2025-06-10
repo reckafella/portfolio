@@ -8,7 +8,7 @@
             </div>
             <div class="entries">
                 <div class="d-flex gap-1 justify-content-around align-items-stretch flex-wrap">
-                    {% for article in latest_posts %}
+                    {% for article in posts %}
                     <article class="entry col-md-5 col-lg-4">
                         <h2 class="entry-title">
                             <a href="{% url 'blog:article_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <!-- If not posts hide this -->
-             {% if latest_posts %}
+             {% if posts %}
             <div class="text-center mt-4">
                 <a href="{% url 'blog:list_articles' %}" class="btn special-btn">View All Posts</a>
             </div>

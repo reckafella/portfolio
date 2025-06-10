@@ -17,11 +17,11 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         n = 4
         # featured projects
-        context["projects"] = Projects.objects.all()[:n]
+        context["projects"] = Projects.objects.filter(live=True)[:n]
         # latest blog posts
 
         posts = BlogPost.objects.live()\
-            .filter().order_by("-first_published_at")[:n]
+            .order_by("-first_published_at")[:n]
         context["posts"] = posts
         return context
 

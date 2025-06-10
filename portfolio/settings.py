@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os.path
 from pathlib import Path
-import random
+# import random
 
 from app.views.helpers.helpers import get_error_files
 
@@ -171,32 +171,35 @@ else:
     PROFILE_FOLDER = "portfolio/profiles/dev"
 
 # sessions
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://" + REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": REDIS_PASSWORD,
-            "SOCKET_CONNECT_TIMEOUT": 5,
-            "SOCKET_TIMEOUT": 5,
-            "SOCKET_KEEPALIVE": True,
-            "SOCKET_KEEPALIVE_OPTIONS": {
-                "TCP_KEEPIDLE": 1,
-                "TCP_KEEPINTVL": 1,
-                "TCP_KEEPCNT": 5,
-            },
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 10,
-                "retry_on_timeout": True,
-            },
-        },
-    }
-}
+if ENVIRONMENT == 'production':
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://" + REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": REDIS_PASSWORD,
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "SOCKET_KEEPALIVE": True,
+                "SOCKET_KEEPALIVE_OPTIONS": {
+                    "TCP_KEEPIDLE": 1,
+                    "TCP_KEEPINTVL": 1,
+                    "TCP_KEEPCNT": 5,
+                },
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 10,
+                    "retry_on_timeout": True,
+                },
+            },
+        }
+    }
+else:
+    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -360,15 +363,17 @@ ERROR_500: str = get_error_files()[3]
 
 
 # captcha settings
-CAPTCHA_CHOICES = (
+""" CAPTCHA_CHOICES = (
     'captcha.helpers.math_challenge',
     'captcha.helpers.random_char_challenge',
 )
 
 CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
+ """
 
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 CAPTCHA_TIMEOUT = 5
-CAPTCHA_IMAGE_SIZE = (300, 100)
+# CAPTCHA_IMAGE_SIZE = (100, 50)
 CAPTCHA_LENGTH = 6
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
                            'captcha.helpers.noise_arcs')
@@ -384,8 +389,8 @@ CAPTCHA_REFRESH_CHALLENGE = True
 # Browser session timeout (when user closes browser)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Inactivity timeout in seconds (e.g. 1/2 hour = 1800 seconds)
-SESSION_COOKIE_AGE = 1800
+# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
+SESSION_COOKIE_AGE = 3600
 
 # Optional but recommended - update session on activity
 SESSION_SAVE_EVERY_REQUEST = True

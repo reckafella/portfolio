@@ -6,7 +6,7 @@ from titlecase import titlecase
 
 # from app.models import Image, Video
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from app.views.projects.create import BaseProjectView
+from app.views.projects.base import BaseProjectView
 
 
 class UpdateProjectView(BaseProjectView, UpdateView):

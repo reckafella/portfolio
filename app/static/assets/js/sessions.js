@@ -44,7 +44,7 @@ class SessionTimeout {
 					method: 'POST',
 					headers: {
 						'X-CSRFToken': this.getCsrfToken(),
-						'Content-Type': 'application/json',
+						// 'Content-Type': 'application/json',
 						'X-Requested-With': 'XMLHttpRequest'
 					},
 					credentials: 'same-origin'
@@ -79,6 +79,12 @@ class SessionTimeout {
 					return;
 				}
 				throw new Error('Session check failed');
+			}
+
+			// If 302 status code, reduce the check frequency
+			if (response.status === 302) {
+				this.checkInterval = setInterval(() => this.checkSession(), 30000); // 5 minutes
+				return;
 			}
 
 			const data = await response.json();
@@ -149,7 +155,7 @@ class SessionTimeout {
 				method: 'POST',
 				headers: {
 					'X-CSRFToken': this.getCsrfToken(),
-					'Content-Type': 'application/json',
+					// 'Content-Type': 'application/json',
 					'X-Requested-With': 'XMLHttpRequest'
 				},
 				credentials: 'same-origin'
@@ -201,7 +207,7 @@ class SessionTimeout {
 		this.lastActivityTime = Date.now();
 		// Reset the timer on user activity
 
-		userActivity.forEach(event => {
+		this.userActivity.forEach(event => {
 			document.addEventListener(event, () => {
 				this.lastActivityTime = Date.now();
 				this.boundResetTimer();
@@ -232,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (userLoggedIn) {
       sessionTimeoutInstance = new SessionTimeout({
-          sessionLength: 1800,
+          sessionLength: 3600,
           warningTime: 300,
           redirectUrl: "/login",
           logoutUrl: "/logout",

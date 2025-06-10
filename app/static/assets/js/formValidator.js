@@ -164,7 +164,17 @@ class FormValidator {
                 }
             } else {
                 this.setButtonState('error');
-                if (this.captchaRefreshButton) {
+                
+                // Only refresh captcha if there's a specific captcha error
+                // Check if 'captcha' is in the error fields or if there's a captcha-related message
+                const hasCaptchaError = 
+                    (data.errors && 
+                    (data.errors.captcha || 
+                     data.errors.captcha_0 || 
+                     data.errors.captcha_1 ||
+                     (typeof data.errors === 'string' && data.errors.toLowerCase().includes('captcha'))));
+                
+                if (hasCaptchaError && this.captchaRefreshButton) {
                     this.captchaRefreshButton.click();
                 }
 

@@ -3,6 +3,7 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
+    {% comment %}
     <div class="page-title">
         <div class="container d-lg-flex justify-content-between align-items-center">
             <h1>{{ page_title }}</h1>
@@ -14,13 +15,14 @@
             </nav>
         </div>
     </div>
+    {% endcomment %}
 
     <section id="profile" class="section">
-        <div class="mask d-flex align-items-center gradient-custom-3 mt-5">
+        <div class="mask d-flex align-items-center gradient-custom-3 mt-1">
             <div class="container">
                 <div class="row d-flex justify-content-center align-items-center">
-                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                        <div class="card p-4" style="border-radius: 15px;">
+                    <div class="col-12 col-md-10 col-lg-9 col-xl-8">
+                        <div class="card p-3" style="border-radius: 15px;">
                             <div class="card-header">
                                 <div class="text-center">
                                     <h2  class="card-title fw-bold">{{ form_title }}</h2>

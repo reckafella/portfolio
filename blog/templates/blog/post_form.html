@@ -1,6 +1,8 @@
 {% extends 'app/base.html' %}
 
 {% block title %}{% if form.instance.slug %}Edit{% else %}New{% endif %} Post - {{ block.super }}{% endblock %}
+{% load wagatailadmin_tags %}
+{% load wagtailcore_tags %}
 
 {% block extra_head %}
 {{ form.media }}
@@ -11,6 +13,7 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">{% if form.instance.slug %}Edit{% else %}New{% endif %} Post</h1>
+            {% rich_text_editor_assets %}
             <form method="post" enctype="multipart/form-data" id="other-form">
                 {% csrf_token %}
                 {% for field in form %}

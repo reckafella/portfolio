@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from django.db.models import Count
 
 from blog.models import BlogPostPage
 
@@ -17,33 +16,21 @@ class BasePostListView(ListView):
     def get_queryset(self):
         return BlogPostPage.objects.live()
 
-    def add_tags(self, articles):
-        """
-        Returns a list of tuples for all tags in the queryset
-        + total number of articles for each tag
-        """
+    def add_topics(self, articles):
         if not articles.exists():
             return []
-
-        # Get all tags used by the articles in the queryset
-        from taggit.models import Tag
-
-        # Get article IDs that are in our filtered queryset
-        article_ids = list(articles.values_list('id', flat=True))
-
-        # Query tags that are associated with these articles
-        tags_with_counts = (
-            Tag.objects
-            .filter(
-                taggit_taggeditem_items__object_id__in=article_ids,
-                taggit_taggeditem_items__content_type__model='blogpostpage')
-            .annotate(article_count=Count('taggit_taggeditem_items',
-                                          distinct=True)).order_by('name'))
-
-        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
-
+        topics = set(
+            topic.strip() for post in articles for topic in post.get_topics())
+        try:
+            topics.remove("all")
+        except KeyError:
+            pass
+        topic_counts = [(topic,
+                         articles.filter(topics__icontains=topic).count())
+                        for topic in topics]
+        # Add "all" entry with total count of all articles
         all_count = articles.count()
-        return [("all", all_count)] + tag_count
+        return sorted([("all", all_count)] + topic_counts)
 
     def add_sorting_options(self):
         return sorted({
@@ -60,8 +47,8 @@ class BasePostListView(ListView):
         articles = self.get_queryset()
 
         context["page_title"] = "Blog Posts"
-        context["tags"] = self.add_tags(articles)
-        context["current_tag"] = self.request.GET.get("tag", "all")
+        context["topics"] = self.add_topics(articles)
+        context["current_topic"] = self.request.GET.get("topic", "all")
         context["current_sort"] = self.request.GET.get("sort", "date_desc")
         context["sorting_options"] = self.add_sorting_options()
         context["submit_text"] = "Read Article"
@@ -74,7 +61,7 @@ class BasePostListView(ListView):
 
 class PostListView(BasePostListView):
     def get_queryset(self):
-        tag = self.request.GET.get("tag", "all")
+        topic = self.request.GET.get("topic", "all")
         sort = self.request.GET.get("sort", "date_desc")
         search_query = self.request.GET.get("q", "")
 
@@ -94,15 +81,15 @@ class PostListView(BasePostListView):
                 title__icontains=search_query
             ) | articles.filter(content__icontains=search_query)
 
-        if tag != "all":
-            articles = articles.filter(tags__name__iexact=tag)
+        if topic != "all":
+            articles = articles.filter(topics__icontains=topic)
 
         return articles.order_by(order_by)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         articles = self.get_queryset()
-        context["tags"] = self.add_tags(articles)
+        context["topics"] = self.add_topics(articles)
 
         return context
 
@@ -110,7 +97,7 @@ class PostListView(BasePostListView):
 class AuthorPostsView(BasePostListView):
     def get_queryset(self):
         self.author = get_object_or_404(User, username=self.kwargs["username"])
-        tag = self.request.GET.get("tag", "all")
+        topic = self.request.GET.get("topic", "all")
         sort = self.request.GET.get("sort", "date_desc")
         search_query = self.request.GET.get("q", "")
 
@@ -127,8 +114,8 @@ class AuthorPostsView(BasePostListView):
             articles = articles.filter(title__icontains=search_query) |\
                 articles.filter(content__icontains=search_query)
 
-        if tag != "all":
-            articles = articles.filter(tags__name__iexact=tag)
+        if topic != "all":
+            articles = articles.filter(topics__icontains=topic)
 
         return articles.order_by(order_by)
 
@@ -142,8 +129,10 @@ class AuthorPostsView(BasePostListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # articles = self.get_queryset()
 
         context["author"] = self.author
+        # context["sorting_options"] = self.add_sorting_options()
         context["all_authors"] = False
 
         return context
@@ -206,14 +195,16 @@ class PostsByDateView(BasePostListView):
             title = str(year)
 
         context["page_title"] = f'Posts from {title}'
+        # context["current_sort"] = self.request.GET.get("sort", "date_desc")
+        # context["sorting_options"] = self.add_sorting_options()
         context["all_authors"] = True
 
         return context
 
 
-class PostsByTagView(BasePostListView):
+class PostsByTopicView(BasePostListView):
     def get_queryset(self):
-        tag = self.kwargs["tag"]
+        topic = self.kwargs["topic"]
         sort = self.request.GET.get("sort", "date_desc")
         search_query = self.request.GET.get("q", "")
 
@@ -226,8 +217,8 @@ class PostsByTagView(BasePostListView):
             "author_desc": "-author__username",
         }.get(sort, "-first_published_at")
 
-        articles = BlogPostPage.objects.live() if tag == 'all' else\
-            BlogPostPage.objects.live().filter(tags__name__iexact=tag)
+        articles = BlogPostPage.objects.live() if topic == 'all' else\
+            BlogPostPage.objects.live().filter(topics__icontains=topic)
 
         if search_query:
             articles = articles.filter(title__icontains=search_query) |\
@@ -239,8 +230,8 @@ class PostsByTagView(BasePostListView):
         context = super().get_context_data(**kwargs)
         articles = self.get_queryset()
 
-        context["page_title"] = f'Tag: {self.kwargs["tag"].capitalize()}'
-        context["tags"] = self.add_tags(articles)
-        context["current_tag"] = self.kwargs["tag"]
+        context["page_title"] = f'Topic: {self.kwargs["topic"].capitalize()}'
+        context["topics"] = self.add_topics(articles)
+        context["current_topic"] = self.kwargs["topic"]
 
         return context

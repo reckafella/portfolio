@@ -13,7 +13,7 @@
                     </div>
                     <div class="card-body">
                         <p class="text-center">Are you sure you want to delete "{{ object.title }}"?</p>
-                        <form method="post" class="text-center">
+                        <form method="post" id="other-post" class="text-center">
                             {% csrf_token %}
                             <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger">Confirm Delete</button>
                             <a href="{% url 'blog:article_details' object.slug %}" class="btn btn-secondary">Cancel</a>

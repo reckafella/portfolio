@@ -47,8 +47,8 @@
                                     &nbsp; | &nbsp; {{ post.first_published_at | date:"F d, Y" }}
                                 </small>
                                 <div class="mt-2">
-                                    {% for topic in post.get_topics %}
-                                        <span class="badge bg-primary me-1">{{ topic }}</span>
+                                    {% for tag in post.get_tags %}
+                                        <span class="badge bg-primary me-1">{{ tag }}</span>
                                     {% endfor %}
                                 </div>
                                 <div class="mt-2 d-flex justify-content-center">

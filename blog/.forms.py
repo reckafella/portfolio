@@ -1,8 +1,9 @@
 """
-Forms to allow users create/update blog posts
+forms to allow users create/update blog posts
 """
 from django import forms
-from wagtail.admin.rich_text import DraftailRichTextArea
+from wagtail.blocks import RichTextBlock
+from wagtail.admin.widgets import DraftailRichTextArea
 
 from blog.models import BlogPostPage
 
@@ -18,11 +19,18 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         help_text="Enter the title of your article",
     )
-    content = forms.CharField(
+    topics = forms.CharField(
+        label="Relevant Topic(s)",
+        required=True,
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        help_text="Separate topics with commas (,)",
+    )
+    content = RichTextBlock(
         label="Article Content",
         required=True,
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 5}),
-        help_text="Content of the Blog Article"
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        help_text="Write the content of your article here",
     )
     cover_image = forms.ImageField(
         label="Article Cover Image",
@@ -30,7 +38,6 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
         help_text="Upload the cover image for this article",
     )
-
     published = forms.BooleanField(
         label="Publish Article",
         required=False,
@@ -43,7 +50,7 @@ class BlogPostForm(forms.ModelForm):
 
     class Meta:
         model = BlogPostPage
-        fields = ["title", "content", "cover_image", "tags", "published"]
+        fields = ["title", "content", "topics", "cover_image"]
 
     def save(self, commit=True, user=None):
         """Customize save behavior to update the author and other details."""
@@ -52,18 +59,15 @@ class BlogPostForm(forms.ModelForm):
             instance.author = user
         if commit:
             instance.save()
-            self.save_m2m()
-
         return instance
 
     def clean(self):
         cleaned_data = super().clean()
         title = cleaned_data.get("title")
         content = cleaned_data.get("content")
-
-        if not title or not content:
-            _m = "Fill in all required fields (title and content)."
-            raise forms.ValidationError(_m)
+        topics = cleaned_data.get("topics")
+        if not title or not content or not topics:
+            raise forms.ValidationError("Please fill in all required fields")
         return cleaned_data
 
 
@@ -78,10 +82,17 @@ class BlogPostAdminForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         help_text="Enter the title of your article",
     )
-
-    content = forms.CharField(
+    topics = forms.CharField(
+        label="Relevant Topic(s)",
+        required=True,
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        help_text="Separate topics with commas (,)",
+    )
+    content = RichTextBlock(
         label="Article Content",
         required=True,
+        features="full",
         widget=DraftailRichTextArea(attrs={"class": "form-control"}),
         help_text="Write the content of your article here",
     )
@@ -89,36 +100,25 @@ class BlogPostAdminForm(forms.ModelForm):
         label="Article Cover Image",
         required=False,
         widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
-        help_text="Upload image to be used as the cover for this article",
-    )
-    published = forms.BooleanField(
-        label="Publish Article",
-        required=False,
-        widget=forms.CheckboxInput(attrs={
-            "class": "form-check-input",
-            "role": "switch"
-            }),
-        help_text="Check this box to publish the article",
+        help_text="Upload an image to be used as the cover image for this article",
     )
 
     class Meta:
         model = BlogPostPage
-        fields = ["title", "content", "tags", "cover_image", "published"]
+        fields = ["title", "content", "topics", "cover_image"]
 
     def save(self, commit=True):
-        """Customize save behavior."""
+        """Customize save behavior to update the author and other details."""
         instance = super().save(commit=False)
         if commit:
             instance.save()
-            self.save_m2m()
         return instance
 
     def clean(self):
         cleaned_data = super().clean()
         title = cleaned_data.get("title")
         content = cleaned_data.get("content")
-
-        if not title or not content:
-            _m = "Please fill in all required fields (title and content)."
-            raise forms.ValidationError(_m)
+        topics = cleaned_data.get("topics")
+        if not title or not content or not topics:
+            raise forms.ValidationError("Please fill in all required fields")
         return cleaned_data

@@ -3,7 +3,7 @@
     <ul class="">
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?topic={{ current_topic }}&page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                <a class="page-link" href="?tag={{ current_tag }}&page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
             </li>
         {% else %}
             <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
@@ -14,14 +14,14 @@
                 <li class="page-item active"><span class="page-link">{{ i }}</span></li>
             {% else %}
                 <li class="page-item">
-                    <a class="page-link" href="?topic={{ current_topic }}&page={{ i }}">{{ i }}</a>
+                    <a class="page-link" href="?tag={{ current_tag }}&page={{ i }}">{{ i }}</a>
                 </li>
             {% endif %}
         {% endfor %}
         
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?topic={{ current_topic }}&page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                <a class="page-link" href="?tag={{ current_tag }}&page={{ page_obj.next_page_number }}">Next &raquo;</a>
             </li>
         {% else %}
             <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>

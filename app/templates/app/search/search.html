@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load wagtailcore_tags %}
 {% block title %} {{ page_title }}
 {% endblock %}
 
@@ -63,91 +64,88 @@
                         </div>
                     </div>
                     <div class="card-body pt-3" data-aos="fade-up" data-aos-delay="250">
-                        
-                        {% if q %} {# query #}
-                            {% if posts or projects %}
-                            <ul class="nav nav-tabs nav-tabs-bordered"
-                                id="searchTabs" role="tablist"
-                                data-aos="fade-up" data-aos-delay="150">
-                                {% if posts %}
-                                <li class="nav-item" role="presentation" id="posts-tab-container">
-                                    <button class="nav-link fw-bold active"
-                                        id="posts-tab"
-                                        data-bs-toggle="tab"
-                                        data-bs-target="#posts"
-                                        type="button" role="tab"
-                                        aria-controls="posts"
-                                        aria-selected="true">
-                                        Blog Posts 
-                                        <span class="fw-normal">
-                                            ({{ posts|length }})
-                                        </span>
-                                    </button>
-                                </li>
-                                {% endif %}
-                                {% if projects %}
-                                <li class="nav-item" role="presentation" id="projects-tab-container">
-                                    <button class="nav-link fw-bold"
-                                        id="projects-tab" data-bs-toggle="tab"
-                                        data-bs-target="#projects" type="button"
-                                        role="tab" aria-controls="projects"
-                                        aria-selected="false">Projects 
-                                        <span class="fw-normal">
-                                            ({{ projects|length }})
-                                        </span>
-                                    </button>
-                                </li>
-                                {% endif %}
-                            </ul>
+                        {% if posts or projects %}
+                        <ul class="nav nav-tabs nav-tabs-bordered"
+                            id="searchTabs" role="tablist"
+                            data-aos="fade-up" data-aos-delay="150">
+                            {% if posts %}
+                            <li class="nav-item" role="presentation" id="posts-tab-container">
+                                <button class="nav-link fw-bold active"
+                                    id="posts-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#posts"
+                                    type="button" role="tab"
+                                    aria-controls="posts"
+                                    aria-selected="true">
+                                    Blog Posts 
+                                    <span class="fw-normal">
+                                        ({{ posts|length }})
+                                    </span>
+                                </button>
+                            </li>
                             {% endif %}
+                            {% if projects %}
+                            <li class="nav-item" role="presentation" id="projects-tab-container">
+                                <button class="nav-link fw-bold"
+                                    id="projects-tab" data-bs-toggle="tab"
+                                    data-bs-target="#projects" type="button"
+                                    role="tab" aria-controls="projects"
+                                    aria-selected="false">Projects 
+                                    <span class="fw-normal">
+                                        ({{ projects|length }})
+                                    </span>
+                                </button>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
 
-                            <div class="tab-content tab-content-bordered pt-2" id="searchTabContent" data-aos="fade-up">
-                                <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
-                                    {% if posts %}
-                                    <ul class="list-group list-group-flush">
-                                        {% for post in posts %}
-                                        <li class="list-group-item" data-aos="fade-right" data-aos-delay="100">
-                                            <a href="{% url 'blog:article_details' post.slug %}" target="_blank" class="text-decoration-none">
-                                                <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
-                                                <p class="card-text">{{ post.content | safe | truncatewords:30 }}</p>
-                                                <small><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>
-                                            </a>
-                                        </li>
-                                        {% empty %}
-                                        <div class="alert alert-danger" role="alert">
-                                            No blog posts found
-                                        </div>
-                                        {% endfor %}
-                                    </ul>
-                                    {% include "app/pagination/search.html" with page_obj=posts %}
-                                    {% endif %}
-                                </div>
-                                <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
-                                    {% if projects %}
-                                    <ul class="list-group list-group-flush">
-                                        {% for project in projects %}
-                                        <li class="list-group-item" data-aos="fade-up" data-aos-delay="100">
-                                            <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
-                                                <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
-                                                <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
-                                                <small class=""><span class="fw-bold">Published on:</span> {{ project.created_at |date:"N d, Y" }}</small>
-                                            </a>
-                                        </li>
-                                        {% empty %}
-                                        <div class="alert alert-danger" role="alert">
-                                            No projects found
-                                        </div>
-                                        {% endfor %}
-                                    </ul>
-                                    {% include "app/pagination/search.html" with page_obj=projects %}
-                                    {% endif %}
-                                </div>
+                        <div class="tab-content tab-content-bordered pt-2" id="searchTabContent" data-aos="fade-up">
+                            <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                                {% if posts %}
+                                <ul class="list-group list-group-flush">
+                                    {% for post in posts %}
+                                    <li class="list-group-item" data-aos="fade-right" data-aos-delay="100">
+                                        <a href="{% url 'blog:article_details' post.slug %}" target="_blank" class="text-decoration-none">
+                                            <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
+                                            <p class="card-text">{{ post.content | richtext | safe | truncatewords:30 }}</p>
+                                            <small><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>
+                                        </a>
+                                    </li>
+                                    {% empty %}
+                                    <div class="alert alert-danger" role="alert">
+                                        No blog posts found
+                                    </div>
+                                    {% endfor %}
+                                </ul>
+                                {% include "app/pagination/search.html" with page_obj=posts %}
+                                {% endif %}
                             </div>
-                            {% if not posts and not projects %}
-                            <div class="alert alert-danger" role="alert">
-                                No results found for your search query. Try adjusting your search terms or filters.
+                            <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                                {% if projects %}
+                                <ul class="list-group list-group-flush">
+                                    {% for project in projects %}
+                                    <li class="list-group-item" data-aos="fade-up" data-aos-delay="100">
+                                        <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
+                                            <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
+                                            <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
+                                            <small class=""><span class="fw-bold">Published on:</span> {{ project.created_at |date:"N d, Y" }}</small>
+                                        </a>
+                                    </li>
+                                    {% empty %}
+                                    <div class="alert alert-danger" role="alert">
+                                        No projects found
+                                    </div>
+                                    {% endfor %}
+                                </ul>
+                                {% include "app/pagination/search.html" with page_obj=projects %}
+                                {% endif %}
                             </div>
-                            {% endif %}
+                        </div>
+                        {% if not posts and not projects %}
+                        <div class="alert alert-danger" role="alert">
+                            No results found for your search query. Try adjusting your search terms or filters.
+                        </div>
                         {% endif %}
                     </div>
                 </div>

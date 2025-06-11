@@ -8,8 +8,8 @@
 .blog .entry {
   padding: 30px;
   margin-bottom: 60px;
-  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 50%);
-  border-radius: 15px;
+  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 50%);
+  border-radius: 10px;
   background-color: color-mix(in srgb, var(--background-color), transparent 88%);
 }
 
@@ -70,31 +70,7 @@
 .blog .entry .entry-content p {
   line-height: 1;
 }
-/* 
-.blog .entry .entry-content a {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  line-height: 1;
-  transition: 0.3s;
-  justify-content: end;
-  color: color-mix(in srgb, var(--heading-color), transparent 20%);
-}
 
-.blog .entry .entry-content a {
-  display: inline-block;
-  background: #754f02;
-  color: #fff;
-  padding: 6px 20px;
-  transition: 0.3s;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-.blog .entry .entry-content a:hover {
-  background: #3d2903;
-}
- */
 .blog .entry .entry-content h3 {
   font-size: 22px;
   margin-top: 30px;
@@ -195,6 +171,17 @@
   color: var(--accent-color);
   content: ",";
 }
+
+.blog .entry .entry-footer .tags li:hover a{
+  color: var(--background-color);
+  background-color: var(--contrast-color);
+  padding: 2px 3px;
+}
+
+/* .blog .entry .entry-footer .tags li:hover a  {
+  color: inherit;
+  background: none;
+} */
 
 .blog .entry-single {
   margin-bottom: 30px;
@@ -549,24 +536,28 @@
 
 .tags-widget ul a {
   background-color: color-mix(in srgb, var(--default-color), transparent 94%);
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  color: color-mix(in srgb, var(--default-color), transparent 5%);
   border-radius: 50px;
   font-size: 14px;
-  padding: 5px 15px;
+  padding: 5px 10px;
   margin: 0 6px 8px 0;
   display: inline-block;
   transition: 0.3s;
 }
 
 .tags-widget ul a:hover {
-  background: var(--accent-color);
-  color: var(--contrast-color);
+  color: var(--background-color);
+  background-color: var(--default-color);
 }
 
 .tags-widget ul a span {
   padding-left: 5px;
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
   font-size: 14px;
+}
+
+.tags-widget ul a:hover span {
+  color: var(--background-color);
 }
 
 .blog-author-widget-2 img {

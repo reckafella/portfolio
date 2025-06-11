@@ -19,3 +19,4 @@ django-simple-captcha~=0.6.0
 daphne~=4.1.2
 # django redis
 django-redis~=5.4.0
+django-taggit~=6.1.0

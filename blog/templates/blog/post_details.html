@@ -22,15 +22,15 @@
         <div class="row">
             <div class="col-lg-8">
                 <article class="entry entry-single">
+                    <div class="entry-img my-1">
+                        {% if article.first_image.optimized_image_url %}
+                        <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}" class="img-fluid mb-1">
+                        {% endif %}
+                    </div>
+
                     <h2 class="entry-title">
                         <a href="{% url 'blog:article_details' article.slug %}">{{ article.title }}</a>
                     </h2>
-
-                    <div class="entry-img my-1">
-                        {% if article.optimized_image_url %}
-                        <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="img-fluid mb-1">
-                        {% endif %}
-                    </div>
 
                     <div class="entry-meta">
                         <ul>
@@ -42,19 +42,20 @@
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
                                 {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
-                                <div class="date-links">
-                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all articles from this year">
+                                <span class="date-links">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}"
+                                        title="View all posts from this day">
+                                        {{ article.first_published_at|date:"d" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                        {{ article.first_published_at|date:"m" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
                                         {{ article.first_published_at|date:"Y" }}
                                     </a>
-                                    <span class="separator">/</span>
-                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all articles from this month">
-                                        {{ article.first_published_at|date:"F" }}
-                                    </a>
-                                    <span class="separator">/</span>
-                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all articles from this day">
-                                        {{ article.first_published_at|date:"j" }}
-                                    </a>
-                                </div>
+                                </span>
                                 {% endwith %}
                             </li>
                             {% endif %}
@@ -90,35 +91,34 @@
                     <div class="entry-footer">
                         <i class="bi bi-tags"></i>
                         <ul class="tags mx-2">
-                            {% for topic in post_topics %}
-                                <li><a href="{% url 'blog:articles_by_topic' topic %}">{{ topic }}</a></li>
+                            {% for tag in post_tags %}
+                            <li>
+                                <a href="{% url 'blog:articles_by_tag' tag %}">
+                                    {{ tag }}</a>
+                            </li>
                             {% endfor %}
-                        </ul>
-                        <ul class="tags">
-                            <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal">
-                                <i class="bi bi-share-fill fs-6"></i>
-                            </a>
                         </ul>
                     </div>
                 </article>
 
-                <div class="edit-delete d-none">
-                    {% if request.user.is_staff or request.user == article.author %}
+                {% if request.user.is_staff or request.user == article.author %}
+                <div class="edit-delete">
                     {% include 'blog/partials/edit_delete_posts_modal.html' %}
-                    {% endif %}
                 </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const editDelete = document.querySelector('.edit-delete');
-                        const editDeleteButton = document.querySelector('.action-buttons button');
-                        editDeleteButton.addEventListener('click', () => editDelete.classList.remove('d-none'));
-                    });
-                </script>
+                {% endif %}
             </div>
             <div class="col-lg-4 sidebar">
-                {% include 'blog/partials/sidebar.html' with other_posts=other_posts %}
+                {% include 'blog/partials/sidebar.html' with other_posts=other_posts all_tags=all_tags %}
             </div>
         </div>
     </div>
 </section>
 {% endblock %}
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editDelete = document.querySelector('.edit-delete');
+        const editDeleteButton = document.querySelector('.action-buttons button');
+        editDeleteButton.addEventListener('click', () => editDelete.classList.remove('d-none'));
+    });
+</script> -->

@@ -85,8 +85,8 @@ INSTALLED_APPS += [
     "django.contrib.contenttypes", 'django.contrib.sites',
     "django.contrib.sessions", "django.contrib.messages",
     "django.contrib.staticfiles", "django.contrib.sitemaps",
-    "corsheaders", "app", "authentication", "blog", 'robots', 'captcha',
-    "django_redis", "crispy_forms",
+    "corsheaders", "app", "authentication", "blog",
+    'robots', 'captcha', "django_redis", "crispy_forms",
 ]
 
 # Wagtail related apps

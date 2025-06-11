@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
+from django.http import JsonResponse
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler
-from app.views.helpers.helpers import handle_no_permissions, return_response
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from blog.models import BlogPostPage
 
 uploader = CloudinaryImageHandler()
@@ -31,24 +32,52 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
         return context
 
-    def delete(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         post = self.get_object()
+        error_messages = []
+        success_messages = []
 
         # Authorization check
         if not self.test_func():
-            handle_no_permissions(self.request, "Not Authorized to delete this post")
+            handle_no_permissions(self.request,
+                                  "Not Authorized to delete this post")
 
         # Delete image from cloudinary if it exists
-        if post.cloudinary_image_id:
+        if post.first_image and post.first_image.cloudinary_image_id:
             try:
-                uploader.delete_image(post.cloudinary_image_id)
+                uploader.delete_image(post.first_image.cloudinary_image_id)
+                success_messages.append("Success. Image Deleted.")
             except Exception as e:
+                error_messages.append(f"Failed to delete image: {str(e)}")
                 response = {
                     "success": False,
-                    "errors": f"Error deleting image: {str(e)}",
+                    "errors": error_messages,
                 }
-                return return_response(request, response)
 
+                if is_ajax(self.request):
+                    return JsonResponse(response, status=500)
+            # delete the image model instance
+            post.first_image.delete()
+        # Delete the post
+        try:
+            post.delete()
+            success_messages.append("Success. Post Deleted.")
+        except Exception as e:
+            error_messages.append(f"Failed to delete post: {str(e)}")
+            response = {
+                "success": False,
+                "errors": error_messages,
+            }
+
+            if is_ajax(self.request):
+                return JsonResponse(response, status_code=500)
+        response = {
+            "success": True,
+            "messages": success_messages,
+            "redirect_url": self.get_success_url(),
+        }
+        if is_ajax(request):
+            return JsonResponse(response, status_code=200)
         return super().delete(request, *args, **kwargs)
 
     def test_func(self):

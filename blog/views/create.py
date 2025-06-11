@@ -27,15 +27,33 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff or self.request.user.is_superuser
 
-    def form_invalid(self, form, response=None):
+    def form_invalid(self, form):
+        """
+         Handles form validation errors, esp. in AJAX requests
+        """
         if is_ajax(self.request):
-            errors = response.get("errors") if response else {}
-            if not errors:
-                errors = {field: form.errors[field] for field in form.errors}
+            error_messages = []
+
+            # field-specific errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+            # non-field errors
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
             return JsonResponse({
-                "success": False,
-                "errors": errors
+                'success': False,
+                'errors': error_messages,
+                'messages': []
             }, status=400)
+
+        # for non-ajax requests
         return super().form_invalid(form)
 
     def upload_image(self, post, cover_image):
@@ -126,6 +144,7 @@ class CreatePostView(BasePostView, CreateView):
         if not self.test_func():
             handle_no_permissions(self.request,
                                   "Not allowed to create a blog post.")
+
         post = form.instance
         post.author = self.request.user
         post.title = titlecase(post.title)
@@ -133,19 +152,32 @@ class CreatePostView(BasePostView, CreateView):
         cover_image = form.files.get("cover_image")
         should_publish: bool = form.cleaned_data.get('published', False)
 
-        self.save_post_to_parent(post)
+        try:
+            with transaction.atomic():
+                # Save the post to the parent first
+                self.save_post_to_parent(post)
 
-        if cover_image:
-            try:
-                self.upload_image(post, cover_image)
-            except Exception as e:
-                BlogPostPage.delete(post, using="default")
-                return self.handle_image_error(post, form, e)
+                # Save the post instance
+                post.save()
 
-        with transaction.atomic():
-            post.save()
-            self.publish_post(post, should_publish)
+                # Handle cover image if provided
+                if cover_image:
+                    self.save_image_to_db(post, cover_image)
 
+                # Publish if requested
+                self.publish_post(post, should_publish)
+
+        except Exception as e:
+            # If anything fails, clean up
+            if post.pk:
+                try:
+                    post.delete()
+                except Exception:
+                    pass
+            return self.handle_image_error(post, form, e)
+
+        # Set the object for the success URL
+        self.object = post
         response = super().form_valid(form)
 
         if is_ajax(self.request):

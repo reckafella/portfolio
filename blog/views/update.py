@@ -93,9 +93,9 @@ class UpdatePostView(BasePostView, UpdateView):
         if not cover_image:
             raise ValueError("No image provided.")
 
-        if post.cloudinary_image_id:
+        if post.first_image.cloudinary_image_id:
             try:
-                Uploader.delete_image(post.cloudinary_image_id)
+                Uploader.delete_image(post.first_image.cloudinary_image_id)
             except Exception as e:
                 return self.handle_image_error(post, form, e)
 

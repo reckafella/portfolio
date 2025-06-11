@@ -13,9 +13,9 @@
                         <h2 class="entry-title">
                             <a href="{% url 'blog:article_details' article.slug %}" class="text-decoration-none text-success">{{ article.title }}</a>
                         </h2>
-                        {% if article.optimized_image_url %}
+                        {% if article.first_image.optimized_image_url %}
                         <div class="entry-img my-2">
-                            <img src="{{ article.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid">
+                            <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid">
                         </div>
                         {% endif %}
                         <div class="entry-meta">

@@ -25,8 +25,32 @@ class BaseAuthentication(FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
+        """
+         Handles form validation errors, esp. in AJAX requests
+        """
         if is_ajax(self.request):
-            return JsonResponse({"success": False, "errors": form.errors})
+            error_messages = []
+
+            # field-specific errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+            # non-field errors
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
+            return JsonResponse({
+                'success': False,
+                'errors': error_messages,
+                'messages': []
+            }, status=400)
+
+        # for non-ajax requests
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):

@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header py-2">
-                <h5 class="modal-title" id="filterModalLabel">Filter by Topic</h5>
+                <h5 class="modal-title" id="filterModalLabel">Filter by Tag</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -12,11 +12,11 @@
                     <div class="row g-3">
                         <div class="col-12 p-2">
                             <input type="hidden" name="q" value="{{ q }}">
-                            <select class="form-select form-select-sm" name="topic">
-                                {% if topics %}
-                                {% for topic, count in topics %}
-                                <option value="{{ topic | urlencode }}" {% if current_topic == topic %}selected{% endif %}>
-                                    {{ topic |capfirst }}
+                            <select class="form-select form-select-sm" name="tag">
+                                {% if tags %}
+                                {% for tag, count in tags %}
+                                <option value="{{ tag | urlencode }}" {% if current_tag == tag %}selected{% endif %}>
+                                    {{ tag |capfirst }}
                                 </option>
                                 {% endfor %}
                                 {% endif %}
@@ -47,7 +47,7 @@
                     <div class="row g-3">
                         <div class="col-12 p-2">
                             <input type="hidden" name="q" value="{{ q }}">
-                            <input type="hidden" name="topic" value="{{ current_topic }}">
+                            <input type="hidden" name="tag" value="{{ current_tag }}">
                             <select class="form-select form-select-sm" name="sort">
                                 {% for key, value in sorting_options.items %}
                                 <option value="{{ key }}" {# if current_sort==key #}selected{# endif #}>

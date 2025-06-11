@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 from django.db import transaction
@@ -37,8 +37,8 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         """
-        Override post instead of delete to properly handle the protected\
-            relationships
+        Override post instead of delete to properly\
+            handle the protected relationships
         """
         self.object = self.get_object()
         self.object_id = self.object.pk
@@ -55,10 +55,10 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                         if image.cloudinary_image_id:
                             uploader.delete_image(image.cloudinary_image_id)
                         image.delete()
-                        success_messages.append("Deleted image successfully.")
+                        success_messages.append("Success. Image Deleted.")
                     except Exception as e:
-                        _message = f"Failed to delete image: {str(e)}"
-                        error_messages.append(_message)
+                        error_messages.append(f"Failed to delete image: \
+                                              {str(e)}")
                         raise
 
                 # 2. Delete ALL videos (they are protected)
@@ -66,40 +66,41 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                 for video in videos:
                     try:
                         video.delete()
-                        _message = "Deleted video link successfully."
-                        success_messages.append(_message)
+                        success_messages.append("Success. Video Link Deleted")
                     except Exception as e:
-                        _message = f"Failed to delete video link: {str(e)}"
-                        error_messages.append(_message)
+                        error_messages.append(f"Failed to delete video link:\
+                                              {str(e)}")
                         raise
 
                 # 3. Only after ALL protected relations are deleted,\
                 # delete the project
                 try:
+                    project_title = project.title
                     project.delete()
-                    success_messages.append("Project deleted successfully!")
+                    success_messages.append(f"Project '{project_title}' \
+                                            deleted successfully!")
                 except ProtectedError as pe:
-                    # If we still get a protected error,\
-                    # show the remaining protected objects
+                    # If still getting error, show remaining protected objects
                     protected_objects = list(pe.protected_objects)
                     protected_details = [f"{obj.__class__.__name__}\
                                          (ID: {obj.pk})"
                                          for obj in protected_objects]
 
-                    error_message = f"Cannot delete project because it's still\
-                        referenced by {len(protected_objects)} objects:\
-                            {', '.join(protected_details)}"
+                    error_message = (f"Failed. Project still referenced by "
+                                     f"{len(protected_objects)} objects:\
+                                        {', '.join(protected_details)}")
                     error_messages.append(error_message)
                     raise
                 except Exception as e:
-                    _message = f"Failed to delete project: {str(e)}"
-                    error_messages.append(_message)
+                    error_messages.append(f"Project Deletion Failed: {str(e)}")
                     raise
 
         except Exception as e:
             # If any error occurs, rollback and return the error response
             error_messages = list(set(error_messages))
-            error_messages.append(str(e))
+            if str(e) not in error_messages:
+                error_messages.append(str(e))
+
             response_data = {
                 "success": False,
                 "messages": success_messages,
@@ -110,24 +111,28 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             if is_ajax(request):
                 return JsonResponse(response_data, status=400)
 
-            for error in error_messages if error_messages else [str(e)]:
+            # Add error messages for non-AJAX requests
+            for error in error_messages:
                 messages.error(request, error)
             return self.render_to_response(self.get_context_data())
 
-        # If everything succeeded
+        # SUCCESS: Everything was deleted successfully
         response_data = {
             "success": True,
             "messages": success_messages,
+            "errors": [],
             "redirect_url": self.get_success_url(),
         }
-
-        for message in success_messages:
-            messages.success(request, message)
 
         if is_ajax(request):
             return JsonResponse(response_data, status=200)
 
-        return self.render_to_response(self.get_context_data())
+        # For non-AJAX requests: add success messages and redirect
+        for message in success_messages:
+            messages.success(request, message)
+
+        # CRITICAL FIX: Redirect instead of rendering the template
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         """

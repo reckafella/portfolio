@@ -10,6 +10,7 @@ from wagtail.fields import RichTextField
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
+from taggit.managers import TaggableManager
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -52,11 +53,7 @@ class BlogPostPage(Page):
     published = models.BooleanField(default=False)
     post_created_at = models.DateTimeField(auto_now_add=True, null=True)
     post_updated_at = models.DateTimeField(auto_now=True, null=True)
-    topics = models.CharField(
-        max_length=200,
-        default="all",
-        help_text="Comma-separated list of topics"
-    )
+    tags = TaggableManager(blank=True, help_text="Add comma-separated tags")
     cloudinary_image_id = models.CharField(max_length=200, blank=True,
                                            null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
@@ -65,7 +62,7 @@ class BlogPostPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content"),
-        FieldPanel("topics"),
+        FieldPanel("tags"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),
@@ -91,14 +88,15 @@ class BlogPostPage(Page):
     def __str__(self):
         return self.title + " by " + self.author.username
 
-    def get_topics(self):
-        return [topic.strip() for topic in self.topics.split(",")]
+    def get_tags(self):
+        """Return list of tag names"""
+        return [tag.name for tag in self.tags.all()]
 
     def get_context(self, request):
         context = super().get_context(request)
         context["author"] = self.author
         context["post"] = self
-        context["topics"] = self.get_topics()
+        context["tags"] = self.get_tags()
         context["date_published"] = self.first_published_at or\
             self.post_created_at
 

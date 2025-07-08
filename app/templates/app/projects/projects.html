@@ -5,11 +5,10 @@
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1>{{ title }}</h1>
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
-                <li>{{ title }}</li>
+                <li class="active">{{ title }}</li>
             </ol>
         </nav>
     </div>
@@ -20,7 +19,7 @@
     <div class="container">
         <div class="section-title text-center mb-4">
             <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
-            <p class="lead">Personal & professional projects I have worked on.</p>
+            <p class="lead">Projects I have worked on.</p>
         </div>
 
         <div class="row">
@@ -34,13 +33,76 @@
             </div>
         </div>
 
-        {% include "app/projects/partials/projects.html" %}
+        <div class="row justify-content-center project-container" >
+            <div class="col-lg-11">
+                <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-2 my-3">
+                    {% for project in projects %}
+                    <div class="col project-item filter-{{ project.category|slugify }}">
+                        <div class="card shadow h-100">
+                            {% if project.first_image %}
+                            <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid" alt="{{ project.title }}">
+                            {% endif %}
+                            <div class="project-info position-relative px-2 py-2">
+                                <span class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}" aria-label="{{ project.project_type|title }}">
+                                    {{ project.project_type|title }}
+                                </span>
+        
+                                <h4 class="mb-3">{{ project.title }}</h4>
+        
+                                <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                                    <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery"
+                                        class="project-lightbox preview-link" title="Preview {{ project.title }}">
+                                        <i class="bi bi-plus"></i>
+                                    </a>
+                                    <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
+                                        title="View details for {{ project.title }}">
+                                        <i class="bi bi-link"></i>
+                                    </a>
+                                    <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                        data-share-url="{% url 'app:project_detail' project.slug %}"
+                                        data-share-title="{{ project.title }}" class="share-link"
+                                        title="Share {{ project.title }}">
+                                        <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
+                                    </a>
+                                </div>
+                                <p class="mb-0 text-center">{{ project.category }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center">
+                        <p>No projects found</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
 
         {# Client-side pagination (replaces server-side pagination) #}
         <div class="d-flex justify-content-center mt-4">
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    {# Pagination will be populated by JavaScript #}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link d-flex justify-content-between align-items-center">&laquo; Previous</span></li>
+                    {% endif %}
+                    
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item active"><span class="page-link d-flex justify-content-between align-items-center">{{ i }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link  d-flex justify-content-between align-items-center">Next &raquo;</span></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
@@ -51,5 +113,5 @@
 
 
 {% block extra_js %}
-<script src="{% static 'assets/js/projects.js' %}"></script>
+<script src="{# static 'assets/js/projects.js' #}"></script>
 {% endblock %}

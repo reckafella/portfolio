@@ -7,10 +7,10 @@
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1>Search</h1>
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li class="active">Search</li>
             </ol>
         </nav>
     </div>
@@ -22,73 +22,54 @@
             <div class="col-lg-10">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="fw-bold mt-5 text-center section-title">{{ page_title }}
-                        </h2>
-                        <div class="d-flex mb-5 py-2 flex-column flex-md-row flex-lg-row gap-2 gap-lg-3 justify-content-center align-items-stretch">
+                        <h2 class="fw-bold mt-3 text-center section-title">{{ page_title }}</h2>
+                        <div
+                            class="d-flex mb-2 py-1 flex-column flex-md-row gap-2 gap-lg-3 justify-content-center align-items-stretch">
                             <div class="search-widget col-md-7 col-lg-6">
                                 <form method="get" action="{% url 'app:search' %}">
-                                    <input id="SearchInput" type="search"
-                                        class="form-control form-control-sm"
-                                        placeholder="Search..."
-                                        aria-label="Search"
-                                        name="q"
-                                        value="{{ q }}"
-                                        required>
-                                    <button type="submit"
-                                        id="submitButton"
-                                        data-loading-text="{{ data_loading_text }}"
-                                        aria-labelledby="SearchInput"
+                                    <input id="SearchInput" type="search" class="form-control form-control-sm"
+                                        placeholder="Search..." aria-label="Search" name="q" value="{{ q }}" required>
+                                    <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"
                                         aria-label="Search">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </form>
                             </div>
-                
-                            <!-- Filter and Sort Buttons - Compact on Mobile -->
+
+                            <!-- Filter and Sort Buttons -->
                             <div class="d-flex gap-3 col-md-3 col-lg-4">
-                                <button type="button" 
-                                        class="btn btn-outline-success btn-sm flex-grow-1"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#sortModal">
+                                <button type="button" class="btn btn-outline-success btn-sm flex-grow-1"
+                                    data-bs-toggle="modal" data-bs-target="#sortModal">
                                     <i class="bi bi-sort-down"></i>
-                                    <span class="d-inline">Sort</span>
+                                    <span>Sort</span>
                                 </button>
-                                <button type="button" 
-                                        class="btn btn-outline-primary btn-sm flex-grow-1"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#filterModal">
+                                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1"
+                                    data-bs-toggle="modal" data-bs-target="#filterModal">
                                     <i class="bi bi-funnel"></i>
-                                    <span class="d-inline">Filter</span>
+                                    <span>Filter</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body pt-3">
                         {% if posts or projects %}
-                        <ul class="nav nav-tabs nav-tabs-bordered"
-                            id="searchTabs" role="tablist">
+                        <ul class="nav nav-tabs nav-tabs-bordered" id="searchTabs" role="tablist">
                             {% if posts %}
-                            <li class="nav-item" role="presentation" id="posts-tab-container">
-                                <button class="nav-link fw-bold active"
-                                    id="posts-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#posts"
-                                    type="button" role="tab"
-                                    aria-controls="posts"
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link fw-bold active" id="posts-tab" data-bs-toggle="tab"
+                                    data-bs-target="#posts" type="button" role="tab" aria-controls="posts"
                                     aria-selected="true">
-                                    Blog Posts 
-                                    (<span class="fw-normal">{{ posts|length }}</span>)
+                                    Blog Posts (<span class="fw-normal">{{ posts|length }}</span>)
                                 </button>
                             </li>
                             {% endif %}
                             {% if projects %}
-                            <li class="nav-item" role="presentation" id="projects-tab-container">
-                                <button class="nav-link fw-bold"
-                                    id="projects-tab" data-bs-toggle="tab"
-                                    data-bs-target="#projects" type="button"
-                                    role="tab" aria-controls="projects"
-                                    aria-selected="false">Projects 
-                                    (<span class="fw-normal">{{ projects|length }}</span>)
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link fw-bold" id="projects-tab" data-bs-toggle="tab"
+                                    data-bs-target="#projects" type="button" role="tab" aria-controls="projects"
+                                    aria-selected="false">
+                                    Projects (<span class="fw-normal">{{ projects|length }}</span>)
                                 </button>
                             </li>
                             {% endif %}
@@ -96,15 +77,20 @@
                         {% endif %}
 
                         <div class="tab-content tab-content-bordered pt-2" id="searchTabContent">
-                            <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                            <div class="tab-pane fade show active" id="posts" role="tabpanel"
+                                aria-labelledby="posts-tab">
                                 {% if posts %}
                                 <ul class="list-group list-group-flush">
                                     {% for post in posts %}
                                     <li class="list-group-item">
-                                        <a href="{% url 'blog:article_details' post.slug %}" target="_blank" class="text-decoration-none">
+                                        <a href="{% url 'blog:article_details' post.slug %}" target="_blank"
+                                            class="text-decoration-none">
                                             <h4 class="card-title fw-bold">{{ post.title | safe }}</h4>
-                                            <p class="card-text">{{ post.content | richtext | safe | truncatewords:30 }}</p>
-                                            <small><span class="fw-bold">Published:</span> {{ post.first_published_at|default:post.post_created_at | date:"N d, Y" }}</small>
+                                            <p class="card-text">{{ post.content | richtext | safe | truncatewords:30 }}
+                                            </p>
+                                            <small><span class="fw-bold">Published:</span> {{
+                                                post.first_published_at|default:post.post_created_at | date:"N d, Y"
+                                                }}</small>
                                         </a>
                                     </li>
                                     {% empty %}
@@ -116,15 +102,18 @@
                                 {% include "app/pagination/search.html" with page_obj=posts %}
                                 {% endif %}
                             </div>
+
                             <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
                                 {% if projects %}
                                 <ul class="list-group list-group-flush">
                                     {% for project in projects %}
                                     <li class="list-group-item">
-                                        <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
+                                        <a href="{{ project.project_url }}" target="_blank"
+                                            class="text-decoration-none">
                                             <h4 class="card-title fw-bold">{{ project.title | safe }}</h4>
                                             <p class="card-text">{{ project.description | safe | truncatewords:20 }}</p>
-                                            <small class=""><span class="fw-bold">Published on:</span> {{ project.created_at |date:"N d, Y" }}</small>
+                                            <small><span class="fw-bold">Published on:</span> {{ project.created_at
+                                                |date:"N d, Y" }}</small>
                                         </a>
                                     </li>
                                     {% empty %}
@@ -137,6 +126,7 @@
                                 {% endif %}
                             </div>
                         </div>
+
                         {% if not posts and not projects %}
                         <div class="alert alert-danger" role="alert">
                             No results found for your search query. Try adjusting your search terms or filters.
@@ -151,3 +141,50 @@
     </div>
 </section>
 {% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        const postsTab = document.getElementById('posts-tab');
+        const projectsTab = document.getElementById('projects-tab');
+        const postsPane = document.getElementById('posts');
+        const projectsPane = document.getElementById('projects');
+
+        if (category && category !== 'all') {
+            if (category === 'posts' && postsTab) {
+                // Activate posts tab
+                postsTab.classList.add('active');
+                postsTab.setAttribute('aria-selected', 'true');
+                postsPane.classList.add('show', 'active');
+
+                // Deactivate projects tab
+                if (projectsTab) {
+                    projectsTab.classList.remove('active');
+                    projectsTab.setAttribute('aria-selected', 'false');
+                }
+                if (projectsPane) {
+                    projectsPane.classList.remove('show', 'active');
+                }
+            } else if (category === 'projects' && projectsTab) {
+                // Activate projects tab
+                projectsTab.classList.add('active');
+                projectsTab.setAttribute('aria-selected', 'true');
+                projectsPane.classList.add('show', 'active');
+
+                // Deactivate posts tab
+                if (postsTab) {
+                    postsTab.classList.remove('active');
+                    postsTab.setAttribute('aria-selected', 'false');
+                }
+                if (postsPane) {
+                    postsPane.classList.remove('show', 'active');
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+}

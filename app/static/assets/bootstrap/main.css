@@ -186,31 +186,36 @@ h6 {
     order: 1;
     position: fixed;
     background: var(--search-bar-background-color);
-    top: 150px;
-    left: 50%;
-    width: 80%;
-    max-width: 500px;
-    padding: 50px 25px;
-    z-index: 1090;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
     visibility: hidden;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    -webkit-transform: translate(0px, -100%) scale(0, 0);
+    -moz-transform: translate(0px, -100%) scale(0, 0);
+    -o-transform: translate(0px, -100%) scale(0, 0);
+    -ms-transform: translate(0px, -100%) scale(0, 0);
+    transform: translate(0px, -100%) scale(0, 0);
     opacity: 0;
-    border-radius: 10px;
-    transition: all 0.3s;
-    transform: translateX(-50%);
-    box-shadow: 0px 0px 5px 0px color-mix(in srgb, var(--accent-color), transparent 10%);
+    z-index: 99999;
   }
 
-  .header .search-nav-wrapper .search-bar .search-tips {
+  #searchModal .search-bar .search-tips {
     margin-top: 20px;
     font-size: 14px;
-    color: #fff;
+    color: var(--default-color);
   }
 
   .search-tips h2 {
     font-size: 20px;
-    color: #fff;
+    color: var();
     font-weight: 700;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 30%);
     margin-bottom: 10px;
   }
 
@@ -219,7 +224,7 @@ h6 {
   }
 
   .search-tips ul li i {
-    color: #fff;
+    color: var(--accent-color);
     margin-right: 5px;
   }
 
@@ -230,7 +235,13 @@ h6 {
   .header .search-nav-wrapper .search-bar-show {
     visibility: visible;
     opacity: 1;
-    top: 60px;
+    -webkit-transform: translate(0px, 0px) scale(1, 1);
+    -moz-transform: translate(0px, 0px) scale(1, 1);
+    -o-transform: translate(0px, 0px) scale(1, 1);
+    -ms-transform: translate(0px, 0px) scale(1, 1);
+    transform: translate(0px, 0px) scale(1, 1);
+    opacity: 1;
+    width: 100%;
   }
 
 /*--------------------------------------------------------------
@@ -757,7 +768,7 @@ h6 {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
 }
 
@@ -766,10 +777,10 @@ h6 {
 }
 
 .page-title .breadcrumbs ol li+li::before {
-  content: "\002F";
+  content: "\00bb";
   display: inline-block;
   padding-right: 5px;
-  font-size: 20;
+  font-size: 20px;
   color: color-mix(in srgb, var(--default-color), transparent 10%);
 }
 

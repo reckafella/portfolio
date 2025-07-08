@@ -113,6 +113,14 @@ class SearchView(ListView):
 
         total_results = posts.paginator.count + projects.paginator.count
         _q = self.query
+        if self.category == "all":
+            _q = f"You searched for: {_q} in all categories"
+        elif self.category == "posts":
+            _q = f"You searched for: {_q} in posts"
+        elif self.category == "projects":
+            _q = f"You searched for: {_q} in projects"
+        else:
+            _q = "Search"
 
         # Add custom context
         context.update({
@@ -121,7 +129,7 @@ class SearchView(ListView):
             "sort": self.sort,
             "posts": posts,
             "projects": projects,
-            "page_title": f"You Searched For: {_q}" if _q else "Search",
+            "page_title": _q,
             "data_loading_text": "Searching...",
             "total_results": total_results,
             "sort_options": {

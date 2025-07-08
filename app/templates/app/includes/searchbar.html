@@ -1,4 +1,48 @@
-{% load static %}
+
+<!-- Search Modal -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="search-widget mx-auto" style="max-width: 600px;">
+          <form class="d-flex align-items-center form-control form-control-sm mb-4" method="GET"
+            action="{% url 'app:search' %}">
+            <input type="search" name="q" value="{{ q }}" placeholder="Type to Search..." title="Enter search keyword"
+              required />
+            <button type="submit" title="Search">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+
+          <!-- tips for users on desktop -->
+          <div class="search-tips d-none d-lg-block text-start">
+            <h2>Search Tips for Desktop Users</h2>
+            <ul class="list-unstyled">
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press <kbd>Enter</kbd> or <i class="bi bi-search"></i> to search</span>
+              </li>
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press <kbd>Esc</kbd> to close</span>
+              </li>
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press outside search bar to close</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% comment %}
 <div class="modal fade p-5" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content pt-4 px-2 pb-5">
@@ -47,3 +91,4 @@
       </div>
     </div>
   </div>
+{% endcomment %}

@@ -23,11 +23,11 @@ function performSearch(event) {
             searchUrl += '&sort=' + encodeURIComponent(sortOptionValue);
         }
 
-        // Hide the modal
+        /* // Hide the modal
         const searchModal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
         if (searchModal) {
             searchModal.hide();
-        }
+        } */
         // Navigate to the search URL
         window.location.href = searchUrl;
     }
@@ -35,19 +35,23 @@ function performSearch(event) {
     return false;
 }
 
-// Event listener for focusing input when modal opens
+// Auto-focus search input when modal opens
 document.getElementById('searchModal').addEventListener('shown.bs.modal', function () {
-    document.getElementById('q').focus();
-});
-
-// Add keyboard shortcut for opening search modal
-document.addEventListener('keydown', function(e) {
-    // Open search modal with Ctrl/Cmd + K
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        select('.search-bar').classList.add('search-bar-show');
+    const searchInput = this.querySelector('input[name="q"]');
+    if (searchInput) {
+      searchInput.focus();
     }
-});
+  });
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+      if (modal) {
+        modal.hide();
+      }
+    }
+  });
+
 
 /* Search.html */
 

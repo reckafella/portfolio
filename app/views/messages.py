@@ -25,7 +25,8 @@ class ContactView(FormView):
         context = super().get_context_data(**kwargs)
         context.update({
             "page_title": "Contact",
-            "submit_text": "Send Message"
+            "submit_text": "Send Message",
+            "data_loding_text": "Sending Message...",
         })
         return context
 

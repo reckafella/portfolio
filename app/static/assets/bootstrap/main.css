@@ -1934,7 +1934,7 @@ Cards
 
 /* Bordered Tabs */
 .nav-tabs-bordered {
-  border-bottom: 2px solid color-mix(in srgb, var(--default-color), transparent 70%);
+  border-bottom: 2px solid color-mix(in srgb, var(--default-color), transparent 30%);
 }
 
 .nav-tabs-bordered .nav-link {

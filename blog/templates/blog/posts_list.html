@@ -21,9 +21,9 @@
     <div class="container" data-aos="fadeup">
         <div class="row">
             <div class="section-title py-2">
-                <h2 class="text-center">
+                <h3 class="text-center">
                     {{ page_title }} {% if not all_authors %} by <a href="{% url 'blog:articles_by_author' author.username %}">{{ author.get_full_name | default:author.username | capfirst }}</a> {% endif %}
-                </h2>
+                </h3>
             </div>
             <div class="row">
                 <div class="entries col-lg-8">

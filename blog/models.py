@@ -59,6 +59,9 @@ class BlogPostPage(Page):
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
 
+    view_count = models.PositiveIntegerField(default=0,
+                                             help_text="Number of page views")
+
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content"),
@@ -68,9 +71,13 @@ class BlogPostPage(Page):
                 FieldPanel("cloudinary_image_id", read_only=True),
                 FieldPanel("cloudinary_image_url", read_only=True),
                 FieldPanel("optimized_image_url", read_only=True),
+                FieldPanel("post_created_at", read_only=True),
+                FieldPanel("post_updated_at", read_only=True),
+                FieldPanel("view_count", read_only=True),
             ],
             heading="Cloudinary Image Details - Readonly",
-        )
+        ),
+        FieldPanel("published"),
     ]
 
     class Meta:
@@ -88,6 +95,12 @@ class BlogPostPage(Page):
     def __str__(self):
         return self.title + " by " + self.author.username
 
+    def increment_view_count(self):
+        """Increment the view count for this post"""
+        self.view_count = models.F('view_count') + 1
+        self.save(update_fields=['view_count'])
+        self.refresh_from_db(fields=['view_count'])
+
     def get_tags(self):
         """Return list of tag names"""
         return [tag.name for tag in self.tags.all()]
@@ -99,8 +112,26 @@ class BlogPostPage(Page):
         context["tags"] = self.get_tags()
         context["date_published"] = self.first_published_at or\
             self.post_created_at
+        context["view_count"] = self.view_count
 
         return context
+
+
+class ViewCountAttempt(models.Model):
+    """Track view count attempts for abuse detection"""
+    article = models.ForeignKey(BlogPostPage, on_delete=models.CASCADE)
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)
+    reason = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        db_table = 'view_count_attempts'
+        indexes = [
+            models.Index(fields=['ip_address', 'timestamp']),
+            models.Index(fields=['article', 'timestamp']),
+        ]
 
 
 class BlogPostImage(models.Model):

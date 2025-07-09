@@ -1,8 +1,8 @@
 """
 this is the model for the blog post using wagtail cms
 """
-
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.utils import timezone
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
 from wagtail.contrib.routable_page.models import RoutablePageMixin
@@ -11,6 +11,7 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 from taggit.managers import TaggableManager
+import hashlib
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -61,6 +62,10 @@ class BlogPostPage(Page):
 
     view_count = models.PositiveIntegerField(default=0,
                                              help_text="Number of page views")
+    last_view_increment = models.DateTimeField(
+        auto_now=True, null=True, blank=True,
+        help_text="Timestamp of the last view count increment"
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel("author"),
@@ -95,11 +100,41 @@ class BlogPostPage(Page):
     def __str__(self):
         return self.title + " by " + self.author.username
 
-    def increment_view_count(self):
+    def increment_view_count(self, request):
         """Increment the view count for this post"""
-        self.view_count = models.F('view_count') + 1
-        self.save(update_fields=['view_count'])
-        self.refresh_from_db(fields=['view_count'])
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR', '')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        visitor_hash = hashlib.sha256(
+            f"{ip}_{user_agent}".encode()).hexdigest()
+
+        _, created = ViewCountAttempt.objects.get_or_create(
+            article=self,
+            visitor_hash=visitor_hash,
+            defaults={
+                'ip_address': ip,
+                'user_agent': user_agent,
+                'user': request.user if request.user.is_authenticated else None
+            }
+        )
+        if created:
+            BlogPostPage.objects.filter(pk=self.pk).update(
+                view_count=models.F('view_count') + 1,
+                last_view_increment=timezone.now()
+            )
+            self.refresh_from_db(fields=['view_count', 'last_view_increment'])
+            return True
+        return False
+
+    def get_view_count_display(self):
+        """Return view count as a formatted string"""
+        if self.view_count == 1:
+            return "1 view"
+        else:
+            return f"{self.view_count} views"
 
     def get_tags(self):
         """Return list of tag names"""
@@ -120,17 +155,21 @@ class BlogPostPage(Page):
 class ViewCountAttempt(models.Model):
     """Track view count attempts for abuse detection"""
     article = models.ForeignKey(BlogPostPage, on_delete=models.CASCADE)
+    visitor_hash = models.CharField(max_length=64, blank=True, null=True)
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     success = models.BooleanField(default=False)
     reason = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,
+                             null=True, related_name="view_count_attempts")
 
     class Meta:
         db_table = 'view_count_attempts'
+        unique_together = ['article', 'visitor_hash']
         indexes = [
             models.Index(fields=['ip_address', 'timestamp']),
-            models.Index(fields=['article', 'timestamp']),
+            models.Index(fields=['article', 'visitor_hash']),
         ]
 
 

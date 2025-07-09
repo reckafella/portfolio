@@ -2089,24 +2089,19 @@ Cards
 }
 
 /* special buttons with a sliding effect on hover */
-.special-btn {
+/* .special-btn {
   margin-top: 5px;
   padding: 4px 8px;
-  background: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background: color-mix(in srgb, var(--accent-color), transparent 40%);
   color: var(--default-color, #05090a);
-  border: 2px solid var(--accent-color, #05090a);
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  text-transform: uppercase;
   transition: 0.25s;
   position: relative;
   overflow: hidden;
   z-index: 1;
 }
 
-/* Create pseudo-elements for the sliding effect */
 .special-btn::before,
 .special-btn::after {
   content: '';
@@ -2127,23 +2122,50 @@ Cards
   right: 0;
 }
 
-/* Using a percentage-based approach for the hover effect */
 .special-btn:hover::before,
 .special-btn:hover::after,
 .special-btn:focus::before,
 .special-btn:focus::after {
-  width: 51%; /* Each side covers half the button */
-}
+  width: 51%;
 
 
-/* apply special-btn to devices with hover capabilities */
 @media (hover: hover) {
   .special-btn:hover,
   .special-btn:focus {
     color: var(--background-color);
     border: 2px solid var(--default-color);
   }
+} */
+
+.special-btn {
+  background: linear-gradient(45deg, var(--accent-color), var(--accent-color));
+  color: var(--default-color);
+  border: none;
+  transform: scale(1.02);
+  /* box-shadow: 0 4px 8px var(--accent-color); */
+  transition: all 0.3s ease;
 }
+
+.special-btn:hover {
+  transform: scale(1.05);
+  /* box-shadow: 0 6px 12px var(--accent-color); */
+}
+
+/* Base button styling */
+.share-btn {
+  background: var(--background-color);
+  border: 1px solid var(--default-color);
+  color: var(--default-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+  background: var(--default-color);
+  color: var(--background-color);
+  text-decoration: none;
+}
+
 
 /*--------------------------------------------------------------
 # HTTP Errors
@@ -2198,4 +2220,20 @@ Cards
 .form-check-input:checked {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
+}
+
+.share-link {
+  color: var(--default-color);
+  background: var(--background-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.share-link i {
+  color: var(--default-color);
+  margin-right: 5px;
+}
+
+.share-link:hover {
+  text-decoration: none;
 }

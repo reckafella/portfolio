@@ -68,6 +68,24 @@
                                         {% endwith %}
                                     </li>
                                     {% endif %}
+                                    {% if user.is_authenticated and user == article.author or user.is_staff %}
+                                    <li class="d-flex align-items-center position-relative">
+                                        <div class="action-buttons">
+                                            {% include 'app/includes/action-buttons.html' %}
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    <!-- share btn -->
+                                    <li class="d-flex align-items-center">
+                                        <a type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#shareModal"
+                                            data-share-url="{% url 'blog:article_details' article.slug %}"
+                                            data-share-title="{{ article.title }}"
+                                            class="share-link btn btn-sm">
+                                            <i class="bi bi-share-fill fs-6"></i>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="entry-content">
@@ -76,7 +94,7 @@
                             <div class="entry-footer d-flex justify-content-between align-items-stretch">
                                 <a type="button"
                                     href="{% url 'blog:article_details' article.slug %}"
-                                    class="read-article btn btn-sm btn-primary">
+                                    class="read-article btn btn-sm btn-success">
                                     Read More
                                 </a>
                                 <!-- share article button -->
@@ -85,7 +103,7 @@
                                     data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
                                     data-share-title="{{ article.title }}"
-                                    class="btn share-link btn-sm btn-success">
+                                    class="btn share-link btn-sm">
                                     Share <i class="bi bi-share-fill fs-6"></i>
                                 </a>
                             </div>

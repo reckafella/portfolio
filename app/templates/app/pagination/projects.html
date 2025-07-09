@@ -27,7 +27,7 @@
                 {% else %}
                     <li class="page-item">
                         <a class="page-link d-flex justify-content-between align-items-center"
-                            href="?page={{ i }}&category={{ current_category }}">
+                            href="?category={{ current_category }}&page={{ i }}">
                             {{ i }}
                         </a>
                     </li>
@@ -37,7 +37,7 @@
             {% if page_obj.has_next %}
                 <li class="page-item">
                     <a class="page-link d-flex justify-content-between align-items-center"
-                        href="?page={{ page_obj.next_page_number }}&category={{ current_category }}">
+                        href="?category={{ current_category }}&page={{ page_obj.next_page_number }}">
                         Next &raquo;</a>
                 </li>
             {% else %}

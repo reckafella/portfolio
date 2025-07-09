@@ -21,13 +21,13 @@
 
 .blog .entry .entry-title {
   font-size: 20px;
-  line-height: 1;
+  /*line-height: 1;*/
   font-weight: bold;
   padding: 0;
 }
 
 .blog .entry .entry-title a {
-  color: var(--accent-color);
+  color: var(--default-color);
   transition: 0.3s;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .blog .entry .entry-content p {
-  line-height: 1;
+  line-height: 1.6;
 }
 
 .blog .entry .entry-content h3 {

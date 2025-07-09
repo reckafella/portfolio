@@ -86,6 +86,25 @@
         {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
     </div>
 </section>
+{% else %}
+<section class="section">
+    <div class="container">
+        <div class="section-title text-center">
+            <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
+            <p class="lead">No projects found.</p>
+        </div>
+        <div class="text-center">
+            <p>Check back later or explore other sections of the site.</p>
+            <a href="{% url 'app:home' %}" class="btn btn-primary">Go to Home</a>
+        </div>
+        <div class="text-center mt-4">
+            <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
+        </div>
+        <div class="text-center mt-4">
+            <p>Want to see more? Check out my <a href="{% url 'app:blog' %}">blog</a> for updates!</p>
+        </div>
+    </div>
+</section>
 {% endif %}
 {% endblock %}
 

@@ -1,7 +1,7 @@
 import os
 from wagtail.models import Page
 from django.conf import settings
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, JsonResponse
 from django.views.generic.base import RedirectView, TemplateView, View
 
 from app.models import Projects
@@ -103,3 +103,11 @@ class CustomRedirectView(RedirectView):
         if query_params:
             return f'{redirect_to}?{query_params}'
         return redirect_to
+
+
+def app_is_running(request):
+    """Simple view to check if the app is running"""
+    return JsonResponse({
+        "status": 200,
+        "message": "The app is running successfully."
+    })

@@ -8,7 +8,8 @@ from app.views.views import (
     ResumeView,
     ResumePDFView,
     SitemapView,
-    CustomRedirectView as crv
+    CustomRedirectView as crv,
+    app_is_running
 )
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
@@ -50,4 +51,5 @@ urlpatterns = [
         MarkAsRead.as_view(),
         name="mark_as_read"
     ),
+    path("app-running", app_is_running, name="app_is_running"),
 ]

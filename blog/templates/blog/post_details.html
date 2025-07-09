@@ -1,7 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% load wagtailcore_tags %}
-{% load wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block content %}
@@ -36,14 +35,12 @@
                         <ul>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{
-                                    article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
                             </li>
                             {% if article.first_published_at %}
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
-                                {% with year=article.first_published_at|date:"Y"
-                                month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
+                                {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
                                 <span class="date-links">
                                     <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}"
                                         title="View all posts from this day">
@@ -66,8 +63,7 @@
                             <!-- Add view count display -->
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-eye"></i>
-                                <span id="view-count">{{ article.view_count }}</span> view{{
-                                article.view_count|pluralize }}
+                                <span id="view-count" class="pr-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
                             </li>
                             {% if user.is_authenticated and user == article.author or user.is_staff %}
                             <li class="d-flex align-items-center position-relative">
@@ -80,7 +76,7 @@
                                 <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
                                     data-share-title="{{ article.title }}" class="share-link">
-                                    <i class="bi bi-share-fill fs-6"></i>
+                                    <i class="bi bi-share-fill"></i>
                                 </a>
                             </li>
                         </ul>
@@ -149,7 +145,7 @@
                 return;
             }
 
-            fetch("{% url 'blog:increment_view_count' article.slug %}", {
+            fetch("{% url 'blog:inc_view_count' article.slug %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

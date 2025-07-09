@@ -109,7 +109,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    "portfolio.middlewares.rate_limit.RateLimitMiddleware"
+    "portfolio.middlewares.rate_limit.RateLimitMiddleware",
+    "blog.middlewares.security.ViewCountSecurityMiddleware",
 ]
 
 # portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,

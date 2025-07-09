@@ -40,19 +40,19 @@ class IncrementViewCountView(DetailView):
         )
 
         try:
-            # Validate the request
-            if not is_ajax(request):
-                attempt.reason = 'Invalid request type'
-                attempt.save()
-                return JsonResponse(
-                    {'success': False, 'error': 'Invalid request'}, status=405)
-
             if not self.validate_csrf(request):
                 attempt.reason = 'Invalid CSRF token'
                 attempt.save()
                 return JsonResponse(
                     {'success': False, 'error': 'Invalid CSRF token'},
                     status=403)
+
+            # Validate the request
+            if not is_ajax(request):
+                attempt.reason = 'Invalid request type'
+                attempt.save()
+                return JsonResponse(
+                    {'success': False, 'error': 'Invalid request'}, status=405)
 
             if not self.validate_payload(request):
                 attempt.reason = 'Invalid payload'

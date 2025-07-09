@@ -60,9 +60,10 @@
   line-height: 0;
 }
 
-.blog .entry .entry-meta a {
+.blog .entry .entry-meta a,
+.blog .entry .entry-meta #view-count {
   color: var(--default-color);
-  font-size: 12px;
+  font-size: 14px;
   display: inline-block;
   line-height: 1;
 }

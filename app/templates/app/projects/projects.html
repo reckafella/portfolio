@@ -19,39 +19,44 @@
     <div class="container">
         <div class="section-title text-center mb-4">
             <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
-            <p class="lead">Projects I have worked on.</p>
+            <p class="lead">Personal & professional projects I have worked on.</p>
         </div>
 
         <div class="row">
             <div class="col-12 d-flex justify-content-center">
                 <ul id="project-filters">
-                    <li data-filter="*" class="filter-active">All</li>
+                    <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">All</li>
                     {% for category in categories %}
-                    <li data-filter=".filter-{{ category|slugify }}">{{ category }}</li>
+                    <li data-filter=".filter-{{ category|slugify }}"
+                        class="{% if current_category == category %}filter-active{% endif %}">{{ category }}</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
 
-        <div class="row justify-content-center project-container" >
+        <div class="row justify-content-center project-container">
             <div class="col-lg-11">
-                <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-2 my-3">
+                <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
                     {% for project in projects %}
                     <div class="col project-item filter-{{ project.category|slugify }}">
                         <div class="card shadow h-100">
                             {% if project.first_image %}
-                            <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid" alt="{{ project.title }}">
+                            <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid"
+                                alt="{{ project.title }}">
                             {% endif %}
                             <div class="project-info position-relative px-2 py-2">
-                                <span class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}" aria-label="{{ project.project_type|title }}">
+                                <span
+                                    class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}"
+                                    aria-label="{{ project.project_type|title }}">
                                     {{ project.project_type|title }}
                                 </span>
-        
+
                                 <h4 class="mb-3">{{ project.title }}</h4>
-        
+
                                 <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
-                                    <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery"
-                                        class="project-lightbox preview-link" title="Preview {{ project.title }}">
+                                    <a href="{{ project.first_image.cloudinary_image_url }}"
+                                        data-gallery="projectGallery" class="project-lightbox preview-link"
+                                        title="Preview {{ project.title }}">
                                         <i class="bi bi-plus"></i>
                                     </a>
                                     <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
@@ -78,40 +83,12 @@
             </div>
         </div>
 
-        {# Client-side pagination (replaces server-side pagination) #}
-        <div class="d-flex justify-content-center mt-4">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a></li>
-                    {% else %}
-                        <li class="page-item disabled"><span class="page-link d-flex justify-content-between align-items-center">&laquo; Previous</span></li>
-                    {% endif %}
-                    
-                    {% for i in page_obj.paginator.page_range %}
-                        {% if page_obj.number == i %}
-                            <li class="page-item active"><span class="page-link d-flex justify-content-between align-items-center">{{ i }}</span></li>
-                        {% else %}
-                            <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ i }}">{{ i }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled"><span class="page-link  d-flex justify-content-between align-items-center">Next &raquo;</span></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
+        {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
     </div>
 </section>
 {% endif %}
 {% endblock %}
 
-
 {% block extra_js %}
-<script src="{# static 'assets/js/projects.js' #}"></script>
+<script src="{% static 'assets/js/projects.js' %}"></script>
 {% endblock %}

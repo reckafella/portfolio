@@ -3,8 +3,8 @@
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 {% block title %}{{ article.title }}{% endblock %}
-{% block content %}
 
+{% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
         <nav class="breadcrumbs">
@@ -23,7 +23,8 @@
                 <article class="entry entry-single">
                     <div class="entry-img my-1">
                         {% if article.first_image.optimized_image_url %}
-                        <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}" class="img-fluid mb-1">
+                        <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}"
+                            class="img-fluid mb-1">
                         {% endif %}
                     </div>
 
@@ -35,29 +36,39 @@
                         <ul>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{
+                                    article.author.get_full_name | default:article.author.username|capfirst }}</a>
                             </li>
                             {% if article.first_published_at %}
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-clock"></i>
-                                {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
+                                {% with year=article.first_published_at|date:"Y"
+                                month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
                                 <span class="date-links">
                                     <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}"
                                         title="View all posts from this day">
                                         {{ article.first_published_at|date:"d" }}
                                     </a>
                                     <span class="separator">-</span>
-                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}"
+                                        title="View all posts from this month">
                                         {{ article.first_published_at|date:"m" }}
                                     </a>
                                     <span class="separator">-</span>
-                                    <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
+                                    <a href="{% url 'blog:articles_by_date' year %}"
+                                        title="View all posts from this year">
                                         {{ article.first_published_at|date:"Y" }}
                                     </a>
                                 </span>
                                 {% endwith %}
                             </li>
                             {% endif %}
+                            <!-- Add view count display -->
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-eye"></i>
+                                <span id="view-count">{{ article.view_count }}</span> view{{
+                                article.view_count|pluralize }}
+                            </li>
                             {% if user.is_authenticated and user == article.author or user.is_staff %}
                             <li class="d-flex align-items-center position-relative">
                                 <div class="action-buttons">
@@ -66,15 +77,13 @@
                             </li>
                             {% endif %}
                             <li class="d-flex align-items-center">
-                                <a type="button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#shareModal"
+                                <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
-                                    data-share-title="{{ article.title }}"
-                                    class="share-link">
+                                    data-share-title="{{ article.title }}" class="share-link">
                                     <i class="bi bi-share-fill fs-6"></i>
                                 </a>
                             </li>
+                        </ul>
                     </div>
 
                     <div class="entry-content">
@@ -105,12 +114,91 @@
         </div>
     </div>
 </section>
-{% endblock %}
 
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const editDelete = document.querySelector('.edit-delete');
-        const editDeleteButton = document.querySelector('.action-buttons button');
-        editDeleteButton.addEventListener('click', () => editDelete.classList.remove('d-none'));
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let viewCountIncremented = false;
+        let scrollThreshold = 0.3; // 30% of page height
+
+        // Function to get cookie value
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function incrementViewCount() {
+            if (viewCountIncremented) return;
+
+            // Get CSRF token
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                getCookie('csrftoken');
+
+            if (!csrftoken) {
+                console.error('CSRF token not found');
+                return;
+            }
+
+            fetch("{% url 'blog:increment_view_count' article.slug %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest',  // Identify as AJAX request
+                },
+                body: JSON.stringify({}),
+                credentials: 'same-origin'  // Include cookies for session
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the view count display
+                        const viewCountElement = document.getElementById('view-count');
+                        if (viewCountElement) {
+                            viewCountElement.textContent = data.view_count;
+                        }
+                        viewCountIncremented = true;
+                        console.log('View count incremented successfully');
+                    } else {
+                        console.log('View count not incremented:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error incrementing view count:', error);
+                });
+        }
+
+        function checkScrollPosition() {
+            if (viewCountIncremented) return;
+
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercentage = scrollTop / documentHeight;
+
+            if (scrollPercentage >= scrollThreshold) {
+                incrementViewCount();
+            }
+        }
+
+        // Add scroll event listener
+        window.addEventListener('scroll', checkScrollPosition);
+
+        // Also increment view count after user has been on page for 10 seconds
+        setTimeout(function () {
+            if (!viewCountIncremented) {
+                incrementViewCount();
+            }
+        }, 10000);
     });
-</script> -->
+</script>
+{% endblock %}

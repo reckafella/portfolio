@@ -1,6 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block content %}
@@ -35,7 +36,7 @@
                         <ul>
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-person"></i>
-                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{article.author.get_full_name | default:article.author.username|capfirst }}</a>
                             </li>
                             {% if article.first_published_at %}
                             <li class="d-flex align-items-center">
@@ -60,10 +61,10 @@
                                 {% endwith %}
                             </li>
                             {% endif %}
-                            <!-- Add view count display -->
+                            <!-- View count display -->
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-eye"></i>
-                                <span id="view-count" class="pr-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
+                                <span class="pr-1 ms-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
                             </li>
                             {% if user.is_authenticated and user == article.author or user.is_staff %}
                             <li class="d-flex align-items-center position-relative">
@@ -76,7 +77,7 @@
                                 <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
                                     data-share-title="{{ article.title }}" class="share-link">
-                                    <i class="bi bi-share-fill"></i>
+                                    <i class="bi bi-share-fill fs-6"></i>
                                 </a>
                             </li>
                         </ul>
@@ -85,6 +86,7 @@
                     <div class="entry-content">
                         {{ article.content | richtext | safe }}
                     </div>
+
                     <div class="entry-footer">
                         <i class="bi bi-tags"></i>
                         <ul class="tags mx-2">
@@ -110,91 +112,4 @@
         </div>
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let viewCountIncremented = false;
-        let scrollThreshold = 0.3; // 30% of page height
-
-        // Function to get cookie value
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        function incrementViewCount() {
-            if (viewCountIncremented) return;
-
-            // Get CSRF token
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
-                document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                getCookie('csrftoken');
-
-            if (!csrftoken) {
-                console.error('CSRF token not found');
-                return;
-            }
-
-            fetch("{% url 'blog:inc_view_count' article.slug %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken,
-                    'X-Requested-With': 'XMLHttpRequest',  // Identify as AJAX request
-                },
-                body: JSON.stringify({}),
-                credentials: 'same-origin'  // Include cookies for session
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update the view count display
-                        const viewCountElement = document.getElementById('view-count');
-                        if (viewCountElement) {
-                            viewCountElement.textContent = data.view_count;
-                        }
-                        viewCountIncremented = true;
-                        console.log('View count incremented successfully');
-                    } else {
-                        console.log('View count not incremented:', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error incrementing view count:', error);
-                });
-        }
-
-        function checkScrollPosition() {
-            if (viewCountIncremented) return;
-
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercentage = scrollTop / documentHeight;
-
-            if (scrollPercentage >= scrollThreshold) {
-                incrementViewCount();
-            }
-        }
-
-        // Add scroll event listener
-        window.addEventListener('scroll', checkScrollPosition);
-
-        // Also increment view count after user has been on page for 10 seconds
-        setTimeout(function () {
-            if (!viewCountIncremented) {
-                incrementViewCount();
-            }
-        }, 10000);
-    });
-</script>
 {% endblock %}

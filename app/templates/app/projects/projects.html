@@ -14,7 +14,7 @@
     </div>
 </div>
 
-{% if projects %}
+{% if projects_ %}
 <section id="project" class="section project">
     <div class="container">
         <div class="section-title text-center mb-4">
@@ -95,13 +95,13 @@
         </div>
         <div class="text-center">
             <p>Check back later or explore other sections of the site.</p>
-            <a href="{% url 'app:home' %}" class="btn btn-primary">Go to Home</a>
+            <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
         </div>
         <div class="text-center mt-4">
             <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
         </div>
         <div class="text-center mt-4">
-            <p>Want to see more? Check out my <a href="{% url 'blog:blog' %}">blog</a> for updates!</p>
+            <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
         </div>
     </div>
 </section>

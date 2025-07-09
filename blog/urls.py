@@ -9,7 +9,7 @@ from blog.views.list import (
     PostsByTagView as PBTV
 )
 
-from blog.views.increment_views import IncrementViewCountView as IVV
+# from blog.views.increment_views import IncrementViewCountView as IVV
 from blog.views.update import UpdatePostView as UPV
 from app.views.views import CustomRedirectView as CRV
 
@@ -26,5 +26,4 @@ urlpatterns = [
     path("authors/<str:username>", APV.as_view(), name="articles_by_author"),
     path("dates/<str:date>/", PBDV.as_view(), name="articles_by_date"),
     path("tag/<str:tag>", PBTV.as_view(), name="articles_by_tag"),
-    path("increment-view/<slug:slug>", IVV.as_view(), name="inc_view_count"),
 ]

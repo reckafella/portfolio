@@ -9,11 +9,13 @@ from blog.views.list import (
     PostsByTagView as PBTV
 )
 from blog.views.update import UpdatePostView as UPV
+from app.views.views import CustomRedirectView as CRV
 
 app_name = "blog"
 
 urlpatterns = [
     path("", PLV.as_view(), name="list_articles"),
+    path("home", CRV.as_view(redirect_to="/blog/")),
     path("article/create", CPV.as_view(), name="create_article"),
     path("article/<slug:slug>", PDV.as_view(), name="article_details"),
     path("article/<slug:slug>/update", UPV.as_view(), name="update_article"),

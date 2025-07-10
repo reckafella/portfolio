@@ -1,32 +1,4 @@
-{% comment %}
-<div class="mt-5">
-    <h3 class="text-center mb-4">Explore More Projects</h3>
 
-    <div class="row">
-        {% for related_project in related_projects %}
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card  h-100 project-card" data-aos="fade-up" data-aos-delay="200">
-                {% if related_project.optimized_image_url %}
-                <img src="{{ related_project.optimized_image_url }}" class="card-img-top" alt="{{ related_project.title }}" style="height: 150px; object-fit: cover;">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="{% url 'app:project_detail' related_project.slug %}" class="text-success text-decoration-none">
-                            {{ related_project.title }}
-                        </a>
-                    </h5>
-                    <p class="card-text text-muted">
-                        <small>{{ related_project.created_at | date:"N j, Y" }}</small>
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endcomment %}
-
-<!-- Carousal for the related projects -->
 {% if related_projects %}
 <div class="mt-5">
     <h3 class="text-center mb-4">Explore More Projects</h3>

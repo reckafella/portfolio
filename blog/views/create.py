@@ -112,7 +112,7 @@ class CreatePostView(BasePostView, CreateView):
         context.update({
             "title": "Create New Post",
             "submit_text": "Create Post",
-            "data_loading_text": "Creating Post...",
+            "data_loading_text": "Creating Post",
             "action_url": reverse_lazy("blog:create_article")
         })
         return context

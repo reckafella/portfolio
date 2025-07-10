@@ -2,7 +2,7 @@
     <!-- Edit Post Modal -->
     {% if user.is_authenticated and user == article.author or user.is_staff %}
     <div class="modal modal-fullscreen-sm modal-fullscreen-md fade contact" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
             <div class="modal-content card">
                 <div class="modal-header">
                     <h5 class="modal-title text-center fw-bold" id="editModalLabel">{{ page_title }}</h5>

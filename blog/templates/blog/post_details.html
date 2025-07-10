@@ -120,3 +120,31 @@
     </div>
 </section>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new FormValidator("{{ update_form_id }}", {
+            fields: {
+                title: {
+                    required: true,
+                    errorMessage: "Please enter a title for your post."
+                },
+                content: {
+                    required: true,
+                    errorMessage: "Content cannot be empty."
+                }
+            }
+        });
+        new FormValidator("{{ delete_form_id }}", {
+            fields: {
+                confirm: {
+                    required: true,
+                    errorMessage: "Please confirm deletion."
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+

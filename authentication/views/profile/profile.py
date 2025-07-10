@@ -76,6 +76,10 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context['active_tab'] = ('profile-overview' if context['active_tab']
                                  not in active_tabs else context['active_tab'])
 
+        context['search_form_id'] = "search-form"
+        context['settings_form_id'] = "settings-form"
+        context['profile_form_id'] = "profile-form"
+
         return context
 
     def post(self, request, **_):

@@ -53,6 +53,7 @@ class SignupView(BaseAuthentication):
                     "link_text": "Login",
                 }
             ],
+            "form_id": "signup-form",
         })
         return context
 
@@ -76,6 +77,7 @@ class LoginView(BaseAuthentication):
                     "link_text": "Register",
                 }
             ],
+            "form_id": "login-form",
         })
         return context
 

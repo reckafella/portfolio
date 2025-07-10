@@ -1,7 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
+from django.db import transaction
+from django.db.models.deletion import ProtectedError
+from django.contrib import messages
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
@@ -28,6 +31,7 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                     "link_text": "Cancel",
                 }
             ],
+            "form_id": "delete-post-form",
         })
 
         return context
@@ -42,43 +46,79 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             handle_no_permissions(self.request,
                                   "Not Authorized to delete this post")
 
-        # Delete image from cloudinary if it exists
-        if post.first_image and post.first_image.cloudinary_image_id:
-            try:
-                uploader.delete_image(post.first_image.cloudinary_image_id)
-                success_messages.append("Success. Image Deleted.")
-            except Exception as e:
-                error_messages.append(f"Failed to delete image: {str(e)}")
-                response = {
-                    "success": False,
-                    "errors": error_messages,
-                }
-
-                if is_ajax(self.request):
-                    return JsonResponse(response, status=500)
-            # delete the image model instance
-            post.first_image.delete()
-        # Delete the post
+        # Delete all images associated with the post
         try:
-            post.delete()
-            success_messages.append("Success. Post Deleted.")
+            with transaction.atomic():
+                images = list(post.images.all())
+                for image in images:
+                    try:
+                        if image.cloudinary_image_id:
+                            uploader.delete_image(image.cloudinary_image_id)
+                        image.delete()
+                        success_messages.append("Success. Image Deleted.")
+                    except Exception as e:
+                        error_messages.append(
+                            f"Failed to delete image: {str(e)}")
+                try:
+                    post_title = post.title
+                    post.delete()
+                    success_messages.append(
+                        f"Success. Post '{post_title}' Deleted.")
+                except ProtectedError as pe:
+                    # If post has protected relationships, handle it gracefully
+                    protected_objects = list(pe.protected_objects)
+                    protected_details = [f"{obj.__class__.__name__}\
+                                         (ID: {obj.pk})"
+                                         for obj in protected_objects]
+
+                    error_message = (f"Failed. Blog Post still referenced by "
+                                     f"{len(protected_objects)} objects:\
+                                        {', '.join(protected_details)}")
+                    error_messages.append(error_message)
+                    raise
+                except Exception as e:
+                    error_messages.append(f"Failed to delete post: {str(e)}")
+                    response = {
+                        "success": False,
+                        "errors": error_messages,
+                    }
+                    if is_ajax(request):
+                        return JsonResponse(response, status=500)
         except Exception as e:
-            error_messages.append(f"Failed to delete post: {str(e)}")
-            response = {
+            # If any error occurs, rollback and return the error response
+            error_messages = list(set(error_messages))
+            if str(e) not in error_messages:
+                error_messages.append(str(e))
+
+            response_data = {
                 "success": False,
+                "messages": success_messages,
                 "errors": error_messages,
+                "redirect_url": None,
             }
 
-            if is_ajax(self.request):
-                return JsonResponse(response, status_code=500)
+            if is_ajax(request):
+                return JsonResponse(response_data, status=400)
+
+            # Add error messages for non-AJAX requests
+            for error in error_messages:
+                messages.error(request, error)
+            return self.render_to_response(self.get_context_data())
+
         response = {
             "success": True,
             "messages": success_messages,
+            "errors": [],
             "redirect_url": self.get_success_url(),
         }
         if is_ajax(request):
             return JsonResponse(response, status_code=200)
-        return super().delete(request, *args, **kwargs)
+
+        # For non-AJAX requests, add success messages
+        for message in success_messages:
+            messages.success(request, message)
+
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         post = self.get_object()

@@ -6,6 +6,7 @@ from django.views.generic import DeleteView
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
 
+
 from app.models import Projects
 from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.views.helpers.helpers import is_ajax
@@ -29,6 +30,7 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             "submit_text": "Delete Project",
             "cancel_text": "Cancel",
             "data_loading_text": "Deleting Project",
+            "form_id": "delete-project-form",
         })
         return context
 

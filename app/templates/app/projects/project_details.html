@@ -115,7 +115,7 @@
                                     <button type="button"
                                         data-bs-toggle="modal"
                                         data-bs-target="#shareModal"
-                                        data-share-url="{% url 'app:project_detail' project.slug %}"
+                                        data-share-url="{% url 'app:project_details' project.slug %}"
                                         data-share-title="{{ project.title }}"
                                         class="btn btn-sm btn-outline-primary">
                                         Share <i class="bi bi-share-fill ms-1"></i>
@@ -176,7 +176,7 @@
                                     </div>
                                     {% endif %}
                                     <div class="card-footer text-center">
-                                        <a href="{% url 'app:project_detail' project.slug %}"
+                                        <a href="{% url 'app:project_details' project.slug %}"
                                             class="btn btn-sm btn-outline-success">
                                             <span>View Project</span>
                                         </a>

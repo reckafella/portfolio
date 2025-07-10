@@ -79,7 +79,7 @@
         <!-- Form Column -->
         <div class="col-12">
             <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
-                <form id="other-form" method="post" class="contact-form">
+                <form id="{{ form_id|default:'other-form' }}" method="post" class="contact-form">
                     {% csrf_token %}
                     <div class="row gy-4">
                         {% for field in form %}
@@ -134,5 +134,30 @@
 </section>
 {% endblock %}
 {% block extra_js %}
-<script src="{% static 'assets/js/contact.js' %}"></script>
+<script type="module" src="{# static 'assets/js/contact.js' #}"></script>
+<script>
+    new FormInputValidator("{{ form_id|default:'other-form' }}", {
+        fields: {
+            name: {
+                maxLength: 100,
+                counterId: "name-count"
+            },
+            subject: {
+                maxLength: 200,
+                counterId: "subject-count"
+            },
+            message: {
+                maxLength: 1000,
+                counterId: "message-count"
+            },
+            captcha_1: {
+                maxLength: 6,
+                counterId: "captcha-1-count"
+            }
+        },
+        submitButtonId: "submitButton",
+        dataLoadingText: "{{ data_loading_text }}"
+    });
+    new FormValidator("{{ form_id|default:'other-form' }}");
+</script>
 {% endblock %}

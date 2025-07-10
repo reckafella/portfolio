@@ -137,10 +137,14 @@ class PostDetailView(DetailView):
         context["form"] = self.form_class(instance=article)
         context['page_title'] = f'Update: {article.title}'
         context['submit_text'] = 'Update Post'
-        context['action_url'] = reverse_lazy('blog:update_article',
+        context['update_url'] = reverse_lazy('blog:update_article',
                                              kwargs={'slug': article.slug})
         context['delete_url'] = reverse_lazy('blog:delete_article',
                                              kwargs={'slug': article.slug})
+
+        # Add form ID for JavaScript handling
+        context['update_form_id'] = 'update-post-form'
+        context['delete_form_id'] = 'delete-post-form'
 
         return context
 

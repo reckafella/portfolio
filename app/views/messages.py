@@ -27,6 +27,7 @@ class ContactView(FormView):
             "page_title": "Contact",
             "submit_text": "Send Message",
             "data_loading_text": "Sending Message",
+            "form_id": "contact-form"
         })
         return context
 

@@ -9,7 +9,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body ">
-                    <form id="other-form" action="{{ action_url }}" method="post" enctype="multipart/form-data" class="contact-form">
+                    <form id="{{ update_form_id }}" action="{{ update_url }}" method="post" enctype="multipart/form-data" class="contact-form">
                         {% csrf_token %}
                         {% for field in form %}
                         <div class="form-group mb-3">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{% url 'blog:delete_article' article.slug %}" method="post" style="display: inline;">
+                    <form id="{{ delete_form_id }}" action="{{ delete_url }}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger" value="Delete"/>
                     </form>

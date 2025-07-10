@@ -75,7 +75,7 @@ class ProjectListView(ListView):
 class ProjectDetailView(DetailView):
     model = Projects
     form_class = ProjectsForm
-    template_name = "app/projects/project_details.html"
+    template_name = "app/projects/project_details"
     context_object_name = "project"
 
     def get_queryset(self):

@@ -21,7 +21,7 @@
                             <div class="card-header text-center pt-2">
                                 <div class="d-flex justify-content-center">
                                     <h5 class="card-title fw-bold">
-                                        <a href="{% url 'app:project_detail' project.slug %}" class="text-decoration-none text-success">{{ project.title }}</a>
+                                        <a href="{% url 'app:project_details' project.slug %}" class="text-decoration-none text-success">{{ project.title }}</a>
                                     </h5>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                             </div>
                             {% endif %}
                             <div class="card-footer text-center">
-                                <a href="{% url 'app:project_detail' project.slug %}" class="btn btn-outline-primary">
+                                <a href="{% url 'app:project_details' project.slug %}" class="btn btn-outline-primary">
                                     <span>Project Details</span>
                                 </a>
                             </div>

@@ -59,7 +59,7 @@ class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
         """ Redirect to the project's details after a successful creation """
         if hasattr(self, 'object') and self.object and self.object.slug:
             kwargs = {"slug": self.object.slug}
-            return reverse("app:project_detail", kwargs=kwargs)
+            return reverse("app:project_details", kwargs=kwargs)
         return reverse("app:projects")
 
     def get_context_data(self, **kwargs):
@@ -69,6 +69,7 @@ class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
             "title": "Create Project",
             "submit_text": "Create Project",
             "data_loading_text": "Creating Project",
+            "form_id": "create-project-form",
         })
         return context
 

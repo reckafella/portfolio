@@ -11,7 +11,12 @@
         <nav class="breadcrumbs">
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
+                {% if not all_authors %}
+                <li><a href="{% url 'blog:list_articles' %}">Blog Posts</a></li>
+                <li>{{ author.get_full_name | default:author.username | capfirst }}</li>
+                {% else %}
                 <li>{{ page_title }}</li>
+                {% endif %}
             </ol>
         </nav>
     </div>
@@ -22,7 +27,7 @@
         <div class="row">
             <div class="section-title py-2">
                 <h2 class="text-center">
-                    {{ page_title }} {% if not all_authors %} by <a href="{% url 'blog:articles_by_author' author.username %}">{{ author.get_full_name | default:author.username | capfirst }}</a> {% endif %}
+                    {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
                 </h2>
             </div>
             <div class="row d-lg-flex justify-content-between align-items-stretch">

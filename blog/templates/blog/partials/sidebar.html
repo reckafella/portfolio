@@ -3,7 +3,7 @@
         <div class="blog-author-widget widget-item">
             <div class="d-flex flex-column align-items-center">
                 <div class="d-flex align-items-center w-100">
-                    <img src="{% static 'assets/images/profile.jpg' %}" alt="" class="rounded-circle flex-shrink-0">
+                    <img src="{% static 'assets/images/profile.jpg' %}" alt="" class="rounded-circle flex-shrink-0" loading="lazy">
                     <div>
                         <h4>{{ article.author.get_full_name | default:article.author.username|capfirst }}</h4>
                         <div class="social-links mt-2">
@@ -60,7 +60,7 @@
             {% for post in other_posts %}
             <div class="post-item">
                 {% if article.optimized_image_url %}
-                <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="flex-shrink-0">
+                <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="flex-shrink-0" loading="lazy">
                 {% endif %}
                 <div>
                     <h4><a href="{% url 'blog:article_details' article.slug %}">{{ article.title }}</a></h4>

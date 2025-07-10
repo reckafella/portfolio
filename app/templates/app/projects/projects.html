@@ -50,7 +50,7 @@
                             <div class="card shadow h-100">
                                 {% if project.first_image %}
                                 <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid"
-                                    alt="{{ project.title }}">
+                                    alt="{{ project.title }}" loading="lazy">
                                 {% endif %}
                                 <div class="project-info position-relative px-2 py-2">
                                     <span

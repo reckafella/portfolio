@@ -57,7 +57,7 @@
         {% for post in recent_posts %}
         <div class="post-item">
             {% if post.optimized_image_url %}
-            <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0">
+            <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0" loading="lazy">
             {% endif %}
             <div>
                 <h4><a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a></h4>

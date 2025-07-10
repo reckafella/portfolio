@@ -24,7 +24,7 @@
                     <div class="entry-img my-1">
                         {% if article.first_image.optimized_image_url %}
                         <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}"
-                            class="img-fluid mb-1">
+                            class="img-fluid mb-1" loading="lazy">
                         {% endif %}
                     </div>
 

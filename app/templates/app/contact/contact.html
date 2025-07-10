@@ -3,120 +3,136 @@
 {% block title %} {{ page_title }} {% endblock %}
 
 {% block content %}
-    <div class="page-title">
-        <div class="container d-lg-flex justify-content-between align-items-center">
-            <nav class="breadcrumbs">
-                <ol>
-                    <li><a href="{% url 'app:home' %}">Home</a></li>
-                    <li class="active">{{ page_title }}</li>
-                </ol>
-            </nav>
-        </div>
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li class="active">{{ page_title }}</li>
+            </ol>
+        </nav>
     </div>
+</div>
 
-    <section id="section" class="section contact">
-        <div class="container" data-aos="fade-up">
-            <div class="info-wrap card">
-                <div class="row gy-5" data-aos="fade-up" data-aos-delay="100">
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="tel:+254719272150" target="_blank" class="info-item d-flex phone">
-                            <i class="bi bi-telephone"></i>
-                            <div class="d-none d-md-block">
-                                <h3>Call Me</h3>
-                                <p>+254719272150</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="https://wa.me/254719272150" target="_blank" class="info-item d-flex phone">
-                            <i class="bi bi-whatsapp"></i>
-                            <div class="d-none d-md-block">
-                                <h3>WhatsApp</h3>
-                                <p>+254719272150</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="mailto:ethanmuthoni@gmail.com" target="_blank" class="info-item d-flex email">
-                            <i class="bi bi-envelope"></i>
-                            <div class="d-none d-md-block">
-                                <h3>Email Me</h3>
-                                <p>ethanmuthoni@gmail.com</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="https://x.com/devrohn" target="_blank" class="info-item d-flex twitter">
-                            <i class="bi bi-twitter"></i>
-                            <div class="d-none d-md-block">
-                                <h3>Twitter</h3>
-                                <p>@devrohn</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="https://www.linkedin.com/in/ethanwanyoike" target="_blank" class="info-item d-flex linkedin">
-                            <i class="bi bi-linkedin"></i>
-                            <div class="d-none d-md-block">
-                                <h3>LinkedIn</h3>
-                                <p>Ethan Wanyoike</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                        <a href="https://facebook.com/reckafella" target="_blank" class="info-item d-flex facebook">
-                            <i class="bi bi-facebook"></i>
-                            <div class="d-none d-md-block">
-                                <h3>Facebook</h3>
-                                <p>Reckafella</p>
-                            </div>
-                        </a>
-                    </div>
+<section id="section" class="section contact">
+    <div class="container" data-aos="fade-up">
+        <div class="info-wrap card">
+            <div class="row gy-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="tel:+254719272150" target="_blank" class="info-item d-flex phone">
+                        <i class="bi bi-telephone"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Call Me</h3>
+                            <p>+254719272150</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="https://wa.me/254719272150" target="_blank" class="info-item d-flex phone">
+                        <i class="bi bi-whatsapp"></i>
+                        <div class="d-none d-md-block">
+                            <h3>WhatsApp</h3>
+                            <p>+254719272150</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="mailto:ethanmuthoni@gmail.com" target="_blank" class="info-item d-flex email">
+                        <i class="bi bi-envelope"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Email Me</h3>
+                            <p>ethanmuthoni@gmail.com</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="https://x.com/devrohn" target="_blank" class="info-item d-flex twitter">
+                        <i class="bi bi-twitter"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Twitter</h3>
+                            <p>@devrohn</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="https://www.linkedin.com/in/ethanwanyoike" target="_blank"
+                        class="info-item d-flex linkedin">
+                        <i class="bi bi-linkedin"></i>
+                        <div class="d-none d-md-block">
+                            <h3>LinkedIn</h3>
+                            <p>Ethan Wanyoike</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="https://facebook.com/reckafella" target="_blank" class="info-item d-flex facebook">
+                        <i class="bi bi-facebook"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Facebook</h3>
+                            <p>Reckafella</p>
+                        </div>
+                    </a>
                 </div>
             </div>
+        </div>
 
-                <!-- Form Column -->
-            <div class="col-12">
-                <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
-                    <form id="other-form" method="post" class="contact-form">
-                        {% csrf_token %}
-                        <div class="row gy-4">
-                            {% for field in form %}
-                                {% if field.name == 'email' or field.name == 'name' %}
-                                <div class="col-12 col-md-6">
-                                    <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
-                                    {{ field }}
-                                </div>
-                                {% else %}
-                                <div class="col-12">
-                                    <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
-                                    {{ field }}
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if user.is_staff %}
-                            <div class="col-12 text-center mt-4">
-                                <button type="submit" id="submitButton"  class="btn btn-success d-inline-flex align-items-center" disabled>{{ submit_text }}</button>
-                            </div>
-                            {% else %}
-                            <div class="col-12 text-center mt-4">
-                                <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50">{{ submit_text }}</button>
+        <!-- Form Column -->
+        <div class="col-12">
+            <div class="card p-4" data-aos="fade-up" data-aos-delay="200">
+                <form id="other-form" method="post" class="contact-form">
+                    {% csrf_token %}
+                    <div class="row gy-4">
+                        {% for field in form %}
+                        {% if field.name == 'email' or field.name == 'name' %}
+                        <div class="col-12 col-md-6">
+                            <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                            {{ field }}
+                            {% if field.name == 'name' %}
+                            <div class="char-counter mt-1">
+                                <small class="text-muted">
+                                    <span id="name-count">0</span> / 100 characters
+                                </small>
                             </div>
                             {% endif %}
                         </div>
-                    </form>
-                </div>
+                        {% else %}
+                        <div class="col-12">
+                            <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                            {{ field }}
+                            {% if field.name == 'subject' %}
+                            <div class="char-counter mt-1">
+                                <small class="text-muted">
+                                    <span id="subject-count">0</span> / 200 characters
+                                </small>
+                            </div>
+                            {% elif field.name == 'message' %}
+                            <div class="char-counter mt-1">
+                                <small class="text-muted">
+                                    <span id="message-count">0</span> / 1000 characters
+                                </small>
+                            </div>
+                            {% elif field.name == 'captcha' %}
+                            <div class="char-counter mt-1">
+                                <small class="text-muted">
+                                    <span id="captcha-1-count">0</span> / 6 characters
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"
+                                class="btn btn-success d-inline-flex align-items-center" {% if user.is_staff %}
+                                disabled{% endif %}>{{ submit_text }}</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock %}
-
-{% comment %}
-                    <div class="h-100 contact-image" 
-                        style="background-image: url('https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73');
-                            background-size: cover;
-                            background-position: center;
-                            min-height: 300px;">
-                    </div>
-                    {% endcomment %}
+{% block extra_js %}
+<script src="{% static 'assets/js/contact.js' %}"></script>
+{% endblock %}

@@ -5,10 +5,7 @@
 {% block content %}
 <section id="hero" class="hero section py-4">
     <div class="hero-background" data-aos="fade-in">
-        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/hero-background" alt="Hero Background" type="image/png" class="img-fluid" data-aos="fade-in" data-aos-delay="100">
-        {% comment %}
-        <img src="{% static 'assets/images/8cf11ad4.jpeg' %}" alt="" type="image/jpeg" data-aos="fade-in" data-aos-delay="100">
-        {% endcomment %}
+        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/hero-background" alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
     </div>
     <div class="overlay"></div>
     <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
@@ -42,7 +39,7 @@
         <div class="row gy-4 justify-content-between">
             <div class="col-lg-4 text-center">
                 <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-profile"
-                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 400px;">
+                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 400px;" loading="lazy">
                 <div class="social-links mt-3">
                     <a href="https://github.com/reckafella" class="github" target="_blank"><i
                             class="bi bi-github"></i></a>

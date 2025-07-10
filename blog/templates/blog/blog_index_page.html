@@ -19,7 +19,7 @@
                             {% if post.cloudinary_image_url %}
                                 <img src="{{ post.cloudinary_image_url }}" 
                                      class="card-img-top" 
-                                     alt="{{ post.title }}">
+                                     alt="{{ post.title }}" loading="lazy">
                             {% endif %}
                             
                             <div class="card-body">

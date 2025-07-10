@@ -130,7 +130,7 @@ class SearchView(ListView):
             "posts": posts,
             "projects": projects,
             "page_title": _q,
-            "data_loading_text": "Searching...",
+            "data_loading_text": "Searching",
             "total_results": total_results,
             "sort_options": {
                 "relevance": "Relevance",

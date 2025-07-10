@@ -50,7 +50,7 @@ class ProjectListView(ListView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Projects"
 
-        # Get projects for categories - staff can see all,\
+        # Get projects for categories - staff can see all,
         # non-staff only published
         projects_for_categories = self.get_queryset()
 
@@ -60,7 +60,7 @@ class ProjectListView(ListView):
         ]))
         context["categories"].sort()
         context["page_title"] = "Projects"
-        context["projects"] = self.get_queryset()
+
         context["current_category"] = self.request.GET.get('category', "all")
         context["sorting_options"] = self.sorting_options()
         context["sort_by"] = self.request.GET.get('sort_by', 'date_desc')

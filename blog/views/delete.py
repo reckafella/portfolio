@@ -20,7 +20,7 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context.update({
             "title": "Delete Post",
             "submit_text": "Delete",
-            "data_loading_text": "Deleting Post...",
+            "data_loading_text": "Deleting Post",
             "extra_messages": [
                 {
                     "text": "Are you sure you want to delete this post?",

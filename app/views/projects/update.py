@@ -71,6 +71,6 @@ class UpdateProjectView(BaseProjectView, UpdateView):
         context.update({
             "title": "Update Project",
             "submit_text": "Update Project",
-            "data_loading_text": "Updating Project...",
+            "data_loading_text": "Updating Project",
         })
         return context

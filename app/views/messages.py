@@ -26,7 +26,7 @@ class ContactView(FormView):
         context.update({
             "page_title": "Contact",
             "submit_text": "Send Message",
-            "data_loding_text": "Sending Message...",
+            "data_loading_text": "Sending Message",
         })
         return context
 

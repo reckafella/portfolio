@@ -14,98 +14,101 @@
     </div>
 </div>
 
-{% if projects %}
-<section id="project" class="section project">
+<section class="section project">
     <div class="container">
         <div class="section-title text-center mb-4">
             <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
-            <p class="lead">Personal & professional projects I have worked on.</p>
+            <p class="lead">
+                {% if projects %}
+                    Personal & professional projects I have worked on.
+                {% else %}
+                    No projects found.
+                {% endif %}
+            </p>
         </div>
 
-        <div class="row">
-            <div class="col-12 d-flex justify-content-center">
-                <ul id="project-filters">
-                    <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">All</li>
-                    {% for category in categories %}
-                    <li data-filter=".filter-{{ category|slugify }}"
-                        class="{% if current_category == category %}filter-active{% endif %}">{{ category }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="row justify-content-center project-container">
-            <div class="col-lg-11">
-                <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
-                    {% for project in projects %}
-                    <div class="col project-item filter-{{ project.category|slugify }}">
-                        <div class="card shadow h-100">
-                            {% if project.first_image %}
-                            <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid"
-                                alt="{{ project.title }}">
-                            {% endif %}
-                            <div class="project-info position-relative px-2 py-2">
-                                <span
-                                    class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}"
-                                    aria-label="{{ project.project_type|title }}">
-                                    {{ project.project_type|title }}
-                                </span>
-
-                                <h4 class="mb-3">{{ project.title }}</h4>
-
-                                <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
-                                    <a href="{{ project.first_image.cloudinary_image_url }}"
-                                        data-gallery="projectGallery" class="project-lightbox preview-link"
-                                        title="Preview {{ project.title }}">
-                                        <i class="bi bi-plus"></i>
-                                    </a>
-                                    <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
-                                        title="View details for {{ project.title }}">
-                                        <i class="bi bi-link"></i>
-                                    </a>
-                                    <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
-                                        data-share-url="{% url 'app:project_detail' project.slug %}"
-                                        data-share-title="{{ project.title }}" class="share-link"
-                                        title="Share {{ project.title }}">
-                                        <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
-                                    </a>
-                                </div>
-                                <p class="mb-0 text-center">{{ project.category }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12 text-center">
-                        <p>No projects found</p>
-                    </div>
-                    {% endfor %}
+        {% if projects %}
+            <!-- Project Filters -->
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <ul id="project-filters" class="project-filters list-inline mb-0">
+                        <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">All</li>
+                        {% for category in categories %}
+                        <li data-filter=".filter-{{ category|slugify }}"
+                            class="{% if current_category == category %}filter-active{% endif %}">{{ category }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </div>
 
-        {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
+            <!-- Project Grid -->
+            <div class="row justify-content-center project-container">
+                <div class="col-lg-11">
+                    <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
+                        {% for project in projects %}
+                        <div class="col project-item filter-{{ project.category|slugify }}">
+                            <div class="card shadow h-100">
+                                {% if project.first_image %}
+                                <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img h-100 img-fluid"
+                                    alt="{{ project.title }}">
+                                {% endif %}
+                                <div class="project-info position-relative px-2 py-2">
+                                    <span
+                                        class="badge rounded-pill position-absolute top-0 end-0 translate-middle {% if project.project_type == 'personal' %}bg-black{% else %}bg-success{% endif %}"
+                                        aria-label="{{ project.project_type|title }}">
+                                        {{ project.project_type|title }}
+                                    </span>
+
+                                    <h4 class="mb-3">{{ project.title }}</h4>
+
+                                    <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                                        <a href="{{ project.first_image.cloudinary_image_url }}"
+                                            data-gallery="projectGallery" class="project-lightbox preview-link"
+                                            title="Preview {{ project.title }}">
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                        <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
+                                            title="View details for {{ project.title }}">
+                                            <i class="bi bi-link"></i>
+                                        </a>
+                                        <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                            data-share-url="{% url 'app:project_detail' project.slug %}"
+                                            data-share-title="{{ project.title }}" class="share-link"
+                                            title="Share {{ project.title }}">
+                                            <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
+                                        </a>
+                                    </div>
+                                    <p class="mb-0 text-center">{{ project.category }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center">
+                            <p>No projects found</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
+
+        {% else %}
+            <!-- No Projects Found -->
+            <div class="text-center">
+                <p>Check back later or explore other sections of the site.</p>
+                <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
+            </div>
+            <div class="text-center mt-4">
+                <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
+            </div>
+            <div class="text-center mt-4">
+                <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
+            </div>
+        {% endif %}
     </div>
 </section>
-{% else %}
-<section class="section">
-    <div class="container">
-        <div class="section-title text-center">
-            <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
-            <p class="lead">No projects found.</p>
-        </div>
-        <div class="text-center">
-            <p>Check back later or explore other sections of the site.</p>
-            <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
-        </div>
-        <div class="text-center mt-4">
-            <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
-        </div>
-        <div class="text-center mt-4">
-            <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
-        </div>
-    </div>
-</section>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}

@@ -2,38 +2,42 @@
 /*--------------------------------------------------------------
 # Projects
 --------------------------------------------------------------*/
-.project #project-filters {
+.project .project-filters {
     padding: 0;
-    margin: 0 auto 25px auto;
+    margin: 0 auto 20px auto;
     list-style: none;
     text-align: center;
-    border-radius: 50px;
 }
 
-.project #project-filters li {
+.project .project-filters li {
     cursor: pointer;
     display: inline-block;
-    padding: 8px 18px 8px 18px;
-    font-size: 14px;
+    padding: 8px 20px 10px 20px;
+    margin: 0 0 5px 0;
+    font-size: 15px;
     font-weight: 500;
     line-height: 1;
-    color: var(--default-color);
-    margin: 0 3px 10px 3px;
-    transition: all ease-in-out 0.3s;
-    border-radius: 10px;
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
+    font-family: var(--heading-font);
 }
 
-.project #project-filters li:hover,
-.project #project-filters li.filter-active {
-    background: var(--default-color);
-    color: var(--background-color);
+.project .project-filters li:hover,
+.project .project-filters li.filter-active {
+    color: var(--contrast-color);
+    background-color: var(--accent-color);
 }
 
-.project #project-filters li:last-child {
+.project .project-filters li:first-child {
+    margin-left: 0;
+}
+
+.project .project-filters li:last-child {
     margin-right: 0;
 }
 
 .project .project-item {
+    position: relative;
     margin-bottom: 30px;
     overflow: visible;
 }
@@ -151,65 +155,66 @@
 }
 
 .project .project-item .project-info {
-    opacity: .5;
     position: absolute;
-    left: 15px;
-    right: 15px;
-    bottom: -50px;
+    left: 12px;
+    right: 12px;
     z-index: 3;
-    transition: all ease-in-out 0.3s;
-    background: var(--accent-color);
-    padding: 15px 20px;
+    opacity: 1;
+    bottom: 10px;
+    transition: all ease-in-out 0.5s;
+    background: color-mix(in srgb, var(--surface-color), transparent 10%);
+    padding: 15px;
+    border-radius: 10px;
 }
 
 .project .project-item .project-info h4 {
     font-size: 18px;
-    color: var(--default-color);
     font-weight: 600;
+    padding-right: 50px;
 }
 
 .project .project-item .project-info p {
-    color: var(--default-color);
+    color: color-mix(in srgb, var(--default-color), transparent 30%);
     font-size: 14px;
     margin-bottom: 0;
+    padding-right: 50px;
 }
 
 .project .project-item .project-info .preview-link,
 .project .project-item .project-info .details-link,
-.project .project-item .project-info .share-link{
+.project .project-item .project-info .share-link {
     position: absolute;
-    right: 85px;
     font-size: 24px;
     top: calc(50% - 18px);
-    color: var(--default-color);
+    color: var(--contrast-color);
     transition: ease-in-out 0.3s;
+    line-height: 0;
+}
+
+.project .project-item .project-info .preview-link {
+    right: 50px;
 }
 
 .project .project-item .project-info .preview-link:hover,
 .project .project-item .project-info .details-link:hover,
 .project .project-item .project-info .share-link:hover {
-    color: var(--contrast-color);
+    color: var(--accent-color);
 }
+
 .project .project-item .project-info .preview-link i,
 .project .project-item .project-info .details-link i,
 .project .project-item .project-info .share-link i {
     font-size: 24px;
     color: inherit;
 }
+
 .project .project-item .project-info .details-link {
-    right: 50px;
+    right: 14px;
+    font-size: 28px;
 }
+
 .project .project-item .project-info .share-link {
-    right: 15px;
-}
-
-.project .project-item:hover img, .project .project-item:hover .video-box {
-    top: -30px;
-}
-
-.project .project-item .project-info {
-    opacity: 1;
-    bottom: -10px;
+    right: 85px;
 }
 
   /*--------------------------------------------------------------
@@ -232,7 +237,7 @@
 .project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet {
     width: 12px;
     height: 12px;
-    background-color: var(--default-color);
+    background-color: color-mix(in srgb, var(--default-color), transparent 85%);
     opacity: 1;
     border: 1px solid var(--accent-color);
 }
@@ -241,18 +246,23 @@
     background-color: var(--accent-color);
 }
 
-.project-details .project-info,
+.project-details .project-info {
+    background-color: var(--surface-color);
+    padding: 30px;
+    /* box-shadow: 0px 0 30px rgba(0, 0, 0, 0.1); */
+}
+
 .project-details .project-description {
-    padding: 20px;
-    box-shadow: 0px 0 10px var(--default-color);
+    background-color: var(--surface-color);
+    padding-top: 30px;
 }
 
 .project-details .project-info h3 {
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 20px;
+    border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
 }
 
 .project-details .project-info ul {
@@ -263,15 +273,6 @@
 
 .project-details .project-info ul li+li {
     margin-top: 10px;
-    font-weight: 600;
-}
-
-.project-details .project-info ul li span {
-    font-weight: 400;
-}
-
-.project-details .project-description {
-    padding-top: 30px;
 }
 
 .project-details .project-description h2 {
@@ -282,24 +283,18 @@
 
 .project-details .project-description p {
     padding: 0;
+    color: color-mix(in srgb, var(--default-color), transparent 30%);
 }
 
-/* Search */
-.search {
-    margin-bottom: 30px;
-}
+@media (max-width: 575px) {
+    .project .project-filters li {
+      font-size: 14px;
+      margin: 0 0 10px 0;
+    }
+  }
 
-.search input {
-    width: 100%;
-    padding: 10px 20px;
-    border-radius: 50px;
-    border: 1px solid #e6e6e6;
-    font-size: 14px;
-    color: #333;
-    background: #fff;
-    transition: all 0.3s;
-}
-
-.search input:focus {
-    border-color: #0880e8;
+.project-details-row {
+    margin: 0 auto;
+    max-width: 1200px;
+    border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 5%);
 }

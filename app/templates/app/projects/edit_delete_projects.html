@@ -2,7 +2,7 @@
 <!-- Edit Project Modal -->
 {% if user.is_staff %}
 <div class="modal modal-fullscreen-sm modal-fullscreen-md fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-center modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-center fw-bold" id="editModalLabel">Edit Project</h5>
@@ -32,7 +32,7 @@
                     </div>
                     {% endfor %}
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Dismiss</button>
                         <input type="submit" class="btn btn-primary" value="{{ submit_text | default:'Save Changes' }}"/>
                     </div>
                 </form>
@@ -55,7 +55,7 @@
                 This action cannot be undone.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Dismiss</button>
                 <form id="delete-form" action="{% url 'app:delete_project' project.slug %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <input type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger" value="Delete"/>

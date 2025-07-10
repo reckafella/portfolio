@@ -1375,170 +1375,6 @@ section,
 }
 
 /*--------------------------------------------------------------
-# Portfolio Section
---------------------------------------------------------------*/
-.project .project-filters {
-  padding: 0;
-  margin: 0 auto 20px auto;
-  list-style: none;
-  text-align: center;
-}
-
-.project .project-filters li {
-  cursor: pointer;
-  display: inline-block;
-  padding: 8px 20px 10px 20px;
-  margin: 0;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1;
-  margin-bottom: 5px;
-  border-radius: 50px;
-  transition: all 0.3s ease-in-out;
-  font-family: var(--heading-font);
-}
-
-.project .project-filters li:hover,
-.project .project-filters li.filter-active {
-  color: var(--contrast-color);
-  background-color: var(--accent-color);
-}
-
-.project .project-filters li:first-child {
-  margin-left: 0;
-}
-
-.project .project-filters li:last-child {
-  margin-right: 0;
-}
-
-@media (max-width: 575px) {
-  .project .project-filters li {
-    font-size: 14px;
-    margin: 0 0 10px 0;
-  }
-}
-
-.project .project-item {
-  position: relative;
-  overflow: hidden;
-}
-
-.project .project-item .project-info {
-  opacity: 0;
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: -100%;
-  z-index: 3;
-  transition: all ease-in-out 0.5s;
-  background: color-mix(in srgb, var(--surface-color), transparent 10%);
-  padding: 15px;
-}
-
-.project .project-item .project-info h4 {
-  font-size: 18px;
-  font-weight: 600;
-  padding-right: 50px;
-}
-
-.project .project-item .project-info p {
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
-  font-size: 14px;
-  margin-bottom: 0;
-  padding-right: 50px;
-}
-
-.project .project-item .project-info .preview-link,
-.project .project-item .project-info .details-link {
-  position: absolute;
-  right: 50px;
-  font-size: 24px;
-  top: calc(50% - 14px);
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
-  transition: 0.3s;
-  line-height: 0;
-}
-
-.project .project-item .project-info .preview-link:hover,
-.project .project-item .project-info .details-link:hover {
-  color: var(--accent-color);
-}
-
-.project .project-item .project-info .details-link {
-  right: 14px;
-  font-size: 28px;
-}
-
-.project .project-item:hover .project-info {
-  opacity: 1;
-  bottom: 0;
-}
-
-/*--------------------------------------------------------------
-# project Details Section
---------------------------------------------------------------*/
-.project-details .project-details-slider img {
-  width: 100%;
-}
-
-.project-details .project-details-slider .swiper-pagination {
-  margin-top: 20px;
-  position: relative;
-}
-
-.project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet {
-  width: 12px;
-  height: 12px;
-  background-color: color-mix(in srgb, var(--default-color), transparent 85%);
-  opacity: 1;
-}
-
-.project-details .project-details-slider .swiper-pagination .swiper-pagination-bullet-active {
-  background-color: var(--accent-color);
-}
-
-.project-details .project-info {
-  background-color: var(--surface-color);
-  padding: 30px;
-  box-shadow: 0px 0 30px rgba(0, 0, 0, 0.1);
-}
-
-.project-details .project-info h3 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
-}
-
-.project-details .project-info ul {
-  list-style: none;
-  padding: 0;
-  font-size: 15px;
-}
-
-.project-details .project-info ul li+li {
-  margin-top: 10px;
-}
-
-.project-details .project-description {
-  padding-top: 30px;
-}
-
-.project-details .project-description h2 {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.project-details .project-description p {
-  padding: 0;
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
-}
-
-
-/*--------------------------------------------------------------
 # Contact Section
 --------------------------------------------------------------*/
 .contact .info-wrap {
@@ -1651,15 +1487,15 @@ Cards
 --------------------------------------------------------------*/
 .card {
   background: var(--surface-color);
-  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 70%);
-  border-radius: 10px;
+  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 80%);
+  border-radius: 5px;
   overflow: hidden;
   color: var(--default-color);
   transition: all 0.3s ease-in-out;
 }
 
 .card:hover {
-  box-shadow: 0px 0px 30px color-mix(in srgb, var(--default-color), transparent 30%);
+  box-shadow: 0px 0px 10px color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
 .card .card-img {
@@ -1670,11 +1506,13 @@ Cards
 .card .card-img img {
   width: 100%;
   height: auto;
+  max-height: 400px;
+  object-fit: cover;
   transition: all 0.3s ease-in-out;
 }
 
 .card .card-header, .card .card-footer {
-  padding: 15px 20px;
+  padding: 10px 15px;
 }
 
 .card .card-footer {
@@ -1698,16 +1536,15 @@ Cards
 
 .card .card-header a,
 .card .card-footer a {
-  color: color-mix(in srgb, var(--accent-color), transparent 10%);
-  font-weight: 300;
+  color: color-mix(in srgb, var(--constrast-color), transparent 40%);
+  font-weight: 400;
   transition: 0.3s;
 }
 
 .card .card-header a:hover,
 .card .card-footer a:hover {
-  color: var(--accent-color);
+  color: var(--constrast-color);
   text-decoration: underline;
-  font-weight: 400;
 }
 
 .card .card-header i,
@@ -2222,18 +2059,18 @@ Cards
   border-color: var(--accent-color);
 }
 
-.share-link {
+.blog .share-link {
   color: var(--default-color);
   background: var(--background-color);
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.share-link i {
+.blog .share-link i {
   color: var(--default-color);
   margin-right: 5px;
 }
 
-.share-link:hover {
+.blog .share-link:hover {
   text-decoration: none;
 }

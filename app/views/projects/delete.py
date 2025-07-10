@@ -28,7 +28,7 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             "form_title": "Delete Project",
             "submit_text": "Delete Project",
             "cancel_text": "Cancel",
-            "data_loading_text": "Deleting Project...",
+            "data_loading_text": "Deleting Project",
         })
         return context
 

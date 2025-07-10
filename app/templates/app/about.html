@@ -3,23 +3,111 @@
 {% block title %} About Me {% endblock %}
 
 {% block content %}
-<section id="section about" class="mt-5 section about" style="background-color: dimgray;">
-    <div class="container card d-flex flex-column flex-lg-row align-items-center mt-4 justify-content-between bg-dark  p-4 h-100">
-        <!-- Profile Picture -->
-        <div class="mb-3 mb-lg-0 col-lg-4 col-md-6 col-sm-8 text-center text-lg-start">
-            <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle w-75">
+<!-- Resume Section -->
+<section id="resume" class="resume section py-5">
+    <div class="container" data-aos="fade-up">
+        <div class="section-title text-center mb-5">
+            <h2>Resume</h2>
+            <p>My professional journey and experiences</p>
+            <div class="mt-3">
+                <a href="{% static 'app/resume/Ethan_Wanyoike_Resume.pdf' %}" class="btn btn-primary" download>
+                    <i class="bi bi-download me-2"></i>Download CV
+                </a>
+            </div>
         </div>
-        <!-- About Text -->
-        <div class=" mt-3 mt-lg-0 p-2 col-lg-7">
-            <h2 class="fw-bold  pacifico-regular kalam-bold">Hello, I'm Ethan</h2>
-            <p>Welcome to my portfolio website!</p>
-            <p>I am a
-                <strong><span class="text-decoration-underline text-success typed" data-typed-items=" FullStack Software Engineer, DevOps Engineer, Backend Developer, Code Testing Specialist," style="text-decoration-thickness: 10%;"></span></strong>
-                <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
-            </p>
-            <p>You can learn more about my work here.</p>
-            <div class="d-flex justify-content-center justify-content-lg-start mt-4">
-                <a class="btn btn-success" href="{% url 'app:projects' %}">View Projects</a>
+
+        <div class="container">
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="resume-title">Summary</h3>
+                    <div class="resume-item pb-0 mb-4">
+                        <h4>Ethan Wanyoike</h4>
+                        <p><em>
+                            A software engineer with a passion for building scalable applications and improving user
+                            experiences. Experienced in both frontend and backend development, and always eager to
+                            learn new technologies and improve my skills.</em>
+                        </p>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-geo-alt me-2"></i>Nairobi, Kenya</li>
+                            <li><i class="bi bi-phone me-2"></i>+254719272150</li>
+                            <li><i class="bi bi-envelope me-2"></i>ethanmuthoni@gmail.com</li>
+                        </ul>
+                    </div>
+                    <h3 class="resume-title">Education</h3>
+                    <div class="resume-item">
+                        <h4>Full-stack Software Engineering</h4>
+                        <h5 class="text-success">2023 - 2024</h5>
+                        <p><em>ALX Africa, Kenya</em></p>
+                        <p>Completed a comprehensive software engineering program covering full-stack development,
+                            DevOps practices, and cloud computing. Projects included web applications, RESTful APIs, and
+                            deployment pipelines.</p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Bachelor of Science in Economics & Statistics</h4>
+                        <h5 class="text-success">2016 - 2020</h5>
+                        <p><em>Maasai Mara University, Kenya</em></p>
+                        <p>Graduated with a Second Class Honours degree specializing in Data Science and Analytics.
+                            Completed a thesis on "Predictive Analytics in the Banking Sector".</p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>High School Diploma</h4>
+                        <h5 class="text-success">2012 - 2015</h5>
+                        <p><em>Gituru High School, Kenya</em></p>
+                        <p>Graduated with a B+ grade. Participated in various extra-curricular activities including
+                            marathons, math clubs, coding clubs and science fairs.</p>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="resume-title">Professional Experience</h3>
+                    <div class="resume-item">
+                        <h4>Software Engineer Intern</h4>
+                        <h5 class="text-success">Jan. 2024 - Dec. 2024</h5>
+                        <p><em><i class="bi bi-building me-2"></i>Alphaflare Ltd</em></p>
+                        <ul>
+                            <li>Developed and maintained web applications using Django and JavaScript.</li>
+                            <li>Collaborated with cross-functional teams to design and implement new features.</li>
+                            <li>Participated in code reviews and provided constructive feedback to peers.</li>
+                            <li>Assisted in the deployment of applications to cloud platforms (DigitalOcean).</li>
+                        </ul>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Freelance Web Developer</h4>
+                        <h5 class="text-success">2024 - 2025</h5>
+                        <p><em><i class="bi bi-laptop me-2"></i>Self-employed, Nairobi, Kenya</em></p>
+                        <ul>
+                            <li>Designed and developed custom websites for small businesses.</li>
+                            <li>Implemented SEO best practices to improve website visibility.</li>
+                            <li>Provided ongoing maintenance and support for clients' websites.</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="resume-title mt-4">Skills</h3>
+                    <div class="resume-item">
+                        <h4>Technical Skills</h4>
+                        <div class="skill-tags">
+                            <span class="badge bg-success m-1">Python</span>
+                            <span class="badge bg-success m-1">Django</span>
+                            <span class="badge bg-success m-1">JavaScript</span>
+                            <span class="badge bg-success m-1">HTML/CSS</span>
+                            <span class="badge bg-success m-1">Git</span>
+                            <span class="badge bg-success m-1">TypeScript</span>
+                            <span class="badge bg-success m-1">Bootstap</span>
+                            <span class="badge bg-success m-1">Tailwind CSS</span>
+                            <span class="badge bg-success m-1">Nodejs</span>
+                            <span class="badge bg-success m-1">C</span>
+                            <span class="badge bg-success m-1">Bash</span>
+                            <span class="badge bg-success m-1">SQL</span>
+                            <span class="badge bg-success m-1">Docker</span>
+                            <span class="badge bg-success m-1">REST APIs</span>
+                            <span class="badge bg-success m-1">Cloud Computing</span>
+                            <span class="badge bg-success m-1">Agile Methodologies</span>
+                            <span class="badge bg-success m-1">Problem Solving</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

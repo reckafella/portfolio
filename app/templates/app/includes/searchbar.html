@@ -8,7 +8,7 @@
       </div>
       <div class="modal-body text-center">
         <div class="search-widget mx-auto" style="max-width: 600px;">
-          <form class="d-flex align-items-center form-control form-control-sm mb-4" method="GET"
+          <form id="search-bar-form" class="d-flex align-items-center form-control form-control-sm mb-4" method="GET"
             action="{% url 'app:search' %}">
             <input type="search" name="q" value="{{ q }}" placeholder="Type to Search..." title="Enter search keyword"
               required />

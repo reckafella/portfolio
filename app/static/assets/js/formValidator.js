@@ -201,8 +201,8 @@ class FormValidator {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+/* document.addEventListener('DOMContentLoaded', () => {
     new FormValidator('other-form');
-});
+}); */
 
 export default FormValidator;

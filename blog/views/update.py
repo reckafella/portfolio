@@ -30,7 +30,8 @@ class UpdatePostView(BasePostView, UpdateView):
             "action_url": reverse_lazy(
                 "blog:update_article",
                 kwargs={"slug": self.object.slug}
-            )
+            ),
+            "form_id": "update-post-form",
         })
         return context
 

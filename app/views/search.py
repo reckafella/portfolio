@@ -144,6 +144,7 @@ class SearchView(ListView):
                 "posts": "Posts",
                 "projects": "Projects",
             },
+            "form_id": "search-form",
         })
 
         return context

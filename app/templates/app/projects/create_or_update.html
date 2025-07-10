@@ -9,6 +9,9 @@
             <ol>
                 <li><a href="{% url 'app:home' %}">Home</a></li>
                 <li><a href="{% url 'app:projects' %}">Projects</a></li>
+                {% if project_url %}
+                <li><a href="{{ project_url }}">Project</a></li>
+                {% endif %}
                 <li>{{ title }}</li>
             </ol>
         </nav>
@@ -26,7 +29,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="other-form" method="post" enctype="multipart/form-data" class="other-form">
+                        <form id="{{ form_id|default:'other-form' }}" method="post" enctype="multipart/form-data" class="{{ form_id|default:'other-form' }}">
                             {% csrf_token %}
                             {% for field in form %}
                             <!-- form switch for publish -->
@@ -70,4 +73,35 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("{{ form_id|default:'other-form' }}");
+        window.addEventListener("load", () => {
+            new FormValidator(form, {
+                fields: {
+                    title: {
+                        required: true,
+                        maxLength: 100
+                    },
+                    description: {
+                        required: true,
+                        maxLength: 500
+                    },
+                    image: {
+                        required: false,
+                        fileType: ['image/jpeg', 'image/png', 'image/gif']
+                    },
+                    video: {
+                        required: false,
+                        fileType: ['video/mp4', 'video/webm']
+                    }
+                }
+            });
+            new FormValidator(form);
+        });
+    });
+</script>
 {% endblock %}

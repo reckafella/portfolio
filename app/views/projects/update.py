@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.generic import UpdateView
 from titlecase import titlecase
+from django.urls import reverse
 
 # from app.models import Image, Video
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
@@ -68,9 +69,13 @@ class UpdateProjectView(BaseProjectView, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        project = self.get_object()
         context.update({
             "title": "Update Project",
             "submit_text": "Update Project",
             "data_loading_text": "Updating Project",
+            "form_id": "project-update-form",
+            "project_url": reverse("app:project_details",
+                                   kwargs={"slug": project.slug}),
         })
         return context

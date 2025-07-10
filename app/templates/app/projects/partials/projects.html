@@ -24,12 +24,12 @@
                                     class="btn btn-sm btn-light rounded-circle project-lightbox preview-link" title="Preview {{ project.title }}">
                                     <i class="bi bi-plus"></i>
                                 </a>
-                                <a href="{% url 'app:project_detail' project.slug %}" class="btn btn-sm btn-light rounded-circle"
+                                <a href="{% url 'app:project_details' project.slug %}" class="btn btn-sm btn-light rounded-circle"
                                     title="View details for {{ project.title }}">
                                     <i class="bi bi-link"></i>
                                 </a>
                                 <a role="button" class="btn btn-sm btn-light rounded-circle" data-bs-toggle="modal" data-bs-target="#shareModal"
-                                    data-share-url="{% url 'app:project_detail' project.slug %}" data-share-title="{{ project.title }}"
+                                    data-share-url="{% url 'app:project_details' project.slug %}" data-share-title="{{ project.title }}"
                                     title="Share {{ project.title }}">
                                     <i class="bi bi-share-fill"></i>
                                 </a>

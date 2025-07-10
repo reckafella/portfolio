@@ -67,12 +67,12 @@
                                             title="Preview {{ project.title }}">
                                             <i class="bi bi-plus"></i>
                                         </a>
-                                        <a href="{% url 'app:project_detail' project.slug %}" class="details-link"
+                                        <a href="{% url 'app:project_details' project.slug %}" class="details-link"
                                             title="View details for {{ project.title }}">
                                             <i class="bi bi-link"></i>
                                         </a>
                                         <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
-                                            data-share-url="{% url 'app:project_detail' project.slug %}"
+                                            data-share-url="{% url 'app:project_details' project.slug %}"
                                             data-share-title="{{ project.title }}" class="share-link"
                                             title="Share {{ project.title }}">
                                             <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>

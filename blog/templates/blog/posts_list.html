@@ -18,18 +18,15 @@
 </div>
 
 <section id="blog" class="blog">
-    <div class="container" data-aos="fadeup">
+    <div class="container">
         <div class="row">
             <div class="section-title py-2">
-                <h3 class="text-center">
+                <h2 class="text-center">
                     {{ page_title }} {% if not all_authors %} by <a href="{% url 'blog:articles_by_author' author.username %}">{{ author.get_full_name | default:author.username | capfirst }}</a> {% endif %}
-                </h3>
+                </h2>
             </div>
-            <div class="row">
-                <div class="entries col-11 col-lg-8">
-                    <div class="d-block d-md-none d-lg-none mb-3">
-                    {% include 'app/pagination/articles.html' %}
-                    </div>
+            <div class="row d-lg-flex justify-content-between align-items-stretch">
+                <div class="entries col-12 col-lg-8">
                     <div class="d-flex justify-content-around gap-1 flex-wrap align-items-center align-items-stretch">
                         {% for article in articles %}
                         <article class="entry col-12">
@@ -118,7 +115,7 @@
                     </div>
                     {% endif %}
                 </div>
-                <div class="sidebar col-lg-4">
+                <div class="sidebar col-12 col-lg-4">
                 {% include 'blog/partials/sidebar-list.html' with other_posts=other_posts current_sort=current_sort current_tag=current_tag tags=tags sorting_options=sorting_options q=q %}
                 </div>
             </div>

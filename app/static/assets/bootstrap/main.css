@@ -879,7 +879,7 @@ section,
 .hero .overlay {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--surface-color) 80%, transparent 5%);
+  background: color-mix(in srgb, var(--surface-color) 50%, transparent 55%);
   z-index: 2;
 }
 

@@ -2,15 +2,15 @@
 # Blog
 --------------------------------------------------------------*/
 .blog {
-  padding: 40px 20px;
+  padding: 5px;
 }
 
 .blog .entry {
-  padding: 30px;
-  margin-bottom: 60px;
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 50%);
-  border-radius: 10px;
-  background-color: color-mix(in srgb, var(--background-color), transparent 88%);
+  padding: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0px 0px 2px color-mix(in srgb, var(--default-color), transparent 20%);
+  border-radius: 5px;
+  background-color: color-mix(in srgb, var(--background-color), transparent 38%);
 }
 
 

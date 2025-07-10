@@ -28,9 +28,7 @@
                         {% endif %}
                     </div>
 
-                    <h2 class="entry-title">
-                        <a href="{% url 'blog:article_details' article.slug %}">{{ article.title }}</a>
-                    </h2>
+                    <h2 class="entry-title">{{ article.title }}</h2>
 
                     <div class="entry-meta">
                         <ul>
@@ -64,7 +62,7 @@
                             <!-- View count display -->
                             <li class="d-flex align-items-center">
                                 <i class="bi bi-eye"></i>
-                                <span class="pr-1 ms-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
+                                <span class="me-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
                             </li>
                             {% if user.is_authenticated and user == article.author or user.is_staff %}
                             <li class="d-flex align-items-center position-relative">
@@ -73,11 +71,11 @@
                                 </div>
                             </li>
                             {% endif %}
-                            <li class="d-flex align-items-center">
+                            <li class="d-flex d-none d-md-inline align-items-center">
                                 <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
                                     data-share-title="{{ article.title }}" class="share-link">
-                                    <i class="bi bi-share-fill fs-6"></i>
+                                    <i class="bi bi-share-fill"></i>
                                 </a>
                             </li>
                         </ul>
@@ -87,7 +85,7 @@
                         {{ article.content | richtext | safe }}
                     </div>
 
-                    <div class="entry-footer">
+                    <div class="entry-footer d-flex">
                         <i class="bi bi-tags"></i>
                         <ul class="tags mx-2">
                             {% for tag in post_tags %}
@@ -96,6 +94,15 @@
                                     {{ tag }}</a>
                             </li>
                             {% endfor %}
+                        </ul>
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-center">
+                                <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                    data-share-url="{% url 'blog:article_details' article.slug %}"
+                                    data-share-title="{{ article.title }}" class="share-link">
+                                    <i class="bi bi-share-fill"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </article>

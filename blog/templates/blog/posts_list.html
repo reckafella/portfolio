@@ -37,7 +37,7 @@
                         <article class="entry col-12">
                             {% if article.first_image.optimized_image_url %}
                             <div class="entry-img my-2">
-                                <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid">
+                                <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid" loading="lazy">
                             </div>
                             {% endif %}
                             <div class="entry-meta">

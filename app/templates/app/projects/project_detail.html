@@ -26,11 +26,11 @@
                             <div class="swiper-slide">
                                 <div class="project-item filter-{{ project.category|slugify }}">
                                     {% if image.cloudinary_image_url %}
-                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
                                     {% elif image.cloudinary_image_url %}
-                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid">
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
                                     {% else %}
-                                    <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid">
+                                    <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
                                     {% endif %}
                                     <div class="project-info">
                                         <h4>{{ project.title }}</h4>
@@ -169,7 +169,7 @@
                                     <div class="card-body">
                                         <img src="{{ project.first_image.optimized_image_url }}" class="card-img-top"
                                             alt="{{ project.title | default:'Project Image' }}"
-                                            style="object-fit: cover; max-height: 300px;">
+                                            style="object-fit: cover; max-height: 300px;" loading="lazy">
                                         <div class="card-body d-flex flex-column">
                                             <p class="card-text">{{ project.description | truncatechars:50 | safe }}</p>
                                         </div>

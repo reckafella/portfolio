@@ -14,6 +14,7 @@ class ContactForm(forms.Form):
         label="Name",
         required=True,
         max_length=100,
+        validators=[MaxLengthValidator(100)],
         widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
     )
     email = forms.EmailField(
@@ -31,6 +32,9 @@ class ContactForm(forms.Form):
     )
     message = forms.CharField(
         label="Message",
+        required=True,
+        max_length=1000,
+        validators=[MaxLengthValidator(1000)],
         widget=forms.Textarea(attrs={"class": "form-control focus-ring"}),
         help_text="Enter your message here",
     )

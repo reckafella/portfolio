@@ -55,11 +55,33 @@ class ContactView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        """Handle form validation errors, especially for AJAX requests"""
         if is_ajax(self.request):
+            # Collect all form errors
+            error_messages = []
+
+            # Field-specific errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+
+            # Non-field errors (from clean() method)
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
             return JsonResponse({
                 "success": False,
-                "errors": form.errors
-            })
+                "errors": error_messages,
+                "messages": [],
+                "form_errors": form.errors.get_json_data()
+            }, status=400)
+
+        # For non-AJAX requests, use default behavior
         return super().form_invalid(form)
 
 

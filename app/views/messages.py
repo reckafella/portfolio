@@ -80,6 +80,7 @@ class MessagesView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "app/contact/messages.html"
     context_object_name = "messages"
     ordering = ["-created_at"]
+    paginate_by = 10
 
     def test_func(self):
         return self.request.user.is_staff or self.request.user.is_superuser

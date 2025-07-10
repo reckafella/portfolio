@@ -103,6 +103,9 @@ class Message(models.Model):
         self.is_read = True
         self.save()
 
+    def dismiss(self):
+        self.delete()
+
     class Meta:
         managed = True
 

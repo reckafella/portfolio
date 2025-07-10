@@ -32,48 +32,81 @@
         </div>
     </div>
 </section>
-
 <section id="about" class="about section">
-    <!-- section title -->
     <div class="container section-title" data-aos="fade-up">
         <h2>About Me</h2>
+        <p>Get to Know Me Better</p>
     </div>
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row gy-4 justify-content-center">
-            <div class="row d-lg-block justify-content-center align-items-center col-lg-4">
-                <img src="{% static 'assets/images/profile.jpg' %}" alt="Profile Picture" class="img-fluid rounded-circle w-75">
+        <div class="row gy-4 justify-content-between">
+            <div class="col-lg-4 text-center">
+                <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/qviwgaelxqb4ubbysrkr"
+                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 350px;">
+                <div class="social-links mt-3">
+                    <a href="https://github.com/yourusername" class="github" target="_blank"><i
+                            class="bi bi-github"></i></a>
+                    <a href="https://linkedin.com/in/yourusername" class="linkedin" target="_blank"><i
+                            class="bi bi-linkedin"></i></a>
+                    <a href="https://twitter.com/yourusername" class="twitter" target="_blank"><i
+                            class="bi bi-twitter"></i></a>
+                </div>
             </div>
-            <div class="col-lg-8 content">
-                <h2>Software Engineer</h2>
+            <div class="col-lg-7 content">
+                <h2>Software Engineer & DevOps Specialist</h2>
                 <p class="fst-italic py-3">
-                    I am a passionate software engineer with a strong focus on backend development and DevOps practices. I have a knack for solving complex problems and delivering high-quality solutions that meet the needs of users and businesses alike.
+                    I am a passionate software engineer with expertise in backend development, cloud architecture, and
+                    DevOps practices.
+                    With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
+                    business growth and enhance user experience.
                 </p>
                 <div class="row">
                     <div class="col-lg-6">
-                        <ul>
-                            <li><i class="bi bi-chevron-right"></i><strong>Birthday:</strong> <span>Dec. 1997</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>Whatsapp:</strong> <span>+254719272150</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>Phone:</strong> <span>+254719272150</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>City:</strong> <span>Nairobi, Kenya</span></li>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Location:</strong>
+                                Nairobi, Kenya</li>
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Phone:</strong>
+                                +254719272150</li>
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Experience:</strong>
+                                5+ Years</li>
                         </ul>
                     </div>
                     <div class="col-lg-6">
-                        <ul>
-                            <li><i class="bi bi-chevron-right"></i><strong>Age:</strong> <span>27</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>Degree:</strong> <span>Bachelor's</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>Email:</strong> <span>ethanmuthoni@gmail.com</span></li>
-                            <li><i class="bi bi-chevron-right"></i><strong>Freelance:</strong> <span>Available</span></li>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Email:</strong>
+                                ethanmuthoni@gmail.com</li>
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Education:</strong>
+                                BSc Computer Science</li>
+                            <li class="mb-2"><i
+                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Availability:</strong>
+                                Open to opportunities</li>
                         </ul>
                     </div>
                 </div>
                 <p class="py-2">
-                    I am always eager to learn new technologies and improve my skills. I believe in the power of collaboration and enjoy working with teams to create innovative solutions that make a difference.
+                    I thrive in collaborative environments and am committed to continuous learning and professional
+                    growth. My approach combines
+                    technical expertise with effective communication skills to deliver solutions that exceed
+                    expectations. Whether working on complex
+                    backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable,
+                    and maintainable code.
                 </p>
+                <div class="mt-4">
+                    <a href="{% url 'app:resume' %}" class="btn btn-outline-primary me-3"><i
+                            class="bi bi-file-earmark-text me-1"></i> View Resume</a>
+                    <a href="{% url 'app:contact' %}" class="btn btn-primary"><i class="bi bi-envelope me-1"></i>
+                        Contact Me</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
+<!-- End About Section -->
 
 <!-- Skills Section -->
 <section id="skills" class="skills section">

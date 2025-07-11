@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="{{ form_id|default:'other-form' }}" method="post" enctype="multipart/form-data" class="{{ form_id|default:'other-form' }}">
+                        <form id="project-form" method="post" enctype="multipart/form-data" class="{{ form_id|default:'other-form' }}">
                             {% csrf_token %}
                             {% for field in form %}
                             <!-- form switch for publish -->

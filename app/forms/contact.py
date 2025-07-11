@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.core.validators import (
     EmailValidator,
-    MaxLengthValidator
+    MaxLengthValidator,
 )
 from captcha.fields import CaptchaField, CaptchaTextInput
 
@@ -13,21 +13,23 @@ class ContactForm(forms.Form):
     name = forms.CharField(
         label="Name",
         required=True,
-        max_length=100,
-        validators=[MaxLengthValidator(100)],
+        max_length=50,
+        validators=[MaxLengthValidator(50)],
         widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
     )
     email = forms.EmailField(
         label="Email",
         required=True,
-        validators=[EmailValidator()],
+        max_length=70,
+        validators=[MaxLengthValidator(70), EmailValidator()],
+        help_text="Enter a valid email address",
         widget=forms.EmailInput(attrs={"class": "form-control focus-ring"}),
     )
     subject = forms.CharField(
         label="Subject",
         required=True,
-        max_length=200,
-        validators=[MaxLengthValidator(200)],
+        max_length=150,
+        validators=[MaxLengthValidator(150)],
         widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
     )
     message = forms.CharField(
@@ -41,6 +43,7 @@ class ContactForm(forms.Form):
 
     captcha = CaptchaField(
         label="Captcha",
+        required=True,
         help_text="Enter the characters shown in the image",
         widget=CaptchaTextInput(attrs={"class": "form-control focus-ring"}),
     )

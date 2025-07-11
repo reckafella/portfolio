@@ -18,6 +18,7 @@ from authentication.forms.profile import (
 from app.views.helpers.cloudinary import (
     CloudinaryImageHandler, handle_image_upload
 )
+from app.views.helpers.helpers import is_ajax
 
 uploader = CloudinaryImageHandler()
 
@@ -25,7 +26,7 @@ uploader = CloudinaryImageHandler()
 class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
-    template_name = 'auth/profile/profile_detail.html'
+    template_name = 'auth/profile/profile_details.html'
 
     def test_func(self):
         return (
@@ -94,8 +95,7 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if 'delete_profile_pic' in request.POST:
             return self.handle_profile_pic_deletion()
 
-        # Determine which form was submitted based on a hidden input or\
-        # button name
+        # Determine which form was submitted based on a hidden input name
         form_type = request.POST.get('form_type')
 
         if form_type == 'profile':
@@ -116,10 +116,13 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return self.handle_valid_profile_forms(form, social_form)
 
         self.request.session['active_tab'] = 'profile-edit'
-        return self.form_invalid(form)
+        return self.form_invalid_with_context(form, social_form)
 
     def handle_valid_profile_forms(self, form, social_form):
         profile = form.save(commit=False)
+
+        success_messages = []
+        error_messages = []
 
         # Handle profile picture upload
         if 'profile_pic' in self.request.FILES:
@@ -134,13 +137,22 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 profile.cloudinary_image_id = _data["cloudinary_image_id"]
                 profile.cloudinary_image_url = _data["cloudinary_image_url"]
                 profile.optimized_image_url = _data["optimized_image_url"]
+                success_messages.append("Success Updating Profile picture!")
             except Exception as e:
                 # Handle any errors that occur during the upload
-                # Log the error or notify the user
-                _error_message = f"Error Uploading Image: {str(e)}"
-                messages.error(self.request, _error_message)
+                error_messages.append(f"Image Upload Failed: {str(e)}")
 
-                return self.form_invalid(form)
+                # Return error response for AJAX requests
+                if is_ajax(self.request):
+                    return JsonResponse({
+                        "success": False,
+                        "errors": error_messages,
+                        "messages": []
+                    }, status=400)
+
+                # For non-AJAX requests, add error msg and return form invalid
+                messages.error(self.request, f"Image Upload Failed: {str(e)}")
+                return self.form_invalid_with_context(form, social_form)
 
         profile.save()
 
@@ -150,19 +162,71 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             setattr(social_links, field, value)
         social_links.save()
 
-        messages.success(self.request, 'Profile updated successfully!')
+        success_messages.append('Profile updated successfully!')
+
+        # Prepare response data
+        response_data = {
+            "success": True,
+            "messages": success_messages,
+            "errors": error_messages,
+            "redirect_url": self.get_success_url()
+        }
+
+        if is_ajax(self.request):
+            return JsonResponse(response_data)
+
+        # For non-AJAX requests, add success message and redirect
+        for message in success_messages:
+            messages.success(self.request, message)
+
         return redirect(self.get_success_url())
 
     def handle_password_change(self):
         form = UserPasswordChangeForm(self.request.user, self.request.POST)
+
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(self.request, user)
+
+            success_messages = ['Password updated successfully!']
+
+            response_data = {
+                "success": True,
+                "messages": success_messages,
+                "errors": [],
+                "redirect_url": self.get_success_url()
+            }
+
+            if is_ajax(self.request):
+                return JsonResponse(response_data)
+
             messages.success(self.request, 'Password updated successfully!')
             return redirect(self.get_success_url())
 
         self.request.session['active_tab'] = 'profile-change-password'
 
+        # Handle form errors for AJAX requests
+        if is_ajax(self.request):
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
+            return JsonResponse({
+                'success': False,
+                'errors': error_messages,
+                'messages': []
+            }, status=400)
+
+        # For non-AJAX requests
         _context_data = self.get_context_data(password_form=form)
         return self.render_to_response(_context_data)
 
@@ -192,14 +256,52 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             # Now save
             settings_instance.save()
 
+            success_messages = ['Settings updated successfully!']
+
+            response_data = {
+                "success": True,
+                "messages": success_messages,
+                "errors": [],
+                "redirect_url": self.get_success_url()
+            }
+
+            if is_ajax(self.request):
+                return JsonResponse(response_data)
+
             messages.success(self.request, 'Settings updated successfully!')
             return redirect(self.get_success_url())
 
         self.request.session['active_tab'] = 'profile-settings'
+
+        # Handle form errors for AJAX requests
+        if is_ajax(self.request):
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
+            return JsonResponse({
+                'success': False,
+                'errors': error_messages,
+                'messages': []
+            }, status=400)
+
+        # For non-AJAX requests
         _context_data = self.get_context_data(settings_form=form)
         return self.render_to_response(_context_data)
 
     def handle_profile_pic_deletion(self):
+        success_messages = []
+        error_messages = []
+
         if self.object.cloudinary_image_id:
             try:
                 uploader.delete_image(self.object.cloudinary_image_id)
@@ -208,22 +310,81 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 self.object.cloudinary_image_url = None
                 self.object.optimized_image_url = None
                 self.object.save()
+                success_messages.append("Success Deleting Profile Picture!")
+
                 return JsonResponse({
                     "success": True,
-                    "message": "Profile picture deleted successfully!"
+                    "messages": success_messages,
+                    "errors": error_messages
                 })
             except Exception as e:
+                error_messages.append(
+                    f"Error deleting profile picture: {str(e)}")
                 return JsonResponse({
                     "success": False,
-                    "error": f"Error deleting profile picture: {str(e)}"
+                    "errors": error_messages,
+                    "messages": []
                 }, status=400)
+
+        error_messages.append("No profile picture to delete")
         return JsonResponse({
             "success": False,
-            "error": "No profile picture to delete"
+            "errors": error_messages,
+            "messages": []
         }, status=400)
+
+    def form_invalid_with_context(self, form, social_form=None):
+        """
+        Handle form validation errors with proper context for multiple forms
+        """
+        if is_ajax(self.request):
+            error_messages = []
+
+            # Handle profile form errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        error_messages.append(str(error))
+                    else:
+                        field_name = form.fields[field].label or\
+                            field.replace('_', ' ').title()
+                        error_messages.append(f"{field_name}: {error}")
+
+            # Handle social form errors if provided
+            if social_form and not social_form.is_valid():
+                for field, errors in social_form.errors.items():
+                    for error in errors:
+                        if field == '__all__':
+                            error_messages.append(str(error))
+                        else:
+                            field_name = social_form.fields[field].label or\
+                                field.replace('_', ' ').title()
+                            error_messages.append(f"{field_name}: {error}")
+
+            # Handle non-field errors
+            for error in form.non_field_errors():
+                error_messages.append(str(error))
+
+            return JsonResponse({
+                'success': False,
+                'errors': error_messages,
+                'messages': []
+            }, status=400)
+
+        # For non-AJAX requests
+        context_data = self.get_context_data()
+        if social_form:
+            context_data['social_form'] = social_form
+        return self.render_to_response(context_data)
 
     def get_success_url(self):
         """Redirect to the profile detail page after successful update"""
         _username = self.request.user.username
-        return reverse('authentication:profile_detail',
+        return reverse('authentication:user_profile',
                        kwargs={'username': _username})
+
+    def form_invalid(self, form):
+        """
+        Handles form validation errors, esp. in AJAX requests
+        """
+        return self.form_invalid_with_context(form)

@@ -96,11 +96,10 @@
     <!-- Main & Forms JS Files -->
     <script src="{% static 'assets/js/main.js' %}"></script>
     <script type="module" src="{% static 'assets/js/toast.js' %}"></script>
-    <script type="module" src="{% static 'assets/js/copyLinks.js' %}"></script>
+    <script type="module" src="{% static 'assets/js/shareManager.js' %}"></script>
     <script src="{% static 'assets/js/moreLess.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/js/formValidator.js' %}"></script>
-    <script type="module" src="{% static 'assets/js/form-input.js' %}"></script>
     <script src="{% static 'assets/js/themes.js' %}"></script>
 
     <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
@@ -122,11 +121,6 @@
         });
     </script>
 
-    {% comment %}
-    <script src="{% static 'assets/js/sessionTimeout.js' %}"></script>
-    {% endcomment %}
-
-    <!-- Form data validation -->
      {% block extra_js %} {% endblock %}
 </body>
 </html>

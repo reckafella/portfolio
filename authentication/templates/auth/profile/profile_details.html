@@ -159,7 +159,8 @@
 
                         <!-- Settings -->
                         <div class="tab-pane fade pt-3" id="profile-settings">
-                            <form method="post" action="{% url 'authentication:profile_detail' request.user %}">
+                            <form method="post" action="{% url 'authentication:user_profile' request.user %}" id="settings-form">
+                                {% csrf_token %}
                                 <div class="row mb-3">
                                     <label class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
                                     <div class="col-md-8 col-lg-9">
@@ -188,7 +189,7 @@
 
                         <!-- Change Password -->
                         <div class="tab-pane fade pt-3" id="profile-change-password">
-                            <form method="post" action="{% url 'authentication:profile_detail' request.user %}">
+                            <form method="post" action="{% url 'authentication:user_profile' request.user %}" id="change-password-form">
                                 {% csrf_token %}
                                 <input type="hidden" name="form_type" value="password">
                                 {% for field in password_form %}
@@ -218,7 +219,7 @@
 <script>
 function deleteProfilePic() {
     if (confirm('Are you sure you want to delete your profile picture?')) {
-        fetch('{% url "authentication:profile_detail" request.user %}', {
+        fetch('{% url "authentication:user_profile" request.user %}', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',

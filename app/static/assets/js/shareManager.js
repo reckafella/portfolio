@@ -1,7 +1,7 @@
 // share-links.js
 import { toastManager } from './toast.js';
 
-class ShareManager {
+export default class ShareManager {
     constructor() {
         this.modal = document.getElementById('shareModal');
         this.copyBtn = this.modal?.querySelector('#copyLinkBtn');
@@ -110,6 +110,17 @@ class ShareManager {
 
 document.addEventListener('DOMContentLoaded', () => {
     new ShareManager();
-});
+    const shareButtons = document.querySelectorAll('.share-btn');
 
-export default ShareManager;
+    // Add event listeners for hover effects
+    shareButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            // prevent default action for anchor tags
+            event.preventDefault();
+            this.classList.add('special-btn');
+        });
+        button.addEventListener('mouseleave', function() {
+            this.classList.remove('special-btn');
+        });
+    });
+});

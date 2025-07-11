@@ -1,56 +1,17 @@
-import { FormInputValidator } from './form-input.js';
+import { isValidEmailSecure } from './validateEmail.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    new FormInputValidator('other-form', {
-        fields: {
-            'id_name': { 
-                type: 'text', 
-                maxLength: 100, 
-                required: true,
-                counterId: 'name-count'
-            },
-            'id_email': { 
-                type: 'email', 
-                required: true 
-            },
-            'id_subject': { 
-                type: 'alphanumeric', 
-                maxLength: 200, 
-                required: true,
-                counterId: 'subject-count'
-            },
-            'id_message': { 
-                maxLength: 1000, 
-                required: true,
-                counterId: 'message-count'
-            },
-            'id_captcha_1': { 
-                type: 'captcha', 
-                maxLength: 6, 
-                required: true,
-                counterId: 'captcha-1-count'
-            }
-        }
-    });
-});
-
-/* document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Field configurations with max lengths
     const fieldConfigs = {
-        'id_name': { max: 100, counterId: 'name-count' },
-        'id_subject': { max: 200, counterId: 'subject-count' },
-        'id_message': { max: 1000, counterId: 'message-count' },
-        'id_captcha_1': { max: 6, counterId: 'captcha-1-count' }
+        'id_name': { max: 50, counterId: 'id_name-count' },
+        'id_subject': { max: 150, counterId: 'id_subject-count' },
+        'id_message': { max: 1000, counterId: 'id_message-count' },
+        'id_captcha_1': { max: 6, counterId: 'id_captcha-count' },
+        'id_email': { max: 70, counterId: 'id_email-count' }
     };
 
     const submitButton = document.getElementById('submitButton');
     let validationErrors = {};
-    
-    // Function to validate email format
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
 
     // Function to update email validation
     function updateEmailValidation() {
@@ -69,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (email.length === 0) {
             // Empty field
             delete validationErrors['id_email'];
-        } else if (!isValidEmail(email)) {
+        } else if (!isValidEmailSecure(email)) {
             // Invalid email format
             emailField.classList.add('char-error');
             validationErrors['id_email'] = 'Please enter a valid email address';
@@ -352,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Add event listeners to all form fields for submit button validation
-    const allFields = document.querySelectorAll('#other-form input, #other-form textarea, #other-form select');
+    const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select');
     allFields.forEach(field => {
         field.addEventListener('input', updateSubmitButton);
         field.addEventListener('change', updateSubmitButton);
@@ -362,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateSubmitButton();
     
     // Form submission handler
-    document.getElementById('other-form').addEventListener('submit', function(e) {
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
         // Final validation before submission
         const hasErrors = Object.keys(validationErrors).length > 0;
         const isEmpty = !isFormValid();
@@ -397,4 +358,4 @@ document.addEventListener('DOMContentLoaded', function () {
             submitButton.textContent = originalText;
         }, 10000);
     });
-}); */
+});

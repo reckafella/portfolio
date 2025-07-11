@@ -38,34 +38,3 @@
         </div>
     </div>
 </div>
-<!-- End of Share Modal -->
-
-{% block extra_js %}
-<script>
-    // Get all share buttons
-    const shareButtons = document.querySelectorAll('.share-btn');
-    
-    // Add event listeners for hover effects
-    shareButtons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            // prevent default action for anchor tags
-            event.preventDefault();
-            this.classList.add('special-btn');
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.classList.remove('special-btn');
-        });
-    });
-    
-    /* // Copy link functionality
-    document.getElementById('copyLinkBtn').addEventListener('click', function() {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            // You can add a toast notification here
-            alert('Link copied to clipboard!');
-        }).catch(function(err) {
-            console.error('Failed to copy: ', err);
-        });
-    }); */
-</script>
-{% endblock %}

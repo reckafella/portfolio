@@ -15,7 +15,7 @@
  *     }
  * });
  */
-
+/* 
 import { toastManager } from './toast.js';
 
 export default class FormInputValidator {
@@ -50,6 +50,7 @@ export default class FormInputValidator {
     /**
      * Initialize built-in validators
      */
+    /*
     initializeValidators() {
         return {
             email: {
@@ -81,7 +82,7 @@ export default class FormInputValidator {
     
     /**
      * Initialize the form validator
-     */
+     *//*
     init() {
         this.setupFieldValidation();
         this.setupFormSubmission();
@@ -90,7 +91,7 @@ export default class FormInputValidator {
     
     /**
      * Setup validation for individual fields
-     */
+     *//*
     setupFieldValidation() {
         Object.entries(this.config.fields).forEach(([fieldId, fieldConfig]) => {
             const field = document.getElementById(fieldId);
@@ -100,7 +101,7 @@ export default class FormInputValidator {
             }
             
             // Setup character counting if enabled and maxLength is specified
-            if (this.config.showCharacterCount && fieldConfig.maxLength) {
+            if (this.config.showCharacterCount && fieldConfig.maxLength && fieldConfig.showCharacterCount !== false) {
                 this.setupCharacterCounter(fieldId, fieldConfig);
             }
             
@@ -127,7 +128,7 @@ export default class FormInputValidator {
     
     /**
      * Setup character counter for a field
-     */
+     *//*
     setupCharacterCounter(fieldId, fieldConfig) {
         const field = document.getElementById(fieldId);
         const counterId = fieldConfig.counterId || `${fieldId}-count`;
@@ -148,7 +149,7 @@ export default class FormInputValidator {
     
     /**
      * Update character count and styling
-     */
+     *//*
     updateCharacterCount(fieldId, fieldConfig) {
         const field = document.getElementById(fieldId);
         const counterId = fieldConfig.counterId || `${fieldId}-count`;
@@ -212,7 +213,7 @@ export default class FormInputValidator {
     
     /**
      * Validate a specific field
-     */
+     *//*
     validateField(fieldId, fieldConfig) {
         const field = document.getElementById(fieldId);
         if (!field) return;
@@ -280,7 +281,7 @@ export default class FormInputValidator {
     
     /**
      * Show validation message
-     */
+     *//*
     showValidationMessage(field, message, type, category) {
         if (!this.config.showValidationMessages) return;
         
@@ -292,7 +293,7 @@ export default class FormInputValidator {
     
     /**
      * Remove validation message
-     */
+     *//*
     removeValidationMessage(field, category) {
         const existingMessage = field.parentElement.querySelector(`.validation-message.${category}`);
         if (existingMessage) {
@@ -302,7 +303,7 @@ export default class FormInputValidator {
     
     /**
      * Update submit button state
-     */
+     *//*
     updateSubmitButton() {
         if (!this.submitButton) return;
         
@@ -323,7 +324,7 @@ export default class FormInputValidator {
     
     /**
      * Check if form is valid (all required fields filled)
-     */
+     *//*
     isFormValid() {
         const requiredFields = Object.entries(this.config.fields)
             .filter(([fieldId, config]) => config.required)
@@ -337,7 +338,7 @@ export default class FormInputValidator {
     
     /**
      * Setup form submission handler
-     */
+     *//*
     setupFormSubmission() {
         this.form.addEventListener('submit', (e) => {
             // Final validation before submission
@@ -371,7 +372,7 @@ export default class FormInputValidator {
     
     /**
      * Validate all fields
-     */
+     *//*
     validateAllFields() {
         Object.entries(this.config.fields).forEach(([fieldId, fieldConfig]) => {
             this.validateField(fieldId, fieldConfig);
@@ -380,7 +381,7 @@ export default class FormInputValidator {
     
     /**
      * Show loading state on submit button
-     */
+     *//*
     showLoadingState() {
         if (!this.submitButton) return;
         
@@ -399,7 +400,7 @@ export default class FormInputValidator {
     
     /**
      * Initial validation run
-     */
+     *//*
     initialValidation() {
         // Update character counts
         Object.entries(this.config.fields).forEach(([fieldId, fieldConfig]) => {
@@ -414,7 +415,7 @@ export default class FormInputValidator {
     
     /**
      * Add custom validator
-     */
+     *//*
     addValidator(name, validateFn, errorMessage) {
         this.validators[name] = {
             validate: validateFn,
@@ -424,14 +425,14 @@ export default class FormInputValidator {
     
     /**
      * Get validation errors
-     */
+     *//*
     getValidationErrors() {
         return { ...this.validationErrors };
     }
     
     /**
      * Clear all validation errors
-     */
+     *//*
     clearValidationErrors() {
         this.validationErrors = {};
         
@@ -450,7 +451,7 @@ export default class FormInputValidator {
     
     /**
      * Destroy the validator (remove event listeners)
-     */
+     *//*
     destroy() {
         if (!this.form) return;
         
@@ -473,4 +474,52 @@ export default class FormInputValidator {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.querySelectorAll('form[id]');
+    forms.forEach(form => {
+        const formId = form.id;
+        const config = {
+            fields: {}
+        };
+        form.querySelectorAll('input, textarea').forEach(input => {
+            const fieldId = input.id;
+            if (fieldId) {
+                // Check if it's a checkbox or boolean type
+                const isBoolean = input.type === 'checkbox' || input.type === 'radio';
+                
+                config.fields[fieldId] = {
+                    type: input.type,
+                    required: input.required || false,
+                    errorMessage: input.dataset.errorMessage || ''
+                };
+                
+                // Only add length validations for non-boolean fields
+                if (!isBoolean) {
+                    config.fields[fieldId].maxLength = input.maxLength || null;
+                    config.fields[fieldId].minLength = input.minLength || null;
+                    config.fields[fieldId].pattern = input.pattern ? new RegExp(input.pattern) : null;
+                    config.fields[fieldId].counterId = input.dataset.counterId || null;
+                    config.fields[fieldId].showCharacterCount = input.dataset.showCharacterCount !== 'false';
+                }
+
+                // captcha field set to 6 characters
+                if (fieldId === 'id_captcha_0' || fieldId === 'id_captcha_1') {
+                    config.fields[fieldId] = {
+                        type: 'captcha',
+                        required: input.required || false,
+                        maxLength: 6,
+                        minLength: 6,
+                        counterId: input.dataset.counterId || 'id_captcha-count',
+                        pattern: input.pattern ? new RegExp(input.pattern) : null,
+                        errorMessage: input.dataset.errorMessage || '',
+                        showCharacterCount: true
+                    };
+                }
+            }
+        });
+        new FormInputValidator(formId, config);
+    });
+});
+
 export const formInputValidator = new FormInputValidator();
+ */

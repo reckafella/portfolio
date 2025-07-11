@@ -87,13 +87,11 @@
                         <div class="col-12 col-md-6">
                             <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
                             {{ field }}
-                            {% if field.name == 'name' %}
                             <div class="char-counter mt-1">
                                 <small class="text-muted">
-                                    <span id="name-count">0</span> / 100 characters
+                                    <span id="{{ field.auto_id }}-count">0</span> / {{ field.field.max_length }} characters
                                 </small>
                             </div>
-                            {% endif %}
                         </div>
                         {% else %}
                         <div class="col-12">
@@ -102,19 +100,19 @@
                             {% if field.name == 'subject' %}
                             <div class="char-counter mt-1">
                                 <small class="text-muted">
-                                    <span id="subject-count">0</span> / 200 characters
+                                    <span id="{{ field.auto_id }}-count">0</span> / {{ field.field.max_length }} characters
                                 </small>
                             </div>
                             {% elif field.name == 'message' %}
                             <div class="char-counter mt-1">
                                 <small class="text-muted">
-                                    <span id="message-count">0</span> / 1000 characters
+                                    <span id="{{ field.auto_id }}-count">0</span> / {{ field.field.max_length }} characters
                                 </small>
                             </div>
                             {% elif field.name == 'captcha' %}
                             <div class="char-counter mt-1">
                                 <small class="text-muted">
-                                    <span id="captcha-1-count">0</span> / 6 characters
+                                    <span id="{{ field.auto_id }}-count">0</span> / 6 characters
                                 </small>
                             </div>
                             {% endif %}
@@ -134,30 +132,5 @@
 </section>
 {% endblock %}
 {% block extra_js %}
-<script type="module" src="{# static 'assets/js/contact.js' #}"></script>
-<script>
-    new FormInputValidator("{{ form_id|default:'other-form' }}", {
-        fields: {
-            name: {
-                maxLength: 100,
-                counterId: "name-count"
-            },
-            subject: {
-                maxLength: 200,
-                counterId: "subject-count"
-            },
-            message: {
-                maxLength: 1000,
-                counterId: "message-count"
-            },
-            captcha_1: {
-                maxLength: 6,
-                counterId: "captcha-1-count"
-            }
-        },
-        submitButtonId: "submitButton",
-        dataLoadingText: "{{ data_loading_text }}"
-    });
-    new FormValidator("{{ form_id|default:'other-form' }}");
-</script>
+<script type="module" src="{% static 'assets/js/contact.js' %}"></script>
 {% endblock %}

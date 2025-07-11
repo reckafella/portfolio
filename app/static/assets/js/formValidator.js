@@ -201,8 +201,15 @@ class FormValidator {
     }
 }
 
-/* document.addEventListener('DOMContentLoaded', () => {
-    new FormValidator('other-form');
-}); */
+document.addEventListener('DOMContentLoaded', () => {
+    const forms = ["auth-form", "contact-form", "project-form", "delete-project-form", "change-password-form", "profile-form", "settings-form"];
+
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            new FormValidator(formId);
+        }
+    });
+});
 
 export default FormValidator;

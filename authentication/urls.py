@@ -9,7 +9,7 @@ from app.views.views import CustomRedirectView as RedirectView
 app_name = "authentication"
 
 urlpatterns = [
-    path('profile/<str:username>', _PV.as_view(), name='profile_detail'),
+    path('profile/<str:username>', _PV.as_view(), name='user_profile'),
     path("accounts/register", RedirectView.as_view(redirect_to="/signup/")),
     path("accounts/signup", RedirectView.as_view(redirect_to="/signup/")),
     path("register", RedirectView.as_view(redirect_to="/signup/")),

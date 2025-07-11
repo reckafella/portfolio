@@ -2,8 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import (
-    MaxLengthValidator,
+    MaxLengthValidator, MinLengthValidator, EmailValidator
 )
+
 from captcha.fields import CaptchaField, CaptchaTextInput
 
 
@@ -13,8 +14,9 @@ class LoginForm(forms.Form):
     username = forms.CharField(
         label="Username",
         required=True,
+        min_length=3,
         max_length=30,
-        validators=[MaxLengthValidator(30)],
+        validators=[MinLengthValidator(3), MaxLengthValidator(30)],
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
@@ -22,7 +24,8 @@ class LoginForm(forms.Form):
         label="Password",
         required=True,
         min_length=8,
-        max_length=60,
+        max_length=64,
+        validators=[MinLengthValidator(8), MaxLengthValidator(64)],
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "id": "password1"},
             render_value=True
@@ -32,6 +35,7 @@ class LoginForm(forms.Form):
 
     captcha = CaptchaField(
         label="Captcha",
+        required=True,
         help_text="Enter the characters shown in the image",
         widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )
@@ -43,8 +47,9 @@ class SignupForm(UserCreationForm):
     username = forms.CharField(
         label="Username",
         required=True,
+        min_length=3,
         max_length=30,
-        validators=[MaxLengthValidator(30)],
+        validators=[MaxLengthValidator(30), MinLengthValidator(3)],
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
@@ -67,6 +72,7 @@ class SignupForm(UserCreationForm):
     email = forms.EmailField(
         label="Email",
         required=True,
+        validators=[EmailValidator()],
         widget=forms.EmailInput(attrs={"class": "form-control"}),
     )
 
@@ -74,8 +80,8 @@ class SignupForm(UserCreationForm):
         label="Password",
         required=True,
         min_length=8,
-        max_length=60,
-        validators=[MaxLengthValidator(60)],
+        max_length=64,
+        validators=[MaxLengthValidator(64), MinLengthValidator(8)],
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "id": "password1"},
             render_value=True
@@ -87,8 +93,8 @@ class SignupForm(UserCreationForm):
         label="Confirm Password",
         required=True,
         min_length=8,
-        max_length=60,
-        validators=[MaxLengthValidator(60)],
+        max_length=64,
+        validators=[MaxLengthValidator(64)],
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "id": "password2"},
             render_value=True
@@ -98,6 +104,7 @@ class SignupForm(UserCreationForm):
 
     captcha = CaptchaField(
         label="Captcha",
+        required=True,
         help_text="Enter the characters shown in the image",
         widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )
@@ -140,8 +147,9 @@ class AdminLoginForm(forms.Form):
     username = forms.CharField(
         label="Username",
         required=True,
+        min_length=3,
         max_length=30,
-        validators=[MaxLengthValidator(30)],
+        validators=[MaxLengthValidator(30), MinLengthValidator(3)],
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
@@ -149,7 +157,8 @@ class AdminLoginForm(forms.Form):
         label="Password",
         required=True,
         min_length=8,
-        max_length=60,
+        max_length=64,
+        validators=[MaxLengthValidator(64), MinLengthValidator(8)],
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "id": "password1"},
             render_value=True
@@ -159,6 +168,7 @@ class AdminLoginForm(forms.Form):
 
     captcha = CaptchaField(
         label="Captcha",
+        required=True,
         help_text="Enter the characters shown in the image",
         widget=CaptchaTextInput(attrs={"class": "form-control"}),
     )

@@ -16,7 +16,7 @@
                                 </div>
                             </div>
                             <div class="card-body p-4">
-                                <form id="other-form" method="post" enctype="multipart/form-data" class="other-form">
+                                <form id="auth-form" method="post" enctype="multipart/form-data" class="auth-form">
                                     {% csrf_token %}
                                     {% for field in form %}
                                     <div class="mb-3">
@@ -36,6 +36,19 @@
                                             {% endif %}
                                         </label>
                                         {{ field }}
+                                        {% if field.name == 'captcha' %}
+                                        <div class="char-counter mt-1">
+                                            <small class="text-muted">
+                                                <span id="{{ field.auto_id }}-count">0</span> / 6 characters
+                                            </small>
+                                        </div>
+                                        {% else %}
+                                        <div class="char-counter mt-1">
+                                            <small class="text-muted">
+                                                <span id="{{ field.auto_id }}-count">0</span> / {{ field.field.max_length }} characters
+                                            </small>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endfor %}
 
@@ -62,18 +75,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="module"  src="{% static 'assets/js/auth.js' %}"></script>
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize form validation
-            const formValidator = new FormInputValidator('other-form', {
-                fields: {
-                    'id_username': { type: 'username', showCharacterCount: true },
-                    'id_password': { type: 'password', showCharacterCount: true },
-                    'id_email': { type: 'email', showCharacterCount: true }
-                }
-            });
-            formValidator.init();
-        });
-    </script> -->
+    <script type="module" src="{% static 'assets/js/auth.js' %}"></script>
 {% endblock %}

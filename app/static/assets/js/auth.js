@@ -446,6 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (field) {
             field.addEventListener('input', updatePasswordValidation);
             field.addEventListener('blur', updatePasswordValidation);
+            field.addEventListener('keyup', updatePasswordValidation);
+            field.addEventListener('change', updatePasswordValidation);
             field.addEventListener('paste', () => setTimeout(updatePasswordValidation, 10));
         }
     });

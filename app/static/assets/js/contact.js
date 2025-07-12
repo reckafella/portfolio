@@ -1,7 +1,120 @@
-import { isValidEmailSecure } from './validateEmail.js';
+// imports
+import updateNameValidation from './utils/validateName.js';
+import updateSubjectValidation from './utils/validateSubject.js';
+import updateCaptchaValidation from './utils/validateCaptcha.js';
+import updateEmailValidation from './utils/validateEmail.js';
+import updateCharacterCount from './utils/validateCharCount.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const fieldConfigs = {
+        'id_name': { max: 50, counterId: 'id_name-count', validate: updateNameValidation },
+        'id_subject': { max: 150, counterId: 'id_subject-count', validate: updateSubjectValidation },
+        'id_message': { max: 1000, counterId: 'id_message-count' },
+        'id_captcha_1': { max: 6, counterId: 'id_captcha-count', validate: updateCaptchaValidation },
+        'id_email': { max: 70, counterId: 'id_email-count', validate: updateEmailValidation }
+    };
+
+    const submitButton = document.getElementById('submitButton');
+    const validationErrors = {};
+
+    function updateSubmitButton() {
+        const hasErrors = Object.keys(validationErrors).length > 0;
+        const isEmpty = !isFormValid();
+
+        submitButton.disabled = hasErrors || isEmpty;
+        submitButton.title = hasErrors
+            ? 'Please fix validation errors before submitting'
+            : isEmpty
+                ? 'Please fill in all required fields'
+                : '';
+    }
+
+    function isFormValid() {
+        return Object.keys(fieldConfigs).every(fieldId => {
+            const field = document.getElementById(fieldId);
+            return field && field.value.trim().length > 0;
+        });
+    }
+
+    function attachValidationHandlers(fieldId, config) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        // Character count (optional)
+        const updateCharCount = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
+        updateCharCount();
+
+        field.addEventListener('input', updateCharCount);
+        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
+        field.addEventListener('keyup', updateCharCount);
+
+        // Field-specific validation (optional)
+        if (typeof config.validate === 'function') {
+            const validator = () => config.validate(fieldId, validationErrors, updateSubmitButton);
+            validator();
+
+            field.addEventListener('input', validator);
+            field.addEventListener('blur', validator);
+            field.addEventListener('paste', () => setTimeout(validator, 10));
+        }
+    }
+
+    // Attach all configured handlers
+    Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
+        attachValidationHandlers(fieldId, config);
+    });
+
+    // Update submit button on any change
+    const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select');
+    allFields.forEach(field => {
+        field.addEventListener('input', updateSubmitButton);
+        field.addEventListener('change', updateSubmitButton);
+    });
+
+    updateSubmitButton(); // initial button state
+
+    // Handle form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+        const hasErrors = Object.keys(validationErrors).length > 0;
+        const isEmpty = !isFormValid();
+
+        if (hasErrors || isEmpty) {
+            e.preventDefault();
+
+            let alertMessage = 'Please fix the following issues:\n\n';
+            if (isEmpty) alertMessage += '• All fields are required\n';
+            if (hasErrors) {
+                Object.values(validationErrors).forEach(error => {
+                    alertMessage += '• ' + error + '\n';
+                });
+            }
+
+            alert(alertMessage);
+            return false;
+        }
+
+        // Loading state
+        const originalText = submitButton.textContent;
+        const loadingText = submitButton.getAttribute('data-loading-text') || 'Submitting...';
+        submitButton.disabled = true;
+        submitButton.textContent = loadingText;
+
+        setTimeout(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }, 10000);
+    });
+});
+
+
+/* // import { isValidEmailSecure } from './utils/validateEmail.js';
+import updateNameValidation from './utils/validateName.js';
+import updateSubjectValidation from './utils/validateSubject.js';
+import updateCaptchaValidation from './utils/validateCaptcha.js';
+import updateEmailValidation from './utils/validateEmail.js';
+import updateCharacterCount from './utils/validateCharCount.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Field configurations with max lengths
     const fieldConfigs = {
         'id_name': { max: 50, counterId: 'id_name-count' },
         'id_subject': { max: 150, counterId: 'id_subject-count' },
@@ -13,224 +126,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.getElementById('submitButton');
     let validationErrors = {};
 
-    // Function to update email validation
-    function updateEmailValidation() {
-        const emailField = document.getElementById('id_email');
-        if (!emailField) return;
+    // validate and update name
+    updateNameValidation('id_name', updateSubmitButton);
 
-        const email = emailField.value.trim();
-        
-        // Remove previous classes and messages
-        emailField.classList.remove('char-warning', 'char-error', 'char-valid');
-        const existingMessage = emailField.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        
-        if (email.length === 0) {
-            // Empty field
-            delete validationErrors['id_email'];
-        } else if (!isValidEmailSecure(email)) {
-            // Invalid email format
-            emailField.classList.add('char-error');
-            validationErrors['id_email'] = 'Please enter a valid email address';
-            
-            // Add error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-message error';
-            errorMessage.textContent = validationErrors['id_email'];
-            emailField.parentElement.appendChild(errorMessage);
-        } else {
-            // Valid email
-            emailField.classList.add('char-valid');
-            delete validationErrors['id_email'];
-        }
-        
-        // Update submit button state
-        updateSubmitButton();
-    }
-
-    function isValidName(name) {
-        const nameRegex = /^[a-zA-Z\s]+$/;
-        return nameRegex.test(name);
-    }
-
-    // function to update the name validation
-    function updateNameValidation() {
-        const nameField = document.getElementById('id_name');
-        if (!nameField) return;
-
-        const name = nameField.value.trim();
-        // Remove previous classes and messages
-        nameField.classList.remove('char-warning', 'char-error', 'char-valid');
-        const existingMessage = nameField.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        if (name.length === 0) {
-            // Empty field
-            delete validationErrors['id_name'];
-        } else if (!isValidName(name)) {
-            // Invalid name format
-            nameField.classList.add('char-error');
-            validationErrors['id_name'] = 'Please enter a valid name (letters and spaces only)';
-            // Add error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-message error';
-            errorMessage.textContent = validationErrors['id_name'];
-            nameField.parentElement.appendChild(errorMessage);
-        } else {
-            // Valid name
-            nameField.classList.add('char-valid');
-            delete validationErrors['id_name'];
-        }
-        // Update submit button state
-        updateSubmitButton();
-    }
-
-    function isValidSubject(subject) {
-        const subjectRegex = /^[a-zA-Z0-9\s]+$/;
-        return subjectRegex.test(subject);
-    }
-
-    // Function to update subject validation
-    function updateSubjectValidation() {
-        const subjectField = document.getElementById('id_subject');
-        if (!subjectField) return;
-        const subject = subjectField.value.trim();
-        // Remove previous classes and messages
-        subjectField.classList.remove('char-warning', 'char-error', 'char-valid');
-        const existingMessage = subjectField.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        if (subject.length === 0) {
-            // Empty field
-            delete validationErrors['id_subject'];
-        } else if (!isValidSubject(subject)) {
-            // Invalid subject format
-            subjectField.classList.add('char-error');
-            validationErrors['id_subject'] = 'Please enter a valid subject (letters, numbers, and spaces only)';
-            // Add error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-message error';
-            errorMessage.textContent = validationErrors['id_subject'];
-            subjectField.parentElement.appendChild(errorMessage);
-        } else {
-            // Valid subject
-            subjectField.classList.add('char-valid');
-            delete validationErrors['id_subject'];
-        }
-        // Update submit button state
-        updateSubmitButton();
-    }
-
-    // Function to validate captcha code format {digits and letters, no special characters}
-    function isValidCaptcha(captcha) {
-        const captchaRegex = /^[a-zA-Z0-9]+$/;
-        return captchaRegex.test(captcha);
-    }
-
+    updateSubjectValidation('id_subject', updateSubmitButton);
     // Function to update captcha validation
-    function updateCaptchaValidation() {
-        const captchaField = document.getElementById('id_captcha_1');
-        if (!captchaField) return;
-        const captcha = captchaField.value.trim();
-        // Remove previous classes and messages
-        captchaField.classList.remove('char-warning', 'char-error', 'char-valid');
-        const existingMessage = captchaField.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        if (captcha.length === 0) {
-            // Empty field
-            delete validationErrors['id_captcha_1'];
-        } else if (!isValidCaptcha(captcha)) {
-            // Invalid captcha format
-            captchaField.classList.add('char-error');
-            validationErrors['id_captcha_1'] = 'Please enter a valid captcha code (letters and numbers only)';
-            // Add error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-message error';
-            errorMessage.textContent = validationErrors['id_captcha_1'];
-            captchaField.parentElement.appendChild(errorMessage);
-        } else {
-            // Valid captcha
-            captchaField.classList.add('char-valid');
-            delete validationErrors['id_captcha_1'];
-        }
-        // Update submit button state
-        updateSubmitButton();
-    }
+    updateCaptchaValidation('id_captcha_1', updateSubmitButton);
 
-    // Function to update character count and validation
-    function updateCharacterCount(fieldId, config) {
-        const field = document.getElementById(fieldId);
-        const counter = document.getElementById(config.counterId);
-        const counterContainer = counter.parentElement.parentElement;
-        
-        if (!field || !counter) return;
-        
-        const currentLength = field.value.length;
-        const remaining = config.max - currentLength;
-        const percentage = (currentLength / config.max) * 100;
-        
-        // Update counter text
-        counter.textContent = currentLength;
-        
-        // Remove previous classes
-        field.classList.remove('char-warning', 'char-error', 'char-valid');
-        counterContainer.classList.remove('warning', 'error');
-        
-        // Remove previous validation message
-        const existingMessage = field.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        
-        // Apply styling based on character count
-        if (currentLength > config.max) {
-            // Over limit - error state (DISABLES SUBMIT)
-            field.classList.add('char-error');
-            counterContainer.classList.add('error');
-            validationErrors[fieldId] = `Character limit exceeded by ${currentLength - config.max} characters`;
-            
-            // Add error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-message error';
-            errorMessage.textContent = validationErrors[fieldId];
-            field.parentElement.appendChild(errorMessage);
-            
-        } else if (percentage >= 90) {
-            // Near limit - warning state (DOES NOT DISABLE SUBMIT)
-            field.classList.add('char-warning');
-            counterContainer.classList.add('warning');
-            delete validationErrors[fieldId]; // Remove any previous error
-            
-            // Add warning message (non-blocking)
-            const warningMessage = document.createElement('div');
-            warningMessage.className = 'validation-message warning';
-            warningMessage.textContent = `Only ${remaining} characters remaining`;
-            field.parentElement.appendChild(warningMessage);
-            
-        } else if (currentLength > 0) {
-            // Valid state
-            field.classList.add('char-valid');
-            delete validationErrors[fieldId];
-        } else {
-            // Empty field
-            delete validationErrors[fieldId];
-        }
-        
-        // Update submit button state
-        updateSubmitButton();
-    }
-    
+    // Function to update character count
+    updateCharacterCount(fieldId, config, updateSubmitButton);
+
     // Function to update submit button state
     function updateSubmitButton() {
         const hasErrors = Object.keys(validationErrors).length > 0;
         const isEmpty = !isFormValid();
-        
+
         if (hasErrors) {
             submitButton.disabled = true;
             submitButton.title = 'Please fix validation errors before submitting';
@@ -242,73 +152,83 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.title = '';
         }
     }
-    
+
     // Function to check if form is valid (all required fields filled)
     function isFormValid() {
-        const requiredFields = ['id_name', 'id_email', 'id_subject', 'id_message', 'id_captcha_1'];
+        // const requiredFields = ['id_name', 'id_email', 'id_subject', 'id_message', 'id_captcha_1'];
+        const requiredFields = Object.keys(fieldConfigs);
         return requiredFields.every(fieldId => {
             const field = document.getElementById(fieldId);
             return field && field.value.trim().length > 0;
         });
     }
-    
+
     // Initialize character counters and event listeners
     Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
         const field = document.getElementById(fieldId);
         if (field) {
             // Initial count
-            updateCharacterCount(fieldId, config);
-            
+            const updateCharacterCountValidator = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
+            updateCharacterCountValidator();
+
             // Add event listeners
-            field.addEventListener('input', () => updateCharacterCount(fieldId, config));
+            field.addEventListener('input', () => updateCharacterCountValidator);
             field.addEventListener('paste', () => {
                 // Delay to allow paste to complete
-                setTimeout(() => updateCharacterCount(fieldId, config), 10);
+                setTimeout(() => updateCharacterCountValidator, 10);
             });
-            field.addEventListener('keyup', () => updateCharacterCount(fieldId, config));
+            field.addEventListener('keyup', () => updateCharacterCountValidator);
         }
     });
-    
+
     // Initialize email validation
     const emailField = document.getElementById('id_email');
     if (emailField) {
-        updateEmailValidation();
-        emailField.addEventListener('input', updateEmailValidation);
-        emailField.addEventListener('blur', updateEmailValidation);
+        // Initial validation
+        const updateEmailValidator = () => updateEmailValidation(emailField.id, validationErrors, updateSubmitButton);
+        updateEmailValidator();
+        emailField.addEventListener('input', updateEmailValidator);
+        emailField.addEventListener('blur', updateEmailValidator);
         emailField.addEventListener('paste', () => {
-            setTimeout(updateEmailValidation, 10);
+            setTimeout(updateEmailValidator, 10);
         });
     }
 
     // Initialize name validation
     const nameField = document.getElementById('id_name');
     if (nameField) {
-        updateNameValidation();
-        nameField.addEventListener('input', updateNameValidation);
-        nameField.addEventListener('blur', updateNameValidation);
+        // Initial validation
+        const updateNameValidator = () => updateNameValidation(nameField.id, validationErrors, updateSubmitButton);
+        updateNameValidator();
+        nameField.addEventListener('input', updateNameValidator);
+        nameField.addEventListener('blur', updateNameValidator);
         nameField.addEventListener('paste', () => {
-            setTimeout(updateNameValidation, 10);
+            setTimeout(updateNameValidator, 10);
         });
     }
-    
+
     // Initialize subject validation
     const subjectField = document.getElementById('id_subject');
     if (subjectField) {
-        updateSubjectValidation();
-        subjectField.addEventListener('input', updateSubjectValidation);
-        subjectField.addEventListener('blur', updateSubjectValidation);
+        // Initial validation
+        const updateSubjectValidator = () => updateSubjectValidation(subjectField.id, validationErrors, updateSubmitButton);
+        updateSubjectValidator();
+        subjectField.addEventListener('input', updateSubjectValidator);
+        subjectField.addEventListener('blur', updateSubjectValidator);
         subjectField.addEventListener('paste', () => {
-            setTimeout(updateSubjectValidation, 10);
+            setTimeout(updateSubjectValidator, 10);
         });
     }
     // Initialize captcha validation
     const captchaField = document.getElementById('id_captcha_1');
     if (captchaField) {
-        updateCaptchaValidation();
-        captchaField.addEventListener('input', updateCaptchaValidation);
-        captchaField.addEventListener('blur', updateCaptchaValidation);
+        const updateCaptchaValidator = () => updateCaptchaValidation(captchaField.id, validationErrors, updateSubmitButton);
+        updateCaptchaValidator();
+
+        captchaField.addEventListener('input', updateCaptchaValidator);
+        captchaField.addEventListener('blur', updateCaptchaValidator);
         captchaField.addEventListener('paste', () => {
-            setTimeout(updateCaptchaValidation, 10);
+            setTimeout(updateCaptchaValidator, 10);
         });
     }
 
@@ -318,19 +238,19 @@ document.addEventListener('DOMContentLoaded', function() {
         field.addEventListener('input', updateSubmitButton);
         field.addEventListener('change', updateSubmitButton);
     });
-    
+
     // Initial submit button state
     updateSubmitButton();
-    
+
     // Form submission handler
     document.getElementById('contact-form').addEventListener('submit', function(e) {
         // Final validation before submission
         const hasErrors = Object.keys(validationErrors).length > 0;
         const isEmpty = !isFormValid();
-        
+
         if (hasErrors || isEmpty) {
             e.preventDefault();
-            
+
             // Show alert with specific issues
             let alertMessage = 'Please fix the following issues:\n\n';
             if (isEmpty) {
@@ -341,17 +261,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     alertMessage += '• ' + error + '\n';
                 });
             }
-            
+
             alert(alertMessage);
             return false;
         }
-        
+
         // Show loading state
         const originalText = submitButton.textContent;
-        const loadingText = submitButton.getAttribute('data-loading-text');
+        const loadingText = submitButton.getAttribute('data-loading-text') || 'Submitting...';
         submitButton.disabled = true;
         submitButton.textContent = loadingText;
-        
+
         // Reset button after 10 seconds in case of network issues
         setTimeout(() => {
             submitButton.disabled = false;
@@ -359,3 +279,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 10000);
     });
 });
+ */

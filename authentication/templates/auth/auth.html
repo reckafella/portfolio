@@ -42,6 +42,12 @@
                                                 <span id="{{ field.auto_id }}-count">0</span> / 6 characters
                                             </small>
                                         </div>
+                                        {% elif field.name == 'password' %}
+                                        <div class="char-counter mt-1">
+                                            <small class="text-muted">
+                                                <span id="id_password1-count">0</span> / {{ field.field.max_length }} characters
+                                            </small>
+                                        </div>
                                         {% else %}
                                         <div class="char-counter mt-1">
                                             <small class="text-muted">

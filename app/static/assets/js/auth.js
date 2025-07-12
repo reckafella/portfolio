@@ -5,6 +5,7 @@ import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateNameValidation from './utils/validateName.js';
 import updateUserNameValidation from './utils/validateUsername.js';
 import { updatePasswordValidation, createPasswordToggle, createPasswordStrengthIndicator } from './utils/validatePasswords.js';
+import attachValidationHandlers from './utils/attachValidationHandlers.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const baseFieldConfigs = {
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
     }
 
-    function attachValidationHandlers(fieldId, config) {
+    /* function attachValidationHandlers(fieldId, config) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             field.addEventListener('blur', validator);
             field.addEventListener('paste', () => setTimeout(validator, 10));
         }
-    }
+    }*/
 
     Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
         attachValidationHandlers(fieldId, config);

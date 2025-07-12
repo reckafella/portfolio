@@ -1,4 +1,4 @@
-function attachValidationHandlers(fieldId, config) {
+export default function attachValidationHandlers(fieldId, config) {
     const field = document.getElementById(fieldId);
     if (!field) return;
 

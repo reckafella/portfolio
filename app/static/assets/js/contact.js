@@ -4,6 +4,7 @@ import updateSubjectValidation from './utils/validateSubject.js';
 import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateEmailValidation from './utils/validateEmail.js';
 import updateCharacterCount from './utils/validateCharCount.js';
+import attachValidationHandlers from './utils/attachValidationHandlers.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const fieldConfigs = {
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function attachValidationHandlers(fieldId, config) {
+    /* function attachValidationHandlers(fieldId, config) {
     const field = document.getElementById(fieldId);
     if (!field) return;
 
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Run initial validation
         validator();
     }
-}
+}*/
 
     // Update submit button on any change
     const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select');

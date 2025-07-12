@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return false;
     }
+attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton);
+ 
 
     /* function attachValidationHandlers(fieldId, config) {
         const field = document.getElementById(fieldId);

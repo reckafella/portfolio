@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return field && field.value.trim().length > 0;
         });
     }
-
+attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton);
     /* function attachValidationHandlers(fieldId, config) {
     const field = document.getElementById(fieldId);
     if (!field) return;

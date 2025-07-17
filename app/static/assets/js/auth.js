@@ -26,13 +26,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.getElementById('submitButton');
     const validationErrors = {};
 
+    // Make these globally accessible for password validation
+    window.validationErrors = validationErrors;
+    window.updateSubmitButton = updateSubmitButton;
+
     function updateSubmitButton() {
         const hasErrors = Object.keys(validationErrors).length > 0;
         const isEmpty = !isFormValid();
 
         submitButton.disabled = hasErrors || isEmpty;
         submitButton.title = hasErrors
-            ? 'Please fix validation errors before submitting'
+            ? 'Please fix all errors before submitting'
             : isEmpty
                 ? 'Please fill in all required fields'
                 : '';
@@ -68,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
-        const updateCharCount = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
+        const updateCharCount = () => updateCharacterCount(fieldId, config);
         updateCharCount();
 
         field.addEventListener('input', updateCharCount);
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         field.addEventListener('keyup', updateCharCount);
 
         if (typeof config.validate === 'function') {
-            const validator = () => config.validate(fieldId, validationErrors, updateSubmitButton);
+            const validator = () => config.validate(fieldId);
             validator();
 
             field.addEventListener('input', validator);
@@ -99,9 +103,8 @@ document.addEventListener('DOMContentLoaded', function () {
             createPasswordStrengthIndicator(fieldId);
         }
 
-        const update = () => setTimeout(updatePasswordValidation, 0);
-
-        field.addEventListener('input', update);
+        // Updated event handlers
+        field.addEventListener('input', updatePasswordValidation);
         field.addEventListener('blur', updatePasswordValidation);
         field.addEventListener('change', updatePasswordValidation);
         field.addEventListener('paste', () => setTimeout(updatePasswordValidation, 10));

@@ -6,11 +6,14 @@ function isValidUsername(username) {
 }
 
 // function to update the name validation
-export default function updateUserNameValidation(userNameFieldId, validationErrors, updateSubmitButton) {
+export default function updateUserNameValidation(userNameFieldId) {
     const userNameField = document.getElementById(userNameFieldId);
     if (!userNameField) return;
 
     const userName = userNameField.value.trim();
+    const validationErrors = window.validationErrors || {};
+    const updateSubmitButton = window.updateSubmitButton || function () { };
+
     // Remove previous classes and messages
     userNameField.classList.remove('char-warning', 'char-error', 'char-valid');
     const existingMessage = userNameField.parentElement.querySelector('.validation-message');
@@ -26,7 +29,7 @@ export default function updateUserNameValidation(userNameFieldId, validationErro
         // Invalid name format
         userNameField.classList.add('char-error');
         if (typeof validationErrors === 'object') {
-            validationErrors[userNameFieldId] = 'Please enter a valid name (letters and spaces only)';
+            validationErrors[userNameFieldId] = 'Invalid username: use letters, numbers, and underscores only.\n\t3-20 characters long';
         }
         // Add error message
         const errorMessage = document.createElement('div');

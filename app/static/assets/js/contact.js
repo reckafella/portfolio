@@ -36,24 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return field && field.value.trim().length > 0;
         });
     }
+
     Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
-        attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton);
+        attachValidationHandlers(fieldId, config);
     });
+
     function attachValidationHandlers(fieldId, config) {
         const field = document.getElementById(fieldId);
         if (!field) return;
         
-        // Character count (optional)
-        const updateCharCount = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
+        // Character count
+        const updateCharCount = () => updateCharacterCount(fieldId, config);
         updateCharCount();
         field.addEventListener('input', updateCharCount);
         field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
         field.addEventListener('keyup', updateCharCount);
         
-        // Field-specific validation (optional)
+        // Field-specific validation
         if (typeof config.validate === 'function') {
             // Create the validator function
-            const validator = () => config.validate(fieldId, validationErrors, updateSubmitButton);
+            const validator = () => config.validate(fieldId);
         
             // For input events (typing), use a timeout and only show errors, not success
             field.addEventListener('input', function() {
@@ -65,11 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
                 // If there are errors, show them immediately
                 if (tempErrors[fieldId]) {
-                    field.classList.add('char-invalid');
+                    field.classList.add('char-error');
                     validationErrors[fieldId] = tempErrors[fieldId];
                     updateSubmitButton();
                 } else {
-                    field.classList.remove('char-invalid');
+                    field.classList.remove('char-error');
                     delete validationErrors[fieldId];
                     updateSubmitButton();
                 }

@@ -117,7 +117,7 @@ class LogoutView(LoginRequiredMixin, View):
         if is_ajax(request):
             return JsonResponse({
                 "success": True,
-                "message": success_message,
+                "messages": [success_message],
                 "redirect_url": redirect_url,
             })
 

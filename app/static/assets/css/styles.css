@@ -206,3 +206,52 @@ button[type=submit]:hover {
 .validation-message.warning {
   color: #ff6b35;
 }
+
+
+/* Captcha input with refresh button styling */
+.captcha-input-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.captcha-input-with-refresh {
+  padding-right: 40px;
+}
+
+.captcha-refresh-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--default-color);
+  z-index: 10;
+  transition: color 0.3s;
+}
+
+.captcha-refresh-btn:hover {
+  color: var(--accent-color);
+}
+
+@keyframes rotate {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.captcha-refresh-btn.rotating i {
+  animation: rotate 1s ease;
+}
+
+@keyframes flash-success {
+  0% { border-color: #28a745; box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); }
+  100% { border-color: #ced4da; box-shadow: none; }
+}
+
+.captcha.captcha-refreshed {
+  border: 2px solid #28a745;
+  animation: flash-success 1s ease;
+}

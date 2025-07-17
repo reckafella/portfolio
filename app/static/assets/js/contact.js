@@ -4,7 +4,7 @@ import updateSubjectValidation from './utils/validateSubject.js';
 import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateEmailValidation from './utils/validateEmail.js';
 import updateCharacterCount from './utils/validateCharCount.js';
-import attachValidationHandlers from './utils/attachValidationHandlers.js';
+// import attachValidationHandlers from './utils/attachValidationHandlers.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const fieldConfigs = {
@@ -36,54 +36,55 @@ document.addEventListener('DOMContentLoaded', () => {
             return field && field.value.trim().length > 0;
         });
     }
-attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton);
-    /* function attachValidationHandlers(fieldId, config) {
-    const field = document.getElementById(fieldId);
-    if (!field) return;
-
-    // Character count (optional)
-    const updateCharCount = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
-    updateCharCount();
-
-    field.addEventListener('input', updateCharCount);
-    field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
-    field.addEventListener('keyup', updateCharCount);
-
-    // Field-specific validation (optional)
-    if (typeof config.validate === 'function') {
-        // Create the validator function
-        const validator = () => config.validate(fieldId, validationErrors, updateSubmitButton);
+    Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
+        attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton);
+    });
+    function attachValidationHandlers(fieldId, config) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
         
-        // For input events (typing), use a timeout and only show errors, not success
-        field.addEventListener('input', function() {
-            field.classList.remove('char-valid');
+        // Character count (optional)
+        const updateCharCount = () => updateCharacterCount(fieldId, config, validationErrors, updateSubmitButton);
+        updateCharCount();
+        field.addEventListener('input', updateCharCount);
+        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
+        field.addEventListener('keyup', updateCharCount);
+        
+        // Field-specific validation (optional)
+        if (typeof config.validate === 'function') {
+            // Create the validator function
+            const validator = () => config.validate(fieldId, validationErrors, updateSubmitButton);
+        
+            // For input events (typing), use a timeout and only show errors, not success
+            field.addEventListener('input', function() {
+                field.classList.remove('char-valid');
+
+                // Check for errors immediately
+                const tempErrors = {...validationErrors};
+                config.validate(fieldId, tempErrors, () => {});
             
-            // Check for errors immediately
-            const tempErrors = {...validationErrors};
-            config.validate(fieldId, tempErrors, () => {});
-            
-            // If there are errors, show them immediately
-            if (tempErrors[fieldId]) {
-                field.classList.add('char-invalid');
-                validationErrors[fieldId] = tempErrors[fieldId];
-                updateSubmitButton();
-            } else {
-                field.classList.remove('char-invalid');
-                delete validationErrors[fieldId];
-                updateSubmitButton();
-            }
-        });
+                // If there are errors, show them immediately
+                if (tempErrors[fieldId]) {
+                    field.classList.add('char-invalid');
+                    validationErrors[fieldId] = tempErrors[fieldId];
+                    updateSubmitButton();
+                } else {
+                    field.classList.remove('char-invalid');
+                    delete validationErrors[fieldId];
+                    updateSubmitButton();
+                }
+            });
         
-        // On blur, do full validation with valid state
-        field.addEventListener('blur', validator);
+            // On blur, do full validation with valid state
+            field.addEventListener('blur', validator);
         
-        // For paste events, use timeout for full validation
-        field.addEventListener('paste', () => setTimeout(validator, 10));
+            // For paste events, use timeout for full validation
+            field.addEventListener('paste', () => setTimeout(validator, 10));
         
-        // Run initial validation
-        validator();
+            // Run initial validation
+            validator();
+        }
     }
-}*/
 
     // Update submit button on any change
     const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select');

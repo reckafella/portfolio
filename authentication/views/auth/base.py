@@ -60,7 +60,7 @@ class BaseAuthentication(FormView):
 
     def handle_error(self, message):
         if is_ajax(self.request):
-            return JsonResponse({"success": False, "errors": message})
+            return JsonResponse({"success": False, "errors": [message]})
         messages.error(self.request, message)
         return self.form_invalid(self.get_form())
 
@@ -68,7 +68,7 @@ class BaseAuthentication(FormView):
         if is_ajax(self.request):
             return JsonResponse({
                 "success": True,
-                "message": message,
+                "messages": [message],
                 "redirect_url": self.get_success_url()
             })
         messages.success(self.request, message)

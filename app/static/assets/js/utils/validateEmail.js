@@ -172,11 +172,13 @@ function isValidEmailSecure(email) {
 }
 
 // Function to update email validation
-export default function updateEmailValidation(nameFieldId, validationErrors, updateSubmitButton) {
+export default function updateEmailValidation(nameFieldId) {
     const emailField = document.getElementById(nameFieldId);
     if (!emailField) return;
 
     const email = emailField.value.trim();
+    const validationErrors = window.validationErrors || {};
+    const updateSubmitButton = window.updateSubmitButton || function () { };
 
     // Remove previous classes and messages
     emailField.classList.remove('char-warning', 'char-error', 'char-valid');

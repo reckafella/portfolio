@@ -4,10 +4,14 @@ function isValidSubject(subject) {
 }
 
     // Function to update subject validation
-export default function updateSubjectValidation(subjectFieldId, validationErrors, updateSubmitButton) {
+export default function updateSubjectValidation(subjectFieldId) {
     const subjectField = document.getElementById(subjectFieldId);
     if (!subjectField) return;
+
     const subject = subjectField.value.trim();
+    const validationErrors = window.validationErrors || {};
+    const updateSubmitButton = window.updateSubmitButton || function () { };
+
     // Remove previous classes and messages
     subjectField.classList.remove('char-warning', 'char-error', 'char-valid');
     const existingMessage = subjectField.parentElement.querySelector('.validation-message');

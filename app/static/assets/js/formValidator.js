@@ -14,18 +14,42 @@ class FormValidator {
 
     setupCaptcha() {
         const captchaImage = this.form.querySelector('.captcha');
-        if (!captchaImage) return;
+        const captchaInput = this.form.querySelector('[name="captcha_1"]');
+        if (!captchaImage || !captchaInput) return;
 
+        // Remove any existing refresh button
+        if (this.captchaRefreshButton) {
+            this.captchaRefreshButton.remove();
+        }
+
+        captchaImage.classList.add('img-fluid', 'captcha');
+
+        // Create a container for the input field if it doesn't exist
+        if (!captchaInput.parentElement.classList.contains('captcha-input-container')) {
+            const container = document.createElement('div');
+            container.className = 'captcha-input-container position-relative';
+            captchaInput.parentElement.insertBefore(container, captchaInput);
+            container.appendChild(captchaInput);
+        }
+
+        // Add padding to the input to make room for the button
+        captchaInput.classList.add('captcha-input-with-refresh');
+
+        // Create the refresh button
         const refreshButton = document.createElement('button');
+        refreshButton.type = 'button';
         refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         refreshButton.title = 'Refresh Captcha';
-        refreshButton.className = 'btn refresh-btn ms-2';
-        captchaImage.parentNode.appendChild(refreshButton);
+        refreshButton.className = 'captcha-refresh-btn position-absolute';
 
+        // Add event listener for refreshing captcha
         refreshButton.addEventListener('click', (e) => {
             e.preventDefault();
             this.refreshCaptcha();
         });
+
+        // Add button to the input container
+        captchaInput.parentElement.appendChild(refreshButton);
 
         this.captchaRefreshButton = refreshButton;
     }
@@ -39,8 +63,8 @@ class FormValidator {
         const states = {
             loading: {
                 html: `
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <span class="ms-2">${this.submitButton.getAttribute('data-loading-text') || 'Loading...'}</span>
+                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                    <span class="ms-2">${this.submitButton.getAttribute('data-loading-text') || 'Submitting...'}</span>
                 `,
                 disabled: true,
                 className: 'btn-primary'
@@ -58,7 +82,7 @@ class FormValidator {
             default: {
                 html: this.originalButtonText,
                 disabled: false,
-                className: 'btn-primary'
+                // className: 'btn-primary'
             }
         };
 
@@ -83,20 +107,73 @@ class FormValidator {
     }
 
     async refreshCaptcha() {
+        // Apply rotation animation to refresh button
+        if (this.captchaRefreshButton) {
+            this.captchaRefreshButton.classList.add('rotating');
+            this.captchaRefreshButton.disabled = true;
+        }
+        
+        // Find captcha elements
+        const captchaImage = this.form.querySelector('.captcha');
+        const captchaHiddenInput = this.form.querySelector('[name="captcha_0"]');
+        const captchaTextInput = this.form.querySelector('[name="captcha_1"]');
+        
+        // Add loading state to captcha image
+        if (captchaImage) {
+            captchaImage.style.opacity = '0.5';
+            // Store original src to restore in case of failure
+            const originalSrc = captchaImage.src;
+        }
+        
+        // Clear text input
+        if (captchaTextInput) {
+            captchaTextInput.value = '';
+            captchaTextInput.focus();
+        }
+        
         try {
             const response = await fetch('/captcha/refresh/');
             if (!response.ok) throw new Error('Failed to refresh captcha');
-
+    
             const data = await response.json();
             if (!data.key || !data.image_url) throw new Error('Invalid captcha data');
-
-            const captchaImage = this.form.querySelector('.captcha');
-            const captchaInput = this.form.querySelector('[name="captcha_0"]');
-
-            captchaImage.src = data.image_url;
-            captchaInput.value = data.key;
+    
+            // Update captcha
+            if (captchaImage) {
+                captchaImage.src = data.image_url;
+            }
+            
+            if (captchaHiddenInput) {
+                captchaHiddenInput.value = data.key;
+            }
+            
+            // Subtle success feedback (flash green border)
+            if (captchaImage) {
+                captchaImage.classList.add('captcha-refreshed');
+                setTimeout(() => {
+                    captchaImage.classList.remove('captcha-refreshed');
+                }, 1000);
+            }
+            
         } catch (error) {
             toastManager.show('danger', error.message);
+            // Restore original image if available
+            if (captchaImage && originalSrc) {
+                captchaImage.src = originalSrc;
+            }
+        } finally {
+            // Remove loading state
+            if (captchaImage) {
+                captchaImage.style.opacity = '1';
+            }
+            
+            // Remove rotation animation
+            if (this.captchaRefreshButton) {
+                setTimeout(() => {
+                    this.captchaRefreshButton.classList.remove('rotating');
+                    this.captchaRefreshButton.disabled = false;
+                }, 1000);
+            }
         }
     }
 
@@ -164,16 +241,16 @@ class FormValidator {
                 }
             } else {
                 this.setButtonState('error');
-                
+
                 // Only refresh captcha if there's a specific captcha error
                 // Check if 'captcha' is in the error fields or if there's a captcha-related message
-                const hasCaptchaError = 
-                    (data.errors && 
-                    (data.errors.captcha || 
-                     data.errors.captcha_0 || 
+                const hasCaptchaError =
+                    (data.errors &&
+                    (data.errors.captcha ||
+                     data.errors.captcha_0 ||
                      data.errors.captcha_1 ||
                      (typeof data.errors === 'string' && data.errors.toLowerCase().includes('captcha'))));
-                
+
                 if (hasCaptchaError && this.captchaRefreshButton) {
                     this.captchaRefreshButton.click();
                 }

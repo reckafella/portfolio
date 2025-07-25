@@ -17,32 +17,39 @@
 <section class="section">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-10">
-                {% for message in messages %}
-                <div class="card mb-3 message-card" data-id="{{ message.id }}">
-                    <div class="card-header d-flex justify-content-between align-items-center cursor-pointer toggle-message">
-                        <div>
-                            <h5 class="mb-0">{{ message.subject }}</h5>
-                            <small class="text-muted">From: {{ message.name }} ({{ message.email }})</small>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            {% if not message.is_read %}
-                            <span class="badge bg-primary me-2">New</span>
-                            {% endif %}
-                            <i class="fas fa-chevron-down toggle-icon"></i>
-                        </div>
+            <div class="col-lg-11">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title section-title text-center">Message Inbox</h2>
                     </div>
-                    <div class="card-body message-content" style="display: none;">
-                        {{ message.message|safe }}
-                        <div class="mt-2">
-                            <small class="text-muted">Received: {{ message.created_at|date:"F j, Y, g:i a" }}</small>
-                        </div>
-                    </div>
-                    <div class="card-body message-preview">
-                        {{ message.message|striptags|truncatechars:100 }}
+                    <div class="card-body">
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th data-type="date" data-format="DD/MM/YYYY">Date Received</th>
+                                    <th>Status</th>
+                                    <th>Read</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for message in messages %}
+                                <tr>
+                                    <td>{{ message.name|truncatechars:15 }}</td>
+                                    <td>{{ message.email|truncatechars:15 }}</td>
+                                    <td>{{ message.subject|truncatechars:15 }}</td>
+                                    <td>{{ message.created_at|date:"d/m/Y" }}</td>
+                                    <td>{% if message.is_read %} Read {% else %} Unread {% endif %}</td>
+                                    <td><a href="" target="" rel="noopener noreferrer">Read Message</a></td>
+                                </tr>
+                                {% endfor %}
+                        
+                            </tbody>
+                            </table>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>
@@ -93,3 +100,33 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+            {% comment %}
+            <div class="col-lg-10">
+                {% for message in messages %}
+                <div class="card mb-3 message-card" data-id="{{ message.id }}">
+                    <div class="card-header d-flex justify-content-between align-items-center cursor-pointer toggle-message">
+                        <div>
+                            <h5 class="mb-0">{{ message.subject|truncatechars:30 }}</h5>
+                            <small class="text-muted">From: {{ message.name|truncatechars:30 }} ({{ message.email }})</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            {% if not message.is_read %}
+                            <span class="badge bg-primary me-2">Unread</span>
+                            {% endif %}
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                    </div>
+                    <div class="card-body message-content" style="display: none;">
+                        {{ message.message|safe }}
+                        <div class="mt-2">
+                            <small class="text-muted">Received: {{ message.created_at|date:"F j, Y, g:i a" }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body message-preview">
+                        {{ message.message|striptags|truncatechars:100 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endcomment %}

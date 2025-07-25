@@ -255,3 +255,42 @@ button[type=submit]:hover {
   border: 2px solid #28a745;
   animation: flash-success 1s ease;
 }
+
+.cropper-container {
+  max-height: 400px;
+}
+.crop-preview {
+  width: 150px;
+  height: 150px;
+  border: 1px solid var(--default-color);
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+/* .modal-lg {
+  max-width: 800px;
+} */
+.file-upload {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.file-drop-zone {
+  border: 2px dashed var(--default-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
+}
+.file-info {
+  background: var(--background-color);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+}

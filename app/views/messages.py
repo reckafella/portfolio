@@ -135,7 +135,8 @@ class MessagesView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 @method_decorator(require_POST, name='dispatch')
 class MarkMessageReadView(UserPassesTestMixin, TemplateView):
     def test_func(self):
-        return self.request.user.is_staff
+        user = self.request.user
+        return user.is_authenticated and (user.is_staff or user.is_superuser)
 
     def handle_no_permission(self):
         raise PermissionDenied

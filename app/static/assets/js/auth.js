@@ -1,11 +1,9 @@
-// imports
 import updateEmailValidation from './utils/validateEmail.js';
 import updateCharacterCount from './utils/validateCharCount.js';
 import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateNameValidation from './utils/validateName.js';
 import updateUserNameValidation from './utils/validateUsername.js';
 import { updatePasswordValidation, createPasswordToggle, createPasswordStrengthIndicator } from './utils/validatePasswords.js';
-// import attachValidationHandlers from './utils/attachValidationHandlers.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const baseFieldConfigs = {

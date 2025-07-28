@@ -33,20 +33,39 @@ class SocialLinksForm(forms.ModelForm):
             'whatsapp': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        for field in self.fields:
+            if cleaned_data.get(field) and not cleaned_data['whatsapp'] and\
+              not cleaned_data[field].startswith(('http://', 'https://')):
+                raise forms.ValidationError(
+                    f'{field} must start with http:// or https://')
+
+        # remove + from whatsapp number if present
+        whatsapp = cleaned_data.get('whatsapp')
+        if whatsapp and whatsapp.startswith('+'):
+            cleaned_data['whatsapp'] = whatsapp[1:].replace(' ', '')
+
+        if 'whatsapp' in cleaned_data and cleaned_data['whatsapp']:
+            if not cleaned_data['whatsapp'].isdigit():
+                raise forms.ValidationError('WhatsApp number must be numeric.')
+
+        return cleaned_data
+
 
 class UserPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(label='Old Password', required=True,
-                                   min_length=8, max_length=50,
+                                   min_length=8, max_length=64,
                                    widget=forms.PasswordInput(
                                        attrs={'class': 'form-control'}))
 
     new_password1 = forms.CharField(label='New Password', required=True,
-                                    min_length=8, max_length=50,
+                                    min_length=8, max_length=64,
                                     widget=forms.PasswordInput(
                                         attrs={'class': 'form-control'}))
 
     new_password2 = forms.CharField(label='Confirm New Password',
-                                    required=True, min_length=8, max_length=50,
+                                    required=True, min_length=8, max_length=64,
                                     widget=forms.PasswordInput(
                                         attrs={'class': 'form-control'}))
 

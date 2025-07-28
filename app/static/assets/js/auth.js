@@ -4,11 +4,12 @@ import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateNameValidation from './utils/validateName.js';
 import updateUserNameValidation from './utils/validateUsername.js';
 import { updatePasswordValidation, createPasswordToggle, createPasswordStrengthIndicator } from './utils/validatePasswords.js';
+import { toastManager } from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const baseFieldConfigs = {
         'id_username': { max: 50, counterId: 'id_username-count', validate: updateUserNameValidation },
-        'password1': { min: 8, max: 64, counterId: 'id_password1-count' },
+        'password1': { min: 8, max: 64, counterId: 'id_password1-count', validate: updatePasswordValidation },
         'id_captcha_1': { max: 6, counterId: 'id_captcha-count', validate: updateCaptchaValidation }
     };
 
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'id_first_name': { max: 50, counterId: 'id_first_name-count', validate: updateNameValidation },
         'id_last_name': { max: 50, counterId: 'id_last_name-count', validate: updateNameValidation },
         'id_email': { max: 70, counterId: 'id_email-count', validate: updateEmailValidation },
-        'password2': { min: 8, max: 64, counterId: 'id_password2-count' }
+        'password2': { min: 8, max: 64, counterId: 'id_password2-count', validate: updatePasswordValidation }
     };
 
     const fieldConfigs = { ...baseFieldConfigs, ...extendedFields };
@@ -74,10 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCharCount();
 
         field.addEventListener('input', updateCharCount);
-        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
         field.addEventListener('keyup', updateCharCount);
+        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
 
-        if (typeof config.validate === 'function') {
+        if (config.validate && typeof config.validate === 'function') {
             const validator = () => config.validate(fieldId);
             validator();
 
@@ -102,9 +103,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Updated event handlers
-        field.addEventListener('input', updatePasswordValidation);
-        field.addEventListener('blur', updatePasswordValidation);
-        field.addEventListener('change', updatePasswordValidation);
+        //field.addEventListener('input', updatePasswordValidation);
+        //field.addEventListener('blur', updatePasswordValidation);
+        //field.addEventListener('change', updatePasswordValidation);
+        ['input', 'keyup', 'blur', 'focus', 'change'].forEach(event => {
+            field.addEventListener(event, updatePasswordValidation);
+        });
         field.addEventListener('paste', () => setTimeout(updatePasswordValidation, 10));
     });
 
@@ -132,18 +136,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            alert(alertMessage);
+            toastManager.show('error', alertMessage);
             return false;
         }
 
         const originalText = submitButton.textContent;
-        const loadingText = submitButton.getAttribute('data-loading-text');
+        const loadingText = submitButton.getAttribute('data-loading-text') || 'Loading...';
         submitButton.disabled = true;
         submitButton.textContent = loadingText;
 
         setTimeout(() => {
             submitButton.disabled = false;
             submitButton.textContent = originalText;
-        }, 10000);
+        }, 3000);
     });
 });

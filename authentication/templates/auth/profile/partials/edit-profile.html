@@ -6,19 +6,19 @@
         {% csrf_token %}
         <input type="hidden" name="form_type" value="profile">
         <div class="row mb-3">
-            <label class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+            <label class="col-md-4 col-lg-3 col-form-label">Profile Photo</label>
             <div class="col-md-8 col-lg-9">
                 {% if profile.optimized_image_url %}
                 <img src="{{ profile.optimized_image_url }}" alt="Profile" loading="lazy"
                     class="img-fluid rounded-circle mb-2" style="max-width: 150px;">
                 {% endif %}
                 <div class="pt-2">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="openImageCropModal()">
-                        <i class="bi bi-upload"></i> Upload Image
+                    <button type="button" class="btn btn-primary btn-sm" title="{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo" onclick="openImageCropModal()">
+                        <i class="bi bi-upload"></i>{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo
                     </button>
                     {% if profile.optimized_image_url %}
-                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteProfilePic()">
-                        <i class="bi bi-trash"></i> Remove
+                    <button type="button" class="btn btn-danger btn-sm" title="Delete Photo" onclick="confirmDeleteProfilePic()">
+                        <i class="bi bi-trash"></i> Delete Photo
                     </button>
                     {% endif %}
                 </div>
@@ -28,6 +28,7 @@
             </div>
         </div>
 
+        <h3 class="mb-2 card-title">Profile</h3>
         {% for field in form %}
         {% if field != form.profile_pic %}
         <div class="mb-3">
@@ -42,11 +43,13 @@
         {% endif %}
         {% endfor %}
 
-        <h5 class="card-title">Social Links</h5>
+        <h3 class="card-title mb-2">Social Links</h3>
         {{ social_form.as_p }}
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="submit" class="btn btn-primary" data-loading-text="{{ data_loading_text }}">Save Changes</button>
         </div>
     </form>
+    {% include 'auth/profile/partials/crop-images-modal.html' %}
+    {% include 'auth/profile/partials/delete-image-modal.html' %}
 </div>

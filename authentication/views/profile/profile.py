@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy as reverse
 from django.views.generic import UpdateView
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
@@ -29,27 +30,30 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'auth/profile/profile_details.html'
 
     def test_func(self):
-        return (
-            self.request.user.is_authenticated and self.request.user.profile
-            ) or self.request.user.is_superuser
+        # Check if user is viewing their own profile or is an admin
+        username = self.kwargs.get('username')
+        return (self.request.user.is_authenticated and
+                (self.request.user.username == username or
+                 self.request.user.is_superuser))
 
     def get_object(self):
-        profile = Profile.objects.get_or_create(
-            user=self.request.user,
-            defaults={"user": self.request.user,
-                      "bio": f"This is {self.request.user}'s bio"
-                      })[0]
-        return profile
+        username = self.kwargs.get('username')
+        user_profile = get_object_or_404(Profile, user__username=username)
+        return user_profile
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Get the profile user based on URL
+        username = self.kwargs.get('username')
+        profile_user = self.object.user
+
         # Add forms for all tabs
         social_links = SocialLinks.objects.get_or_create(
             profile=self.object,
             defaults={}
         )[0]
         settings = UserSettings.objects.get_or_create(
-            user=self.request.user,
+            user=profile_user,
             defaults={
                 'changes_notifications': True,
                 'new_products_notifications': True,
@@ -62,24 +66,31 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             context['social_form'] = SocialLinksForm(instance=social_links)
         if 'password_form' not in kwargs:
             context['password_form'] = (
-                UserPasswordChangeForm(self.request.user)
+                UserPasswordChangeForm(profile_user)
             )
         if 'settings_form' not in kwargs:
             context['settings_form'] = UserSettingsForm(instance=settings)
 
-        username = self.request.user.username.capitalize()
+        username_display = username.capitalize()
         active_tabs = [
             'profile-edit', 'profile-change-password', 'profile-settings'
             ]
         active_tab = self.request.session.get('active_tab', 'profile-overview')
-        context['title'] = context['page_title'] = f"{username}'s Profile"
+        context['page_title'] = f"{username_display}'s Profile"
         context['active_tab'] = active_tab
         context['active_tab'] = ('profile-overview' if context['active_tab']
                                  not in active_tabs else context['active_tab'])
 
+        # Add flag to indicate if viewing user is owner or admin
+        context['is_owner'] = self.request.user.username == username
+        context['is_admin'] = self.request.user.is_superuser
+        context['can_edit'] = context['is_owner'] or context['is_admin']
+
         context['search_form_id'] = "search-form"
         context['settings_form_id'] = "settings-form"
         context['profile_form_id'] = "profile-form"
+        context['change_password_id'] = 'change-password-form'
+        context["data_loading_text"] = "Saving changes..."
 
         return context
 
@@ -126,6 +137,18 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
         # Handle profile picture upload
         if 'profile_pic' in self.request.FILES:
+            try:
+                # Check if the user has a profile picture already
+                if self.object.cloudinary_image_id:
+                    # Delete the old image before uploading a new one
+                    uploader.delete_image(self.object.cloudinary_image_id)
+                    _message = "Old profile picture deleted successfully!"
+                    success_messages.append(_message)
+            except Exception as e:
+                # Handle any errors that occur during the deletion
+                _message = f"Error deleting old image: {str(e)}"
+                error_messages.append(_message)
+
             try:
                 # results of image upload
                 _data = handle_image_upload(
@@ -182,11 +205,14 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return redirect(self.get_success_url())
 
     def handle_password_change(self):
-        form = UserPasswordChangeForm(self.request.user, self.request.POST)
+        profile_user = self.object.user
+        form = UserPasswordChangeForm(profile_user, self.request.POST)
 
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(self.request, user)
+            # Only update session auth hash if changing own password
+            if self.request.user == user:
+                update_session_auth_hash(self.request, user)
 
             success_messages = ['Password updated successfully!']
 
@@ -231,8 +257,8 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.render_to_response(_context_data)
 
     def handle_settings_update(self):
-        _user = self.request.user
-        settings, created = UserSettings.objects.get_or_create(user=_user)
+        profile_user = self.object.user
+        settings, _ = UserSettings.objects.get_or_create(user=profile_user)
 
         # Create a copy of the form to check which fields are disabled
         dummy_form = UserSettingsForm(instance=settings)
@@ -312,19 +338,22 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 self.object.save()
                 success_messages.append("Success Deleting Profile Picture!")
 
-                return JsonResponse({
-                    "success": True,
-                    "messages": success_messages,
-                    "errors": error_messages
-                })
+                if is_ajax(self.request):
+                    return JsonResponse({
+                        "success": True,
+                        "messages": success_messages,
+                        "errors": error_messages
+                    })
+
             except Exception as e:
                 error_messages.append(
                     f"Error deleting profile picture: {str(e)}")
-                return JsonResponse({
-                    "success": False,
-                    "errors": error_messages,
-                    "messages": []
-                }, status=400)
+                if is_ajax(self.request):
+                    return JsonResponse({
+                        "success": False,
+                        "errors": error_messages,
+                        "messages": []
+                        }, status=400)
 
         error_messages.append("No profile picture to delete")
         return JsonResponse({
@@ -379,9 +408,9 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_success_url(self):
         """Redirect to the profile detail page after successful update"""
-        _username = self.request.user.username
+        username = self.kwargs.get('username')
         return reverse('authentication:user_profile',
-                       kwargs={'username': _username})
+                       kwargs={'username': username})
 
     def form_invalid(self, form):
         """

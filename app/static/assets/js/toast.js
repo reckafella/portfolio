@@ -41,7 +41,7 @@ class ToastManager {
         toastMessage.textContent = message;
         if (messages) {
             toastTitle.innerText = `${title} (${messages.length})`;
-            toastMessages.innerHTML = messages.map(message => `<li>${message}</li>`).join('');
+            toastMessages.innerHTML = messages.map(message => `<li class="list-unstyled"><i class="bi bi-check"></i>${message}</li>`).join('');
         }
 
         // Handle errors if present
@@ -55,7 +55,7 @@ class ToastManager {
                 const errorsList = Object.entries(errors).map(([field, messages]) => {
                     const fieldName = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                     const messageText = Array.isArray(messages) ? messages.join(', ') : messages;
-                    return `<li><strong>${fieldName}:</strong> ${messageText}</li>`;
+                    return `<li class="list-unstyled"><i class="bi bi-check"></i><strong>${fieldName}:</strong> ${messageText}</li>`;
                 });
                 toastErrors.innerHTML = errorsList.join('');
             }

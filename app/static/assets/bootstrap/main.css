@@ -1862,22 +1862,15 @@ Cards
 }
 
 .modal-footer button[type="submit"] {
-  --accent-color: #01172b;
-  color: #ccc;
-  background: var(--accent-color);
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 1px;
   display: inline-block;
   padding: 6px 10px;
   border-radius: 10px;
-  border: 1px solid var(--default-color);
   transition: 0.5s;
 }
 
-.modal-footer button[type="submit"]:hover {
-  background: color-mix(in srgb, var(--accent-color) 90%, transparent 20%);
-}
 
 /* cancel button */
 .modal-footer button[type="button"] {
@@ -1925,55 +1918,6 @@ Cards
   color: var(--accent-color);
   border: 1px solid var(--accent-color);
 }
-
-/* special buttons with a sliding effect on hover */
-/* .special-btn {
-  margin-top: 5px;
-  padding: 4px 8px;
-  background: color-mix(in srgb, var(--accent-color), transparent 40%);
-  color: var(--default-color, #05090a);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.25s;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.special-btn::before,
-.special-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 0;
-  background-color: var(--accent-color, #282c34);
-  transition: 0.3s ease-out;
-  z-index: -1;
-}
-
-.special-btn::before {
-  left: 0;
-}
-
-.special-btn::after {
-  right: 0;
-}
-
-.special-btn:hover::before,
-.special-btn:hover::after,
-.special-btn:focus::before,
-.special-btn:focus::after {
-  width: 51%;
-
-
-@media (hover: hover) {
-  .special-btn:hover,
-  .special-btn:focus {
-    color: var(--background-color);
-    border: 2px solid var(--default-color);
-  }
-} */
 
 .special-btn {
   background: linear-gradient(45deg, var(--accent-color), var(--accent-color));

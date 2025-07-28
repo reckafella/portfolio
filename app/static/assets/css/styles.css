@@ -256,20 +256,18 @@ button[type=submit]:hover {
   animation: flash-success 1s ease;
 }
 
-.cropper-container {
-  max-height: 400px;
+.image-crop-container {
+  max-height: 450px;
 }
 .crop-preview {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border: 1px solid var(--default-color);
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto;
 }
-/* .modal-lg {
-  max-width: 800px;
-} */
+
 .file-upload {
   position: relative;
   display: inline-block;

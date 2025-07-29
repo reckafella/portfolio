@@ -1,3 +1,5 @@
+import { fieldValidator } from './updateFieldStatus.js';
+
 function isValidEmail(email) {
     // Input validation
     if (!email || typeof email !== 'string') {
@@ -177,41 +179,21 @@ export default function updateEmailValidation(nameFieldId) {
     if (!emailField) return;
 
     const email = emailField.value.trim();
-    const validationErrors = window.validationErrors || {};
-    const updateSubmitButton = window.updateSubmitButton || function () { };
 
-    // Remove previous classes and messages
-    emailField.classList.remove('char-warning', 'char-error', 'char-valid');
-    const existingMessage = emailField.parentElement.querySelector('.validation-message');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
+    // Clear previous validation
+    fieldValidator.clearFieldValidation(emailField, nameFieldId);
 
     if (email.length === 0) {
-        // Empty field
-        if (typeof validationErrors === 'object') {
-            delete validationErrors[nameFieldId];
-        }
+        // Empty field - no validation needed yet
         return;
     } else if (!isValidEmailSecure(email)) {
         // Invalid email format
-        emailField.classList.add('char-error');
-        if (typeof validationErrors === 'object') {
-            validationErrors[nameFieldId] = 'Please enter a valid email address';
-        }
-        // Add error message
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'validation-message error';
-        errorMessage.textContent = validationErrors[nameFieldId] || 'Invalid email format';
-        emailField.parentElement.appendChild(errorMessage);
+        fieldValidator.setFieldError(emailField, nameFieldId, 'Please enter a valid email address');
     } else {
         // Valid email
-        emailField.classList.add('char-valid');
-        if (typeof validationErrors === 'object') {
-            delete validationErrors[nameFieldId];
-        }
+        fieldValidator.setFieldSuccess(emailField, nameFieldId, 'Email format is valid');
     }
 
     // Update submit button state
-    if (typeof updateSubmitButton === 'function') updateSubmitButton();
+    fieldValidator.updateSubmitButtonState();
 }

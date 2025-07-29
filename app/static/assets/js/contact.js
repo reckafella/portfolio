@@ -5,7 +5,6 @@ import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateEmailValidation from './utils/validateEmail.js';
 import updateCharacterCount from './utils/validateCharCount.js';
 import { toastManager } from './toast.js';
-// import attachValidationHandlers from './utils/attachValidationHandlers.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const fieldConfigs = {
@@ -38,65 +37,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function attachValidationHandlers(fieldId, config) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        const updateCharCount = () => updateCharacterCount(fieldId, config);
+        updateCharCount();
+
+        ['input', 'keyup', 'blur', 'focus', 'change'].forEach(event => {
+            field.addEventListener(event, updateCharCount);
+        });
+        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
+
+        if (config.validate && typeof config.validate === 'function') {
+            const validator = () => config.validate(fieldId);
+            validator();
+
+            ['input', 'keyup', 'blur', 'focus', 'change', 'paste'].forEach(event => {
+                if (event === 'paste' || event === 'input') {
+                    field.addEventListener(event, () => setTimeout(validator, 10));
+                } else {
+                    field.addEventListener(event, validator);
+                }
+            });
+        }
+    }
+
     Object.entries(fieldConfigs).forEach(([fieldId, config]) => {
         attachValidationHandlers(fieldId, config);
     });
 
-    function attachValidationHandlers(fieldId, config) {
-        const field = document.getElementById(fieldId);
-        if (!field) return;
-        
-        // Character count
-        const updateCharCount = () => updateCharacterCount(fieldId, config);
-        updateCharCount();
-        field.addEventListener('input', updateCharCount);
-        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
-        field.addEventListener('keyup', updateCharCount);
-        
-        // Field-specific validation
-        if (typeof config.validate === 'function') {
-            // Create the validator function
-            const validator = () => config.validate(fieldId);
-        
-            // For input events (typing), use a timeout and only show errors, not success
-            field.addEventListener('input', function() {
-                field.classList.remove('char-valid');
-
-                // Check for errors immediately
-                const tempErrors = {...validationErrors};
-                config.validate(fieldId, tempErrors, () => {});
-            
-                // If there are errors, show them immediately
-                if (tempErrors[fieldId]) {
-                    field.classList.add('char-error');
-                    validationErrors[fieldId] = tempErrors[fieldId];
-                    updateSubmitButton();
-                } else {
-                    field.classList.remove('char-error');
-                    delete validationErrors[fieldId];
-                    updateSubmitButton();
-                }
-            });
-        
-            // On blur, do full validation with valid state
-            field.addEventListener('blur', validator);
-        
-            // For paste events, use timeout for full validation
-            field.addEventListener('paste', () => setTimeout(validator, 10));
-        
-            // Run initial validation
-            validator();
-        }
-    }
-
     // Update submit button on any change
-    const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select');
+    const allFields = document.querySelectorAll('#contact-form input, #contact-form textarea');
     allFields.forEach(field => {
-        field.addEventListener('input', updateSubmitButton);
-        field.addEventListener('change', updateSubmitButton);
+        ['input', 'change'].forEach(event => {
+            field.addEventListener(event, updateSubmitButton);
+        });
     });
 
-    updateSubmitButton(); // initial button state
+    updateSubmitButton();
 
     // Handle form submission
     document.getElementById('contact-form').addEventListener('submit', function(e) {

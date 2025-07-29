@@ -229,7 +229,7 @@ button[type=submit]:hover {
   font-size: 1.2rem;
   cursor: pointer;
   color: var(--default-color);
-  z-index: 10;
+  /* z-index: 10; */
   transition: color 0.3s;
 }
 

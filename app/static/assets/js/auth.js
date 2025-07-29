@@ -3,7 +3,7 @@ import updateCharacterCount from './utils/validateCharCount.js';
 import updateCaptchaValidation from './utils/validateCaptcha.js';
 import updateNameValidation from './utils/validateName.js';
 import updateUserNameValidation from './utils/validateUsername.js';
-import { updatePasswordValidation, createPasswordToggle, createPasswordStrengthIndicator } from './utils/validatePasswords.js';
+import { updatePasswordValidation, createPasswordStrengthIndicator, createPasswordToggle } from './utils/validatePasswords.js';
 import { toastManager } from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -74,17 +74,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const updateCharCount = () => updateCharacterCount(fieldId, config);
         updateCharCount();
 
-        field.addEventListener('input', updateCharCount);
-        field.addEventListener('keyup', updateCharCount);
+        ['input', 'keyup', 'blur', 'focus', 'change'].forEach(event => {
+            field.addEventListener(event, updateCharCount);
+        });
         field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
 
         if (config.validate && typeof config.validate === 'function') {
             const validator = () => config.validate(fieldId);
             validator();
 
-            field.addEventListener('input', validator);
-            field.addEventListener('blur', validator);
-            field.addEventListener('paste', () => setTimeout(validator, 10));
+            ['input', 'keyup', 'blur', 'focus', 'change', 'paste'].forEach(event => {
+                if (event === 'paste' || event === 'input') {
+                    field.addEventListener(event, () => setTimeout(validator, 10));
+                } else {
+                    field.addEventListener(event, validator);
+                }
+            });
         }
     }
 
@@ -102,10 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
             createPasswordStrengthIndicator(fieldId);
         }
 
-        // Updated event handlers
-        //field.addEventListener('input', updatePasswordValidation);
-        //field.addEventListener('blur', updatePasswordValidation);
-        //field.addEventListener('change', updatePasswordValidation);
         ['input', 'keyup', 'blur', 'focus', 'change'].forEach(event => {
             field.addEventListener(event, updatePasswordValidation);
         });

@@ -174,7 +174,7 @@ function isValidEmailSecure(email) {
 }
 
 // Function to update email validation
-export default function updateEmailValidation(nameFieldId) {
+export function updateEmailValidation(nameFieldId) {
     const emailField = document.getElementById(nameFieldId);
     if (!emailField) return;
 

@@ -1,8 +1,11 @@
 import os
 from wagtail.models import Page
 from django.conf import settings
-from django.http import FileResponse, Http404, JsonResponse
+from django.http import (
+    FileResponse, Http404, JsonResponse, HttpResponseRedirect
+)
 from django.views.generic.base import RedirectView, TemplateView, View
+import datetime
 
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
@@ -105,9 +108,39 @@ class CustomRedirectView(RedirectView):
         return redirect_to
 
 
-def app_is_running(request):
-    """Simple view to check if the app is running"""
-    return JsonResponse({
-        "status": 200,
-        "message": "The app is running successfully."
-    })
+class AppHealthCheckView(View):
+    """Class-based view to check the application health status"""
+
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests to check if the app is running"""
+        # You could add more health check metrics here
+        time = datetime.datetime.now()
+        request_ip = request.META.get('REMOTE_ADDR', 'unknown')
+        return JsonResponse({
+            "status": 200,
+            "message": "App is running.",
+            "version": getattr(settings, 'APP_VERSION', '1.0.0'),
+            "environment": getattr(settings, 'ENVIRONMENT', 'production'),
+            "request_ip": request_ip,
+            "server_time": {
+                'iso': time.isoformat(),
+                'unix': int(time.timestamp()),
+                'human_readable': time.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        }, status=200)
+
+
+def render_favicon(request):
+    """View to render the favicon"""
+    favicon_path = os.path.join(
+        settings.BASE_DIR, "app", "static", "assets", "images",
+        "icons", "favicon.icon"
+    )
+
+    if os.path.exists(favicon_path):
+        return FileResponse(open(favicon_path, 'rb'),
+                            content_type='image/x-icon')
+    else:
+        url = ('https://res.cloudinary.com/dg4sl9jhw/image/upload/'
+               'portfolio-favicon_tdrrpe.ico')
+        return HttpResponseRedirect(url)

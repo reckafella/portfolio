@@ -1,4 +1,4 @@
-export default function attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton) {
+export function attachValidationHandlers(fieldId, config, updateCharacterCount, updateSubmitButton) {
   // if (typeof updateCharacterCount !== 'function' || typeof updateSubmitButton !== 'function') return;
     const field = document.getElementById(fieldId);
     if (!field) return;

@@ -1,5 +1,5 @@
 {% load static %}
-    <div class="widget-items-container">
+    <div class="widgets-container">
         <div class="blog-author-widget widget-item">
             <div class="d-flex flex-column align-items-center">
                 <div class="d-flex align-items-center w-100">
@@ -35,29 +35,34 @@
                 </p>
             </div>
         </div>
-        <div class="widget-item search-widget">
-            <h3 class="widget-title">Search Blog</h3>
+        <div class="search-widget widget-item">
+            <h3 class="widget-title">Search the Blog</h3>
             <form id="search-form" action="{% url 'blog:list_articles' %}" method="get">
-                <input type="search" name="q" class="form-control" placeholder="Search..." required>
-                <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"><i class="bi bi-search"></i></button>
+                <input type="search" name="q"
+                    class="form-control"
+                    placeholder="Search..."
+                    required>
+                <button type="submit" id="submitButton"
+                    data-loading-text="{{ data_loading_text }}">
+                    <i class="bi bi-search"></i>
+                </button>
             </form>
         </div>
         <!-- End widget search form-->
-        <div class="widget-item tags-widget">
-           <h3 class="widget-title">Tags</h3>
+        <div class="tags-widget widget-item">
+           <h3 class="widget-title">Article Tags</h3>
            <ul>
-               {% for tag, _c in all_tags %}
+               {% for tag, count in all_tags %}
                <li>
-                   <a href="{% url 'blog:articles_by_tag' tag %}">{{ tag }}</a>
+                   <a href="{% url 'blog:articles_by_tag' tag %}">{{ tag }} ({{ count }})</a>
                </li>
                {% endfor %}
            </ul>
        </div>
-
-        {% comment %}
+        {% if other_posts%}
         <div class="recent-posts-widget widget-item">
-            <h3 class="widget-title">Recent Posts</h3>
-            {% for post in other_posts %}
+            <h3 class="widget-title">Recent Articles</h3>
+            {% for article in other_posts %}
             <div class="post-item">
                 {% if article.optimized_image_url %}
                 <img src="{{ article.optimized_image_url }}" alt="{{ article.title }}" class="flex-shrink-0" loading="lazy">
@@ -69,6 +74,6 @@
             </div>
             {% endfor %}
         </div>
-        {% endcomment %}
+        {% endif %}
     </div>
     <!-- End widget tags-->

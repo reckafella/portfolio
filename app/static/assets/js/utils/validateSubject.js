@@ -14,7 +14,7 @@ function isValidSubject(subject) {
  * @param {string} subjectFieldId - The ID of the subject input field
  * @returns {void}
  */
-export default function updateSubjectValidation(subjectFieldId) {
+export function updateSubjectValidation(subjectFieldId) {
     const subjectField = document.getElementById(subjectFieldId);
     if (!subjectField) return;
 

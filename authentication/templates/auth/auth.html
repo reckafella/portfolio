@@ -10,8 +10,8 @@
                     <div class="col-12 col-md-10 col-lg-9 col-xl-8">
                         <div class="card p-3" style="border-radius: 15px;">
                             <div class="card-header">
-                                <div class="text-center">
-                                    <h2  class="card-title fw-bold">{{ form_title }}</h2>
+                                <div class="text-center section-title">
+                                    <h2  class="card-title">{{ form_title }}</h2>
                                     <p>{{ page_title }}</p>
                                 </div>
                             </div>
@@ -19,39 +19,22 @@
                                 <form id="auth-form" method="post" enctype="multipart/form-data" class="auth-form">
                                     {% csrf_token %}
                                     {% for field in form %}
-                                    <div class="mb-3">
-                                        <label for="{{ field.id_for_label }}" class="form-label">
-                                            {{ field.label }}
-                                            {% if field.field.required %}
-                                            <span class="text-danger"><i class="bi bi-asterisk"></i></span>
-                                            {% endif %}
-                                            {% if field.help_text %}
-                                            <button type="button"
-                                                class="btn btn-sm btn-link text-decoration-none p-0"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="{{ field.help_text }}">
-                                                <i class="bi bi-question-circle-fill text-primary"></i>
-                                            </button>
-                                            {% endif %}
+                                    <div class="form-group mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}
+                                            {% if field.field.required %}<span class="text-danger"><i class="bi bi-asterisk"></i></span>{% endif %}
                                         </label>
                                         {{ field }}
-                                        {% if field.name == 'captcha' %}
+                                        <!-- add password toggle to all password fields -->
+                                        {% if field.name == 'password' %}
                                         <div class="char-counter mt-1">
                                             <small class="text-muted">
-                                                <span id="{{ field.auto_id }}-count">0</span> / 6 characters
-                                            </small>
-                                        </div>
-                                        {% elif field.name == 'password' %}
-                                        <div class="char-counter mt-1">
-                                            <small class="text-muted">
-                                                <span id="id_password1-count">0</span> / {{ field.field.max_length }} characters
+                                                <span id="id_password1-count">0</span>
                                             </small>
                                         </div>
                                         {% else %}
                                         <div class="char-counter mt-1">
                                             <small class="text-muted">
-                                                <span id="{{ field.auto_id }}-count">0</span> / {{ field.field.max_length }} characters
+                                                <span id="{{ field.auto_id }}-count">0</span>
                                             </small>
                                         </div>
                                         {% endif %}
@@ -61,11 +44,11 @@
                                     <input type="hidden" name="next" value="{{ request.GET.next }}">
 
                                     <div class="text-center mb-2 mt-2">
-                                        <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50 btn-outline-primary special-btn">{{ submit_text }}</button>
+                                        <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-sm btn-primary">{{ submit_text }}</button>
                                     </div>
                                 </form>
                             </div>
-                            <div class="d-flex card-footer mt-2 mb-2">
+                            <div class="d-flex card-footer mt-2 mb-2 justify-content-center">
                                 {% for message in extra_messages %}
                                 <p class="text-center">{{ message.text }}
                                     <a href="{{ message.link }}" class="text-accent">{{ message.link_text }}</a>
@@ -78,8 +61,4 @@
             </div>
         </div>
     </section>
-{% endblock %}
-
-{% block extra_js %}
-<script type="module" src="{% static 'assets/js/auth.js' %}"></script>
 {% endblock %}

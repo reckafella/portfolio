@@ -15,7 +15,7 @@
 </div>
 
 <section class="section project">
-    <div class="container">
+    <div class="container col-lg-11">
         <div class="section-title text-center mb-4">
             <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
             <p class="lead">
@@ -29,20 +29,45 @@
 
         {% if projects %}
             <!-- Project Filters -->
-            <div class="row">
-                <div class="col-12 d-flex justify-content-center">
-                    <ul id="project-filters" class="project-filters list-inline mb-0">
-                        <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">All</li>
-                        {% for category in categories %}
-                        <li data-filter=".filter-{{ category|slugify }}"
-                            class="{% if current_category == category %}filter-active{% endif %}">{{ category }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+                <ul id="project-filters" class="project-filters isotope-filters">
+                    <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">All</li>
+                    {% for category in categories %}
+                    <li data-filter=".filter-{{ category|slugify }}"
+                        class="{% if current_category == category %}filter-active{% endif %}">{{ category }}</li>
+                    {% endfor %}
+                </ul>
             </div>
 
             <!-- Project Grid -->
-            <div class="row justify-content-center project-container">
+             {% include "app/projects/partials/projects.html" %}
+
+            <!-- Pagination -->
+            {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
+
+        {% else %}
+            <!-- No Projects Found -->
+            <div class="text-center">
+                <p>Check back later or explore other sections of the site.</p>
+                <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
+            </div>
+            <div class="text-center mt-4">
+                <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
+            </div>
+            <div class="text-center mt-4">
+                <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js/projects.js' %}"></script>
+{% endblock %}
+
+{% comment %}
+<div class="row justify-content-center project-container">
                 <div class="col-lg-11">
                     <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 py-4 my-3">
                         {% for project in projects %}
@@ -71,10 +96,15 @@
                                             title="View details for {{ project.title }}">
                                             <i class="bi bi-link"></i>
                                         </a>
-                                        <a role="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                        <a role="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#shareModal"
                                             data-share-url="{% url 'app:project_details' project.slug %}"
-                                            data-share-title="{{ project.title }}" class="share-link"
-                                            title="Share {{ project.title }}">
+                                            data-share-title="Project"
+                                            data-share-image="{{ project.first_image.cloudinary_image_url }}"
+                                            data-share-description="{{ project.description|truncatewords:20 }}"
+                                            class="share-link"
+                                            title="Share Project">
                                             <i class="justify-content-center align-items-center bi bi-share-fill fs-6"></i>
                                         </a>
                                     </div>
@@ -90,27 +120,5 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            {% include 'app/pagination/projects.html' with page_obj=page_obj current_category=current_category %}
-
-        {% else %}
-            <!-- No Projects Found -->
-            <div class="text-center">
-                <p>Check back later or explore other sections of the site.</p>
-                <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
-            </div>
-            <div class="text-center mt-4">
-                <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
-            </div>
-            <div class="text-center mt-4">
-                <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
-            </div>
-        {% endif %}
-    </div>
-</section>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'assets/js/projects.js' %}"></script>
-{% endblock %}
+{% endcomment %}
+}

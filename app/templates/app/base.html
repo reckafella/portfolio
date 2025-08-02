@@ -6,10 +6,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="X-UA-Compatible" content="IE=7">
+    
+    {% include 'app/includes/meta_tags.html' with title=page_title|default:site_title description=page_description|default:site_description image=page_image|default:default_og_image %}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.css" rel="stylesheet">
 
@@ -23,8 +23,8 @@
 
 
     <!-- Favicons -->
-    <link rel="shortcut icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon" type="image/x-icon">
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon">
+    <link rel="icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
@@ -40,6 +40,7 @@
     <!-- Main CSS File -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/projects.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/project-cards.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/passwords.css' %}">
 
@@ -102,28 +103,12 @@
     <script type="module" src="{% static 'assets/js/shareManager.js' %}"></script>
     <script src="{% static 'assets/js/moreLess.js' %}"></script>
     <script src="{% static 'assets/js/search.js' %}"></script>
-    <script type="module" src="{% static 'assets/js/formValidator.js' %}"></script>
+    <script type="module" src="{% static 'assets/javascript/ValidateForms.js' %}"></script>
     <script src="{% static 'assets/js/themes.js' %}"></script>
 
-    <script type="module" src="{% static 'assets/js/sessions.js' %}"></script>
+    <script type="module" src="{# static 'assets/js/sessions.js' #}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            function setupSessionTimeout() {
-                let userLoggedIn = document.getElementById('user-logged-in');
-                if (userLoggedIn !== null) {
-                    new sessionTimeout({
-                        sessionLength: '{{ request.session.get_expiry_age|default:0 }}',
-                        warningTime: 300,
-                        redirectUrl: '{% url "authentication:login" %}',
-                        logoutUrl: '{% url "authentication:logout" %}',
-                    });
-                }
-            }
-            setupSessionTimeout();
-        });
-    </script>
-
-     {% block extra_js %} {% endblock %}
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>

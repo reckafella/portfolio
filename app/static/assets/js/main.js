@@ -91,26 +91,26 @@
      */
     if (select('.search-bar-toggle')) {
       on('click', '.search-bar-toggle', function(e) {
-        select('.search-bar').classList.toggle('search-bar-show')
+        select('.search-bar')?.classList.toggle('search-bar-show')
       });
     }
 
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' && select('.search-bar').classList.contains('search-bar-show')) {
-        select('.search-bar').classList.remove('search-bar-show');
+      if (event.key === 'Escape' && select('.search-bar')?.classList.contains('search-bar-show')) {
+        select('.search-bar')?.classList.remove('search-bar-show');
       }
 
       if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault();
-        select('.search-bar').classList.add('search-bar-show');
+        select('.search-bar')?.classList.add('search-bar-show');
       }
     });
     /* click outside to hide search bar */
     document.addEventListener('click', function (e) {
-      if (select('.search-bar').classList.contains('search-bar-show') && 
+      if (select('.search-bar')?.classList.contains('search-bar-show') && 
         !e.target.closest('.search-bar') && 
         !e.target.closest('.search-bar-toggle')) {
-        select('.search-bar').classList.remove('search-bar-show');
+        select('.search-bar')?.classList.remove('search-bar-show');
       }
     });
 
@@ -123,48 +123,7 @@
         preloader.remove();
       });
     }
-  
-    /**
-     * Theme switcher
-    */
-    /* const themeSwitcher = document.getElementById('themeSwitcher');
-    const themeIcon = themeSwitcher.querySelector('.theme-icon');
-    const header = document.getElementById('header');
-    const footer = document.querySelector('footer');
-    
-    // Check for saved theme preference
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    
-    // Function to update theme
-    function updateTheme(theme) {
-        // Update header
-        header.classList.remove('light-background', 'dark-background');
-        header.classList.add(`${theme}-background`);
-        
-        // Update footer if it exists
-        if (footer) {
-            footer.classList.remove('light-background', 'dark-background');
-            footer.classList.add(`${theme}-background`);
-        }
-        
-        // Update icon
-        themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
-        themeIcon.classList.add(theme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
-        
-        // Save preference
-        localStorage.setItem('theme', theme);
-    }
-    
-    // Set initial theme
-    updateTheme(currentTheme);
-    
-    // Theme switch event listener
-    themeSwitcher.addEventListener('click', function() {
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        updateTheme(newTheme);
-    }); */
-    
+
     /**
      * Scroll top button
      */
@@ -232,6 +191,39 @@
       });
     });
   
+  /**
+   * Init isotope layout and filters
+   */
+  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+
+    let initIsotope;
+    imagesLoaded(isotopeItem.querySelector('.project-container'), function() {
+      initIsotope = new Isotope(isotopeItem.querySelector('.project-container'), {
+        itemSelector: '.project-item',
+        layoutMode: layout,
+        filter: filter,
+        sortBy: sort
+      });
+    });
+
+    isotopeItem.querySelectorAll('.project-filters li').forEach(function(filters) {
+      filters.addEventListener('click', function() {
+        isotopeItem.querySelector('.project-filters .filter-active').classList.remove('filter-active');
+        this.classList.add('filter-active');
+        initIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+        if (typeof aosInit === 'function') {
+          aosInit();
+        }
+      }, false);
+    });
+
+  });
+  
     /**
      * Initiate Pure Counter
      */
@@ -270,12 +262,28 @@
     const projectLightbox = GLightbox({
       selector: '.project-lightbox'
     });
+    projectLightbox.on('slide_before_load', (data) => {
+      if (data.slideIndex === 0) {
+        const video = data.slide.querySelector('video');
+        if (video) {
+          video.play();
+        }
+      }
+    });
 
     /**
      * Initiate glightbox
      */
     const glightbox = GLightbox({
       selector: '.glightbox'
+    });
+    glightbox.on('slide_before_load', (data) => {
+      if (data.slideIndex === 0) {
+        const video = data.slide.querySelector('video');
+        if (video) {
+          video.play();
+        }
+      }
     });
   
     /**
@@ -446,4 +454,64 @@
       observer.observe(image);
     });
   });
-  })();
+
+  // manage focus in modals
+  document.addEventListener('DOMContentLoaded', function () {
+    const modals = document.querySelectorAll('.modal');
+
+    modals.forEach(modal => {
+      // the element that triggered the modal
+      let previousActiveElement;
+
+      // before the modal is shown
+      modal.addEventListener('show.bs.modal', function () {
+        previousActiveElement = document.activeElement;
+      });
+
+      // when the modal is fully shown
+      modal.addEventListener('shown.bs.modal', function () {
+        // Focus the first form element or the close button
+        const firstInput = modal.querySelector('select, input:not([type="hidden"]), button:not([data-bs-dismiss="modal"])');
+        if (firstInput) {
+          firstInput.focus();
+        } else {
+          modal.querySelector('.btn-close').focus();
+        }
+      });
+
+      // Before the modal is hidden
+      modal.addEventListener('hide.bs.modal', function () {
+        // Remove focus from any element inside the modal
+        if (modal.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+      });
+      
+      // When the modal is fully hidden
+      modal.addEventListener('hidden.bs.modal', function() {
+        // Restore focus to the element that had it before the modal was shown
+        if (previousActiveElement) {
+          previousActiveElement.focus();
+        }
+      });
+    })
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+      passwordToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+          const inputField = document.querySelector(this.getAttribute('toggle'));
+          if (inputField.type === 'password') {
+            inputField.type = 'text';
+              this.querySelector('i').classList.remove('bi-eye');
+              this.querySelector('i').classList.add('bi-eye-slash');
+            } else {
+              inputField.type = 'password';
+              this.querySelector('i').classList.remove('bi-eye-slash');
+              this.querySelector('i').classList.add('bi-eye');
+            }
+        });
+      });
+    });
+})();

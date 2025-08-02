@@ -80,8 +80,9 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#shareModal"
                                             data-share-url="{% url 'blog:article_details' article.slug %}"
-                                            data-share-title="{{ article.title }}"
-                                            class="share-link btn btn-sm">
+                                            data-share-title="Article"
+                                            data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                            class="btn btn-sm special-btn share-link">
                                             <i class="bi bi-share-fill fs-6"></i>
                                         </a>
                                     </li>

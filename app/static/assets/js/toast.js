@@ -1,4 +1,4 @@
-class ToastManager {
+export class ToastManager {
     constructor() {
         this.container = document.getElementById('liveToast');
         if (this.container) this.setupCloseButton();
@@ -80,4 +80,4 @@ class ToastManager {
     }
 }
 
-export const toastManager = new ToastManager();
+//export const toastManager = new ToastManager();

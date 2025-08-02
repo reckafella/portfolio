@@ -1,37 +1,47 @@
 {% load static %}
     <div class="widget-items-container">
+        <div class="widget-item recent-posts-widget">
+            <h2 class="widget-title">Popular Articles</h2>
+            {% for post in most_viewed_posts %}
+            <div class="post-item">
+                {% if post.optimized_image_url %}
+                <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0" loading="lazy">
+                {% else %}
+                <div class="bg-light-dark d-flex align-items-center justify-content-center" style="height: 150px; padding: 1rem;">
+                    <div class="d-flex flex-column justify-content-between align-items-center">
+                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+                {% endif %}
+                <div>
+                    <h4><a href="{% url 'blog:article_details' post.slug %}">{{ post.title }}</a></h4>
+                    <time datetime="{{ post.first_published_at }}">{{ post.first_published_at | date:"N j, Y" }}</time>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         <div class="widget-item search-widget gap-3">
             <div class="col-12">
-                <h3 class="widget-title">Search Blog</h3>
-                <form
-                    id="search-form" method="get"
-                    action="{% url 'blog:list_articles' %}">
-                    <input
-                        type="search"
-                        name="q"
-                        value="{{ q }}"
-                        class="form-control"
-                        placeholder="Search..."
-                        required>
-                    <button
-                        type="submit"
-                        id="submitButton"
-                        data-loading-text="{{ data_loading_text }}">
+                <h3 class="widget-title">Search My Blog</h3>
+                <form id="search-form" method="get" action="{% url 'blog:list_articles' %}">
+                    <input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Search..." required>
+                    <input type="hidden" name="sort" value="{{ current_sort }}">
+                    <input type="hidden" name="page" value="{{ page_obj.number }}">
+                    <input type="hidden" name="tag" value="{{ current_tag }}">
+                    <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}">
                         <i class="bi bi-search"></i>
                     </button>
                 </form>
             </div>
             <!-- Filter and Sort Buttons - Compact on Mobile -->
             <div class="d-flex my-4 gap-3">
-                <button type="button" class="btn rounded-pill btn-outline-success btn-sm flex-grow-1" data-bs-toggle="modal"
-                    data-bs-target="#sortModal">
-                    <i class="bi bi-sort-down"></i>
-                    <span class="d-inline">Sort</span>
-                </button>
-                <button type="button" class="btn rounded-pill btn-outline-primary btn-sm flex-grow-1" data-bs-toggle="modal"
-                    data-bs-target="#filterModal">
+                <button type="button" class="btn rounded-pill btn-primary btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="bi bi-funnel"></i>
                     <span class="d-inline">Filter</span>
+                </button>
+                <button type="button" class="btn rounded-pill btn-success btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#sortModal">
+                    <i class="bi bi-sort-down"></i>
+                    <span class="d-inline">Sort</span>
                 </button>
             </div>
             <!-- End Filter and Sort Buttons-->
@@ -54,7 +64,7 @@
 
     <div class="widget-item recent-posts-widget">
         <h3 class="widget-title">Recent Posts</h3>
-        {% for post in recent_posts %}
+        {% for post in most_recent_posts %}
         <div class="post-item">
             {% if post.optimized_image_url %}
             <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}" class="flex-shrink-0" loading="lazy">
@@ -66,8 +76,10 @@
         </div>
         {% endfor %}
     </div>
+
+    
     <!-- End widget recent posts-->
 
-    {% include 'blog/partials/filter-sort-modals.html' with tags=tags q=q %}
+    {% include 'blog/partials/filter-sort-modals.html' with tags=tags q=q current_sort=current_sort current_tag=current_tag page_obj=page_obj sorting_options=sorting_options %}
 
     <!-- End widget filter and sort modals-->

@@ -1,0 +1,19 @@
+{% comment %}
+Share button template with image support
+Usage:
+{% include 'app/includes/share_button.html' with 
+    url=object.get_absolute_url
+    title=object.title 
+    image=object.image.url|default:default_og_image
+    description=object.description|truncatechars:150 %}
+{% endcomment %}
+
+<button class="btn btn-sm btn-outline-secondary share-link"
+        data-bs-toggle="modal"
+        data-bs-target="#shareModal"
+        data-share-url="{{ url }}"
+        data-share-title="{{ title }}"
+        {% if image %}data-share-image="{{ image }}"{% endif %}
+        {% if description %}data-share-description="{{ description|truncatechars:150 }}"{% endif %}>
+    <i class="bi bi-share"></i> Share
+</button>

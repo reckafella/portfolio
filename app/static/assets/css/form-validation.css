@@ -1,0 +1,118 @@
+/* Form Validation Styles */
+
+/* Input field states */
+.char-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.char-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+.char-warning {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+}
+
+/* Validation messages */
+.validation-message {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.validation-message.error {
+    color: #dc3545;
+}
+
+.validation-message.success {
+    color: #198754;
+}
+
+.validation-message.warning {
+    color: #ffc107;
+}
+
+/* Character counters */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Password toggle button */
+.password-toggle-container {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2;
+}
+
+.password-field-with-toggle {
+    padding-right: 40px;
+}
+
+/* Password strength indicator */
+.password-strength-indicator {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.strength-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    width: 0%;
+    background-color: #dc3545;
+}
+
+.strength-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.strength-requirements {
+    font-size: 0.75rem;
+}
+
+.requirement {
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+.requirement.met {
+    color: #198754;
+}
+
+.requirement.met .requirement-icon {
+    color: #198754;
+}
+
+.requirement-icon {
+    margin-right: 0.5rem;
+    font-weight: bold;
+}

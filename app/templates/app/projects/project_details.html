@@ -17,10 +17,13 @@
 
 <section id="project" class="project project-details">
     <div class="container">
-        <div class="row justify-content-center align-items-center gy-4 project-details-row">
+        <div class="section-title text-center">
+            <h2 class="mb-3">{{ project.title }}</h2>
+        </div>
+        <div class="row justify-content-center align-items-center gy-4 project-details-row pb-5 mb-5">
             <div class="col-12 col-lg-8">
                 <div class="project-details-slider swiper">
-                    <div class="swiper-wrapper align-items-center shadow">
+                    <div class="swiper-wrapper align-items-center">
                         {% if project.images.all or project.videos.all %}
                             {% for image in project.images.all %}
                             <div class="swiper-slide">
@@ -80,13 +83,9 @@
                 <div class="row g-4">
                     <!-- Project Information Card -->
                     <div class="col-12 col-md-6 col-lg-12">
-                        <div class="project-info p-3 rounded shadow-sm border">
+                        <div class="project-info p-3 rounded border">
                             <h3 class="mb-3 border-bottom pb-2">Project Information</h3>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-center">
-                                    <i class="bi bi-bookmark-fill me-2 text-primary"></i>
-                                    <strong>Name:</strong> <span class="ms-2">{{ project.title }}</span>
-                                </li>
                                 <li class="list-group-item d-flex align-items-center">
                                     <i class="bi bi-tag-fill me-2 text-primary"></i>
                                     <strong>Category:</strong> <span class="ms-2">{{project.category|default:"Web Development" }}</span>
@@ -116,8 +115,10 @@
                                         data-bs-toggle="modal"
                                         data-bs-target="#shareModal"
                                         data-share-url="{% url 'app:project_details' project.slug %}"
-                                        data-share-title="{{ project.title }}"
-                                        class="btn btn-sm btn-outline-primary">
+                                        data-share-title="Project"
+                                        data-share-image="{{ project.first_image.cloudinary_image_url|default:default_og_image }}"
+                                        data-share-description="{{ project.description|truncatewords:20 }}"
+                                        class="btn btn-sm btn-outline-primary share-link">
                                         Share <i class="bi bi-share-fill ms-1"></i>
                                     </button>
                                 </li>
@@ -127,9 +128,9 @@
                     
                     <!-- Project Description Card -->
                     <div class="col-12 col-md-6 col-lg-12">
-                        <div class="project-description p-3 rounded shadow-sm border">
+                        <div class="project-description p-3 rounded border">
                             <h3 class="mb-3 border-bottom pb-2">Project Overview</h3>
-                            <p class="text-muted">
+                            <p>
                                 {{ project.description }}
                             </p>
                         </div>
@@ -141,7 +142,7 @@
         <!-- Related Projects Carousel -->
         {% if related_projects %}
         <div class="mt-5">
-            <h3 class="text-center mb-4">Explore More Projects</h3>
+            <h2 class="text-center mb-3">Explore More Projects</h2>
 
             <div id="relatedProjectsCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
                 <!-- Indicators -->

@@ -72,7 +72,7 @@
                                 {{ field }}
                                 <div class="char-counter mt-1">
                                     <small class="text-muted">
-                                        <span id="{{ field.auto_id }}-count">0</span>
+                                        <span id="{{ field.auto_id }}-count"></span>
                                     </small>
                                 </div>
                             </div>
@@ -83,20 +83,20 @@
                                 {% if field.name == 'subject' %}
                                 <div class="char-counter mt-1">
                                     <small class="text-muted">
-                                        <span id="{{ field.auto_id }}-count">0</span>
+                                        <span id="{{ field.auto_id }}-count"></span>
                                     </small>
                                 </div>
                                 {% elif field.name == 'message' %}
                                 <div class="char-counter mt-1">
                                     <small class="text-muted">
                                         <span id="{{ field.auto_id }}-word-count"></span>
-                                        [<span id="{{ field.auto_id }}-count">0</span>]
+                                        [<span id="{{ field.auto_id }}-count"></span>]
                                     </small>
                                 </div>
                                 {% elif field.name == 'captcha' %}
                                 <div class="char-counter mt-1">
                                     <small class="text-muted">
-                                        <span id="{{ field.auto_id }}-count">0</span>
+                                        <span id="{{ field.auto_id }}-count"></span>
                                     </small>
                                 </div>
                                 {% endif %}

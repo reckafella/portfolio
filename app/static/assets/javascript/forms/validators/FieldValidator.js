@@ -7,7 +7,26 @@ import { FormManager } from "../manager/FormManager.js";
 export class FieldValidator {
     constructor(formManager) {
         this.formManager = formManager;
+        this.fieldConfigs = this.formManager.fieldConfigs;
         this.validationErrors = this.formManager.validationErrors || {};
+    }
+
+    /**
+     * Get configuration for a specific field
+     * @param {string} fieldId - The field ID
+     */
+    getFieldConfig(fieldId) {
+        return this.fieldConfigs[fieldId] || {};
+    }
+
+    /**
+     * Check if a field is required based on its configuration
+     * @param {string} fieldId - The field ID
+     * @returns {boolean} - True if field is required
+     */
+    isFieldRequired(fieldId) {
+        const config = this.getFieldConfig(fieldId);
+        return config.required !== false; // Default to true unless explicitly set to false
     }
 
     /**

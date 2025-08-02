@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Form - Multiple Image Upload</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="app/static/assets/css/form-validation.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2>Project Form - Image Upload Test</h2>
+                <form id="project-form" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Project Title</label>
+                        <input type="text" class="form-control" id="id_title" name="title" required>
+                        <div id="id_title-count" class="form-text"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Project Description</label>
+                        <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+                        <div id="id_description-count" class="form-text"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_project_url" class="form-label">Project URL</label>
+                        <input type="url" class="form-control" id="id_project_url" name="project_url" required>
+                        <div id="id_project_url-count" class="form-text"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_project_type" class="form-label">Project Type</label>
+                        <select class="form-control" id="id_project_type" name="project_type" required>
+                            <option value="">Select project type</option>
+                            <option value="personal">Personal</option>
+                            <option value="professional">Professional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_category" class="form-label">Category</label>
+                        <select class="form-control" id="id_category" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="web">Web Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="design">Design</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_client" class="form-label">Client Name (Optional)</label>
+                        <input type="text" class="form-control" id="id_client" name="client">
+                        <div id="id_client-count" class="form-text"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_images" class="form-label">Upload Images (Optional)</label>
+                        <input type="file" class="form-control" id="id_images" name="images" multiple 
+                               accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml"
+                               data-max-files="5" data-max-size="5242880" data-max-total-size="26214400">
+                        <div class="form-text">
+                            Upload up to 5 images (max 5MB each, 25MB total). Drag & drop supported.<br>
+                            Supported formats: JPG, PNG, GIF, WebP, BMP, SVG
+                        </div>
+                        <!-- Image preview will be inserted here by JavaScript -->
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_youtube_urls" class="form-label">YouTube URLs (Optional)</label>
+                        <textarea class="form-control" id="id_youtube_urls" name="youtube_urls" rows="3" placeholder="Enter YouTube URLs, one per line"></textarea>
+                        <div id="id_youtube_urls-count" class="form-text"></div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="id_live" name="live">
+                        <label class="form-check-label" for="id_live">Publish Project</label>
+                    </div>
+                    
+                    <button type="submit" id="submitButton" class="btn btn-primary">Create Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        // Initialize validation
+        import('./app/static/assets/javascript/forms/ProjectsForm.js').then(module => {
+            const { ProjectsForm } = module;
+            
+            // Set up global variables first
+            window.validationErrors = {};
+            window.submitButton = document.querySelector('#submitButton');
+            window.updateSubmitButton = (state) => {
+                if (state === 'disabled' || Object.keys(window.validationErrors).length > 0) {
+                    window.submitButton.disabled = true;
+                } else {
+                    window.submitButton.disabled = false;
+                }
+            };
+            
+            // Initialize the form
+            new ProjectsForm('project-form');
+        }).catch(error => {
+            console.error('Error loading ProjectsForm:', error);
+        });
+    </script>
+</body>
+</html>

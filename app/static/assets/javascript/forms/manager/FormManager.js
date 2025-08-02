@@ -118,15 +118,12 @@ export class FormManager {
             if (currentLength < min) {
                 counter.classList.add('text-danger');
                 counter.classList.remove('text-success', 'text-warning');
-                //this.fieldValidator.setFieldError(field, field.id, `Minimum ${min} characters required`);
             } else if (currentLength > max) {
                 counter.classList.add('text-danger');
                 counter.classList.remove('text-success', 'text-warning');
-                //this.fieldValidator.setFieldError(field, field.id, `Maximum ${max} characters exceeded`);
             } else {
                 counter.classList.add('text-success');
                 counter.classList.remove('text-danger', 'text-warning');
-                //this.fieldValidator.setFieldSuccess(field, field.id, '');
             }
         };
         field.addEventListener('input', updateCount);

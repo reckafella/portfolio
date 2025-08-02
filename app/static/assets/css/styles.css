@@ -327,3 +327,54 @@ button[type=submit]:hover {
   color: var(--accent-color);
   font-size: 15px;
 }
+
+
+
+/****************************************
+* Rich text editor styles
+****************************************/
+/* Enhanced styles for rich text content editing */
+.rich-text-content {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 12px;
+  background-color: var(--background-color);
+}
+
+.rich-text-content:focus {
+  background-color: var(--background-color);
+  border-color: var(--accent-color);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem var(--accent-color);
+}
+
+.content-preview {
+  background: inherit;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 20px;
+  margin-top: 10px;
+  min-height: 200px;
+}
+
+.preview-toggle {
+  background: var(--default-color);
+  color: var(--color);
+  border: none;
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.preview-toggle:hover {
+  background: var(--accent-color);
+}
+
+.preview-toggle.active {
+  background: var(--primary-color);
+}

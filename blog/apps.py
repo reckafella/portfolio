@@ -6,6 +6,4 @@ class BlogConfig(AppConfig):
     name = "blog"
 
     def ready(self):
-        import blog.admin
-
-        return super().ready()
+        pass

@@ -7,8 +7,10 @@ export class MessageValidator extends FieldValidator {
     /**
      * Validate message length and content
      * @param {string} fieldId - Message field ID
+     * @param {string} fieldName - Human-readable field name for error messages
+     * @param {boolean} required - Whether the field is required
      */
-    validate(fieldId) {
+    validate(fieldId, fieldName = 'Message', required = true) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
@@ -18,15 +20,18 @@ export class MessageValidator extends FieldValidator {
         this.clearFieldValidation(field, fieldId);
         
         if (!message) {
-            //this.setFieldError(field, fieldId, 'Message is required');
-        } else if (message.length > 0 && message.length < 20) {
-            this.setFieldError(field, fieldId, 'Message must be at least 20 characters');
+            if (required) {
+                this.setFieldError(field, fieldId, `${fieldName} is required`);
+            }
+            // If not required and empty, no validation error
+        } else if (message.length > 0 && message.length < 25) {
+            this.setFieldError(field, fieldId, `${fieldName} must be at least 25 characters`);
         } else if (message.length < 50) {
-            this.setFieldWarning(field, fieldId, 'Consider adding more details to your message');
-        } else if (message.length > 1000) {
-            this.setFieldError(field, fieldId, 'Message must be less than 1000 characters');
+            this.setFieldWarning(field, fieldId, `Consider adding more details to your ${fieldName.toLowerCase()}`);
+        } else if (message.length > 1500) {
+            this.setFieldError(field, fieldId, `${fieldName} must be less than 1500 characters`);
         } else {
-            this.setFieldSuccess(field, fieldId, '');
+            this.setFieldSuccess(field, fieldId, `${fieldName} looks good`);
         }
     }
 

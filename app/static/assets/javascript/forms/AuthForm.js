@@ -28,17 +28,17 @@ export class AuthForm {
 
         // Basic field configurations
         const fieldConfigs = {
-            'id_username': { min: 3, max: 50, counterId: 'id_username-count' },
-            'password1': { min: 8, max: 64, counterId: 'id_password1-count' },
-            'id_captcha_1': { length: 6, counterId: 'id_captcha-count' }
+            'id_username': { min: 3, max: 50, counterId: 'id_username-count', required: true },
+            'password1': { min: 8, max: 64, counterId: 'id_password1-count', required: true },
+            'id_captcha_1': { length: 6, counterId: 'id_captcha-count', required: true }
         };
 
         // Add registration-specific fields
         if (isSignupForm) {
-            fieldConfigs['id_first_name'] = { min: 2, max: 50, counterId: 'id_first_name-count' };
-            fieldConfigs['id_last_name'] = { min: 2, max: 50, counterId: 'id_last_name-count' };
-            fieldConfigs['id_email'] = { max: 70, counterId: 'id_email-count' };
-            fieldConfigs['password2'] = { min: 8, max: 64, counterId: 'id_password2-count' };
+            fieldConfigs['id_first_name'] = { min: 2, max: 50, counterId: 'id_first_name-count', required: true };
+            fieldConfigs['id_last_name'] = { min: 2, max: 50, counterId: 'id_last_name-count', required: true };
+            fieldConfigs['id_email'] = { max: 70, counterId: 'id_email-count', required: true };
+            fieldConfigs['password2'] = { min: 8, max: 64, counterId: 'id_password2-count', required: true };
         }
 
         // Create form manager (without automatic field setup)
@@ -56,10 +56,10 @@ export class AuthForm {
      * @param {boolean} isSignupForm - Whether this is a registration form
      */
     setupValidators(isSignupForm) {
-        // Create validators
-        const usernameValidator = new UsernameValidator(this.formManager);
-        const passwordValidator = new PasswordValidator(this.formManager);
-        const captchaValidator = new CaptchaValidator(this.formManager);
+        // Create validators and pass fieldConfigs to them
+        const usernameValidator = new UsernameValidator(this.formManager, this.formManager.fieldConfigs);
+        const passwordValidator = new PasswordValidator(this.formManager, this.formManager.fieldConfigs);
+        const captchaValidator = new CaptchaValidator(this.formManager, this.formManager.fieldConfigs);
 
         // Register validators for all auth forms
         this.formManager.registerValidator('id_username',
@@ -80,8 +80,8 @@ export class AuthForm {
 
         // For signup forms, add additional validation
         if (isSignupForm) {
-            const emailValidator = new EmailValidator(this.formManager);
-            const nameValidator = new NameValidator(this.formManager);
+            const emailValidator = new EmailValidator(this.formManager, this.formManager.fieldConfigs);
+            const nameValidator = new NameValidator(this.formManager, this.formManager.fieldConfigs);
 
             // Set up name validation
             this.formManager.registerValidator('id_first_name',

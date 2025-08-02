@@ -1,6 +1,8 @@
 import { AuthForm } from './forms/AuthForm.js';
+import { BlogPostForm } from './forms/BlogPostForm.js';
 import { ContactForm } from './forms/ContactForm.js';
 import { PasswordChangeForm } from './forms/PasswordChangeForm.js';
+import { ProjectsForm } from './forms/ProjectsForm.js';
 import { ToastManager } from '../js/toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,5 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
         new PasswordChangeForm('change-password-form');
     }
 
-    //alert('Form validations initialized');
+    // Projects form
+    if (document.getElementById('project-form')) {
+        new ProjectsForm('project-form');
+    }
+    // Blog post form
+    if (document.getElementById('blog-post-form')) {
+        new BlogPostForm('blog-post-form');
+    }
 });

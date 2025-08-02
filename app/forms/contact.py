@@ -13,6 +13,7 @@ class ContactForm(forms.Form):
     name = forms.CharField(
         label="Name",
         required=True,
+        min_length=5,
         max_length=50,
         validators=[MaxLengthValidator(50)],
         widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
@@ -28,6 +29,7 @@ class ContactForm(forms.Form):
     subject = forms.CharField(
         label="Subject",
         required=True,
+        min_length=15,
         max_length=150,
         validators=[MaxLengthValidator(150)],
         widget=forms.TextInput(attrs={"class": "form-control focus-ring"}),
@@ -35,6 +37,7 @@ class ContactForm(forms.Form):
     message = forms.CharField(
         label="Message",
         required=True,
+        min_length=25,
         max_length=1000,
         validators=[MaxLengthValidator(1000)],
         widget=forms.Textarea(attrs={"class": "form-control focus-ring"}),

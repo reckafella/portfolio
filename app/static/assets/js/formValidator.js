@@ -5,7 +5,7 @@ class FormValidator {
     constructor(formId) {
         this.form = document.getElementById(formId);
         if (this.form) {
-            this.submitButton = this.form.querySelector('#submitButton');
+            this.submitButton = window.updateSubmitButton || this.form.querySelector('#submitButton');
             this.originalButtonText = this.submitButton?.innerHTML || 'Submit';
             this.setupEventListeners();
             this.setupCaptcha();

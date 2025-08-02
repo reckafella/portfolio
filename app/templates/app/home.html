@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section id="hero" class="hero section py-4">
+<section id="hero" class="section hero py-5">
     <div class="hero-background" data-aos="fade-in">
         <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/image_2025-07-10_at_15.55.17_wwo7tj" alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
     </div>
@@ -29,70 +29,67 @@
         </div>
     </div>
 </section>
-<section id="about" class="about section">
-    <div class="container section-title" data-aos="fade-up">
+<section id="about" class="section about py-4">
+    <div class="container section-title">
         <h2>About Me</h2>
         <p>Get to Know Me Better</p>
     </div>
 
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="container">
         <div class="row gy-4 justify-content-between">
-            <div class="col-lg-4 text-center">
+            <div class="col-lg-3 text-center">
                 <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-profile"
-                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 400px;" loading="lazy">
+                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 390px;" loading="lazy">
                 <div class="social-links mt-3">
                     <a href="https://github.com/reckafella" class="github" target="_blank"><i
                             class="bi bi-github"></i></a>
-                    <a href="https://linkedin.com/in/ethanwanyoike" class="linkedin mx-2" target="_blank"><i
+                    <a href="https://linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
                             class="bi bi-linkedin"></i></a>
-                    <a href="https://twitter.com/devrohn" class="twitter" target="_blank"><i
-                            class="bi bi-twitter"></i></a>
+                    <a href="https://twitter.com/devrohn" class="twitter twitter-x" target="_blank"><i
+                            class="bi bi-twitter-x"></i></a>
                 </div>
             </div>
-            <div class="col-lg-7 content">
-                <h2>Software Engineer & DevOps Specialist</h2>
-                <p class="fst-italic py-3">
-                    I am a passionate software engineer with expertise in backend development, cloud architecture, and
-                    DevOps practices.
-                    With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
+            <div class="col-lg-8 content">
+                <h2>Software Engineer</h2>
+                <p class="fst-italic py-3">I am a passionate software engineer with expertise in backend development, cloud architecture, and
+                    DevOps practices. With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
                     business growth and enhance user experience.
                 </p>
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-7">
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Location:</strong>
-                                Nairobi, Kenya</li>
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Phone:</strong>
-                                +254719272150</li>
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Experience:</strong>
-                                2+ Years</li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Email:</strong> ethanmuthoni@gmail.com
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Education:</strong> Software Engineering
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Availability:</strong> Open to Opportunities
+                            </li>
                         </ul>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Email:</strong>
-                                ethanmuthoni@gmail.com</li>
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Education:</strong>
-                                BSc Computer Science</li>
-                            <li class="mb-2"><i
-                                    class="bi bi-check-circle-fill text-primary me-2"></i><strong>Availability:</strong>
-                                Open to opportunities</li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Location:</strong> Nairobi, Kenya
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Phone:</strong> +254719272150
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Experience:</strong> 2+ Years
+                            </li>
                         </ul>
                     </div>
                 </div>
-                <p class="py-2">
-                    I thrive in collaborative environments and am committed to continuous learning and professional
-                    growth. My approach combines
-                    technical expertise with effective communication skills to deliver solutions that exceed
-                    expectations. Whether working on complex
-                    backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable,
-                    and maintainable code.
-                </p>
+                <p class="py-2">I thrive in collaborative environments and am committed to continuous learning and professional growth. My approach combines technical expertise with effective communication skills to deliver solutions that exceed expectations. Whether working on complex backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable, and maintainable code.</p>
                 <div class="mt-4">
                     <a href="{% url 'app:resume' %}" class="btn btn-secondary me-3"><i
                             class="bi bi-file-earmark-text me-1"></i> View Resume</a>
@@ -106,7 +103,7 @@
 <!-- End About Section -->
 
 <!-- Skills Section -->
-<section id="skills" class="skills section py-5">
+<section id="skills" class="section skills py-5">
     <div class="container">
         <!-- Section Title -->
         <div class="section-title text-center mb-5" data-aos="fade-up">
@@ -241,8 +238,8 @@
             
             <!-- Call to Action -->
             <div class="row mt-5">
-                <div class="col-12 text-center">
-                    <div class="p-4 card rounded-3 shadow-sm">
+                <div class="col-12 d-flex justify-content-center align-items-center text-center">
+                    <div class="p-4 w-50 card rounded-3 shadow-sm">
                         <h4 class="mb-3">Want to see my skills in action?</h4>
                         <p class="mb-4">Explore my portfolio projects or check out my technical articles.</p>
                         <div class="d-flex justify-content-center gap-3">
@@ -257,10 +254,13 @@
     </div>
 </section>
 {% include 'app/includes/services.html' %}
+
+{% comment %}
 <!-- Featured Projects -->
 {% include 'app/home/featured_projects.html' %}
-
 <!-- Latest Blog Posts -->
 {% include 'app/home/latest_posts.html' %}
+{% endcomment %}
+
 
 {% endblock %}

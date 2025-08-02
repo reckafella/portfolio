@@ -7,7 +7,7 @@ function isValidCaptcha(captcha) {
 }
 
 // Function to update captcha validation
-export default function updateCaptchaValidation(captchaFieldId) {
+export function updateCaptchaValidation(captchaFieldId) {
     const captchaField = document.getElementById(captchaFieldId);
     if (!captchaField) return;
 
@@ -18,7 +18,7 @@ export default function updateCaptchaValidation(captchaFieldId) {
         // Empty field
     } else if (!isValidCaptcha(captcha)) {
         // Invalid captcha format
-        fieldValidator.setFieldError(captchaField, captchaFieldId, 'Captcha must be 6 letters (a-z, A-Z) long without special characters.');
+        fieldValidator.setFieldError(captchaField, captchaFieldId, 'Captcha should be 6 letters long.');
     } else {
         // Valid captcha
         fieldValidator.setFieldSuccess(captchaField, captchaFieldId, 'Captcha is valid.');

@@ -28,7 +28,7 @@ class PostDetailView(DetailView):
         # Staff users can see all posts.
         return queryset
 
-    def get_object(self, queryset=None):
+    def get_this_object(self, queryset=None):
         """Override to increment view count when object is accessed"""
         obj = super().get_object(queryset)
 
@@ -121,12 +121,12 @@ class PostDetailView(DetailView):
         # Order by most recent publication date and limit to 5 posts.
         return (
             queryset.exclude(slug=current_article.slug)
-            .order_by("-first_published_at")[:3]
+            .order_by("-first_published_at")[:5]
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        article = self.get_object()
+        article = self.get_this_object()
         visible_articles = self.get_queryset()
 
         context["other_posts"] = self.get_other_posts(article,

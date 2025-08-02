@@ -10,7 +10,7 @@
   --background-color: #e9e8e6; /* Background color for the entire website, including individual sections */
   --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #5239cf; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --accent-color: #4d4090; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
@@ -18,18 +18,33 @@
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
+  --preloader-bg-color: #100d08; /* black chocolate */
   --nav-color: #121010;  /* The default color of the main navmenu links */
-  --nav-hover-color: #02f2d6; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-hover-color: #1e044d; /* Applied to main navmenu links when they are hovered over or active */
   --nav-mobile-background-color: #cccbc8; /* Used as the background color for mobile navigation menu */
   --nav-dropdown-background-color: #e0d8d8; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
   --nav-dropdown-color: #181717; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #34b7a7; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-dropdown-hover-color: #4834b7; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --background-color: #cccbc8;
+  --header-background-color: #fffff0; /* marble */
+  --blog-background-color: #f4f1f8; /* lavender */
+  --projects-background-color: #fbf5df; /* parachment */
+  --skills-background-color: #d1d1ca; /* pearl */
+  --about-background-color: #fdfdfd; /* egg white */
+  --contact-background-color: #f0f8ff; /* alice blue */
+  --resume-background-color: #f0f8ff; /* alice blue */
+  --nav-mobile-background-color: #dde7f2;
+  --nav-dropdown-background-color: #f8f9fa;
+  --breadcrumbs-background-color: #f8f9fa;
+  --footer-background-color: #f8f9fa;
+  --card-background-color: #f2f8fc;
+  --background-color: #fffff0; /* ivory */
+  --scroll-top-background-color: #000000; /* alice blue */
+  --scroll-top-color: #f0f8ff; /* black */
   --nav-color: #444444;
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-background-color: #e9e8e6;
@@ -37,27 +52,39 @@
   --contrast-color: #000;
   --search-bar-background-color: #1d0723;
   --nav-dropdown-hover-color: var(--accent-color);
-  --skills-bg: #b4b1aa;
-  --about-bg: #ebe8e6;
 }
-
+/* 
+https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73
+ */
 [data-bs-theme="dark"] {
-  --background-color: #201f1f;
+  --header-background-color: #0a0a0a; /* rich black */
+  --blog-background-color: #242526; /* black olive */
+  --projects-background-color: #212121; /* midnight blue */
+  --skills-background-color: #1d1f21; /* gunmetal */
+  --about-background-color: #0c0c0c; /* oil black */
+  --contact-background-color: #212124; /* Charleston green */
+  --resume-background-color: #0b1215; /* obsidian */
+  --nav-mobile-background-color: var(--header-background-color);
+  --special-background-color: #101720; /* smoky black */
+  --breadcrumbs-background-color: #252525; /* outer space */
+  --footer-background-color: #181818; /* iridium */
+  --card-background-color: #11181c; /* arsenic */
+  --background-color: #161618; /* jet black */
+  --nav-dropdown-background-color:  #191919; /* dark slate gray */
   --default-color: #ffffff;
-  --heading-color: #ffffff;
+  --scroll-top-background-color:var(--default-color); /* white */
+  --scroll-top-color: #1f1f1f; /* charcoal */
+  /* --card-background-color: #13151a; */
+  --heading-color: var(--default-color);
   --surface-color: #252525;
-  --contrast-color: #ffffff;
+  --contrast-color: var(--default-color);
   /* search bar background should have dim color like Twitter */
-  --search-bar-background-color: #15202b;
-  --accent-color:#f88b05;
-  --nav-color: #ffffff;
+  --search-bar-background-color: var(--special-background-color);
+  --accent-color:#e4891a;
+  --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
-  --nav-dropdown-background-color: #252525;
-  --nav-dropdown-color: #ffffff;
+  --nav-dropdown-color: var(--default-color);
   --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
-  --nav-mobile-background-color: #474444;
-  --skills-bg: #152e02;
-  --about-bg: #253525;
 }
 
 /* theme-transition.css */
@@ -119,7 +146,7 @@ h6 {
 --------------------------------------------------------------*/
 .header {
   color: var(--default-color);
-  background-color: var(--background-color);
+  background-color: var(--header-background-color);
   padding: 15px 0;
   transition: all 0.5s;
   z-index: 997;
@@ -185,7 +212,7 @@ h6 {
   .header .search-nav-wrapper .search-bar {
     order: 1;
     position: fixed;
-    background: var(--search-bar-background-color);
+    background-color: var(--search-bar-background-color);
     top: 0px;
     left: 0px;
     width: 100%;
@@ -325,7 +352,7 @@ h6 {
   .navmenu .dropdown ul {
     margin: 0;
     padding: 10px 0;
-    background: var(--nav-dropdown-background-color);
+    background-color: var(--nav-dropdown-background-color);
     display: block;
     position: absolute;
     visibility: hidden;
@@ -404,7 +431,7 @@ h6 {
     scrollbar-width: thin;
     scrollbar-color: var(--accent-color) var(--background-color);
     overflow-y: auto;
-    background: none;
+    background-color: none;
     left: -300px;
   }
 
@@ -506,7 +533,7 @@ h6 {
     position: fixed;
     overflow: hidden;
     inset: 0;
-    background: none;
+    background-color: none;
   }
 
   .mobile-nav-active .navmenu>ul {
@@ -519,9 +546,9 @@ h6 {
 --------------------------------------------------------------*/
 #footer {
   color: var(--default-color);
-  background-color: var(--background-color);
+  background-color: var(--footer-background-color);
   box-shadow: 0px 5px 5px 0px color-mix(in srgb, var(--default-color), transparent 70%);
-  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 70%);
+  border-top: 1px solid color-mix(in srgb, var(--footer-background-color), transparent 70%);
   font-size: 14px;
   padding: 0 0 30px 0;
   position: relative;
@@ -529,7 +556,7 @@ h6 {
 
 #footer .footer-top {
   padding: 30px 0;
-  background: var(--background-color);
+  background-color: var(--footer-background-color);
 }
 
 #footer .footer-top .footer-info {
@@ -546,7 +573,7 @@ h6 {
 
 #footer .footer-top .footer-title {
   color: var(--default-color);
-  background-color: var(--background-color);
+  background-color: var(--footer-background-color);
   padding: 25px 0;
   position: relative;
   /* border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%); */
@@ -584,7 +611,7 @@ h6 {
 }
 
 #footer .footer-top .social-links a:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 30%);
+  background-color: color-mix(in srgb, var(--accent-color), transparent 30%);
   border-color: var(--accent-color);
 }
 
@@ -652,13 +679,11 @@ h6 {
 # Preloader
 --------------------------------------------------------------*/
 #preloader {
-  --background-color: #0c0e1e;
-  /*--accent-color: #ffd072;*/
   position: fixed;
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  background-color: var(--background-color);
+  background-color: var(--preloader-bg-color);
   transition: all 0.6s ease-out;
   width: 100%;
   height: 100vh;
@@ -714,7 +739,7 @@ h6 {
   right: 15px;
   bottom: -15px;
   z-index: 99999;
-  background-color: var(--default-color);
+  background-color: var(--scroll-top-background-color);
   width: 44px;
   height: 44px;
   border-radius: 50px;
@@ -723,12 +748,12 @@ h6 {
 
 .scroll-top i {
   font-size: 24px;
-  color: var(--background-color);
+  color: var(--scroll-top-color);
   line-height: 0;
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--default-color), transparent 10%);
+  background-color: color-mix(in srgb, var(--scroll-top-background-color), transparent 10%);
 }
 
 .scroll-top.active {
@@ -751,10 +776,10 @@ h6 {
 --------------------------------------------------------------*/
 .page-title {
   color: var(--default-color);
-  background-color: var(--surface-color);
+  background-color: var(--background-color);
   padding: 25px 0;
   position: relative;
-  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  border-bottom: 1px solid color-mix(in srgb, var(--background-color), transparent 90%);
 }
 
 .page-title h1 {
@@ -828,7 +853,7 @@ section,
   display: block;
   width: 50px;
   height: 3px;
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   left: 0;
   right: 0;
   bottom: 0;
@@ -879,7 +904,7 @@ section,
 .hero .overlay {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--surface-color) 50%, transparent 55%);
+  background-color: color-mix(in srgb, var(--surface-color) 50%, transparent 55%);
   z-index: 2;
 }
 
@@ -912,7 +937,7 @@ section,
 
 .hero .btn-get-started {
   color: var(--default-color);
-  background: var(--surface-color);
+  background-color: var(--surface-color);
   font-family: var(--heading-font);
   font-weight: 600;
   display: inline-block;
@@ -938,8 +963,7 @@ section,
 # About Section
 --------------------------------------------------------------*/
 .about {
-  background: var(--about-bg);
-  padding: 60px 0;
+  background-color: var(--about-background-color);
 }
 
 .about .content h2 {
@@ -969,18 +993,45 @@ section,
   line-height: 0;
 }
 
+.about .content p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.about .social-links {
+  margin-top: 20px;
+}
+
+.about .social-links a {
+  display: inline-block;
+  margin-right: 10px;
+  color: var(--default-color);
+  font-size: 20px;
+  transition: color 0.3s;
+}
+.about .social-links a:hover {
+  color: var(--accent-color);
+}
+.about .social-links a i {
+  line-height: 0;
+}
+.about .social-links a:last-child {
+  margin-right: 0;
+}
+
 /*--------------------------------------------------------------
 # Skills Section
 --------------------------------------------------------------*/
 .skills {
-  background: var(--skills-bg);
-  /* padding: 60px 0; */
+  background-color: var(--skills-background-color);
+  padding: 60px 0;
 }
 
 .skills .progress {
   height: 60px;
   display: block;
-  background: none;
+  background-color: none;
   border-radius: 0;
 }
 
@@ -1000,7 +1051,7 @@ section,
 }
 
 .skills .progress-bar-wrap {
-  background: color-mix(in srgb, var(--default-color), transparent 90%);
+  background-color: color-mix(in srgb, var(--default-color), transparent 90%);
   height: 10px;
 }
 
@@ -1022,13 +1073,13 @@ section,
 }
 
 #cta h1, #cta h2, #cta h3, #cta h4, #cta h5, #cta h6 {
-  color: #fff;
+  color: var(--default-color);
   font-size: 28px;
   font-weight: 700;
 }
 
 #cta p {
-  color: #fff;
+  color: var(--default-color);
 }
 
 #cta .cta-btn {
@@ -1042,13 +1093,15 @@ section,
   border-radius: 5px;
   transition: 0.5s;
   margin: 10px;
-  background: var(--default-color);
+  background-color: #000;
   border: 2px solid var(--accent-color);
-  color: var(--background-color);
+  color: #fff;
+  background: var(--accent-color);
+  color: var(--default-color);
 }
 
 #cta .cta-btn:hover {
-  background: var(--accent-color);
+  transform: uppercase;
 }
 
 /*--------------------------------------------------------------
@@ -1075,7 +1128,7 @@ section,
   display: block;
   width: 25px;
   height: 3px;
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   left: 0;
   right: 0;
   bottom: 0;
@@ -1189,6 +1242,11 @@ section,
 /*--------------------------------------------------------------
 # Resume Section
 --------------------------------------------------------------*/
+.resume {
+  background-color: var(--resume-bg);
+  padding: 60px 0;
+}
+
 .resume .resume-title {
   color: var(--heading-color);
   font-size: 26px;
@@ -1241,7 +1299,7 @@ section,
   border-radius: 50px;
   left: -9px;
   top: 0;
-  background: var(--background-color);
+  background-color: var(--background-color);
   border: 2px solid var(--accent-color);
 }
 
@@ -1377,14 +1435,18 @@ section,
 /*--------------------------------------------------------------
 # Contact Section
 --------------------------------------------------------------*/
+.contact {
+  background-color: var(--contact-background-color);
+  padding: 60px 0;
+}
+
 .contact .info-wrap {
   box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 70%);
-  padding: 30px;
-  margin-bottom: 30px;
+  padding: 30px 20px;
 }
 
 .contact .info-item i {
-  font-size: 20px;
+  font-size: 18px;
   color: var(--accent-color);
   width: 50px;
   height: 50px;
@@ -1410,31 +1472,26 @@ section,
 }
 
 .contact .info-item:hover i {
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   color: var(--contrast-color);
 }
 
-.contact .contact-form, .other .other-form {
+/* .contact .contact-form, .other .other-form {
   box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 90%);
-  padding: 30px;
-}
+} */
 
 @media (max-width: 575px) {
-  .contact .contact-form, .other .other-form {
-    padding: 20px;
-  }
-
   .contact .info-item i {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
+    width: 25px;
+    height: 25px;
+    font-size: 15px;
     margin-right: 10px;
-    max-width: 35px;
-    max-height: 35px;
-    padding: 3px;
+    max-width: 30px;
+    max-height: 30px;
+    padding: 2px;
   }
 }
-
+/* 
 .contact .contact-form input[type=text],
 .contact .contact-form input[type=email],
 .contact .contact-form textarea,
@@ -1470,7 +1527,6 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
-
 @keyframes animate-loading {
   0% {
     transform: rotate(0deg);
@@ -1481,12 +1537,13 @@ section,
   }
 }
 
+ */
 
 /*--------------------------------------------------------------
 Cards
 --------------------------------------------------------------*/
 .card {
-  background: var(--surface-color);
+  background-color: var(--card-background-color);
   box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 80%);
   border-radius: 5px;
   overflow: hidden;
@@ -1513,6 +1570,7 @@ Cards
 
 .card .card-header, .card .card-footer {
   padding: 10px 15px;
+  background-color: transparent;
 }
 
 .card .card-footer {
@@ -1583,7 +1641,7 @@ Cards
   box-shadow: none;
   border-radius: 0;
   color: var(--default-color);
-  background-color: color-mix(in srgb, var(--surface-color), transparent 90%);
+  background-color: color-mix(in srgb, var(--surface-color), transparent 10%);
   border-color: color-mix(in srgb, var(--default-color), transparent 60%);
 }
 
@@ -1620,31 +1678,58 @@ Cards
   padding: 5px 20px;
 }
 
-.card-header button[type=button] {
+.card .card-header button[type=button],
+.card .card-body button[type=button]
+ {
   border-radius: 10px;
+  /* background-color: transparent; */
+  /* border: none; */
+  color: var(--default-color);
+}
+.card .card-body a[type=button] {
+  color: var(--default-color);
+  text-decoration: none;
+  font-weight: 600;
+  background-color: transparent;
+  transition: 0.3s;
+}
+.card .card-body a[type=button]:hover {
+  text-decoration: underline;
+  color: var(--default-color);
+}
+.card .card-body a[type=button].active {
+  background-color: var(--accent-color);
+  color: var(--surface-color);
+}
+.card .card-body a[type=button]>span {
+  color: var(--default-color);
+}
+.card .card-body a[type=button].active span {
+  color: var(--surface-color);
 }
 
 .card .card-body form button[type=submit] {
   /* --btn-color: #d0d5d9;
   --btn-bg: #120303; */
-  color: var(--background-color);
-  background: var(--default-color);
+  color: var(--surface-color);
+  background-color: var(--default-color);
   border: 2px solid var(--default-color);
-  padding: 10px 12px;
+  padding: 8px 10px;
   transition: 0.4s;
   font-weight: bold;
+  width: 50%;
+  font-size: 16px;
   border-radius: 10px;
 }
 
 .card .card-body form button[type=submit]:hover {
-  background: var(--background-color);
+  background-color: var(--surface-color);
   color: var(--default-color);
 }
 
 
 .card .card-body .card-title {
   font-weight: 400;
-  border-bottom: 2px solid var(--accent-color);
 }
 
 .card .card-body .card-text {
@@ -1656,7 +1741,7 @@ Cards
 /* card body lists */
 .card .card-body ul {
   padding: 0;
-  background: var(--surface-color);
+  /* background-color: var(--surface-color); */
   color: var(--default-color);
   list-style: none;
 }
@@ -1682,37 +1767,14 @@ Cards
   font-weight: 300;
   transition: 0.3s;
 }
-/* 
-.card .card-body ul li a:hover {
-  color: var(--accent-color);
-  font-weight: 600;
-}
-
-.card .card-body ul li i:hover {
-  color: var(--accent-color);
-}
-
-.card .card-body ul li span:hover {
-  color: var(--accent-color);
-}
- */
 .card .card-body ul li:hover a {
   color: var(--accent-color);
   font-style: normal;
 }
-/* 
-.card .card-body ul li:hover i {
-  color: var(--accent-color);
-}
-
-.card .card-body ul li:hover span {
-  color: var(--accent-color);
-}
- */
 /* card body buttons */
 .card .card-body .refresh-btn {
   color: var(--default-color);
-  background: color-mix(in srgb, var(--background-color), transparent 20%);
+  background-color: color-mix(in srgb, var(--background-color), transparent 20%);
   text-transform: uppercase;
   font-weight: 600;
   border-radius: 50px;
@@ -1721,7 +1783,7 @@ Cards
 }
 
 .card .card-body .refresh-btn:hover {
-  background: color-mix(in srgb, var(--default-color), transparent 10%);
+  background-color: color-mix(in srgb, var(--default-color), transparent 10%);
   color: var(--background-color)
 }
 
@@ -1729,6 +1791,10 @@ Cards
 /*--------------------------------------------------------------
 # Profile Page
 --------------------------------------------------------------*/
+.profile {
+  background-color: var(--special-background-color);
+}
+
 .profile .profile-card img {
   max-width: 120px;
 }
@@ -1798,7 +1864,7 @@ Cards
 }
 
 .nav-tabs-bordered .nav-link.active {
-  background-color: var(--background-color);
+  /* background-color: var(--background-color); */
   color: var(--accent-color);
   border-bottom: 2px solid var(--accent-color);
 }
@@ -1806,12 +1872,10 @@ Cards
 .tab-content-bordered ul {
   border: 2px solid color-mix(in srgb, var(--default-color), transparent 20%);
   border-top: none;
-  background-color: var(--background-color);
+  /* background-color: var(--background-color); */
   color: var(--default-color);
   padding: 20px;
 }
-
-
 
 .message-card {
   transition: all 0.3s ease;
@@ -1874,8 +1938,8 @@ Cards
 
 /* cancel button */
 .modal-footer button[type="button"] {
-  color: var(--background-color);
-  background: var(--default-color);
+  /* color: var(--background-color);
+  background-color: var(--default-color); */
   text-transform: capitalize;
   font-weight: 400;
   font-size: 15px;
@@ -1883,14 +1947,14 @@ Cards
   display: inline-block;
   padding: 6px 10px;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 40%);
+  /* border: 1px solid color-mix(in srgb, var(--default-color), transparent 40%); */
   transition: 0.5s;
 }
 
-.modal-footer button[type="button"]:hover {
+/* .modal-footer button[type="button"]:hover {
   color: var(--background-color);
-  background: color-mix(in srgb, var(--default-color), transparent 20%);
-}
+  background-color: color-mix(in srgb, var(--default-color), transparent 20%);
+} */
 
 
 .modal-body form select {
@@ -1909,7 +1973,7 @@ Cards
 }
 
 .modal-btn {
-  background: var(--default-color);
+  background-color: var(--default-color);
   color: var(--background-color);
   border: var(--background-color);
 }
@@ -1920,22 +1984,20 @@ Cards
 }
 
 .special-btn {
-  background: linear-gradient(45deg, var(--accent-color), var(--accent-color));
+  background-color: linear-gradient(45deg, var(--accent-color), var(--accent-color));
   color: var(--default-color);
-  border: none;
+  border: var(--default-color);
   transform: scale(1.02);
-  /* box-shadow: 0 4px 8px var(--accent-color); */
   transition: all 0.3s ease;
 }
 
 .special-btn:hover {
-  transform: scale(1.05);
-  /* box-shadow: 0 6px 12px var(--accent-color); */
+  transform: scale(1.001);
 }
 
 /* Base button styling */
 .share-btn {
-  background: var(--background-color);
+  background-color: var(--surface-color);
   border: 1px solid var(--default-color);
   color: var(--default-color);
   text-decoration: none;
@@ -1943,8 +2005,8 @@ Cards
 }
 
 .share-btn:hover {
-  background: var(--default-color);
-  color: var(--background-color);
+  background-color: var(--default-color);
+  color: var(--surface-color);
   text-decoration: none;
 }
 
@@ -1972,7 +2034,7 @@ Cards
 }
 
 .http-errors .btn {
-  background: var(--default-color);
+  background-color: var(--default-color);
   color: var(--background-color);
   border: 2px solid var(--accent-color);
   padding: 4px 8px;
@@ -2006,7 +2068,7 @@ Cards
 
 .blog .share-link {
   color: var(--default-color);
-  background: var(--background-color);
+  background-color: transparent;
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -2020,10 +2082,16 @@ Cards
   text-decoration: none;
 }
 
-.btn-light {
+.btn-light-dark {
   color: var(--default-color);
-  background: var(--surface-color);
+  background-color: var(--background-color);
   border: 1px solid var(--default-color);
   padding: 4px 8px;
   transition: all 0.3s ease;
+}
+
+.btn-light-dark:hover {
+  color: var(--background-color);
+  background-color: var(--default-color);
+  border: 1px solid var(--default-color);
 }

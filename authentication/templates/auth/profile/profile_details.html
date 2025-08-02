@@ -94,6 +94,11 @@
 
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-<script src="{% static 'assets/js/cropImages.js' %}"></script>
-<script type="module" src="{% static 'assets/js/passwordChange.js' %}"></script>
+<script src="{% static 'assets/js/toast.js' %}" type="module"></script>
+<script src="{% static 'assets/js/cropImages.js' %}" type="module"></script>
+<script type="module">
+  // Initialize toast manager globally
+  import { ToastManager } from "{% static 'assets/js/toast.js' %}";
+  window.toastManager = new ToastManager();
+</script>
 {% endblock %}

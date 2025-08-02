@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!tag) tag = 'default';  // Fallback if tag is missing
         if (!page) page = 1;  // Default to first page if page is not defined
         if (!sort) sort = 'relevance';  // Default to 'relevance' sort
+        if (!filter) filter = 'all';  // Default to 'all' filter
         if (!q) q = '';  // Empty search if no search term provided
 
         // Create the AJAX request
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var url = '{% url "blog" %}?tag=' + encodeURIComponent(tag) +
                   '&page=' + encodeURIComponent(page) +
                   '&sort=' + encodeURIComponent(sort) +
+                  '&filter-by=' + encodeURIComponent(filter) +
                   '&q=' + encodeURIComponent(q);
         
         xhr.open('GET', url, true);
@@ -71,8 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.classList.add('active');
             var tag = e.target.getAttribute('data-tag');
             var sort = document.getElementById('sortSelect').value;
+            var filter = document.getElementById('filterSelect').value;
             var q = document.getElementById('searchInput').value;
-            loadPosts(tag, 1, sort, q);
+            loadPosts(tag, 1, sort, q, filter);
         }
     });
 
@@ -83,8 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
             var tag = document.querySelector('#tagTabs .active').getAttribute('data-tag');
             var page = e.target.getAttribute('href').split('page=')[1];
             var sort = document.getElementById('sortSelect').value;
+            var filter = document.getElementById('filterSelect').value;
             var q = document.getElementById('searchInput').value;
-            loadPosts(tag, page, sort, q);
+            loadPosts(tag, page, sort, q, filter);
         }
     });
 
@@ -92,8 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sortSelect').addEventListener('change', function() {
         var tag = document.querySelector('#tagTabs .active').getAttribute('data-tag');
         var sort = this.value;
+        var filter = document.getElementById('filterSelect').value;
         var q = document.getElementById('searchInput').value;
-        loadPosts(tag, 1, sort, q);
+        loadPosts(tag, 1, sort, q, filter);
     });
 
     // Event listener for search form submission
@@ -102,12 +107,14 @@ document.addEventListener('DOMContentLoaded', function() {
         var tag = document.querySelector('#tagTabs .active').getAttribute('data-tag');
         var sort = document.getElementById('sortSelect').value;
         var q = document.getElementById('searchInput').value;
-        loadPosts(tag, 1, sort, q);
+        var filter = document.getElementById('filterSelect').value;
+        loadPosts(tag, 1, sort, q, filter);
     });
 
     // Load initial posts on page load
     var initialTag = '{{ current_tag }}';
     var initialSort = '{{ current_sort }}';
     var initialSearch = '{{ q }}';
-    loadPosts(initialTag, 1, initialSort, initialSearch);
+    var initialFilter = '{{ current_filter }}';
+    loadPosts(initialTag, 1, initialSort, initialSearch, initialFilter);
 });

@@ -1,11 +1,38 @@
-//import { toastManager } from './toast.js';
+import { ToastManager } from './toast.js';
 
-class ImageCropper {
-    constructor() {
+/**
+ * Main image cropper class that manages the cropping interface and functionality
+ */
+export class ImageCropper {
+    /**
+     * @param {Object} options - Configuration options
+     */
+    constructor(options = {}) {
+        this.options = Object.assign({
+            modalId: 'imageCropModal',
+            cropImageId: 'cropImage',
+            previewId: 'cropPreview',
+            fileInputId: 'imageFileInput',
+            cropButtonId: 'cropAndUpload',
+            uploadEndpoint: window.location.href,
+            aspectRatio: 1, // 1:1 for profile pictures
+            circular: true,
+            minSize: { width: 500, height: 500 },
+            maxSize: 20 * 1024 * 1024 // 20MB
+        }, options);
+        
         this.cropper = null;
         this.selectedFile = null;
         this.previewUpdateTimeout = null;
         this.isMobile = this.detectMobile();
+        
+        // Try to use the global ToastManager if available, otherwise create one
+        try {
+            this.toastManager = window.toastManager || new ToastManager();
+        } catch (error) {
+            console.warn('ToastManager initialization failed, using fallback alerts', error);
+            this.toastManager = null;
+        }
 
         this.init();
     }
@@ -486,45 +513,45 @@ class ImageCropper {
 }
 
 // Initialize the cropper
-const imageCropper = new ImageCropper();
+export const imageCropper = new ImageCropper();
 
 // Global functions for HTML onclick handlers to call class methods
-function openImageCropModal() {
+export function openImageCropModal() {
     imageCropper.openModal();
 }
 
-function clearSelectedFile() {
+export function clearSelectedFile() {
     imageCropper.clearSelectedFile();
 }
 
-function cropAndUpload() {
+export function cropAndUpload() {
     imageCropper.cropAndUpload();
 }
 
-function rotateImage(degrees) {
+export function rotateImage(degrees) {
     imageCropper.rotate(degrees);
 }
 
-function moveImage(x, y) {
+export function moveImage(x, y) {
     imageCropper.move(x, y);
 }
 
-function zoomImage(ratio) {
+export function zoomImage(ratio) {
     imageCropper.zoom(ratio);
 }
 
-function resetCropper() {
+export function resetCropper() {
     imageCropper.reset();
 }
 
 
 // Delete profile picture functions
-function confirmDeleteProfilePic() {
+export function confirmDeleteProfilePic() {
     const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
     modal.show();
 }
 
-function deleteProfilePic() {
+export function deleteProfilePic() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
                      document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 

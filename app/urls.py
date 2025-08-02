@@ -8,7 +8,8 @@ from app.views.views import (
     ResumePDFView,
     SitemapView,
     CustomRedirectView as crv,
-    app_is_running
+    AppHealthCheckView as app_is_running,
+    render_favicon
 )
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
@@ -50,5 +51,6 @@ urlpatterns = [
         MarkAsRead.as_view(),
         name="mark_as_read"
     ),
-    path("app-running", app_is_running, name="app_is_running"),
+    path("app-running", app_is_running.as_view(), name="app_is_running"),
+    path("favicon.ico", render_favicon, name="favicon"),
 ]

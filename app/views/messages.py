@@ -27,7 +27,8 @@ class ContactView(FormView):
             "page_title": "Contact",
             "submit_text": "Send Message",
             "data_loading_text": "Sending Message",
-            "form_id": "contact-form"
+            "form_id": "contact-form",
+            "actionurl": reverse('app:contact'),
         })
         return context
 
@@ -41,10 +42,11 @@ class ContactView(FormView):
                     "subject": form.cleaned_data.get("subject"),
                     "message": form.cleaned_data.get("message"),
                 }
+                # Store the message data as JSON string for later retrieval
                 messages.success(self.request, json.dumps(message_data))
                 return JsonResponse({
                     "success": True,
-                    "redirect_url": self.success_url,
+                    "redirect_url": str(self.success_url),
                     "message": "Message sent successfully",
                     "message_data": message_data
                 })
@@ -53,6 +55,13 @@ class ContactView(FormView):
                     "success": False,
                     "errors": str(e)
                 })
+        else:
+            # For non-AJAX requests, save the form and add a simple message
+            form.save()
+            messages.success(
+                self.request,
+                "Your message has been sent successfully!"
+            )
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -92,9 +101,35 @@ class ContactSuccessView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Message Sent"
+        context["message_data"] = None
+        context["message_text"] = ""
+
         message_list = list(messages.get_messages(self.request))
         if message_list:
-            context["message_data"] = json.loads(message_list[0].message)
+            try:
+                # Try to parse the message as JSON
+                message_content = message_list[0].message
+                if message_content:
+                    # Check if it's JSON by trying to parse it
+                    parsed_data = json.loads(message_content)
+                    context["message_data"] = parsed_data
+                else:
+                    context["message_text"] = (
+                        "Your message has been sent successfully!"
+                    )
+            except (json.JSONDecodeError, TypeError, AttributeError):
+                # If JSON parsing fails, treat as regular text message
+                context["message_text"] = (
+                    str(message_list[0].message)
+                    if message_list[0].message
+                    else "Your message has been sent successfully!"
+                )
+        else:
+            # No messages found, provide default success message
+            context["message_text"] = (
+                "Your message has been sent successfully!"
+            )
+
         return context
 
 

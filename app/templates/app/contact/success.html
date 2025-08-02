@@ -14,8 +14,7 @@
     </div>
 </div>
 
-<section id="contact" class="contact"
-style="background-image: url('https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73');">
+<section id="contact" class="section contact">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-sm-10 col-lg-8 col-md-9">
@@ -27,11 +26,16 @@ style="background-image: url('https://res.cloudinary.com/dg4sl9jhw/image/upload/
                     </div>
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center justify-content-between">
-                            <p class="mb-0">Your message has been sent successfully.</p>
-                            <p>I will get back to you as soon as possible.</p>
+                            {% if message_data %}
+                                <p class="mb-0">Your message has been sent successfully.</p>
+                                <p>I will get back to you as soon as possible.</p>
+                                <p class="my-1">Here's the contents of your message:</p>
+                            {% else %}
+                                <p class="mb-0">{{ message_text|default:"Your message has been sent successfully." }}</p>
+                                <p>I will get back to you as soon as possible.</p>
+                            {% endif %}
 
                             {% if message_data %}
-                            <p class="my-1">Here's the contents of your message:</p>
                             <div class="mb-3 message-card">
                                 <div class="card-header d-flex justify-content-between align-items-center cursor-pointer toggle-message">
                                     <div>

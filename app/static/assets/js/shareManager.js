@@ -1,14 +1,15 @@
 // share-links.js
-import { toastManager } from './toast.js';
+import { ToastManager } from './toast.js';
 
 export default class ShareManager {
     constructor() {
         this.modal = document.getElementById('shareModal');
         this.copyBtn = this.modal?.querySelector('#copyLinkBtn');
         this.setupEventListeners();
+        this.toastManager = new ToastManager();
     }
 
-    setupShareModal(url, title) {
+    setupShareModal(url, title, imageUrl = null, description = null) {
         if (!this.modal) return;
 
         // Set up copy button
@@ -19,17 +20,31 @@ export default class ShareManager {
         // Set up share links
         const fbLink = this.modal.querySelector('.share-facebook');
         if (fbLink) {
+            // Facebook allows sharing image through Open Graph meta tags
             fbLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
         }
 
-        const twitterLink = this.modal.querySelector('.share-twitter');
-        if (twitterLink) {
-            twitterLink.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+        const twitterXLink = this.modal.querySelector('.share-twitter-x');
+        if (twitterXLink) {
+            // X (Twitter) doesn't directly support image in share URL
+            twitterXLink.href = `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
         }
 
         const whatsappLink = this.modal.querySelector('.share-whatsapp');
         if (whatsappLink) {
             whatsappLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
+        }
+        
+        // Show image preview if available
+        const imagePreview = this.modal.querySelector('.share-image-preview');
+        if (imagePreview) {
+            if (imageUrl) {
+                imagePreview.src = imageUrl;
+                imagePreview.alt = title;
+                imagePreview.classList.remove('d-none');
+            } else {
+                imagePreview.classList.add('d-none');
+            }
         }
 
         // Update modal title
@@ -41,23 +56,23 @@ export default class ShareManager {
 
     copyToClipboard(text) {
         if (!text) {
-            toastManager.show('danger', 'Error: No link to copy!');
+            this.toastManager.show('danger', 'Error', ['No link to copy!']);
             this.updateCopyButton('error');
             return;
         }
 
         if (!navigator.clipboard) {
-            toastManager.show('danger', 'Clipboard API not available');
+            this.toastManager.show('danger', 'Error', ['Clipboard API not supported']);
             return;
         }
 
         navigator.clipboard.writeText(text)
             .then(() => {
-                toastManager.show('success', 'Link copied to clipboard!');
+                this.toastManager.show('success', 'Success', ['Link copied to clipboard!']);
                 this.updateCopyButton('success');
             })
             .catch((err) => {
-                toastManager.show('danger', `Failed to copy link: ${err}`);
+                this.toastManager.show('danger', 'Error', [`Failed to copy link: ${err}`]);
                 this.updateCopyButton('error');
             });
     }
@@ -94,7 +109,9 @@ export default class ShareManager {
             link.addEventListener('click', (e) => {
                 const url = window.location.origin + link.dataset.shareUrl;
                 const title = link.dataset.shareTitle;
-                this.setupShareModal(url, title);
+                const imageUrl = link.dataset.shareImage || null;
+                const description = link.dataset.shareDescription || null;
+                this.setupShareModal(url, title, imageUrl, description);
             });
         });
 

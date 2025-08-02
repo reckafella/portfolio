@@ -1,16 +1,16 @@
 button[type=submit] {
     border: 0;
     padding: 10px 12px;
-    color: #01172b;
+    /* color: #01172b; */
     transition: 0.4s;
     border-radius: 10px;
-    border: 2px solid #01172b;
-    background: #fff;
+    /* border: 2px solid #01172b;
+    background: #fff; */
 }
   
 button[type=submit]:hover {
-    background: #01172b;
-    color: #fff;
+    /* background: #01172b;
+    color: #fff; */
     font-weight: bold;
 }
 
@@ -242,8 +242,8 @@ button[type=submit]:hover {
   to { transform: translateY(-50%) rotate(360deg); }
 }
 
-.captcha-refresh-btn.rotating i {
-  animation: rotate 1s ease;
+.captcha-refresh-btn.rotating {
+  animation: rotate 1s ease-in-out infinite;
 }
 
 @keyframes flash-success {
@@ -253,7 +253,7 @@ button[type=submit]:hover {
 
 .captcha.captcha-refreshed {
   border: 2px solid #28a745;
-  animation: flash-success 1s ease;
+  animation: flash-success 1s ease-in-out;
 }
 
 .image-crop-container {
@@ -291,4 +291,39 @@ button[type=submit]:hover {
   border-radius: 6px;
   padding: 0.75rem;
   margin-top: 1rem;
+}
+
+/* Accordion */
+.accordion-item {
+  border: 1px solid var(--default-color);
+  border-radius: 8px;
+  padding: 1px 2px;
+  background-color: transparent;
+}
+
+.accordion-button:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--accent-color);
+  background-color: transparent;
+}
+
+.accordion-flush .accordion-button {
+  padding: 10px 0;
+  background: none;
+  border: 0;
+}
+
+.accordion-flush .accordion-button:not(.collapsed) {
+  box-shadow: none;
+  color: var(--accent-color);
+}
+
+.accordion-flush .accordion-body {
+  padding: 0 0 15px 0;
+  color: var(--accent-color);
+  font-size: 15px;
 }

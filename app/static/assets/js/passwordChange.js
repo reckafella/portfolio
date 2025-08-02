@@ -1,5 +1,5 @@
 import {createPasswordStrengthIndicator, updatePasswordChangeValidation, createPasswordToggle } from "./utils/validatePasswords.js";
-import updateCharacterCount from "./utils/validateCharCount.js";
+import { updateCharacterCount } from "./utils/validateCharCount.js";
 import { toastManager } from "./toast.js";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function isFormValid() {
-        const requiredFields = ['id_old_password', 'id_new_password1', 'id_new_password2'];
+        const requiredFields = Object.keys(fieldConfigs);
         return requiredFields.every(fieldId => {
             const field = document.getElementById(fieldId);
             return field && field.value.trim().length > 0;
@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     field.addEventListener(event, validator);
                 }
+                field.addEventListener(event, updateSubmitButton);
             });
         }
     }
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
         attachValidationHandlers(fieldId, config);
     });
 
-    ['id_old_password', 'id_new_password1', 'id_new_password2'].forEach(fieldId => {
+    Object.keys(fieldConfigs).forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
@@ -76,22 +77,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const events = ['input', 'blur', 'change'];
-        events.forEach(event => field.addEventListener(event, updatePasswordChangeValidation));
+        events.forEach(event => {
+            field.addEventListener(event, updatePasswordChangeValidation);
+            field.addEventListener(event, updateSubmitButton);
+        });
         field.addEventListener('paste', () => setTimeout(updatePasswordChangeValidation, 10));
     });
 
-    //const allFields = ['id_old_password', 'id_new_password1', 'id_new_password2'];
+    /* //const allFields = ['id_old_password', 'id_new_password1', 'id_new_password2'];
     const allFields = Object.keys(fieldConfigs);
 
     allFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (!field) return;
         ['input', 'change'].forEach(event => {
-            field.addEventListener(event, updateSubmitButton);
         });
-        field.addEventListener('input', updateSubmitButton);
-        field.addEventListener('change', updateSubmitButton);
-    });
+        //field.addEventListener('input', updateSubmitButton);
+        //.addEventListener('change', updateSubmitButton);
+    }); */
 
     updateSubmitButton();
     setTimeout(updatePasswordChangeValidation, 100);

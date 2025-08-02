@@ -20,16 +20,24 @@
     <div class="container" data-aos="fade-up">
         <div class="row">
             <div class="col-12 col-lg-8">
-                <article class="entry entry-single">
+                <article class="entry entry-single p-2">
+
                     <div class="entry-img my-1">
                         {% if article.first_image.optimized_image_url %}
                         <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}"
                             class="img-fluid mb-1" loading="lazy">
+                        {% else %}
+                        <div class="bg-light-dark d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <div class="d-flex flex-column justify-content-between align-items-center">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                <span class="text-muted text-center">No image available</span>
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
 
                     <h2 class="entry-title">{{ article.title }}</h2>
-
+                    
                     <div class="entry-meta">
                         <ul>
                             <li class="d-flex align-items-center">
@@ -72,15 +80,18 @@
                             </li>
                             {% endif %}
                             <li class="d-flex d-none d-md-inline align-items-center">
-                                <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                <a type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
-                                    data-share-title="{{ article.title }}" class="share-link">
+                                    data-share-title="Article"
+                                    data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                    class="btn btn-sm special-btn share-link">
                                     <i class="bi bi-share-fill"></i>
                                 </a>
                             </li>
                         </ul>
                     </div>
-
                     <div class="entry-content">
                         {{ article.content | richtext | safe }}
                     </div>
@@ -95,12 +106,16 @@
                             </li>
                             {% endfor %}
                         </ul>
-                        <ul class="list-unstyled">
+                        <ul class="">
                             <li class="d-flex align-items-center">
-                                <a type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                <a type="button"
+                                    data-bs-toggle="modal" data-bs-target="#shareModal"
                                     data-share-url="{% url 'blog:article_details' article.slug %}"
-                                    data-share-title="{{ article.title }}" class="share-link">
-                                    <i class="bi bi-share-fill"></i>
+                                    data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                    data-share-description="{{ article.content|truncatewords:20 }}"
+                                    data-share-title="Article"
+                                    class="share-link">
+                                        <i class="bi bi-share-fill"></i>
                                 </a>
                             </li>
                         </ul>
@@ -147,4 +162,3 @@
     });
 </script>
 {% endblock %}
-

@@ -1,21 +1,21 @@
-import updateEmailValidation from './utils/validateEmail.js';
-import updateCharacterCount from './utils/validateCharCount.js';
-import updateCaptchaValidation from './utils/validateCaptcha.js';
-import updateNameValidation from './utils/validateName.js';
-import updateUserNameValidation from './utils/validateUsername.js';
+import { updateEmailValidation } from './utils/validateEmail.js';
+import { updateCharacterCount } from './utils/validateCharCount.js';
+import { updateCaptchaValidation } from './utils/validateCaptcha.js';
+import { updateNameValidation } from './utils/validateName.js';
+import { updateUserNameValidation } from './utils/validateUsername.js';
 import { updatePasswordValidation, createPasswordStrengthIndicator, createPasswordToggle } from './utils/validatePasswords.js';
 import { toastManager } from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const baseFieldConfigs = {
-        'id_username': { max: 50, counterId: 'id_username-count', validate: updateUserNameValidation },
+        'id_username': { min:3, max: 50, counterId: 'id_username-count', validate: updateUserNameValidation },
         'password1': { min: 8, max: 64, counterId: 'id_password1-count', validate: updatePasswordValidation },
-        'id_captcha_1': { max: 6, counterId: 'id_captcha-count', validate: updateCaptchaValidation }
+        'id_captcha_1': { length: 6, counterId: 'id_captcha-count', validate: updateCaptchaValidation }
     };
 
     const extendedFields = {
-        'id_first_name': { max: 50, counterId: 'id_first_name-count', validate: updateNameValidation },
-        'id_last_name': { max: 50, counterId: 'id_last_name-count', validate: updateNameValidation },
+        'id_first_name': {min: 2,  max: 50, counterId: 'id_first_name-count', validate: updateNameValidation },
+        'id_last_name': { min: 2,  max: 50, counterId: 'id_last_name-count', validate: updateNameValidation },
         'id_email': { max: 70, counterId: 'id_email-count', validate: updateEmailValidation },
         'password2': { min: 8, max: 64, counterId: 'id_password2-count', validate: updatePasswordValidation }
     };
@@ -74,16 +74,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const updateCharCount = () => updateCharacterCount(fieldId, config);
         updateCharCount();
 
-        ['input', 'keyup', 'blur', 'focus', 'change'].forEach(event => {
+        ['input', 'change', 'paste'].forEach(event => {
+            if (event === 'paste') field.addEventListener(event, () => setTimeout(updateCharCount, 10));
             field.addEventListener(event, updateCharCount);
         });
-        field.addEventListener('paste', () => setTimeout(updateCharCount, 10));
 
         if (config.validate && typeof config.validate === 'function') {
             const validator = () => config.validate(fieldId);
             validator();
 
-            ['input', 'keyup', 'blur', 'focus', 'change', 'paste'].forEach(event => {
+            ['input', 'change', 'paste'].forEach(event => {
                 if (event === 'paste' || event === 'input') {
                     field.addEventListener(event, () => setTimeout(validator, 10));
                 } else {

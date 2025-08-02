@@ -1,6 +1,6 @@
 import { fieldValidator } from './updateFieldStatus.js';
 
-export default function updateCharacterCount(fieldId, config) {
+export function updateCharacterCount(fieldId, config) {
     const field = document.getElementById(fieldId);
     const counter = document.getElementById(config.counterId);
     const counterContainer = counter?.parentElement?.parentElement;

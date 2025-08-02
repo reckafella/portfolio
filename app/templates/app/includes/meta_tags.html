@@ -1,0 +1,27 @@
+{% comment %}
+This template contains Open Graph and other meta tags for social sharing
+Usage:
+    {% include 'app/includes/meta_tags.html' with title=page_title description=page_description image=page_image %}
+{% endcomment %}
+
+<!-- Primary Meta Tags -->
+<meta name="title" content="{{ title|default:site_title }}">
+<meta name="description" content="{{ description|default:site_description }}">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{{ title|default:site_title }}">
+<meta property="og:description" content="{{ description|default:site_description }}">
+{% if image %}
+<meta property="og:image" content="{{ image|default:default_og_image }}">
+{% endif %}
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+<meta property="twitter:title" content="{{ title|default:site_title }}">
+<meta property="twitter:description" content="{{ description|default:site_description }}">
+{% if image %}
+<meta property="twitter:image" content="{{ image|default:default_og_image }}">
+{% endif %}

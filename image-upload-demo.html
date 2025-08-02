@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Image Upload Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="app/static/assets/css/form-validation.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-images me-2"></i>
+                            Enhanced Image Upload Demo
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>Features Demonstrated:</h5>
+                            <ul class="mb-0">
+                                <li><strong>Multiple file selection</strong> - Upload up to 5 images at once</li>
+                                <li><strong>Drag & drop support</strong> - Drag images directly onto the upload area</li>
+                                <li><strong>Real-time validation</strong> - File type, size, and count validation</li>
+                                <li><strong>Image previews</strong> - See thumbnails of uploaded images</li>
+                                <li><strong>Individual file removal</strong> - Remove specific images before submission</li>
+                                <li><strong>Full-size preview</strong> - Click on any image to view full size</li>
+                                <li><strong>Progress indicators</strong> - Visual feedback for upload status</li>
+                                <li><strong>File size limits</strong> - 5MB per file, 25MB total</li>
+                            </ul>
+                        </div>
+
+                        <form id="demo-form" method="post" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="id_demo_images" class="form-label">
+                                    <i class="fas fa-cloud-upload-alt me-2"></i>
+                                    Upload Images
+                                </label>
+                                <input type="file" class="form-control" id="id_demo_images" name="demo_images" 
+                                       multiple accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml"
+                                       data-max-files="5" data-max-size="5242880" data-max-total-size="26214400">
+                                <div class="form-text">
+                                    <i class="fas fa-hand-pointer me-1"></i>
+                                    <strong>Try these actions:</strong>
+                                    <ul class="mt-2">
+                                        <li>Select multiple images using the file browser</li>
+                                        <li>Drag and drop images directly onto the input area</li>
+                                        <li>Upload files larger than 5MB to see validation errors</li>
+                                        <li>Try uploading more than 5 files</li>
+                                        <li>Click on image previews to view full size</li>
+                                        <li>Use the remove buttons to delete individual images</li>
+                                    </ul>
+                                </div>
+                                <!-- Image preview will be inserted here by JavaScript -->
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_demo_title" class="form-label">Project Title (for testing)</label>
+                                <input type="text" class="form-control" id="id_demo_title" name="demo_title" 
+                                       placeholder="Enter a title (min 5 characters)">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" id="submitButton" class="btn btn-primary">
+                                    <i class="fas fa-upload me-2"></i>
+                                    Submit Demo
+                                </button>
+                                <button type="button" class="btn btn-secondary ms-2" onclick="location.reload()">
+                                    <i class="fas fa-redo me-2"></i>
+                                    Reset Form
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-code me-2"></i>
+                            Validation Rules
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-file-image me-2"></i>File Types</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>JPEG/JPG</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>PNG</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>GIF</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>WebP</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>BMP</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>SVG</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-ruler me-2"></i>Size Limits</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-file me-2"></i>Max per file: 5MB</li>
+                                    <li><i class="fas fa-files me-2"></i>Max files: 5</li>
+                                    <li><i class="fas fa-database me-2"></i>Max total: 25MB</li>
+                                    <li><i class="fas fa-ban me-2"></i>Empty files: Not allowed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        // Import and initialize the enhanced image validator
+        import('./app/static/assets/javascript/forms/validators/ImagesValidator.js').then(module => {
+            const { ImagesValidator } = module;
+            
+            // Mock form manager for demo
+            const mockFormManager = {
+                fieldConfigs: {
+                    'id_demo_images': { 
+                        required: false, 
+                        maxFiles: 5, 
+                        maxSize: 5 * 1024 * 1024, // 5MB
+                        maxTotalSize: 25 * 1024 * 1024, // 25MB
+                        allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/svg+xml']
+                    },
+                    'id_demo_title': { min: 5, max: 200, required: false }
+                },
+                validationErrors: {},
+                updateSubmitButton: function() {
+                    const hasErrors = Object.keys(this.validationErrors).length > 0;
+                    document.getElementById('submitButton').disabled = hasErrors;
+                }
+            };
+
+            // Set up global variables
+            window.validationErrors = {};
+            window.submitButton = document.querySelector('#submitButton');
+            window.updateSubmitButton = (state) => {
+                if (state === 'disabled' || Object.keys(window.validationErrors).length > 0) {
+                    window.submitButton.disabled = true;
+                } else {
+                    window.submitButton.disabled = false;
+                }
+            };
+            
+            // Create validator instance
+            const imagesValidator = new ImagesValidator(mockFormManager);
+            
+            // Set up image validation and preview
+            imagesValidator.createImagePreview('id_demo_images');
+            
+            // Add change listener for validation
+            document.getElementById('id_demo_images').addEventListener('change', () => {
+                imagesValidator.validate('id_demo_images');
+            });
+
+            // Demo title validation (simple)
+            const titleField = document.getElementById('id_demo_title');
+            titleField.addEventListener('input', () => {
+                const value = titleField.value.trim();
+                if (value.length > 0 && value.length < 5) {
+                    titleField.classList.add('char-error');
+                    titleField.classList.remove('char-valid');
+                } else if (value.length >= 5) {
+                    titleField.classList.add('char-valid');
+                    titleField.classList.remove('char-error');
+                } else {
+                    titleField.classList.remove('char-error', 'char-valid');
+                }
+            });
+
+            console.log('Enhanced image upload demo initialized successfully!');
+        }).catch(error => {
+            console.error('Error loading ImagesValidator:', error);
+        });
+    </script>
+</body>
+</html>

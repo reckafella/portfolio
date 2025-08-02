@@ -35,7 +35,7 @@ class ProjectListView(ListView):
             "category-asc": "category",
             "category-desc": "-category",
             "original-order": "id"
-        }.get(sort, "-created-at")
+        }.get(sort, "-created_at")
 
         # Base queryset - staff can see all projects,
         # non-staff only see published
@@ -66,7 +66,7 @@ class ProjectListView(ListView):
 
         context["current_category"] = self.request.GET.get('category', "all")
         context["sorting_options"] = self.sorting_options()
-        context["sort_by"] = self.request.GET.get('sort_by', 'date_desc')
+        context["sort_by"] = self.request.GET.get('sort_by', 'date-desc')
 
         # Add flag to template to show unpublished status
         context["is_staff"] = self.request.user.is_staff

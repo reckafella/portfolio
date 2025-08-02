@@ -1,6 +1,11 @@
 from wagtail_modeladmin.options import (
     ModelAdmin, ModelAdminGroup, modeladmin_register)
 from .models import BlogPostPage
+from .forms import BlogPostAdminForm
+from django.contrib import admin
+
+
+admin.site.register(BlogPostPage, BlogPostAdminForm)
 
 
 class BlogPostPageAdmin(ModelAdmin):

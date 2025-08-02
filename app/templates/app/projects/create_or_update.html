@@ -35,9 +35,9 @@
                             <!-- form switch for publish -->
                             {% if field.label == 'Publish Project' %}
                             <div class="form-check form-switch">
-                                <input class="form-check form-check-input" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+                                <input class="form-check form-check-input" type="checkbox" id="{{ field.auto_id }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
                                 <label class="form-check
-                                    form-switch-label" for="{{ field.id_for_label }}">
+                                    form-switch-label" for="{{ field.auto_id }}">
                                     {{ field.label }}
                                 </label>
                             </div>
@@ -49,17 +49,16 @@
                                   {% if field.field.required %}
                                   <span class="text-danger"><i class="bi bi-asterisk"></i></span>
                                   {% endif %}
-                                  {% if field.help_text %}
-                                  <button type="button"
-                                          class="btn btn-sm btn-link text-decoration-none p-0"
-                                          data-bs-toggle="tooltip"
-                                          data-bs-placement="top"
-                                          title="{{ field.help_text }}">
-                                    <i class="bi bi-question-circle-fill text-primary"></i>
-                                  </button>
-                                  {% endif %}
                                 </label>
                                 {{ field }}
+                                <!-- exclude character counter for youtube urls & images -->
+                                {% if field.auto_id != 'id_youtube_urls' and field.auto_id != 'id_images' %}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.auto_id }}-count"></span>
+                                    </small>
+                                </div>
+                                {% endif %}
                             </div>
                             {% endif %}
                             {% endfor %}
@@ -73,35 +72,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("{{ form_id|default:'other-form' }}");
-        window.addEventListener("load", () => {
-            new FormValidator(form, {
-                fields: {
-                    title: {
-                        required: true,
-                        maxLength: 100
-                    },
-                    description: {
-                        required: true,
-                        maxLength: 500
-                    },
-                    image: {
-                        required: false,
-                        fileType: ['image/jpeg', 'image/png', 'image/gif']
-                    },
-                    video: {
-                        required: false,
-                        fileType: ['video/mp4', 'video/webm']
-                    }
-                }
-            });
-            new FormValidator(form);
-        });
-    });
-</script>
 {% endblock %}

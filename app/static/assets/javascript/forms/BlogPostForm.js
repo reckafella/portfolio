@@ -2,13 +2,14 @@ import { NameValidator } from "./validators/NameValidator.js";
 import { MessageValidator } from "./validators/MessageValidator.js";
 import { FormManager } from "./manager/FormManager.js";
 import { BooleanValidator } from "./validators/SelectValidator.js";
-import { ImagesValidator } from "./validators/ImagesValidator.js";
+import { ImageValidator } from "./validators/SingleImageValidator.js";
+import { TagsValidator } from "./validators/TagsValidator.js";
 
 /**
  * BlogPostForm handles the blog post creation/updates and validation
  * @class BlogPostForm
  * @extends FormManager
- * * @param {string} formId - The ID of the form element
+ * @param {string} formId - The ID of the form element
  */
 export class BlogPostForm {
     /**
@@ -20,7 +21,18 @@ export class BlogPostForm {
         const fieldConfigs = {
             'id_title': { min: 5, max: 200, counterId: 'id_title-count', required: true },
             'id_content': { min: 25, max: 50000, counterId: 'id_content-count', required: true },
-            'id_tags': { min: 3, max: 100, counterId: 'id_tags-count', required: false },
+            'id_tags': { 
+                min: 3, 
+                max: 30, 
+                counterId: 'id_tags-count', 
+                required: false,
+                minTags: 1,
+                maxTags: 10,
+                minTagLength: 2,
+                maxTagLength: 30,
+                allowDuplicates: false,
+                invalidCharsPattern: /[<>\"'&]/
+            },
             'id_cover_image': {
                 required: false,
                 maxFiles: 1,
@@ -42,15 +54,16 @@ export class BlogPostForm {
     setupValidators() {
         // Create validators and pass fieldConfigs to them
         const nameValidator = new NameValidator(this.formManager);
-        const messageValidator = new MessageValidator(this.formManager);
-        const imagesValidator = new ImagesValidator(this.formManager);
+        const contentValidator = new MessageValidator(this.formManager);
+        const imageValidator = new ImageValidator(this.formManager);
         const booleanValidator = new BooleanValidator(this.formManager);
+        const tagsValidator = new TagsValidator(this.formManager);
 
         // Register validators for all blog post fields
         this.formManager.registerValidator('id_title', () => nameValidator.validate('id_title'));
-        this.formManager.registerValidator('id_content', () => messageValidator.validate('id_content'));
-        this.formManager.registerValidator('id_tags', () => nameValidator.validate('id_tags', 'Tags', false));
-        this.formManager.registerValidator('id_cover_image', () => imagesValidator.validate('id_cover_image'));
+        this.formManager.registerValidator('id_content', () => contentValidator.validate('id_content'));
+        this.formManager.registerValidator('id_tags', () => tagsValidator.validate('id_tags'));
+        this.formManager.registerValidator('id_cover_image', () => imageValidator.validate('id_cover_image'));
         this.formManager.registerValidator('id_publish', () => booleanValidator.validate('id_publish'));
     }
 }

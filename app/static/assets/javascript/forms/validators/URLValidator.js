@@ -14,11 +14,14 @@ export class URLValidator extends FieldValidator {
         return httpUrlPattern.test(value);
     }
 
-    validate(fieldId, required = true) {
+    validate(fieldId) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
         const url = field.value.trim();
+
+        // Get field configuration (merge with data attributes)
+        const required = this.isFieldRequired(fieldId);
 
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);

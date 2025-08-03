@@ -1,3 +1,5 @@
+import { TagsValidator } from '../validators/TagsValidator.js';
+
 /**
  * FormManager is the central module for managing forms in the application.
  * It handles form initialization, validation, and submission.
@@ -286,7 +288,13 @@ export class FormManager {
         Object.keys(this.validationErrors).forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {
-                this.fieldValidator.clearFieldValidation(field, fieldId);
+                delete this.validationErrors[fieldId];
+                field.classList.remove('char-warning', 'char-error', 'char-valid');
+                const existingMessage = field.parentElement.querySelector('.validation-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+                this.updateSubmitButton('default');
             }
         });
         this.validationErrors = {};

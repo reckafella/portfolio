@@ -13,11 +13,16 @@ export class SelectValidator extends FieldValidator {
      * @param {string} fieldName - Human-readable field name for error messages
      * @param {boolean} required - Whether the field is required
      */
-    validate(fieldId, fieldName = 'Field', required = true) {
+    validate(fieldId, fieldName) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
         const value = field.value.trim();
+
+        // Use field name from config or parameter, fallback to 'Field'
+        fieldName = fieldName || this.getFieldDisplayName(fieldId) || 'Field';
+        // Check if the field is required
+        const required = this.isFieldRequired(fieldId);
 
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
@@ -35,6 +40,24 @@ export class SelectValidator extends FieldValidator {
         }
         // If not required and empty, no validation needed
     }
+
+    /**
+     * Get display name for field based on field ID
+     * @param {string} fieldId - The field ID
+     * @returns {string} - Human-readable field name
+     */
+    getFieldDisplayName(fieldId) {
+        const displayNames = {
+            'id_select_field': 'Select Field',
+            'id_project_type': 'Project Type',
+            'id_category': 'Category',
+            'id_status': 'Status',
+            'id_priority': 'Priority',
+            'id_dropdown_menu': 'Dropdown Menu',
+            // Add more field IDs and their display names as needed
+        };
+        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Select Field';
+    }
 }
 
 /**
@@ -50,11 +73,17 @@ export class BooleanValidator extends FieldValidator {
      * @param {string} fieldName - Human-readable field name for error messages
      * @param {boolean} required - Whether the field must be checked
      */
-    validate(fieldId, fieldName = 'Field', required = false) {
+    validate(fieldId, fieldName = null) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
         const isChecked = field.checked;
+
+        // Use field name from config or parameter, fallback to 'Boolean Field'
+        fieldName = fieldName || this.getFieldDisplayName(fieldId) || 'Boolean Field';
+        // Check if the field is required
+        const required = this.isFieldRequired(fieldId);
+
 
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
@@ -66,4 +95,23 @@ export class BooleanValidator extends FieldValidator {
         }
         // For non-required boolean fields, both checked and unchecked are valid
     }
+
+    /**
+     * Get display name for field based on field ID
+     * @param {string} fieldId - The field ID
+     * @returns {string} - Human-readable field name
+     */
+    getFieldDisplayName(fieldId) {
+        const displayNames = {
+            'id_live': 'Boolean Field',
+            'id_privacy_policy': 'Privacy Policy',
+            'id_subscribe': 'Subscribe to Newsletter',
+            'id_published': 'Boolean Field',
+            'id_newsletter': 'Newsletter Subscription',
+            'id_notifications': 'Notifications',
+            // Add more field IDs and their display names as needed
+        };
+        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Boolean Field';
+    }
+
 }

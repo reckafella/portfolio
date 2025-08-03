@@ -3,60 +3,13 @@ Forms to allow users create/update blog posts
 """
 from django import forms
 # from wagtail.admin.rich_text import DraftailRichTextArea
-from wagtail.rich_text import RichText
-from django.utils.html import strip_tags
-import html
 from django.contrib import admin
 
+from wagtail.admin.widgets.tags import AdminTagWidget
+from taggit.forms import TagField
+
 from blog.models import BlogPostPage
-
-
-class PlainTextFormField(forms.CharField):
-    """
-    Form field that converts rich text to plain text for simple editing
-    """
-    def __init__(self, *args, **kwargs):
-        if 'widget' not in kwargs:
-            kwargs['widget'] = forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 10
-            })
-        super().__init__(*args, **kwargs)
-
-    def prepare_value(self, value):
-        """
-        Convert RichText to plain text for editing
-        """
-        if isinstance(value, RichText):
-            # Convert to HTML first, then strip tags
-            html_content = str(value)
-            # Unescape HTML entities and strip tags
-            plain_text = html.unescape(strip_tags(html_content))
-            return plain_text
-        elif value:
-            # If it's already HTML string, strip tags
-            return html.unescape(strip_tags(str(value)))
-        return value
-
-    def to_python(self, value):
-        """
-        Convert plain text back to HTML (basic formatting)
-        """
-        if value in self.empty_values:
-            return ""
-
-        # Convert plain text to basic HTML with paragraph tags
-        lines = str(value).strip().split('\n')
-        html_lines = []
-
-        for line in lines:
-            line = line.strip()
-            if line:
-                # Escape HTML characters and wrap in paragraph tags
-                escaped_line = html.escape(line)
-                html_lines.append(f'<p>{escaped_line}</p>')
-
-        return '\n'.join(html_lines) if html_lines else ''
+from blog.form_utils.fields import DraftailFormField
 
 
 class BlogPostForm(forms.ModelForm):
@@ -71,7 +24,21 @@ class BlogPostForm(forms.ModelForm):
         help_text="Enter the title of your article",
     )
 
-    content = PlainTextFormField(
+    """ content = PlainTextFormField(
+        label="Article Content",
+        required=True,
+        widget=forms.Textarea(attrs={
+            'cols': 80,
+            'rows': 20,
+            'class': 'form-control'
+        }),
+        help_text=("Write your article content using the rich text editor. "
+                   "Use the toolbar to format text, add headings, "
+                   "create lists, add links, and more. The editor shows "
+                   "exactly how your content will appear to readers.")
+    ) """
+
+    content = DraftailFormField(
         label="Article Content",
         required=True,
         widget=forms.Textarea(attrs={
@@ -85,11 +52,24 @@ class BlogPostForm(forms.ModelForm):
                    "exactly how your content will appear to readers.")
     )
 
-    cover_image = forms.ImageField(
+    cover_image = forms.FileField(
         label="Article Cover Image",
         required=False,
-        widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
+        widget=forms.TextInput(attrs={"class": "form-control",
+                                      "type": "file",
+                                      "accept": "image/*",
+                                      "placeholder": "Upload cover image",
+                                      "multiple": False}),
         help_text="Upload the cover image for this article",
+    )
+
+    tags = TagField(
+        label="Article Tags",
+        required=False,
+        widget=AdminTagWidget(attrs={"class": "form-control"}),
+        help_text=(
+            "Add tags to your article. Tags help categorize your content."
+        )
     )
 
     published = forms.BooleanField(

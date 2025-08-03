@@ -1,14 +1,14 @@
 import { FieldValidator } from "./FieldValidator.js";
 
 /**
- * ImagesValidator class for validating image fields
- * Extends FieldValidator to provide image-specific validation logic
- * @class ImagesValidator
+ * ImageValidator class for validating single image fields
+ * Extends FieldValidator to provide single image validation logic
+ * @class ImageValidator
  * @extends FieldValidator
  */
-export class ImagesValidator extends FieldValidator {
+export class ImageValidator extends FieldValidator {
     /**
-     * Validate uploaded images (multiple files)
+     * Validate single uploaded image
      * @param {string} fieldId - The field ID to validate
      */
     validate(fieldId) {
@@ -18,14 +18,12 @@ export class ImagesValidator extends FieldValidator {
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
 
-        // Get field configuration (merge with data attributes)
+        // Get field configuration
         const config = this.getFieldConfig(fieldId);
-        const displayName = this.getFieldDisplayName(fieldId) || 'Images';
+        const displayName = this.getFieldDisplayName(fieldId) || 'Image';
         
-        // Override config with data attributes if present
-        const maxFiles = field?.dataset.maxFiles ? parseInt(field.dataset.maxFiles) : (config.maxFiles || 10);
+        // Configuration with data attribute override
         const maxSize = field?.dataset.maxSize ? parseInt(field.dataset.maxSize) : (config.maxSize || (5 * 1024 * 1024));
-        const maxTotalSize = field?.dataset.maxTotalSize ? parseInt(field.dataset.maxTotalSize) : (config.maxTotalSize || (50 * 1024 * 1024));
         const allowedTypes = config.allowedTypes || [
             'image/jpeg', 
             'image/jpg', 
@@ -42,74 +40,42 @@ export class ImagesValidator extends FieldValidator {
         
         if (!files || files.length === 0) {
             if (required) {
-                if (fieldId === 'id_images') {
-                    this.setFieldError(field, fieldId, 'Please select at least one image');
-                } else {
-                    this.setFieldError(field, fieldId, `${displayName} is required`);
-                }
-                
+                this.setFieldError(field, fieldId, `${displayName} is required`);
             }
             return;
         }
-        this.maxSizeMB = maxSize / (1024 * 1024); // Update max size in MB
 
-        // Check file count limit
-        if (files.length > maxFiles) {
-            this.setFieldError(field, fieldId, `Too many files selected. Maximum ${maxFiles} files allowed`);
+        // Single file validation
+        const file = files[0];
+
+        if (!allowedTypes.includes(file.type.toLowerCase())) {
+            this.setFieldError(field, fieldId, `Invalid file type. Allowed types: ${allowedTypes.join(', ')}`);
             return;
         }
 
-        const invalidFiles = [];
-        const validFiles = [];
-        let totalSize = 0;
-
-        Array.from(files).forEach((file, index) => {
-            totalSize += file.size;
-
-            if (!allowedTypes.includes(file.type.toLowerCase())) {
-                invalidFiles.push(`${file.name}: Invalid file type (${file.type})`);
-            } else if (file.size > maxSize) {
-                const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
-                invalidFiles.push(`${file.name}: File too large (max ${maxSizeMB}MB)`);
-            } else if (file.size === 0) {
-                invalidFiles.push(`${file.name}: File is empty`);
-            } else {
-                validFiles.push({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                });
-            }
-        });
-
-        // Check total size limit
-        if (totalSize > maxTotalSize) {
-            const maxTotalSizeMB = (maxTotalSize / (1024 * 1024)).toFixed(1);
-            invalidFiles.push(`Total file size too large (max ${maxTotalSizeMB}MB total)`);
+        if (file.size > maxSize) {
+            const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
+            this.setFieldError(field, fieldId, `File too large. Maximum size: ${maxSizeMB}MB`);
+            return;
         }
 
-        if (invalidFiles.length > 0) {
-            this.setFieldError(field, fieldId, invalidFiles.join('; '));
-        } else if (validFiles.length > 0) {
-            const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(1);
-            this.setFieldSuccess(field, fieldId, 
-                `${validFiles.length} valid image(s) selected (${totalSizeMB}MB total)`);
+        if (file.size === 0) {
+            this.setFieldError(field, fieldId, 'File is empty');
+            return;
         }
+
+        // Success
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        this.setFieldSuccess(field, fieldId, `Valid image selected (${fileSizeMB}MB)`);
     }
 
     /**
-     * Create image preview for uploaded files with drag-and-drop support
+     * Create single image preview with drag-and-drop support
      * @param {string} fieldId - The field ID
      */
     createImagePreview(fieldId) {
         const field = document.getElementById(fieldId);
         if (!field) return;
-
-        // Remove existing preview
-        const existingPreview = field.parentElement.querySelector('.image-preview-container');
-        if (existingPreview) {
-            existingPreview.remove();
-        }
 
         // Add drag and drop functionality
         this.setupDragAndDrop(fieldId);
@@ -121,7 +87,7 @@ export class ImagesValidator extends FieldValidator {
     }
 
     /**
-     * Set up drag and drop functionality for the file input
+     * Set up drag and drop functionality for single image
      * @param {string} fieldId - The field ID
      */
     setupDragAndDrop(fieldId) {
@@ -135,14 +101,14 @@ export class ImagesValidator extends FieldValidator {
         dragOverlay.className = 'drag-overlay';
         dragOverlay.innerHTML = `
             <div class="drag-content">
-                <i class="bi bi-cloud-arrow-up-fill"></i>
-                <p>Drop images here or click to browse</p>
+                <i class="bi bi-image-fill"></i>
+                <p>Drop image here or click to browse</p>
             </div>
         `;
         dragOverlay.style.display = 'none';
         container.appendChild(dragOverlay);
 
-        // Drag events for the container
+        // Drag events
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             container.addEventListener(eventName, (e) => {
                 e.preventDefault();
@@ -156,7 +122,6 @@ export class ImagesValidator extends FieldValidator {
         });
 
         container.addEventListener('dragleave', (e) => {
-            // Only hide if leaving the container completely
             if (!container.contains(e.relatedTarget)) {
                 dragOverlay.style.display = 'none';
                 container.classList.remove('drag-hover');
@@ -169,18 +134,20 @@ export class ImagesValidator extends FieldValidator {
 
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                // Update the file input with dropped files
-                field.files = files;
+                // Only take the first file for single image
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                field.files = dt.files;
                 
                 // Trigger validation and preview
                 this.validate(fieldId);
-                this.updateImagePreview(fieldId, files);
+                this.updateImagePreview(fieldId, field.files);
             }
         });
     }
 
     /**
-     * Update image preview when files are selected
+     * Update single image preview
      * @param {string} fieldId - The field ID
      * @param {FileList} files - Selected files
      */
@@ -196,93 +163,85 @@ export class ImagesValidator extends FieldValidator {
 
         if (!files || files.length === 0) return;
 
+        const file = files[0];
+        if (!file.type.startsWith('image/')) return;
+
         // Create preview container
         previewContainer = document.createElement('div');
         previewContainer.className = 'image-preview-container mt-2';
-        previewContainer.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between mb-2">
-                <small class="text-muted">Image Previews:</small>
-                <button type="button" class="btn btn-sm btn-outline-danger clear-all-btn">
-                    <i class="bi bi-trash"></i> Clear All
-                </button>
-            </div>
-        `;
 
-        const previewGrid = document.createElement('div');
-        previewGrid.className = 'row g-2';
-
-        // Store files array for manipulation
-        this.currentFiles = Array.from(files);
-
-        this.currentFiles.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
-                this.createImagePreviewCard(file, index, previewGrid, fieldId);
-            }
-        });
-
-        previewContainer.appendChild(previewGrid);
+        this.createImagePreviewCard(file, previewContainer, fieldId);
         field.parentElement.appendChild(previewContainer);
-
-        // Handle clear all button
-        const clearAllBtn = previewContainer.querySelector('.clear-all-btn');
-        clearAllBtn.addEventListener('click', () => {
-            this.clearAllImages(fieldId);
-        });
     }
 
     /**
-     * Create individual image preview card
+     * Create single image preview card
      * @param {File} file - The image file
-     * @param {number} index - File index
      * @param {HTMLElement} container - Container to append to
      * @param {string} fieldId - The field ID
      */
-    createImagePreviewCard(file, index, container, fieldId) {
+    createImagePreviewCard(file, container, fieldId) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const previewCol = document.createElement('div');
-            previewCol.className = 'col-6 col-md-4 col-lg-3';
-            previewCol.dataset.fileIndex = index;
             const field = document.getElementById(fieldId);
+            const config = this.getFieldConfig(fieldId);
+            const maxSize = field?.dataset.maxSize ? parseInt(field.dataset.maxSize) : (config.maxSize || (5 * 1024 * 1024));
             
             const fileSizeKB = (file.size / 1024).toFixed(1);
             const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
             const displaySize = file.size < 1024 * 1024 ? `${fileSizeKB} KB` : `${fileSizeMB} MB`;
-            const maxSize = field?.dataset.maxSize ? parseInt(field.dataset.maxSize) : (config.maxSize || (5 * 1024 * 1024));
             const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
             const maxSizeExceeded = file.size > maxSize;
-            previewCol.innerHTML = `
-                <div class="card position-relative">
-                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 remove-image-btn" 
-                            style="border-radius: 50%; width: 24px; height: 24px; padding: 0; z-index: 10;">
-                        <i class="bi bi-x-lg text-white" style="font-size: 10px;"></i>
-                    </button>
-                    <img src="${e.target.result}" class="card-img-top" 
-                         style="height: 120px; object-fit: cover; cursor: pointer;" 
-                         alt="${file.name}" title="Click to view full size">
-                    <div class="card-body p-2">
-                        <small class="card-text text-truncate d-block" title="${file.name}">${file.name}</small>
-                        <small class="text-muted">${displaySize}</small>
-                        <div class="mt-1">
-                            <div class="progress" style="height: 4px;">
-                                ${maxSizeExceeded ? `<div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>` : `<div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>`};
+
+            container.innerHTML = `
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="${e.target.result}" 
+                                 class="img-fluid rounded-start h-100" 
+                                 style="object-fit: cover; cursor: pointer; min-height: 120px; max-height: 200px;" 
+                                 alt="${file.name}" 
+                                 title="Click to view full size">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="card-title text-truncate" title="${file.name}">${file.name}</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">Size: ${displaySize}</small><br>
+                                            <small class="text-muted">Type: ${file.type}</small>
+                                        </p>
+                                        <div class="mt-2">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar ${maxSizeExceeded ? 'bg-danger' : 'bg-success'}" 
+                                                     role="progressbar" 
+                                                     style="width: 100%"
+                                                     title="${maxSizeExceeded ? `Exceeds ${maxSizeMB}MB limit` : 'Valid file size'}">
+                                                </div>
+                                            </div>
+                                            ${maxSizeExceeded ? `<small class="text-danger">Exceeds ${maxSizeMB}MB limit</small>` : ''}
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger ms-2 remove-image-btn">
+                                        <i class="bi bi-trash"></i> Remove
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
 
-            container.appendChild(previewCol);
-
-            // Handle individual image removal
-            const removeBtn = previewCol.querySelector('.remove-image-btn');
+            // Handle image removal
+            const removeBtn = container.querySelector('.remove-image-btn');
             removeBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.removeImage(fieldId, index);
+                this.clearImage(fieldId);
             });
 
             // Handle image click for full-size view
-            const img = previewCol.querySelector('img');
+            const img = container.querySelector('img');
             img.addEventListener('click', () => {
                 this.showImageModal(e.target.result, file.name);
             });
@@ -291,38 +250,15 @@ export class ImagesValidator extends FieldValidator {
     }
 
     /**
-     * Remove individual image from selection
-     * @param {string} fieldId - The field ID
-     * @param {number} index - Index of file to remove
-     */
-    removeImage(fieldId, index) {
-        const field = document.getElementById(fieldId);
-        if (!field || !this.currentFiles) return;
-
-        // Remove file from array
-        this.currentFiles.splice(index, 1);
-
-        // Create new FileList (DataTransfer is needed for this)
-        const dt = new DataTransfer();
-        this.currentFiles.forEach(file => dt.items.add(file));
-        field.files = dt.files;
-
-        // Update preview and revalidate
-        this.updateImagePreview(fieldId, field.files);
-        this.validate(fieldId);
-    }
-
-    /**
-     * Clear all selected images
+     * Clear selected image
      * @param {string} fieldId - The field ID
      */
-    clearAllImages(fieldId) {
+    clearImage(fieldId) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
         // Clear the file input
         field.value = '';
-        this.currentFiles = [];
 
         // Remove preview
         const previewContainer = field.parentElement.querySelector('.image-preview-container');
@@ -392,7 +328,6 @@ export class ImagesValidator extends FieldValidator {
             backdrop.addEventListener('click', closeModal);
         }
     }
-
     /**
      * Get display name for field based on field ID
      * @param {string} fieldId - The field ID
@@ -400,11 +335,11 @@ export class ImagesValidator extends FieldValidator {
      */
     getFieldDisplayName(fieldId) {
         const displayNames = {
-            'id_images': 'Images',
-            'id_gallery': 'Image Gallery',
-            'id_uploads': 'Uploads',
+            'id_cover_image': 'Cover Image',
+            'id_profile_pic': 'Profile Picture',
+            'id_featured_image': 'Featured Image',
             // Add more field IDs and their display names as needed
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Images';
+        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Image';
     }
 }

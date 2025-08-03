@@ -8,12 +8,16 @@ import { FieldValidator } from "./FieldValidator.js";
  * @param {string} fieldId - The ID of the captcha input field
  */
 export class CaptchaValidator extends FieldValidator { 
-    validate(fieldId) {
+    validate(fieldId, fieldName = null) {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
         const captchaValue = field.value.trim();
         const captchaRegex = /^[a-zA-Z]{6}$/;
+
+        // Get field configuration (merge with data attributes)
+        const config = this.getFieldConfig(fieldId);
+        const displayName = fieldName || this.getFieldDisplayName(fieldId) || 'Captcha';
 
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
@@ -25,6 +29,18 @@ export class CaptchaValidator extends FieldValidator {
         } else {
             this.setFieldSuccess(field, fieldId, '');
         }
+    }
+
+    /**
+     * Get display name for field based on field ID
+     * @param {string} fieldId - The field ID
+     * @returns {string} - Human-readable field name
+     */
+    getFieldDisplayName(fieldId) {
+        const displayNames = {
+            'id_captcha_1': 'Captcha',
+        };
+        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Captcha';
     }
 
     /**

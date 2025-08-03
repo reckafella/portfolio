@@ -25,24 +25,24 @@ export class ProjectsForm {
             'id_title': { min: 5, max: 200, counterId: 'id_title-count', required: true },
             'id_description': { min: 25, max: 1500, counterId: 'id_description-count', required: true },
             'id_project_url': { max: 250, counterId: 'id_project_url-count', required: true },
-            
+
             // Select fields (required)
             'id_project_type': { required: true },
             'id_category': { required: true },
-            
+
             // Optional text fields
             'id_client': { min: 5, max: 100, counterId: 'id_client-count', required: false },
-            
+
             // Optional file/media fields
-            'id_images': { 
-                required: false, 
-                maxFiles: 5, 
+            'id_images': {
+                required: false,
+                maxFiles: 5,
                 maxSize: 5 * 1024 * 1024, // 5MB per file
                 maxTotalSize: 25 * 1024 * 1024, // 25MB total
                 allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
             },
             'id_youtube_urls': { counterId: 'id_youtube_urls-count', required: false },
-            
+
             // Boolean field (optional)
             'id_live': { required: false }
         };
@@ -73,30 +73,30 @@ export class ProjectsForm {
         // Register validators - now they can access their own fieldConfigs
         this.formManager.registerValidator('id_title',
             () => nameValidator.validate('id_title'));
-        
+
         this.formManager.registerValidator('id_description',
             () => messageValidator.validate('id_description'));
-        
+
         this.formManager.registerValidator('id_project_url',
             () => urlValidator.validate('id_project_url'));
-        
+
         // Required select fields
         this.formManager.registerValidator('id_project_type',
             () => selectValidator.validate('id_project_type'));
-        
+
         this.formManager.registerValidator('id_category',
             () => selectValidator.validate('id_category'));
 
         // Optional fields - validators will check config.required automatically
         this.formManager.registerValidator('id_client',
             () => nameValidator.validate('id_client'));
-        
+
         this.formManager.registerValidator('id_youtube_urls',
             () => youtubeUrlValidator.validate('id_youtube_urls'));
-        
+
         this.formManager.registerValidator('id_images',
             () => imagesValidator.validate('id_images'));
-        
+
         // Boolean field (checkbox)
         this.formManager.registerValidator('id_live',
             () => booleanValidator.validate('id_live'));

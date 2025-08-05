@@ -77,6 +77,11 @@ export class ImageValidator extends FieldValidator {
         const field = document.getElementById(fieldId);
         if (!field) return;
 
+        const existingPreview = field.parentElement.querySelector('.image-preview-container');
+        if (existingPreview) {
+            existingPreview.remove(); // Remove any existing preview
+        }
+
         // Add drag and drop functionality
         this.setupDragAndDrop(fieldId);
 
@@ -170,7 +175,9 @@ export class ImageValidator extends FieldValidator {
         previewContainer = document.createElement('div');
         previewContainer.className = 'image-preview-container mt-2';
 
-        this.createImagePreviewCard(file, previewContainer, fieldId);
+        if (file.type.startsWith('image/')) {
+            this.createImagePreviewCard(file, previewContainer, fieldId);
+        }
         field.parentElement.appendChild(previewContainer);
     }
 
@@ -194,39 +201,20 @@ export class ImageValidator extends FieldValidator {
             const maxSizeExceeded = file.size > maxSize;
 
             container.innerHTML = `
-                <div class="card">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${e.target.result}" 
-                                 class="img-fluid rounded-start h-100" 
-                                 style="object-fit: cover; cursor: pointer; min-height: 120px; max-height: 200px;" 
-                                 alt="${file.name}" 
-                                 title="Click to view full size">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h6 class="card-title text-truncate" title="${file.name}">${file.name}</h6>
-                                        <p class="card-text">
-                                            <small class="text-muted">Size: ${displaySize}</small><br>
-                                            <small class="text-muted">Type: ${file.type}</small>
-                                        </p>
-                                        <div class="mt-2">
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar ${maxSizeExceeded ? 'bg-danger' : 'bg-success'}" 
-                                                     role="progressbar" 
-                                                     style="width: 100%"
-                                                     title="${maxSizeExceeded ? `Exceeds ${maxSizeMB}MB limit` : 'Valid file size'}">
-                                                </div>
-                                            </div>
-                                            ${maxSizeExceeded ? `<small class="text-danger">Exceeds ${maxSizeMB}MB limit</small>` : ''}
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-outline-danger ms-2 remove-image-btn">
-                                        <i class="bi bi-trash"></i> Remove
-                                    </button>
-                                </div>
+                <div class="card position-relative">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 remove-image-btn" 
+                            style="border-radius: 50%; width: 24px; height: 24px; padding: 0; z-index: 10;">
+                        <i class="bi bi-x-lg text-white" style="font-size: 10px;"></i>
+                    </button>
+                    <img src="${e.target.result}" class="card-img-top" 
+                         style="height: 120px; object-fit: cover; cursor: pointer;" 
+                         alt="${file.name}" title="Click to view full size">
+                    <div class="card-body p-2">
+                        <small class="card-text text-truncate d-block" title="${file.name}">${file.name}</small>
+                        <small class="text-muted">${displaySize}</small>
+                        <div class="mt-1">
+                            <div class="progress" style="height: 4px;">
+                                ${maxSizeExceeded ? `<div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>` : `<div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>`};
                             </div>
                         </div>
                     </div>

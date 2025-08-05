@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# ignore flake8
+# flake8: noqa: E402, F401
+
 import os
 import django
 

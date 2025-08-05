@@ -35,18 +35,7 @@ export class FieldValidator {
      * @param {string} errorKey - The key to remove from validationErrors object
      */
     clearFieldValidation(field, errorKey) {
-        if (!field) return;
-
-        field.classList.remove('char-warning', 'char-error', 'char-valid');
-        const existingMessage = field.parentElement.querySelector('.validation-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        delete this.formManager.validationErrors[errorKey];
-        if (window.validationErrors) {
-            delete window.validationErrors[errorKey];
-        }
-        this.formManager.updateSubmitButton('default');
+        return this.formManager.clearFieldValidation(field, errorKey);
     }
 
     /**

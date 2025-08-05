@@ -5,7 +5,7 @@
             {% if page_obj.has_previous %}
                 <li class="page-item">
                     <a class="page-link d-flex justify-content-between align-items-center"
-                        href="?category={{ current_category }}&page={{ page_obj.previous_page_number }}">
+                        href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ page_obj.previous_page_number }}">
                         &laquo; Previous
                     </a>
                 </li>
@@ -27,7 +27,7 @@
                 {% else %}
                     <li class="page-item">
                         <a class="page-link d-flex justify-content-between align-items-center"
-                            href="?category={{ current_category }}&page={{ i }}">
+                            href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ i }}">
                             {{ i }}
                         </a>
                     </li>
@@ -37,7 +37,7 @@
             {% if page_obj.has_next %}
                 <li class="page-item">
                     <a class="page-link d-flex justify-content-between align-items-center"
-                        href="?category={{ current_category }}&page={{ page_obj.next_page_number }}">
+                        href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ page_obj.next_page_number }}">
                         Next &raquo;</a>
                 </li>
             {% else %}

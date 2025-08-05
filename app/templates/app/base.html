@@ -43,6 +43,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/project-cards.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/passwords.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/search.css' %}">
 
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
@@ -64,8 +65,6 @@
     {% endif %}
     {% csrf_token %}
     {% include 'app/includes/header.html' %}
-
-    {% include 'app/includes/searchbar.html' %}
 
     <main class="main">
         {% include 'app/includes/toast.html' %}

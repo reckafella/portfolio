@@ -36,16 +36,19 @@ function performSearch(event) {
 }
 
 // Auto-focus search input when modal opens
-document.getElementById('searchModal').addEventListener('shown.bs.modal', function () {
+const searchModal = document.getElementById('searchModal');
+if (searchModal) {
+  searchModal.addEventListener('shown.bs.modal', function () {
     const searchInput = this.querySelector('input[name="q"]');
     if (searchInput) {
       searchInput.focus();
     }
   });
+}
 
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
-      const modal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+      const modal = bootstrap.Modal.getInstance(searchModal);
       if (modal) {
         modal.hide();
       }

@@ -33,7 +33,7 @@
     const onscroll = (el, listener) => {
       el.addEventListener('scroll', listener)
     }
-    
+
     /**
      * Apply .scrolled class to the body as the page is scrolled down
      */
@@ -43,22 +43,22 @@
       if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
       window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
     }
-  
+
     document.addEventListener('scroll', toggleScrolled);
     window.addEventListener('load', toggleScrolled);
-  
+
     /**
      * Mobile nav toggle
      */
     const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-  
+
     function mobileNavToogle() {
       document.querySelector('body').classList.toggle('mobile-nav-active');
       mobileNavToggleBtn.classList.toggle('bi-list');
       mobileNavToggleBtn.classList.toggle('bi-x');
     }
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
-  
+
     /**
      * Hide mobile nav on same-page/hash links
      */
@@ -68,9 +68,9 @@
           mobileNavToogle();
         }
       });
-  
+
     });
-  
+
     /**
      * Toggle mobile nav dropdowns
      */
@@ -107,8 +107,8 @@
     });
     /* click outside to hide search bar */
     document.addEventListener('click', function (e) {
-      if (select('.search-bar')?.classList.contains('search-bar-show') && 
-        !e.target.closest('.search-bar') && 
+      if (select('.search-bar')?.classList.contains('search-bar-show') &&
+        !e.target.closest('.search-bar') &&
         !e.target.closest('.search-bar-toggle')) {
         select('.search-bar')?.classList.remove('search-bar-show');
       }
@@ -128,7 +128,7 @@
      * Scroll top button
      */
     let scrollTop = document.querySelector('.scroll-top');
-  
+
     function toggleScrollTop() {
       if (scrollTop) {
         window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
@@ -141,10 +141,10 @@
         behavior: 'smooth'
       });
     });
-  
+
     window.addEventListener('load', toggleScrollTop);
     document.addEventListener('scroll', toggleScrollTop);
-  
+
     /**
      * Animation on scroll function and init
      */
@@ -157,7 +157,7 @@
       });
     }
     window.addEventListener('load', aosInit);
-  
+
     /**
      * Init typed.js
      */
@@ -173,7 +173,61 @@
         backDelay: 2000
       });
     }
-  
+    const selectTypedSearch = document.querySelector('.typed-search');
+    if (selectTypedSearch) {
+      let typed_strings = selectTypedSearch.getAttribute('data-typed-search-items');
+      typed_strings = typed_strings.split(',');
+      const searchInput = document.querySelector('input[type="search"]');
+
+      if (searchInput) {
+        // Create a hidden element for typed.js to work with
+        const hiddenTypedElement = document.createElement('span');
+        hiddenTypedElement.className = 'typed-2';
+        hiddenTypedElement.style.position = 'absolute';
+        hiddenTypedElement.style.left = '-9999px';
+        hiddenTypedElement.style.visibility = 'hidden';
+        document.body.appendChild(hiddenTypedElement);
+
+        new Typed('.typed-2', {
+          strings: typed_strings,
+          loop: true,
+          typeSpeed: 100,
+          backSpeed: 50,
+          backDelay: 2000,
+          showCursor: false,
+          onStringTyped: function(arrayPos, self) {
+          },
+          preStringTyped: function(arrayPos, self) {
+            searchInput.placeholder = '';
+          },
+          onTypingPaused: function(arrayPos, self) {
+            const currentText = hiddenTypedElement.textContent;
+            searchInput.placeholder = `Search for ${currentText}`;
+          }
+        });
+
+        // Override the typewrite method to capture real-time changes
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+              const currentText = hiddenTypedElement.textContent;
+              if (currentText) {
+                searchInput.placeholder = `Search for ${currentText}`;
+              } else {
+                searchInput.placeholder = `Search for `;
+              }
+            }
+          });
+        });
+
+        observer.observe(hiddenTypedElement, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      }
+    }
+
     /**
      * Animate the skills items on reveal
      */
@@ -190,7 +244,7 @@
         }
       });
     });
-  
+
   /**
    * Init isotope layout and filters
    */
@@ -223,12 +277,12 @@
     });
 
   });
-  
+
     /**
      * Initiate Pure Counter
      */
     new PureCounter();
-  
+
     /**
     * Project Isotope and filter
     */
@@ -239,16 +293,16 @@
         itemSelector: '.project-item',
         layoutMode: 'fitRows'
       }); // fitRows
-  
+
       let projectFilters = select('#project-filters li', true);
-  
+
       on('click', '#project-filters li', function(e) {
         e.preventDefault();
         projectFilters.forEach(function(el) {
           el.classList.remove('filter-active');
         });
         this.classList.add('filter-active');
-  
+
         projectIsotope.arrange({
           filter: this.getAttribute('data-filter')
         });
@@ -285,7 +339,7 @@
         }
       }
     });
-  
+
     /**
      * Init isotope layout and filters
      */
@@ -293,7 +347,7 @@
       let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
       let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
       let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-  
+
       let initIsotope;
       imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
         initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
@@ -303,7 +357,7 @@
           sortBy: sort
         });
       });
-  
+
       isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
         filters.addEventListener('click', function() {
           isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
@@ -316,9 +370,9 @@
           }
         }, false);
       });
-  
+
     });
-  
+
     /**
      * Frequently Asked Questions Toggle
      */
@@ -327,7 +381,7 @@
         faqItem.parentNode.classList.toggle('faq-active');
       });
     });
-  
+
     /**
      * Init swiper sliders
      */
@@ -336,7 +390,7 @@
         let config = JSON.parse(
           swiperElement.querySelector(".swiper-config").innerHTML.trim()
         );
-  
+
         if (swiperElement.classList.contains("swiper-tab")) {
           initSwiperWithCustomPagination(swiperElement, config);
         } else {
@@ -344,7 +398,7 @@
         }
       });
     }
-  
+
     window.addEventListener("load", initSwiper);
 
   /**
@@ -382,12 +436,12 @@
         }
       }
     });
-  
+
     /**
      * Navmenu Scrollspy
      */
     let navmenulinks = document.querySelectorAll('.navmenu a');
-  
+
     function navmenuScrollspy() {
       navmenulinks.forEach(navmenulink => {
         if (!navmenulink.hash) return;
@@ -404,7 +458,7 @@
     }
     window.addEventListener('load', navmenuScrollspy);
     document.addEventListener('scroll', navmenuScrollspy);
-  
+
   /**
    * Initiate Datatables
    */
@@ -428,11 +482,11 @@
       ]
     });
   })
-  
+
   // Lazy loading for images
   document.addEventListener('DOMContentLoaded', function () {
     const lazyImages = document.querySelectorAll('img.lazy');
-      
+
     const lazyLoad = (image) => {
         if (image.dataset.src) {
           image.src = image.dataset.src;
@@ -440,7 +494,7 @@
           image.removeAttribute('data-src');
         }
     };
-      
+
     const observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -449,7 +503,7 @@
         }
       });
     });
-      
+
     lazyImages.forEach(image => {
       observer.observe(image);
     });
@@ -486,7 +540,7 @@
           document.activeElement.blur();
         }
       });
-      
+
       // When the modal is fully hidden
       modal.addEventListener('hidden.bs.modal', function() {
         // Restore focus to the element that had it before the modal was shown
@@ -513,5 +567,42 @@
             }
         });
       });
+  });
+  // Full Page Search Activation
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchTrigger = document.querySelector('.search-bar-toggle');
+    const searchOverlay = document.getElementById('full-page-search');
+    const searchInput = searchOverlay.querySelector('form input[type="search"]');
+    const closeButton = searchOverlay.querySelector('button.close');
+    const closeButtonI = closeButton.querySelector('i');
+
+    // Open search overlay and focus input
+    if (searchTrigger) {
+      searchTrigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        searchOverlay.classList.add('open');
+        searchInput.focus();
+      });
+    }
+
+    // Close on overlay click, close button click, or Escape key
+    function closeOverlay(event) {
+      if (
+        event.target === searchOverlay ||
+        event.target === closeButton ||
+        event.target === closeButtonI ||
+        event.key === 'Escape' || event.keyCode === 27
+      ) {
+        searchOverlay.classList.remove('open');
+      }
+    }
+
+    // Listen for click and keyup on overlay and close button
+    [searchOverlay, closeButton].forEach(el => {
+      if (el) {
+        el.addEventListener('click', closeOverlay);
+        el.addEventListener('keyup', closeOverlay);
+      }
     });
+  });
 })();

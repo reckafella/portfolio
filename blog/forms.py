@@ -52,7 +52,7 @@ class BlogPostForm(forms.ModelForm):
                    "exactly how your content will appear to readers.")
     )
 
-    cover_image = forms.FileField(
+    cover_image = forms.ImageField(
         label="Article Cover Image",
         required=False,
         widget=forms.TextInput(attrs={"class": "form-control",

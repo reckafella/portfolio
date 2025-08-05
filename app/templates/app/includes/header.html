@@ -6,7 +6,7 @@
         </a>
         <div class="search-nav-wrapper d-flex justify-content-between align-items-center gap-1">
             <div class="d-block search-icon">
-                <a type="button" role="button" class="search-bar-toggle" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <a type="button" role="button" class="search-bar-toggle">
                     <i class="bi bi-search"></i>
                 </a>
             </div>
@@ -16,12 +16,14 @@
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
+                    {% comment %}
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'app:about' %}"><span>About Me</span></a></li>
-                            <li><a href="{% url 'app:resume_pdf' %}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li><a href="{# url 'app:resume' #}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
                         </ul>
                     </li>
+                    {% endcomment %}
+                    <li><a href="{% url 'app:about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About Me</span></a></li>
                     <li><a href="{% url 'app:services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><span>Services</span></a></li>
                     <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
                     {% if user.is_staff %}
@@ -78,3 +80,18 @@
     </div>
 </header>
 <div class="nav-overlay"></div>
+
+<div id="full-page-search" class="">
+    <button type="button" class="close"><i class="bi bi-x-lg"></i></button>
+    <div class="search-container">
+        <div class="search-header">
+            <h2>Search</h2>
+        </div>
+        <form action="{% url 'app:search' %}" class="d-flex flex-column align-items-center gap-3 gap-lg-5 w-100">
+            <input type="search" name="q" id="search-input" class="typed-search"
+                value="{{ q }}" data-typed-search-items="projects,blog posts"
+                placeholder="" required/>
+            <button type="submit" class="btn btn-success fw-bold">Search</button>
+        </form>
+    </div>
+</div>

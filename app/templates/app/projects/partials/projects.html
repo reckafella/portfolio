@@ -4,7 +4,7 @@
 <div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for project in projects %}
     <div class="col-lg-4 col-md-6 project-item isotope-item filter-{{ project.category|slugify }}">
-        <div class="project-content h-100">
+        <div class="card shadow project-content h-100">
             {% if project.first_image %}
                 <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img-top img-fluid" alt="{{ project.title }}" loading="lazy">
                 {% else %}

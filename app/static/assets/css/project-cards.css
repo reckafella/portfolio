@@ -21,11 +21,11 @@
 }
 
 .card:hover .bg-light.card-img-top {
-    background-color: #f8f9fa !important;
+    background-color: var(--card-background-color) !important;
 }
 
 .card:hover .bi-image {
-    color: #6c757d !important;
+    color: var(--default-color) !important;
 }
 
 /* Card hover effects */
@@ -57,4 +57,3 @@
     border: 1px solid var(--default-color);
     transition: all 0.3s ease;
 }
-

@@ -1,0 +1,64 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+    <section id="profile" class="section">
+        <div class="mask d-flex align-items-center gradient-custom-3 mt-1">
+            <div class="container">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="col-12 col-md-10 col-lg-9 col-xl-8">
+                        <div class="card p-3" style="border-radius: 15px;">
+                            <div class="card-header">
+                                <div class="text-center section-title">
+                                    <h2  class="card-title">{{ form_title }}</h2>
+                                    <p>{{ page_title }}</p>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <form id="auth-form" method="post" enctype="multipart/form-data" class="auth-form">
+                                    {% csrf_token %}
+                                    {% for field in form %}
+                                    <div class="form-group mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}
+                                            {% if field.field.required %}<span class="text-danger"><i class="bi bi-asterisk"></i></span>{% endif %}
+                                        </label>
+                                        {{ field }}
+                                        <!-- add password toggle to all password fields -->
+                                        {% if field.name == 'password' %}
+                                        <div class="char-counter mt-1">
+                                            <small class="text-muted">
+                                                <span id="id_password1-count"></span>
+                                            </small>
+                                        </div>
+                                        {% else %}
+                                        <div class="char-counter mt-1">
+                                            <small class="text-muted">
+                                                <span id="{{ field.auto_id }}-count"></span>
+                                            </small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+
+                                    <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+                                    <div class="text-center mb-2 mt-2">
+                                        <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-sm btn-primary">{{ submit_text }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="d-flex card-footer mt-2 mb-2 justify-content-center">
+                                {% for message in extra_messages %}
+                                <p class="text-center">{{ message.text }}
+                                    <a href="{{ message.link }}" class="text-accent">{{ message.link_text }}</a>
+                                </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

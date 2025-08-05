@@ -1,0 +1,44 @@
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title" id="shareModalLabel">Share</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Image preview -->
+                <div class="share-image-container mb-3 text-center">
+                    <img src="" alt="" class="share-image-preview img-fluid rounded d-none" style="max-height: 150px; object-fit: cover;">
+                </div>
+                <div class="d-grid gap-2">
+                    <!-- Copy Link -->
+                    <button class="btn share-btn d-flex align-items-center gap-3 py-2" id="copyLinkBtn">
+                        <i class="bi bi-copy"></i>
+                        <span>Copy link</span>
+                    </button>
+
+                    <!-- Facebook -->
+                    <a href="#" class="btn share-btn d-flex align-items-center gap-3 py-2 share-facebook"
+                       target="_blank" rel="noopener noreferrer">
+                        <i class="bi bi-facebook text-primary"></i>
+                        <span>Share on Facebook</span>
+                    </a>
+
+                    <!-- Twitter -->
+                    <a href="#" class="btn share-btn d-flex align-items-center gap-3 py-2 share-twitter-x"
+                       target="_blank" rel="noopener noreferrer">
+                        <i class="bi bi-twitter-x text-info"></i>
+                        <span>Share on X</span>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="#" class="btn share-btn d-flex align-items-center gap-3 py-2 share-whatsapp"
+                       target="_blank" rel="noopener noreferrer">
+                        <i class="bi bi-whatsapp text-success"></i>
+                        <span>Share on WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

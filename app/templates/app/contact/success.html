@@ -1,0 +1,85 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} {{ page_title }} {% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="contact" class="section contact">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-lg-8 col-md-9">
+                <div class="card p-1" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header border-success">
+                        <div class="section-title mb-0">
+                            <h2 class="text-center fw-bold mb-0" data-aos="fade-up">{{ page_title }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center justify-content-between">
+                            {% if message_data %}
+                                <p class="mb-0">Your message has been sent successfully.</p>
+                                <p>I will get back to you as soon as possible.</p>
+                                <p class="my-1">Here's the contents of your message:</p>
+                            {% else %}
+                                <p class="mb-0">{{ message_text|default:"Your message has been sent successfully." }}</p>
+                                <p>I will get back to you as soon as possible.</p>
+                            {% endif %}
+
+                            {% if message_data %}
+                            <div class="mb-3 message-card">
+                                <div class="card-header d-flex justify-content-between align-items-center cursor-pointer toggle-message">
+                                    <div>
+                                        <h5 class="mb-0">{{ message_data.subject }}</h5>
+                                        <small class="">From: {{ message_data.name }} ({{ message_data.email }})</small>
+                                    </div>
+                                </div>
+                                <div class="card-body message-content" style="display: none;">
+                                    {{ message_data.message|safe }}
+                                    <div class="mt-2">
+                                        <small class="">Received: {{ message_data.created_at|date:"F j, Y, g:i a"|default:"Now" }}</small>
+                                    </div>
+                                </div>
+                                <div class="card-body message-preview">
+                                    {{ message_data.message|striptags|truncatechars:100 }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex justify-content-center mt-1">
+                            <a href="{% url 'app:contact' %}" class="btn btn-success">Send Another Message</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageCards = document.querySelectorAll('.message-card');
+
+    messageCards.forEach(card => {
+        const toggleButton = card.querySelector('.toggle-message');
+        const messageContent = card.querySelector('.message-content');
+        const messagePreview = card.querySelector('.message-preview');
+
+        toggleButton.addEventListener('click', function() {
+            messageContent.style.display = messageContent.style.display === 'none' ? 'block' : 'none';
+            messagePreview.style.display = messagePreview.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

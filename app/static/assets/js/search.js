@@ -1,57 +1,59 @@
-function toggleSearchBar() {
-  const searchBar = document.getElementById('search-bar');
-  searchBar.classList.toggle('d-none');
-  
-  if (!searchBar.classList.contains('d-none')) {
-      searchBar.querySelector('input[type="text"]').focus();
-  }
+function performSearch(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+    
+    // Get form elements using their IDs
+    const searchInput = document.getElementById('search-input');
+    const searchType = document.getElementById('search-bar-filterOption');
+    const sortOption = document.getElementById('search-bar-sortSelect');
+    
+    const searchTerm = searchInput.value.trim();
+    const searchCategory = searchType.value;
+    const sortOptionValue = sortOption.value;
+
+    if (searchTerm) {
+        // Build the search URL
+        let searchUrl = '/search?q=' + encodeURIComponent(searchTerm);
+        
+        if (searchCategory && searchCategory !== 'all') {
+            searchUrl += '&category=' + encodeURIComponent(searchCategory);
+        }
+        
+        if (sortOptionValue && sortOptionValue !== 'relevance') {
+            searchUrl += '&sort=' + encodeURIComponent(sortOptionValue);
+        }
+
+        /* // Hide the modal
+        const searchModal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+        if (searchModal) {
+            searchModal.hide();
+        } */
+        // Navigate to the search URL
+        window.location.href = searchUrl;
+    }
+    
+    return false;
 }
 
-function performSearch() {
-  const searchInput = document.querySelector('#search-bar input[type="text"]');
-  const searchType = document.getElementById('search-bar-filterOption');
-  const sortOption = document.getElementById('search-bar-sortSelect');
-  
-  const searchTerm = searchInput.value.trim();
-  const searchCategory = searchType.value;
-  const sortOptionValue = sortOption.value;
-
-  if (searchTerm) {
-      let searchUrl = '/search?q=' + encodeURIComponent(searchTerm);
-      
-      if (searchCategory !== 'all') {
-          searchUrl += '&category=' + encodeURIComponent(searchCategory);
-      }
-      if (sortOptionValue !== 'relevance') {
-          searchUrl += '&sort=' + encodeURIComponent(sortOptionValue);
-      }
-
-      // Redirect to the search URL
-      window.location.href = searchUrl;
-  }
-
-  // Prevent form submission to avoid default behavior
-  return false;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const searchIcon = document.querySelector('a[href*="search"]');
-  if (searchIcon) {
-      searchIcon.addEventListener('click', function(e) {
-          e.preventDefault();
-          toggleSearchBar();
-      });
-  }
-
-  document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-          const searchBar = document.getElementById('search-bar');
-          if (!searchBar.classList.contains('d-none')) {
-              toggleSearchBar();
-          }
-      }
+// Auto-focus search input when modal opens
+const searchModal = document.getElementById('searchModal');
+if (searchModal) {
+  searchModal.addEventListener('shown.bs.modal', function () {
+    const searchInput = this.querySelector('input[name="q"]');
+    if (searchInput) {
+      searchInput.focus();
+    }
   });
-});
+}
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      const modal = bootstrap.Modal.getInstance(searchModal);
+      if (modal) {
+        modal.hide();
+      }
+    }
+  });
 
 
 /* Search.html */
@@ -78,10 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
           projectsTabContainer.style.display = 'block';
       }
   }
-
-  categorySelect.addEventListener('change', updateTabs);
-  updateTabs();
-
+  if (categorySelect) {
+    categorySelect.addEventListener('change', updateTabs);updateTabs();
+  }
+  
   var triggerTabList = [].slice.call(document.querySelectorAll('#searchTabs button'));
   triggerTabList.forEach(function (triggerEl) {
       var tabTrigger = new bootstrap.Tab(triggerEl);

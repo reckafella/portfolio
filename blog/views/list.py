@@ -1,135 +1,280 @@
+from datetime import datetime
+from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from blog.models import BlogPostPage
 
 
-class PostListView(ListView):
+class BasePostListView(ListView):
     model = BlogPostPage
     template_name = "blog/posts_list.html"
     context_object_name = "articles"
-    paginate_by = 6
+    paginate_by = 5
 
     def get_queryset(self):
-        topic = self.request.GET.get("topic", "all")
-        sort = self.request.GET.get("sort", "date_desc")
-        search_query = self.request.GET.get("q", "")
+        return BlogPostPage.objects.live()
 
-        order_by = {
-            "date_desc": "-first_published_at",
-            "date_asc": "first_published_at",
-            "title_asc": "title",
-            "title_desc": "-title",
-            "author_asc": "author__username",
-            "author_desc": "-author__username",
-        }.get(sort, "-first_published_at")
-
-        blog_posts = BlogPostPage.objects.live()  # Only live (published) pages
-
-        if search_query:
-            blog_posts = blog_posts.filter(
-                title__icontains=search_query
-            ) | blog_posts.filter(content__icontains=search_query)
-
-        if topic != "all":
-            blog_posts = blog_posts.filter(topics__icontains=topic)
-
-        return blog_posts.order_by(order_by)
-
-    def add_topics(self, articles):
+    def add_tags(self, articles):
+        """
+        Returns a list of tuples for all tags in the queryset
+        + total number of articles for each tag
+        """
         if not articles.exists():
             return []
-        topics = set(topic.strip() for post in articles for topic in post.get_topics())
-        topics.add("all")
-        return sorted(topics)
+
+        # Get all tags used by the articles in the queryset
+        from taggit.models import Tag
+
+        # Get article IDs that are in our filtered queryset
+        article_ids = list(articles.values_list('id', flat=True))
+
+        # Query tags that are associated with these articles
+        tags_with_counts = (
+            Tag.objects
+            .filter(
+                taggit_taggeditem_items__object_id__in=article_ids,
+                taggit_taggeditem_items__content_type__model='blogpostpage')
+            .annotate(article_count=Count('taggit_taggeditem_items',
+                                          distinct=True)).order_by('name'))
+
+        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
+
+        all_count = articles.count()
+        return [("all", all_count)] + tag_count
 
     def add_sorting_options(self):
         return {
-            "date_desc": "Date (Newest First)",
-            "date_asc": "Date (Oldest First)",
-            "title_asc": "Title (A-Z)",
-            "title_desc": "Title (Z-A)",
-            "author_asc": "Author (A-Z)",
-            "author_desc": "Author (Z-A)",
+            "author-asc": "Author Asc",
+            "author-desc": "Author Desc",
+            "date-asc": "Date Asc",
+            "date-desc": "Date Desc",
+            "title-asc": "Title Asc",
+            "title-desc": "Title Desc"
         }
+
+    def get_sorting_attribute(self, sort):
+        """
+        Returns the attribute to sort by based on the selected option.
+        """
+        return {
+            "date-asc": "first_published_at",
+            "date-desc": "-first_published_at",
+            "title-asc": "title",
+            "title-desc": "-title",
+            "author-asc": "author__username",
+            "author-desc": "-author__username"
+        }.get(sort, "-first_published_at")
+
+    def get_sorting_by_attribute(self, sorting_options, sort):
+        """
+        Returns the attribute to sort by based on the selected option.
+        """
+        return sorting_options.get(sort, "-first_published_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         articles = self.get_queryset()
 
         context["page_title"] = "Blog Posts"
-        context["submit_text"] = "Read Article"
-
-        context["topics"] = self.add_topics(articles)
-        context["current_topic"] = self.request.GET.get("topic", "all")
-        context["current_sort"] = self.request.GET.get("sort", "date_desc")
+        context["tags"] = self.add_tags(articles)
+        context["current_tag"] = self.request.GET.get("tag", "all")
+        context["current_sort"] = self.request.GET.get("sort", "date-desc")
         context["sorting_options"] = self.add_sorting_options()
+        context["submit_text"] = "Read Article"
+        context['share_article'] = "Share Article"
         context["q"] = self.request.GET.get("q", "")
         context["all_authors"] = True
+        context["most_recent_posts"] = self.get_most_recent_posts()
+        context["most_viewed_posts"] = self.get_most_viewed_posts()
+
+        return context
+
+    def get_most_recent_posts(self):
+        """
+        Returns the 5 most recent blog posts.
+        """
+        return BlogPostPage.objects.live().order_by("-first_published_at")[:5]
+
+    def get_most_viewed_posts(self):
+        """
+        Returns the 5 most viewed blog posts from the queryset.
+        """
+        return BlogPostPage.objects.live().order_by("-view_count")[:5]
+
+
+class PostListView(BasePostListView):
+    def get_queryset(self):
+        tag = self.request.GET.get("tag", "all")
+        sort = self.request.GET.get("sort", "date-desc")
+        search_query = self.request.GET.get("q", "")
+
+        order_by = self.get_sorting_attribute(sort)
+
+        articles = BlogPostPage.objects.live()
+
+        if search_query:
+            articles = articles.filter(
+                title__icontains=search_query
+            ) | articles.filter(content__icontains=search_query)
+
+        if tag != "all":
+            articles = articles.filter(tags__name__iexact=tag)
+
+        return articles.order_by(order_by)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        articles = self.get_queryset()
+        context["tags"] = self.add_tags(articles)
+        context["sorting_options"] = self.add_sorting_options()
 
         return context
 
 
-class AuthorPostsView(ListView):
-    model = BlogPostPage
-    template_name = "blog/posts_list.html"
-    context_object_name = "articles"
-    paginate_by = 6
-
+class AuthorPostsView(BasePostListView):
     def get_queryset(self):
         self.author = get_object_or_404(User, username=self.kwargs["username"])
-        topic = self.request.GET.get("topic", "all")
-        sort = self.request.GET.get("sort", "date_desc")
+        tag = self.request.GET.get("tag", "all")
+        sort = self.request.GET.get("sort", "date-desc")
         search_query = self.request.GET.get("q", "")
 
-        order_by = {
-            "date_desc": "-first_published_at",
-            "date_asc": "first_published_at",
-            "title_asc": "title",
-            "title_desc": "-title",
-        }.get(sort, "-first_published_at")
+        order_by = self.get_sorting_attribute(sort)
 
-        posts = BlogPostPage.objects.live().filter(author=self.author)
+        articles = BlogPostPage.objects.live().filter(author=self.author)
 
         if search_query:
-            posts = posts.filter(title__icontains=search_query) | posts.filter(
-                content__icontains=search_query
-            )
+            articles = articles.filter(title__icontains=search_query) |\
+                articles.filter(content__icontains=search_query)
 
-        if topic != "all":
-            posts = posts.filter(topics__icontains=topic)
+        if tag != "all":
+            articles = articles.filter(tags__name__iexact=tag)
 
-        return posts.order_by(order_by)
-
-    def add_topics(self, articles):
-        if not articles.exists():
-            return []
-        topics = set(topic.strip() for post in articles for topic in post.get_topics())
-        topics.add("all")
-        return sorted(topics)
+        return articles.order_by(order_by)
 
     def add_sorting_options(self):
         return {
-            "date_desc": "Date (Newest First)",
-            "date_asc": "Date (Oldest First)",
-            "title_asc": "Title (A-Z)",
-            "title_desc": "Title (Z-A)",
+            "date-asc": "Date Asc",
+            "date-desc": "Date Desc",
+            "title-asc": "Title Asc",
+            "title-desc": "Title Desc",
         }
+
+    def get_sorting_attribute(self, sort):
+        attributes = super().get_sorting_attribute(sort)
+        # remove author sorting options
+        if "author" in attributes:
+            attributes.pop("author-asc", None)
+            attributes.pop("author-desc", None)
+        return attributes
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["author"] = self.author
+        context["all_authors"] = False
+        context["page_title"] = f'Posts by {self.author.username}'
+        context["current_tag"] = self.request.GET.get("tag", "all")
+        context["current_sort"] = self.request.GET.get("sort", "date-desc")
+        context["sorting_options"] = self.add_sorting_options()
+        context["tags"] = self.add_tags(self.get_queryset())
+
+        return context
+
+
+class PostsByDateView(BasePostListView):
+    def get_date_components(self):
+        date_str = self.kwargs.get('date', '')
+        try:
+            # Handle different date formats (YYYY, YYYY-MM, YYYY-MM-DD)
+            parts = date_str.split('-')
+            year = int(parts[0])
+            month = int(parts[1]) if len(parts) > 1 else None
+            day = int(parts[2]) if len(parts) > 2 else None
+            return year, month, day
+        except (ValueError, IndexError):
+            return None, None, None
+
+    def add_sorting_options(self):
+        return super().add_sorting_options()
+
+    def get_queryset(self):
+        year, month, day = self.get_date_components()
+        if year is None:
+            return redirect('blog:posts_list')
+
+        articles = BlogPostPage.objects.live()
+
+        # Build date filter
+        date_filter = {'first_published_at__year': year}
+        if month:
+            date_filter['first_published_at__month'] = month
+        if day:
+            date_filter['first_published_at__day'] = day
+
+        articles = articles.filter(**date_filter)
+
+        # Apply sorting
+        sort = self.request.GET.get("sort", "date-desc")
+        order_by = self.get_sorting_attribute(sort)
+
+        return articles.order_by(order_by)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year, month, day = self.get_date_components()
+
+        # Format the page title based on date components
+        if day:
+            date_obj = datetime(year, month, day)
+            title = date_obj.strftime('%B %d, %Y')
+        elif month:
+            date_obj = datetime(year, month, 1)
+            title = date_obj.strftime('%B, %Y')
+        else:
+            title = str(year)
+
+        context["page_title"] = f'Posts from {title}'
+        context["all_authors"] = True
+        context["current_tag"] = self.request.GET.get("tag", "all")
+        context["search_query"] = self.request.GET.get("q", "")
+        context["current_sort"] = self.request.GET.get("sort", "date-desc")
+        context["tags"] = self.add_tags(self.get_queryset())
+        context["sorting_options"] = self.add_sorting_options()
+
+        return context
+
+
+class PostsByTagView(BasePostListView):
+    def get_queryset(self):
+        tag = self.kwargs["tag"]
+        sort = self.request.GET.get("sort", "date-desc")
+        search_query = self.request.GET.get("q", "")
+
+        order_by = self.get_sorting_attribute(sort)
+
+        articles = BlogPostPage.objects.live() if tag == 'all' else\
+            BlogPostPage.objects.live().filter(tags__name__iexact=tag)
+
+        if search_query:
+            articles = articles.filter(title__icontains=search_query) |\
+                articles.filter(content__icontains=search_query)
+
+        return articles.order_by(order_by)
+
+    def add_sorting_options(self):
+        return super().add_sorting_options()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         articles = self.get_queryset()
 
-        context["author"] = self.author
-        context["page_title"] = "Blog Posts"
-        context["topics"] = self.add_topics(articles)
-        context["current_topic"] = self.request.GET.get("topic", "all")
-        context["current_sort"] = self.request.GET.get("sort", "date_desc")
+        context["page_title"] = f'Tag: {self.kwargs["tag"].capitalize()}'
+        context["tags"] = self.add_tags(articles)
+        context["current_tag"] = self.kwargs["tag"]
+        context["current_sort"] = self.request.GET.get("sort", "date-desc")
         context["sorting_options"] = self.add_sorting_options()
-        context["submit_text"] = "Read Article"
-        context["q"] = self.request.GET.get("q", "")
-        context["all_authors"] = False
 
         return context

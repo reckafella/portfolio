@@ -1,0 +1,261 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load wagtailadmin_tags %}
+{% load wagtailcore_tags %}
+{% load wagtailuserbar %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <!-- Wagtail Admin CSS and JS for rich text editor -->
+    <style>
+        /* Custom styles for Wagtail rich text editor in frontend */
+        .Draftail-Editor {
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            min-height: 300px;
+            background: white;
+        }
+        
+        .Draftail-Editor:focus-within {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .Draftail-Toolbar {
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            border-radius: 0.375rem 0.375rem 0 0;
+            padding: 8px;
+        }
+        
+        .Draftail-Editor__wrapper {
+            background: white;
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+        
+        .Draftail-Editor__editor {
+            padding: 15px;
+            min-height: 250px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* Style the rich text content */
+        .Draftail-Editor__editor h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        .Draftail-Editor__editor h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.875rem 0;
+        }
+        
+        .Draftail-Editor__editor h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.75rem 0;
+        }
+        
+        .Draftail-Editor__editor p {
+            margin: 0.5rem 0;
+        }
+        
+        .Draftail-Editor__editor ul, 
+        .Draftail-Editor__editor ol {
+            margin: 0.5rem 0;
+            padding-left: 2rem;
+        }
+        
+        .Draftail-Editor__editor blockquote {
+            border-left: 4px solid #007bff;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #6c757d;
+        }
+        
+        /* Override some admin styles for better frontend appearance */
+        .halloeditor, .richtext {
+            background: white !important;
+            border-radius: 0.375rem !important;
+        }
+        
+        .rich-text-content {
+            display: none; /* Hide if fallback textarea exists */
+        }
+        
+        /* Button styling for rich text toolbar */
+        .Draftail-ToolbarButton {
+            border-radius: 3px;
+            margin: 2px;
+        }
+        
+        .Draftail-ToolbarButton:hover {
+            background: #e9ecef;
+        }
+        
+        .Draftail-ToolbarButton--active {
+            background: #007bff;
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="blog" class="blog">
+    <div class="container col-12">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-11 col-lg-10 col-xl-10">
+                <div class="card p-5">
+                    <div class="card-header">
+                        <div class="section-title">
+                            <h2 class="fw-bold text-center">{{ title }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-body py-2 px-5">
+                        <form id="blog-post-form" action="{{ action_url }}" method="post" enctype="multipart/form-data" class="contact-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <!-- form switch for publish -->
+                            {% if field.label == 'Publish Article' %}
+                            <div class="form-check form-switch">
+                                <input class="form-check
+                                    form-check-input" type="checkbox"
+                                    id="{{ field.id_for_label }}"
+                                    name="{{ field.html_name }}"
+                                    {% if field.value %}checked{% endif %}>
+                                <label class="form-check form-switch-label"
+                                    for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                            {% elif field.label == 'Article Content' %}
+                            <!-- Wagtail rich text editor -->
+                            <div class="form-group mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger"><i class="bi bi-braces-asterisk"></i></span>
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                        <button type="button"
+                                            class="btn btn-sm btn-link text-decoration-none p-0"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="{{ field.help_text }}">
+                                            <i class="bi bi-question-circle"></i>
+                                        </button>
+                                    {% endif %}
+                                </label>
+                                <div class="wagtail-richtext-container">
+                                    {{ field }}
+                                </div>
+                                <small class="form-text text-muted">
+                                    Use the toolbar above to format your text. You can create headings, bold/italic text, 
+                                    links, lists, and more. The editor shows exactly how your content will appear.
+                                </small>
+                            </div>
+                            {% else %}
+                            <div class="form-group mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label"> {{ field.label }} {% if field.field.required %}<span class="text-danger"><i class="bi bi-braces-asterisk"></i></span>{% endif %} {% if field.help_text %}
+                                    <button type="button"
+                                        class="btn btn-sm btn-link text-decoration-none p-0"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="{{ field.help_text }}">
+                                        <i class="bi bi-question-circle"></i>
+                                    </button>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.id_for_label != 'id_cover_image' %}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.id_for_label }}-count">0</span>
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            <div class="text-center mb-2 mt-3">
+                                <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="w-50">{{ submit_text }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Wagtail rich text editor
+            if (window.wagtail && window.wagtail.init) {
+                window.wagtail.init();
+            }
+            
+            // Alternative method if the above doesn't work
+            if (window.draftail) {
+                // Find all Draftail rich text areas and initialize them
+                document.querySelectorAll('[data-draftail-editor]').forEach(function(element) {
+                    if (!element.dataset.initialized) {
+                        element.dataset.initialized = 'true';
+                        if (window.draftail.initEditor) {
+                            window.draftail.initEditor(element);
+                        }
+                    }
+                });
+            }
+            
+            // Ensure character counters work for other fields
+            const textInputs = document.querySelectorAll('input[type="text"], textarea:not(.wagtail-richtext-editor)');
+            textInputs.forEach(function(input) {
+                const counter = document.getElementById(input.id + '-count');
+                if (counter) {
+                    function updateCounter() {
+                        const current = input.value.length;
+                        const max = input.getAttribute('maxlength');
+                        if (max) {
+                            counter.textContent = `${current}/${max} characters`;
+                            if (current > max * 0.9) {
+                                counter.className = 'text-warning';
+                            } else if (current === max) {
+                                counter.className = 'text-danger';
+                            } else {
+                                counter.className = 'text-muted';
+                            }
+                        } else {
+                            counter.textContent = `${current} characters`;
+                        }
+                    }
+                    
+                    input.addEventListener('input', updateCounter);
+                    updateCounter(); // Initial count
+                }
+            });
+        });
+    </script>
+{% endblock %}

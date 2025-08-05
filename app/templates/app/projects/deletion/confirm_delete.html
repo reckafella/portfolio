@@ -7,16 +7,21 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card bg-body-secondary">
-                    <div class="card-header">
-                        <h3 class="text-center">{{ form_title }}</h3>
+                <div class="card">
+                    <div class="card-header section-title">
+                        <h2 class="text-center">{{ form_title }}</h2>
                     </div>
                     <div class="card-body">
-                        <p class="text-center">Are you sure you want to delete "{{ object.title }}"? This action cannot be undone.</p>
-                        <form id="delete-form" method="post" class="text-center justify-content-between">
+                        <p class="text-center">Are you sure you want to delete this project?</p>
+                        <p class="text-center fw-bold">Project Title: <span class="fs-italic text-primary">{{ object.title }}</span></p>
+                        <p class="text-center">All associated data will be permanently deleted.</p>
+                        <p class="text-center fw-bold text-danger">This action cannot be undone.</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <form id="delete-project-form" method="post" class="d-flex align-items-center justify-content-around">
                             {% csrf_token %}
-                            <a href="{% url 'app:project_detail' object.id %}" class="btn btn-outline-light">{{ cancel_text }}</a>
-                            <button type="submit" class="btn btn-danger">{{ submit_text }}</button>
+                            <a href="{% url 'app:projects' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-outline-danger">{{ submit_text }}</button>
                         </form>
                     </div>
                 </div>
@@ -24,4 +29,13 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", ()=> {
+        const form = document.getElementById("{{ form_id|default:'other-form' }}");
+        new FormValidator(form);
+    });
+</script>
 {% endblock %}

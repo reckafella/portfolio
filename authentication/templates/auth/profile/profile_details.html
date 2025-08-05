@@ -1,0 +1,104 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section profile">
+    <div class="row justify-content-around align-items-stretch">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                    {% if profile.optimized_image_url %}
+                    <img src="{{ profile.optimized_image_url }}" alt="Profile" class="rounded-circle" loading="lazy">
+                    {% endif %}
+                    <h2>{{ user.get_full_name }}</h2>
+                    <h3>{{ profile.title|default:"Software Developer" }}</h3>
+                    <div class="social-links mt-2">
+                        {% with social=profile.social_media.first %}
+                            {% if social.twitter_x %}
+                                <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                            {% endif %}
+                            {% if social.facebook %}
+                                <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                            {% endif %}
+                            {% if social.instagram %}
+                                <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                            {% endif %}
+                            {% if social.linkedin %}
+                                <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                            {% endif %}
+                            {% if social.github %}
+                                <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                            {% endif %}
+                            {% if social.youtube %}
+                                <a href="{{ social.youtube }}" class="youtube"><i class="bi bi-youtube"></i></a>
+                            {% endif %}
+                            {% if social.website %}
+                                <a href="{{ social.website }}" class="website"><i class="bi bi-globe"></i></a>
+                            {% endif %}
+                            {% if social.whatsapp %}
+                                <a href="https://wa.me/{{ social.whatsapp }}" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-7">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-2">
+                        {% include 'auth/profile/partials/overview.html' %}
+                        {% include 'auth/profile/partials/edit-profile.html' %}
+                        {% include 'auth/profile/partials/settings.html' %}
+                        {% include 'auth/profile/partials/change-password.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{% static 'assets/js/toast.js' %}" type="module"></script>
+<script src="{% static 'assets/js/cropImages.js' %}" type="module"></script>
+<script type="module">
+  // Initialize toast manager globally
+  import { ToastManager } from "{% static 'assets/js/toast.js' %}";
+  window.toastManager = new ToastManager();
+</script>
+{% endblock %}

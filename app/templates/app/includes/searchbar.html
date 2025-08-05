@@ -1,0 +1,94 @@
+
+<!-- Search Modal -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="search-widget mx-auto" style="max-width: 600px;">
+          <form id="search-bar-form" class="d-flex align-items-center form-control form-control-sm mb-4" method="GET"
+            action="{% url 'app:search' %}">
+            <input type="search" name="q" value="{{ q }}" placeholder="Type to Search..." title="Enter search keyword"
+              required />
+            <button type="submit" title="Search">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+
+          <!-- tips for users on desktop -->
+          <div class="search-tips d-none d-lg-block text-start">
+            <h2>Search Tips for Desktop Users</h2>
+            <ul class="list-unstyled">
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press <kbd>Enter</kbd> or <i class="bi bi-search"></i> to search</span>
+              </li>
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press <kbd>Esc</kbd> to close</span>
+              </li>
+              <li>
+                <i class="bi bi-check"></i>
+                <span>Press outside search bar to close</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% comment %}
+<div class="modal fade p-5" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content pt-4 px-2 pb-5">
+        <div class="modal-header py-2">
+          <h5 class="modal-title" id="searchModalLabel">Search Projects and Blog</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="search-form" onsubmit="return performSearch(event)">
+            {% csrf_token %}
+            <div class="row g-3 align-items-center align-items-stretch">
+              <div class="col-12 col-md-4">
+                <input type="search"
+                       id="search-input"
+                       name="q"
+                       class="form-control form-control-sm rounded-pill"
+                       placeholder="Search..."
+                       aria-label="Search"
+                       required>
+              </div>
+              <div class="col-4 col-md-3">
+                <select id="search-bar-filterOption" name="category" class="form-select form-select-sm">
+                  <option value="all" selected>All</option>
+                  <option value="posts">Posts</option>
+                  <option value="projects">Projects</option>
+                </select>
+              </div>
+              <div class="col-4 col-md-3">
+                <select id="search-bar-sortSelect" name="sort" class="form-select form-select-sm">
+                  <option value="relevance" selected>Relevance</option>
+                  <option value="date_desc">Newest First</option>
+                  <option value="date_asc">Oldest First</option>
+                  <option value="title_asc">Title A-Z</option>
+                  <option value="title_desc">Title Z-A</option>
+                </select>
+              </div>
+              <div class="col-4 col-md-2">
+                <button type="submit" class="btn btn-sm d-flex justify-content-between align-items-center">
+                    <span class="d-sm-none d-md-inline d-lg-inline">Search</span>
+                    <i class="bi bi-search d-md-none d-lg-none"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcomment %}

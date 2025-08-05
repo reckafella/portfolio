@@ -1,0 +1,164 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>Blog Post</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="blog" class="blog">
+    <div class="container" data-aos="fade-up">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <article class="entry entry-single p-2">
+
+                    <div class="entry-img my-1">
+                        {% if article.first_image.optimized_image_url %}
+                        <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title }}"
+                            class="img-fluid mb-1" loading="lazy">
+                        {% else %}
+                        <div class="bg-light-dark d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <div class="d-flex flex-column justify-content-between align-items-center">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                <span class="text-muted text-center">No image available</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <h2 class="entry-title">{{ article.title }}</h2>
+                    
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-person"></i>
+                                <a href="{% url 'blog:articles_by_author' article.author.username %}">{{article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                            </li>
+                            {% if article.first_published_at %}
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-clock"></i>
+                                {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
+                                <span class="date-links">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}"
+                                        title="View all posts from this day">
+                                        {{ article.first_published_at|date:"d" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}"
+                                        title="View all posts from this month">
+                                        {{ article.first_published_at|date:"m" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year %}"
+                                        title="View all posts from this year">
+                                        {{ article.first_published_at|date:"Y" }}
+                                    </a>
+                                </span>
+                                {% endwith %}
+                            </li>
+                            {% endif %}
+                            <!-- View count display -->
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-eye"></i>
+                                <span class="me-1">{{ article.view_count }} view{{ article.view_count|pluralize }}</span>
+                            </li>
+                            {% if user.is_authenticated and user == article.author or user.is_staff %}
+                            <li class="d-flex align-items-center position-relative">
+                                <div class="action-buttons">
+                                    {% include 'app/includes/action-buttons.html' %}
+                                </div>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex d-none d-md-inline align-items-center">
+                                <a type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#shareModal"
+                                    data-share-url="{% url 'blog:article_details' article.slug %}"
+                                    data-share-title="Article"
+                                    data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                    class="btn btn-sm special-btn share-link">
+                                    <i class="bi bi-share-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="entry-content">
+                        {{ article.content | richtext | safe }}
+                    </div>
+
+                    <div class="entry-footer d-flex">
+                        <i class="bi bi-tags"></i>
+                        <ul class="tags mx-2">
+                            {% for tag in post_tags %}
+                            <li>
+                                <a href="{% url 'blog:articles_by_tag' tag %}">
+                                    {{ tag }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="">
+                            <li class="d-flex align-items-center">
+                                <a type="button"
+                                    data-bs-toggle="modal" data-bs-target="#shareModal"
+                                    data-share-url="{% url 'blog:article_details' article.slug %}"
+                                    data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                    data-share-description="{{ article.content|truncatewords:20 }}"
+                                    data-share-title="Article"
+                                    class="share-link">
+                                        <i class="bi bi-share-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </article>
+
+                {% if request.user.is_staff or request.user == article.author %}
+                <div class="edit-delete">
+                    {% include 'blog/partials/edit_delete_posts_modal.html' %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 sidebar">
+                {% include 'blog/partials/sidebar.html' with other_posts=other_posts all_tags=all_tags %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new FormValidator("{{ update_form_id }}", {
+            fields: {
+                title: {
+                    required: true,
+                    errorMessage: "Please enter a title for your post."
+                },
+                content: {
+                    required: true,
+                    errorMessage: "Content cannot be empty."
+                }
+            }
+        });
+        new FormValidator("{{ delete_form_id }}", {
+            fields: {
+                confirm: {
+                    required: true,
+                    errorMessage: "Please confirm deletion."
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

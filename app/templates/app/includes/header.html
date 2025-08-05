@@ -1,0 +1,97 @@
+{% load static %}
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid d-flex justify-content-around align-items-center">
+        <a href="{% url 'app:home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
+            <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-logo" alt="Ethan" class="logo-img image-fluid" loading="lazy">
+        </a>
+        <div class="search-nav-wrapper d-flex justify-content-between align-items-center gap-1">
+            <div class="d-block search-icon">
+                <a type="button" role="button" class="search-bar-toggle">
+                    <i class="bi bi-search"></i>
+                </a>
+            </div>
+            <button type="button" class="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
+                <i class="bi bi-sun-fill theme-icon"></i>
+            </button>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
+                    {% comment %}
+                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{# url 'app:resume' #}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                        </ul>
+                    </li>
+                    {% endcomment %}
+                    <li><a href="{% url 'app:about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About Me</span></a></li>
+                    <li><a href="{% url 'app:services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><span>Services</span></a></li>
+                    <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
+                    {% if user.is_staff %}
+                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'app:projects' %}"><span>Projects</span></a></li>
+                            <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.app_name == 'blog' %}active{% endif %}"><span>Blog</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'blog:list_articles' %}"><span>Blog</span></a></li>
+                            <li><a href="{% url 'blog:create_article' %}"><span>Create Blog Post</span></a></li>
+                            <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li><a href="{% url 'app:projects' %}" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span></a></li>
+                    <li><a href="{% url 'blog:list_articles' %}" class="{% if request.resolver_match.url_name == 'list_articles' %}active{% endif %}"><span>Blog</span></a></li>
+                    {% endif %}
+                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            {% if user.is_staff %}
+                            <li><a href="{% url 'authentication:user_profile' request.user %}"><span>Profile</span><i class="bi bi-person-fill"></i></a></li>
+                            <li><a href="{% url 'app:messages' %}"><span>Messages</span><i class="bi bi-chat-square-text-fill"></i></a></li>
+                            <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'authentication:logout' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <span>Logout</span>
+                                    <i class="bi bi-box-arrow-left"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'authentication:login' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    <span>Login</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'authentication:signup' %}?next={{ request.GET.next|default:request.path|urlencode }}">
+                                    <i class="bi bi-person"></i>
+                                    <span>Register</span>
+                                </a>
+                            </li>{% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </div>
+    </div>
+</header>
+<div class="nav-overlay"></div>
+
+<div id="full-page-search" class="">
+    <button type="button" class="close"><i class="bi bi-x-lg"></i></button>
+    <div class="search-container">
+        <div class="search-header">
+            <h2>Search</h2>
+        </div>
+        <form action="{% url 'app:search' %}" class="d-flex flex-column align-items-center gap-3 gap-lg-5 w-100">
+            <input type="search" name="q" id="search-input" class="typed-search"
+                value="{{ q }}" data-typed-search-items="projects,blog posts"
+                placeholder="" required/>
+            <button type="submit" class="btn btn-success fw-bold">Search</button>
+        </form>
+    </div>
+</div>

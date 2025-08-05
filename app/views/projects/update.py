@@ -1,73 +1,81 @@
-from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.contrib import messages
+# from django.conf import settings
+from django.http import JsonResponse
 from django.views.generic import UpdateView
 from titlecase import titlecase
+from django.urls import reverse
 
-from app.forms import CustomErrorList, ProjectsForm
-from app.models import Projects
-from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
-from app.views.helpers.helpers import handle_no_permissions, return_response
-
-uploader = CloudinaryImageHandler()
+# from app.models import Image, Video
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
+from app.views.projects.base import BaseProjectView
 
 
-class UpdateProjectView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Projects
-    form_class = ProjectsForm
-    error_class = CustomErrorList
-    template_name = "app/projects/create_or_update.html"
-    context_object_name = "view"
-
+class UpdateProjectView(BaseProjectView, UpdateView):
     def form_valid(self, form):
-        project = form.instance
+        project = form.save()
         project.title = titlecase(project.title)
         project.description = project.description.strip()
-        image = form.files.get("image")
+        project.project_url = project.project_url.strip()
+        project.project_type = project.project_type
+        project.live = project.live
+        project.client = project.client
+        project.save()
+
+        images = self.request.FILES.getlist('images', [])
+        youtube_urls = form.cleaned_data.get("youtube_urls", [])
 
         # Handle authorization
         if not self.test_func():
             handle_no_permissions(
-                self.request, "You do not have permission to update this project."
+                self.request, "You do not have permission to update a project."
             )
+
+        success_messages = []
+        error_messages = []
 
         # Handle image upload
-        try:
-            res: dict = handle_image_upload(
-                project, uploader, image, settings.PROJECTS_FOLDER
-            )
-            if res:
-                project.cloudinary_image_id = res["cloudinary_image_id"]
-                project.cloudinary_image_url = res["cloudinary_image_url"]
-                project.optimized_image_url = res["optimized_image_url"]
-        except Exception as e:
-            response = {"success": False, "errors": f"An error occurred: {str(e)}"}
-            form.add_error(None, f"An error occurred: {str(e)}")
-            return return_response(self.request, response, 400)
+        if images:
+            self.handle_images(images, project,
+                               success_messages, error_messages)
 
-        return super().form_valid(form)
+        if youtube_urls:
+            # First, delete existing videos if you want to replace them
+            # Video.objects.filter(project=project).delete()
+            # Create new video objects
+            self.handle_youtube_urls(youtube_urls, project,
+                                     success_messages, error_messages)
 
-    def test_func(self):
-        """
-        Check if the user is a staff or superuser.
-        """
-        return self.request.user.is_staff or self.request.user.is_superuser
+        if not images and not youtube_urls:
+            success_messages.append("Project Updated Successfully!")
 
-    def get_success_url(self):
-        """
-        Redirect to the project detail page after successfully updating the project.
-        """
-        return reverse_lazy("app:project_detail", kwargs={"pk": self.object.pk})
+        response = super().form_valid(form)
+        response_data = {
+            "success": True,
+            "messages": success_messages,
+            "errors": error_messages,
+            "redirect_url": self.get_success_url(),
+        }
+
+        if is_ajax(self.request):
+            return JsonResponse(response_data)
+
+        if error_messages:
+            for error in error_messages:
+                messages.error(self.request, error)
+        for message in success_messages:
+            messages.success(self.request, message)
+
+        return response
 
     def get_context_data(self, **kwargs):
-        """
-        Add additional context data for the template.
-        """
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "title": "Update Project",
-                "submit_text": "Update Project",
-            }
-        )
+        project = self.get_object()
+        context.update({
+            "title": "Update Project",
+            "submit_text": "Update Project",
+            "data_loading_text": "Updating Project",
+            "form_id": "project-update-form",
+            "project_url": reverse("app:project_details",
+                                   kwargs={"slug": project.slug}),
+        })
         return context

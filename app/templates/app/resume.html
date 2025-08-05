@@ -3,25 +3,94 @@
 {% block title %} {{ page_title }} {% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog mt-2">
-    <div class="container col-lg-7 col-md-9 col-sm-10">
-        <div class="card bg-white mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
-            <div class="card-header text-center">
-                <div class="info-wrap mb-2" data-aos="fade-up">
-                    <h2 class="fw-bold">{{ page_title }}</h2>
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Resume Section -->
+<section id="resume" class="resume section">
+    <div class="container" data-aos="fade-up">
+        <div class="section-title">
+            <h2>Resume</h2>
+            <p>My professional journey and experiences</p>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="resume-title">Summary</h3>
+                    <div class="resume-item pb-0">
+                        <h4>Ethan Wanyoike</h4>
+                        <p><em>
+                                A software engineer with a passion for building scalable applications and improving user
+                                experiences. Experienced in both frontend and backend development, and always eager to
+                                learn new technologies and improve my skills.</em></p>
+                        <ul>
+                            <li>Nairobi, Kenya</li>
+                            <li>+254719272150</li>
+                            <li>ethanmuthoni@gmail.com</li>
+                        </ul>
+                    </div>
+                    <h3 class="resume-title">Education</h3>
+                    <div class="resume-item">
+                        <h4>Full-stack Software Engineering</h4>
+                        <h5>2023 - 2024</h5>
+                        <p><em>ALX Africa, Kenya</em></p>
+                        <p>Completed a comprehensive software engineering program covering full-stack development,
+                            DevOps practices, and cloud computing. Projects included web applications, RESTful APIs, and
+                            deployment pipelines. Participated in peer code reviews and collaborative projects to
+                            enhance teamwork and communication skills.</p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Bachelor of Science in Economics & Statistics</h4>
+                        <h5>2016 - 2020</h5>
+                        <p><em>Maasai Mara University, Kenya</em></p>
+                        <p>Graduated with a Second Class Honours degree specializing in Data Science and Analytics.
+                            Completed a thesis on "Predictive Analytics in the Banking Sector".</p>
+                    </div>
+                    <div class="resume-item">
+                        <h4>High School Diploma</h4>
+                        <h5>2012 - 2015</h5>
+                        <p><em>Gituru High School, Kenya</em></p>
+                        <p>Graduated with a B+ grade. During my high school years, I participated in various
+                            extra-curricular activities including marathons, math clubs, coding clubs and science fairs.
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                {% if found %}
-                <embed  src="{% url 'app:resume_pdf' %}" width="100%" height="800px" />
-                {% else %}
-                <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-heading">No resume found!</h4>
-                    <p>Sorry, the resume is not available at the moment. Please check back later.</p>
-                </div> 
-                {% endif %}
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="resume-title">Experience</h3>
+                    <div class="resume-item">
+                        <h4>Software Engineer Intern</h4>
+                        <h5>Jan. 2024 - Dec. 2024</h5>
+                        <p><em>Alphaflare Ltd</em></p>
+                        <ul>
+                            <li>Developed and maintained web applications using Django and JavaScript.</li>
+                            <li>Collaborated with cross-functional teams to design and implement new features.</li>
+                            <li>Participated in code reviews and provided constructive feedback to peers.</li>
+                            <li>Assisted in the deployment of applications to cloud platforms (DigitalOcean).</li>
+                        </ul>
+                    </div>
+                    <div class="resume-item">
+                        <h4>Freelance Web Developer</h4>
+                        <h5>2024 - 2025</h5>
+                        <p><em>Self-employed, Nairobi, Kenya</em></p>
+                        <ul>
+                            <li>Designed and developed custom websites for small businesses.</li>
+                            <li>Implemented SEO best practices to improve website visibility.</li>
+                            <li>Provided ongoing maintenance and support for clients' websites.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 {% endblock %}
+

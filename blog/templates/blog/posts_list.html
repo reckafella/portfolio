@@ -1,37 +1,132 @@
 {% extends "app/base.html" %}
+{% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
+
 {% load static %}
 
 {% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username }} {% endif %}{% endblock %}
 
 {% block content %}
-<section class="py-5 mt-5">
-    <div class="container d-flex justify-content-center align-items-center mt-4 card col-11">
-        <div class="row justify-content-center d-flex justify-content-center align-items-center">
-            <div class="w-100 mb-2">
-                <div class="container row d-flex align-items-center justify-content-center">
-                    <div class="row d-flex justify-content-center align-items-center">
-                        <div class="card-header bg-transparent">
-                            <div class="section-title py-2">
-                                <h2 class="text-center">
-                                    {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="row card-body d-flex justify-content-center align-items-center">
-                            {% comment %} include the template for filters and sorts {% endcomment %}
-                            {% include 'blog/partials/filters_and_sorts.html' %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                {% if not all_authors %}
+                <li><a href="{% url 'blog:list_articles' %}">Blog Posts</a></li>
+                <li>{{ author.get_full_name | default:author.username | capfirst }}</li>
+                {% else %}
+                <li>{{ page_title }}</li>
+                {% endif %}
+            </ol>
+        </nav>
+    </div>
+</div>
 
-                            {% comment %} include the template for articles list
-                            this template contains the loop for articles
-                            {% endcomment %}
-                            {% include 'blog/partials/articles_list.html' %}
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            {% comment %} include the template for pagination {% endcomment %}
-                            {% include 'app/pagination/articles.html' %}
-                        </div>
+<section id="blog" class="blog">
+    <div class="container">
+        <div class="row">
+            <div class="section-title py-2">
+                <h2 class="text-center">
+                    {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username | capfirst }} {% endif %}
+                </h2>
+            </div>
+            <div class="row d-lg-flex justify-content-between align-items-stretch">
+                <div class="entries col-12 col-lg-8">
+                    <div class="d-flex justify-content-around gap-1 flex-wrap align-items-center align-items-stretch">
+                        {% for article in articles %}
+                        <article class="entry col-12">
+                            {% if article.first_image.optimized_image_url %}
+                            <div class="entry-img my-2">
+                                <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid" loading="lazy">
+                            </div>
+                            {% endif %}
+                            <div class="entry-meta">
+                                <ul>
+                                    <li
+                                    class="d-flex align-items-center">
+                                        <i class="bi bi-person"></i>
+                                        <a href="{% url 'blog:articles_by_author' article.author.username %}">{{ article.author.get_full_name | default:article.author.username|capfirst }}</a>
+                                    </li>
+                                    {% if article.first_published_at %}
+                                    <li class="d-flex align-items-center">
+                                        <i class="bi bi-clock"></i>
+                                        {% with year=article.first_published_at|date:"Y" month=article.first_published_at|date:"m" day=article.first_published_at|date:"d" %}
+                                        <span class="date-links">
+                                            <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}" title="View all posts from this day">
+                                                {{ article.first_published_at|date:"d" }}
+                                            </a>
+                                            <span class="separator">-</span>
+                                            <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}" title="View all posts from this month">
+                                                {{ article.first_published_at|date:"m" }}
+                                            </a>
+                                            <span class="separator">-</span>
+                                            <a href="{% url 'blog:articles_by_date' year %}" title="View all posts from this year">
+                                                {{ article.first_published_at|date:"Y" }}
+                                            </a>
+                                        </span>
+                                        {% endwith %}
+                                    </li>
+                                    {% endif %}
+                                    {% if user.is_authenticated and user == article.author or user.is_staff %}
+                                    <li class="d-flex align-items-center position-relative">
+                                        <div class="action-buttons">
+                                            {% include 'app/includes/action-buttons.html' %}
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    <!-- share btn -->
+                                    <li class="d-flex align-items-center">
+                                        <a type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#shareModal"
+                                            data-share-url="{% url 'blog:article_details' article.slug %}"
+                                            data-share-title="Article"
+                                            data-share-image="{{ article.first_image.optimized_image_url|default:default_og_image }}"
+                                            class="btn btn-sm special-btn share-link">
+                                            <i class="bi bi-share-fill fs-6"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <h2 class="entry-title">
+                                <a href="{% url 'blog:article_details' article.slug %}" class="text-decoration-none">{{ article.title }}</a>
+                            </h2>
+                            <div class="entry-content">
+                                {{ article.content | richtext | safe | truncatewords:15 }}
+                            </div>
+                            <div class="entry-footer d-flex justify-content-center align-items-stretch">
+                                <a type="button"
+                                    href="{% url 'blog:article_details' article.slug %}"
+                                    class="read-article btn btn-sm btn-success">
+                                    Read Article
+                                </a>
+                            </div>
+                        </article>
+
+                        {% empty %}
+                        <article class="entry alert alert-danger text-center" role="alert">
+                            <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2.5rem;">
+                                <h3 class="alert-heading fw-bold">No articles found!</h3>
+                                <p class="lead">No articles were found matching your search criteria.</p>
+                                {% if user.is_staff %}
+                                <a href="{% url 'blog:create_article' %}" class="btn btn-outline-primary">Create Article</a>
+                                {% endif %}
+                            </div>
+                        </article>
+                        {% endfor %}
                     </div>
+                    {% if articles %}
+                    <div class="d-block d-md-none d-lg-none mb-3">
+                    {% include 'app/pagination/articles.html' %}
+                    </div>
+                    {% endif %}
                 </div>
+                <div class="sidebar col-12 col-lg-4">
+                {% include 'blog/partials/sidebar-list.html' with other_posts=other_posts current_sort=current_sort current_tag=current_tag tags=tags sorting_options=sorting_options q=q %}
+                </div>
+            </div>
+            <div class="d-none d-md-none d-lg-block">
+                {% include 'app/pagination/articles.html' %}
             </div>
         </div>
     </div>

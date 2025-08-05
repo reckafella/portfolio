@@ -1,0 +1,120 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} {{ page_title }} {% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li class="active">{{ page_title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="contact" class="section contact">
+    <div class="container">
+        <div class="info-wrap card col-12 col-md-11 col-lg-10 mx-auto">
+            <div class="row d-flex gy-3">
+                <div class="col-2 col-md-6 col-lg-3 col-xl-3">
+                    <a href="https://x.com/frmundu" target="_blank" class="info-item d-flex phone">
+                        <i class="bi bi-telephone"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Twitter</h3>
+                            <p>Ethan Wanyoike</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-3 col-xl-3">
+                    <a href="https://wa.me/254719272150" target="_blank" class="info-item d-flex phone">
+                        <i class="bi bi-whatsapp"></i>
+                        <div class="d-none d-md-block">
+                            <h3>WhatsApp</h3>
+                            <p>+254719272150</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-3 col-xl-3">
+                    <a href="https://www.linkedin.com/in/ethanmuthoni" target="_blank"
+                        class="info-item d-flex linkedin">
+                        <i class="bi bi-linkedin"></i>
+                        <div class="d-none d-md-block">
+                            <h3>LinkedIn</h3>
+                            <p>Ethan Wanyoike</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-2 col-md-6 col-lg-4 col-xl-3">
+                    <a href="mailto:ethanmuthoni@gmail.com" target="_blank" class="info-item d-flex email">
+                        <i class="bi bi-envelope-paper-fill py-1 px-2"></i>
+                        <div class="d-none d-md-block">
+                            <h3>Email Me</h3>
+                            <p>ethanmuthoni@gmail.com</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Column -->
+        <div class="card col-12 col-md-11 col-lg-10 mx-auto mt-4 p-4">
+            <div class="row">
+                <div class="card-body">
+                    <form id="{{ form_id|default:'other-form' }}" method="post" action="{{ action_url|default:'' }}" class="contact-form">
+                        {% csrf_token %}
+                        <div class="row gy-4">
+                            {% for field in form %}
+                            {% if field.name == 'email' or field.name == 'name' %}
+                            <div class="col-12 col-md-6">
+                                <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                                {{ field }}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.auto_id }}-count"></span>
+                                    </small>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-12">
+                                <label for="{{ field.label }}" class="pb-2">{{ field.label }} *</label>
+                                {{ field }}
+                                {% if field.name == 'subject' %}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.auto_id }}-count"></span>
+                                    </small>
+                                </div>
+                                {% elif field.name == 'message' %}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.auto_id }}-word-count"></span>
+                                        [<span id="{{ field.auto_id }}-count"></span>]
+                                    </small>
+                                </div>
+                                {% elif field.name == 'captcha' %}
+                                <div class="char-counter mt-1">
+                                    <small class="text-muted">
+                                        <span id="{{ field.auto_id }}-count"></span>
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}"
+                                    class="btn text-center">{{ submit_text }}</button>
+                            </div>
+                        </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script type="module" src="{# static 'assets/js/contact.js' #}"></script>
+{% endblock %}

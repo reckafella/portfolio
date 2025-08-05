@@ -1,32 +1,4 @@
-{% comment %}
-<div class="mt-5">
-    <h3 class="text-center mb-4">Explore More Projects</h3>
 
-    <div class="row">
-        {% for related_project in related_projects %}
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card bg-white h-100 project-card" data-aos="fade-up" data-aos-delay="200">
-                {% if related_project.optimized_image_url %}
-                <img src="{{ related_project.optimized_image_url }}" class="card-img-top" alt="{{ related_project.title }}" style="height: 150px; object-fit: cover;">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="{% url 'app:project_detail' related_project.id %}" class="text-success text-decoration-none">
-                            {{ related_project.title }}
-                        </a>
-                    </h5>
-                    <p class="card-text text-muted">
-                        <small>{{ related_project.created_at | date:"N j, Y" }}</small>
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endcomment %}
-
-<!-- Carousal for the related projects -->
 {% if related_projects %}
 <div class="mt-5">
     <h3 class="text-center mb-4">Explore More Projects</h3>
@@ -45,24 +17,24 @@
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="d-flex justify-content-center">
                     <div class="col-lg-6 col-md-8">
-                        <div class="card text-black h-100" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-delay="150">
+                        <div class="card  h-100" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-delay="150">
                             <div class="card-header text-center pt-2">
                                 <div class="d-flex justify-content-center">
                                     <h5 class="card-title fw-bold">
-                                        <a href="{% url 'app:project_detail' project.id %}" class="text-decoration-none text-success">{{ project.title }}</a>
+                                        <a href="{% url 'app:project_details' project.slug %}" class="text-decoration-none text-success">{{ project.title }}</a>
                                     </h5>
                                 </div>
                             </div>
                             {% if project.optimized_image_url %}
                             <div class="card-body">
-                                <img src="{{ project.optimized_image_url }}" class="card-img-top" alt="{{ project.title | default:'Project Image' }}" style="object-fit: cover; height: 150px;">
+                                <img src="{{ project.optimized_image_url }}" class="card-img-top" alt="{{ project.title | default:'Project Image' }}" style="object-fit: cover; height: 150px;" loading="lazy">
                                 <div class="card-body d-flex flex-column">
                                     <p class="card-text">{{ project.description | truncatechars:50 | safe }}</p>
                                 </div>
                             </div>
                             {% endif %}
                             <div class="card-footer text-center">
-                                <a href="{% url 'app:project_detail' project.id %}" class="btn btn-outline-primary">
+                                <a href="{% url 'app:project_details' project.slug %}" class="btn btn-outline-primary">
                                     <span>Project Details</span>
                                 </a>
                             </div>

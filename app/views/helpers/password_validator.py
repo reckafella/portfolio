@@ -33,5 +33,6 @@ class ComplexPasswordValidator:
 
     def get_help_text(self):
         return _(
-            "Your password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+            "Your password must contain at least one uppercase letter,\
+                one lowercase letter, one digit, and one special character."
         )

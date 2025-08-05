@@ -1,0 +1,210 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li><a href="{% url 'app:projects' %}">Projects</a></li>
+                <li>{{ project.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="project" class="project project-details">
+    <div class="container">
+        <div class="section-title text-center">
+            <h2 class="mb-3">{{ project.title }}</h2>
+        </div>
+        <div class="row justify-content-center align-items-center gy-4 project-details-row pb-5 mb-5">
+            <div class="col-12 col-lg-8">
+                <div class="project-details-slider swiper">
+                    <div class="swiper-wrapper align-items-center">
+                        {% if project.images.all or project.videos.all %}
+                            {% for image in project.images.all %}
+                            <div class="swiper-slide">
+                                <div class="project-item filter-{{ project.category|slugify }}">
+                                    {% if image.cloudinary_image_url %}
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
+                                    {% elif image.cloudinary_image_url %}
+                                    <img src="{{ image.cloudinary_image_url }}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
+                                    {% else %}
+                                    <img src="{% static 'assets/images/projects/default.png' %}" alt="{{ project.title }}" class="img-fluid" loading="lazy">
+                                    {% endif %}
+                                    <div class="project-info">
+                                        <h4>{{ project.title }}</h4>
+                                        <p>Cloudinary Image</p>
+                                        <a href="{{ image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }}">
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                        <a href="{{ image.cloudinary_image_url }}" target="_blank" class="details-link" title="{{ project.title }}">
+                                            <i class="bi bi-link"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% for video in project.videos.all %}
+                            <div class="swiper-slide">
+                                <div class="project-item filter-{{ project.category|slugify }}">
+                                    <div class="align-items-stretch position-relative video-box" 
+                                        style="background-image: url('{{ video.thumbnail_url }}');">
+                                        <a href="{{ video.youtube_url }}" class="glightbox play-btn mb-4"></a>
+                                    </div>
+                                    <div class="project-info">
+                                        <h4>{{ project.title }}</h4>
+                                        <p>YouTube Video</p>
+                                        <div class="justify-content-between align-items-center">
+                                            <a href="{{ video.youtube_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="{{ project.title }} - YouTube Video">
+                                                <i class="bi bi-plus"></i>
+                                            </a>
+                                            <a href="{{ video.youtube_url }}" target="_blank" class="details-link" title="{{ project.title }} - YouTube Video">
+                                                <i class="bi bi-link"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="swiper-slide">
+                                <p>No Images/YouTube Videos uploaded for this project</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="row g-4">
+                    <!-- Project Information Card -->
+                    <div class="col-12 col-md-6 col-lg-12">
+                        <div class="project-info p-3 rounded border">
+                            <h3 class="mb-3 border-bottom pb-2">Project Information</h3>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-tag-fill me-2 text-primary"></i>
+                                    <strong>Category:</strong> <span class="ms-2">{{project.category|default:"Web Development" }}</span>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-building me-2 text-primary"></i>
+                                    <strong>Client:</strong> <span class="ms-2">{{ project.client|default:"Personal" }}</span>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-calendar-event me-2 text-primary"></i>
+                                    <strong>Date:</strong> <span class="ms-2">{{ project.created_at | date:"N j, Y" }}</span>
+                                </li>
+                                {% if project.project_url %}
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-link-45deg me-2 text-primary"></i>
+                                    <strong>URL:</strong>
+                                    <a href="{{ project.project_url }}" target="_blank" class="ms-2">
+                                        Visit Project <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {% if user.is_staff %}
+                                    {% include 'app/includes/action-buttons.html' %}
+                                    {% endif %}
+                                    <button type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#shareModal"
+                                        data-share-url="{% url 'app:project_details' project.slug %}"
+                                        data-share-title="Project"
+                                        data-share-image="{{ project.first_image.cloudinary_image_url|default:default_og_image }}"
+                                        data-share-description="{{ project.description|truncatewords:20 }}"
+                                        class="btn btn-sm btn-outline-primary share-link">
+                                        Share <i class="bi bi-share-fill ms-1"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Description Card -->
+                    <div class="col-12 col-md-6 col-lg-12">
+                        <div class="project-description p-3 rounded border">
+                            <h3 class="mb-3 border-bottom pb-2">Project Overview</h3>
+                            <p>
+                                {{ project.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Projects Carousel -->
+        {% if related_projects %}
+        <div class="mt-5">
+            <h2 class="text-center mb-3">Explore More Projects</h2>
+
+            <div id="relatedProjectsCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                <!-- Indicators -->
+                <div class="carousel-indicators">
+                    {% for project in related_projects %}
+                    <button type="button" data-bs-target="#relatedProjectsCarousel"
+                        data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"
+                        aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+
+                <!-- Carousel Items -->
+                <div class="carousel-inner p-5">
+                    {% for project in related_projects %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="d-flex justify-content-center">
+                            <div class="col-lg-6 col-md-8">
+                                <div class="card h-100">
+                                    <div class="card-header text-center pt-2">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                                        </div>
+                                    </div>
+                                    {% if project.first_image.optimized_image_url %}
+                                    <div class="card-body">
+                                        <img src="{{ project.first_image.optimized_image_url }}" class="card-img-top"
+                                            alt="{{ project.title | default:'Project Image' }}"
+                                            style="object-fit: cover; max-height: 300px;" loading="lazy">
+                                        <div class="card-body d-flex flex-column">
+                                            <p class="card-text">{{ project.description | truncatechars:50 | safe }}</p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-footer text-center">
+                                        <a href="{% url 'app:project_details' project.slug %}"
+                                            class="btn btn-sm btn-outline-success">
+                                            <span>View Project</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Carousel Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#relatedProjectsCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#relatedProjectsCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    {# include 'app/projects/edit_delete_projects.html' with form=form #}
+</section>
+{% endblock %}

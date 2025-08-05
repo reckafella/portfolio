@@ -3,7 +3,7 @@
 {% block title %}Delete Post{% endblock %}
 
 {% block content %}
-<section class="mt-5 section bg-light">
+<section class="mt-5 section ">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -13,10 +13,10 @@
                     </div>
                     <div class="card-body">
                         <p class="text-center">Are you sure you want to delete "{{ object.title }}"?</p>
-                        <form method="post" class="text-center">
+                        <form method="post" id="other-post" class="text-center">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                            <a href="{% url 'blog:post_detail' object.slug %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger">Confirm Delete</button>
+                            <a href="{% url 'blog:article_details' object.slug %}" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>
                 </div>

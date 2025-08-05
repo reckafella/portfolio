@@ -1,66 +1,124 @@
-from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.contrib import messages
 from django.views.generic import CreateView
+from django.db import transaction
 from titlecase import titlecase
+from django.http import JsonResponse
 
-from app.forms import CustomErrorList, ProjectsForm
-from app.models import Projects
-from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
-from app.views.helpers.helpers import handle_no_permissions, return_response
-
-uploader = CloudinaryImageHandler()
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
+from .base import BaseProjectView
 
 
-class CreateProjectView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    model = Projects
-    form_class = ProjectsForm
-    error_class = CustomErrorList
-    template_name = "app/projects/create_or_update.html"
-    context_object_name = "view"
+class CreateProjectView(BaseProjectView, CreateView):
 
+    def get_form_kwargs(self):
+        """Pass the request object to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    @transaction.atomic
     def form_valid(self, form):
-        project = form.instance
-        project.title = titlecase(project.title)
-        project.description = project.description.strip()
-        image = form.files.get("image")
-
-        # Handle authorization
+        """Handle successful form submission with database transaction"""
         if not self.test_func():
-            handle_no_permissions(
-                self.request, "You do not have permission to create a project."
-            )
+            if is_ajax(self.request):
+                return JsonResponse({
+                    "success": False,
+                    "errors": ["Not permitted to create a project."],
+                    "messages": []
+                }, status=403)
+            else:
+                handle_no_permissions(
+                    self.request, "Not permitted to create a project."
+                )
 
-        # Handle image upload
         try:
-            res: dict = handle_image_upload(
-                project, uploader, image, settings.PROJECTS_FOLDER
-            )
-            if res:
-                project.cloudinary_image_id = res["cloudinary_image_id"]
-                project.cloudinary_image_url = res["cloudinary_image_url"]
-                project.optimized_image_url = res["optimized_image_url"]
+            # Get media data before creating project
+            images = self.request.FILES.getlist('images', [])
+            youtube_urls = form.cleaned_data.get("youtube_urls", [])
+
+            # Create and save the project first
+            project = form.save()
+            project.title = titlecase(project.title)
+            project.description = project.description.strip()
+            project.project_url = project.project_url.strip()
+            project.project_type = project.project_type
+            project.live = project.live
+            project.client = project.client
+            project.save()
+
+            # Set self.object to ensure get_success_url() works properly
+            self.object = project
+
+            success_messages = []
+            error_messages = []
+            media_success = True  # Assume success initially
+
+            # Handle image upload if images are provided
+            if images:
+                try:
+                    self.handle_images(images, project, success_messages,
+                                       error_messages)
+                except Exception as img_error:
+                    err_msg = f"Image upload failed: {str(img_error)}"
+                    error_messages.append(err_msg)
+                    media_success = False
+
+            # Handle video URLs if provided
+            if youtube_urls:
+                try:
+                    self.handle_youtube_urls(youtube_urls, project,
+                                             success_messages, error_messages)
+                except Exception as vid_error:
+                    err_msg = f"Video processing failed: {str(vid_error)}"
+                    error_messages.append(err_msg)
+                    media_success = False
+
+            # Set appropriate success messages
+            if not images and not youtube_urls:
+                success_messages.append("Project created successfully!")
+            elif media_success and not error_messages:
+                if images and youtube_urls:
+                    success_messages.append(
+                        "Success. Project with images and videos created!")
+                elif images:
+                    success_messages.append(
+                        "Success. Project and images uploaded!")
+                elif youtube_urls:
+                    success_messages.append(
+                        "Success. Project and videos added!")
+            elif error_messages:
+                success_messages.append(
+                    "Project created successfully, but some media had issues.")
+
+            response_data = {
+                "success": True,
+                "messages": success_messages,
+                "errors": error_messages,
+                "redirect_url": self.get_success_url(),
+            }
+
+            if is_ajax(self.request):
+                return JsonResponse(response_data)
+
+            # Add messages for non-AJAX requests
+            if error_messages:
+                for error in error_messages:
+                    messages.warning(self.request, error)
+            for message in success_messages:
+                messages.success(self.request, message)
+
+            return super().form_valid(form)
+
         except Exception as e:
-            # Delete the project if an error occurs
-            Projects.delete(project, using="default")
-            # Delete the image from Cloudinary if an error occurs
-            if project.cloudinary_image_id:
-                uploader.delete_image(project.cloudinary_image_id)
-            response = {"success": False, "errors": f"An error occurred: {str(e)}"}
-            form.add_error(None, f"An error occurred: {str(e)}")
-            return return_response(self.request, response, 400)
+            _e = str(e)
+            error_mes = f"An error occurred while creating the project: {_e}"
 
-        return super().form_valid(form)
-
-    def test_func(self):
-        # Allow only staff members/superusers to create projects
-        return self.request.user.is_staff or self.request.user.is_superuser
-
-    def get_success_url(self):
-        # Redirect to the project's details after a successful creation
-        return reverse_lazy("app:project_detail", kwargs={"pk": self.object.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({"title": "Add a New Project", "submit_text": "Add Project"})
-        return context
+            if is_ajax(self.request):
+                return JsonResponse({
+                    "success": False,
+                    "errors": [error_mes],
+                    "messages": []
+                }, status=500)
+            else:
+                messages.error(self.request, error_mes)
+                return self.form_invalid(form)

@@ -7,7 +7,7 @@ class RemoveTrailingSlashMiddleware(MiddlewareMixin):
         path: str = request.path
 
         # Exclude admin paths from the trailing slash logic
-        if path.startswith(("/admin", "/wagtail")):
+        if path.startswith(("/admin", "/wagtail", "/captcha")):
             return None
 
         # Ignore the root path and paths without trailing slashes

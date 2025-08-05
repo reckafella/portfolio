@@ -1,0 +1,73 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load wagtailuserbar %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<section id="section" class="mt-5 section blog ">
+    <div class="container  col-lg-7 col-md-9 col-sm-10">
+        <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header text-center">
+                <div class="info-wrap mb-2" data-aos="fade-up">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted text-center">
+                            <a href="{% url 'blog:list_articles' %}" class="text-decoration-none p-2 text-danger" title="View all articles">
+                                <i class="bi bi-arrow-left-square"></i> Blog Posts
+                            </a>
+                        </small>
+                        <h2 class="fw-bold text-success text-decoration-none">{{ post.title }}</h2>
+                        <!-- Icon for editing -->
+                        {% if user.is_authenticated and user == post.author or user.is_staff %}
+                        <a href="{% url 'blog:update_article' post.slug %}" class="btn btn-link text-decoration-none text-primary">
+                            <i class="bi bi-pencil-square bi-pencil-fill"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            By 
+                            <a href="{% url 'blog:articles_by_author' post.author.username %}" class="text-success text-decoration-none">
+                                {% if post.author.first_name and post.author.last_name %}
+                                    {{ post.author.first_name }} {{ post.author.last_name }}
+                                {% else %}
+                                    {{ post.author.username | capfirst }}
+                                {% endif %}
+                            </a>
+                            {% comment %} | &nbsp; {{ post.first_published_at | date:"N j, Y" }} {% endcomment %}
+                            <!-- use post.post_created_at as fallback -->
+                            | &nbsp; {% if post.first_published_at %}
+                                        {{ post.first_published_at | date:"N j, Y" }} 
+                                    {% else %}
+                                        {{ post.post_created_at | date:"N j, Y" }}
+                                    {% endif %}
+
+                        </small>
+                    </p>
+                    {% if user.is_authenticated and user == post.author or user.is_staff %}
+                    <div class="action-buttons mb-2">
+                        {% include 'app/includes/action-buttons.html' %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Cover Image -->
+                {% if post.optimized_image_url %}
+                <img src="{{ post.optimized_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;" loading="lazy">
+                {% endif %}
+                <div class="text-start">
+                    {{ post.content | richtext | safe }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommended Articles Section -->
+        {# include 'blog/partials/recommended.html' #}
+    </div>
+    {# include 'blog/partials/edit_delete_posts_modal.html' #}
+</section>
+{% endblock %}

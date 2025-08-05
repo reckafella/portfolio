@@ -1,0 +1,65 @@
+                <!-- Filter Modal -->
+                <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header py-2">
+                                <h5 class="modal-title" id="filterModalLabel">Filtering Options</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="search-modal-filter-form" method="GET" action="">
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2">
+                                            <input type="hidden" name="q" value="{{ q }}">
+                                            <select class="form-select form-select-sm" name="category">
+                                                {% for key, value in filter_options.items %}
+                                                <option value="{{ key }}" {% if category == key %}selected{% endif %}>
+                                                    {{ value }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="sort" value="{{ sort }}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer py-2">
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort Modal -->
+                <div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header py-2">
+                                <h5 class="modal-title" id="sortModalLabel">Sorting Options</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="search-modal-sort-form" method="GET" action="">
+                                        <div class="row g-3">
+                                            <div class="col-12 p-2">
+                                                <input type="hidden" name="q" value="{{ q }}">
+                                                <input type="hidden" name="category" value="{{ category }}">
+                                                <select class="form-select form-select-sm" name="sort">
+                                                    {% for key, value in sort_options.items %}
+                                                    <option value="{{ key }}" {% if sort == key %}selected{% endif %}>
+                                                        {{ value }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer py-2">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>

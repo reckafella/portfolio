@@ -3,88 +3,318 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section id="hero" class="mt-5 py-5">
-    <div class="container card d-flex flex-column flex-lg-row align-items-center mt-5 justify-content-center p-5 h-100 col-lg-8 col-sm-8 col-md-7 border-secondary-subtle bg-body-secondary">
-        <!-- Profile Picture -->
-        <div class="mb-2 mb-lg-0 col-lg-5 col-md-7 col-sm-8 text-center text-lg-start">
-                <picture>
-                    <source srcset="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella" type="image/jpeg">
-                    <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella.webp" alt="Profile Picture" class="img-fluid rounded-circle w-75">
-                </picture>
-        </div>
-
-        <!-- About Text -->
-        <div class="mt-1 mt-lg-0 p-1 col-lg-6">
-            <div class="text-start mb-2">
-                <h2 class="kalam-bold">Hello there, my name is Ethan</h2>
-            </div>
-
-            <div class="justify-content-center">
-                <p>Welcome to my portfolio website!</p>
-                <p>I specialize in
-                    <strong>
-                        <span class="text-decoration-underline text-success typed" data-typed-items=" FullStack Software Engineering, DevOps Engineering, Backend Development, API Development, Database Design" style="text-decoration-thickness: 10%;"></span>
-                    </strong>
-                    <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
-                </p>
-            </div>
-            <div class="d-flex justify-content-center justify-content-lg-start">
-                <a href="#featured-projects" class="btn btn-outline-primary">View Projects</a>
+<section id="hero" class="section hero py-5">
+    <div class="hero-background" data-aos="fade-in">
+        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/image_2025-07-10_at_15.55.17_wwo7tj" alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
+    </div>
+    <div class="overlay"></div>
+    <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="stix-two-text-bold">Ethan Wanyoike</h2>
+                <div>
+                    <p>
+                        <span class="text-decoration-underline typed source-serif-4-bold"
+                            data-typed-items="Software Engineer, DevOps Engineer, Backend Developer, Frontend Developer, Technical Writer"
+                            style="text-decoration-thickness: 5%;">
+                        </span>
+                        <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
+                    </p>
+                </div>
+                <div class="d-flex flex-column mt-3">
+                    <p>Let's bring your project to life!</p>
+                    <p><a href="{% url 'app:contact' %}" class="btn special-btn">Get in Touch</a></p>
+                </div>
             </div>
         </div>
     </div>
 </section>
+<section id="about" class="section about py-4">
+    <div class="container section-title">
+        <h2>About Me</h2>
+        <p>Get to Know Me Better</p>
+    </div>
 
+    <div class="container">
+        <div class="row gy-4 justify-content-between">
+            <div class="col-lg-4 text-center">
+                <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-profile"
+                    alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 390px;" loading="lazy">
+                <div class="social-links mt-3">
+                    <a href="https://github.com/reckafella" class="github" target="_blank"><i
+                            class="bi bi-github"></i></a>
+                    <a href="https://linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
+                            class="bi bi-linkedin"></i></a>
+                    <a href="https://twitter.com/devrohn" class="twitter twitter-x" target="_blank"><i
+                            class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-8 content">
+                <h2>Software Engineer</h2>
+                <p class="fst-italic py-3">I am a passionate software engineer with expertise in backend development, cloud architecture, and
+                    DevOps practices. With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
+                    business growth and enhance user experience.
+                </p>
+                <div class="row">
+                    <div class="col-lg-7">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Email:</strong> ethanmuthoni@gmail.com
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Education:</strong> Software Engineering
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Availability:</strong> Open to Opportunities
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-5">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Location:</strong> Nairobi, Kenya
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Phone:</strong> +254719272150
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Experience:</strong> 2+ Years
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="py-2">I thrive in collaborative environments and am committed to continuous learning and professional growth. My approach combines technical expertise with effective communication skills to deliver solutions that exceed expectations. Whether working on complex backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable, and maintainable code.</p>
+                <div class="mt-4 d-flex justify-content-center">
+                    <a href="{% url 'app:resume' %}" class="btn btn-secondary me-3"><i
+                            class="bi bi-file-earmark-text me-1"></i> View Resume</a>
+                    <a href="{% url 'app:contact' %}" class="btn btn-success"><i class="bi bi-envelope me-1"></i>
+                        Contact Me</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End About Section -->
+
+<!-- Skills Section -->
+<section id="skills" class="section skills py-5">
+    <div class="container">
+        <!-- Section Title -->
+        <div class="section-title text-center mb-1" data-aos="fade-up">
+            <h2>Skills & Expertise</h2>
+            <p class="text-muted">My Technical Toolkit</p>
+        </div>
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <!-- Languages Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="150">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-code-square fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">Languages</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Python</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>JavaScript</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>TypeScript</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>C</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>HTML/CSS</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>SQL</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Bash</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Frameworks Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-stack fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">Frameworks</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Django</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Flask</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Node.js</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Express.js</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Bootstrap</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Tailwind CSS</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>RESTful APIs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DevOps & Cloud Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="250">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-cloud fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">DevOps & Cloud</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Docker</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>AWS</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>CI/CD</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Terraform</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Ansible</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Nginx & Apache</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>GitHub Actions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Databases Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-database fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">Databases</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>PostgreSQL</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>MySQL</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>MongoDB</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>SQLite</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Redis</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>MongoDB Atlas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tools & Platforms Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="350">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-tools fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">Tools & Platforms</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Git & GitHub</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>JIRA</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Trello</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>VS Code</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Postman</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Soft Skills Column -->
+                <div class="col" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-people fs-2 text-primary me-3"></i>
+                                <h3 class="card-title mb-0">Soft Skills</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Teamwork</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Communication</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Problem Solving</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Adaptability</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Attention to Detail</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Leadership</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="row mt-5">
+                <div class="col-12 d-flex justify-content-center align-items-center text-center">
+                    <div class="p-5 w-auto card rounded-3 shadow-lg border-2">
+                        <h4 class="mb-3 fw-bold">Want to see my skills in action?</h4>
+                        <p class="mb-4 text-muted">Explore my portfolio projects or check out my technical articles.</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="{% url 'app:projects' %}" class="btn btn-warning btn-lg px-4 py-2">
+                                <i class="bi bi-code-slash me-2"></i>View Projects
+                            </a>
+                            <a href="{% url 'blog:list_articles' %}" class="btn btn-info btn-lg px-4 py-2">
+                                <i class="bi bi-journal-text me-2"></i>Read Blog
+                            </a>
+                            <a href="{% url 'app:resume' %}" class="btn btn-success btn-lg px-4 py-2">
+                                <i class="bi bi-file-earmark-person me-2"></i>See Resume
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'app/includes/services.html' %}
+
+{% comment %}
 <!-- Featured Projects -->
 {% include 'app/home/featured_projects.html' %}
-
 <!-- Latest Blog Posts -->
 {% include 'app/home/latest_posts.html' %}
+{% endcomment %}
 
-<!-- Skills & Technologies -->
-<section id="skills" class="py-5 bg-body-secondary">
-    <div class="container d-flex flex-column justify-content-center align-items-center w-100">
-        <div class="text-center mb-3 section-title">
-            <h2 class="text-center">Skills & Technologies</h2>
-        </div>
-        <div class="row justify-content-around text-center">
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-code-square fs-1 text-primary"></i>
-                <h5 class="mt-2">Web Development</h5>
-            </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-hdd-stack fs-1 text-primary"></i>
-                <h5 class="mt-2">DevOps</h5>
-            </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-database fs-1 text-primary"></i>
-                <h5 class="mt-2">Backend Systems</h5>
-            </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-bug fs-1 text-primary"></i>
-                <h5 class="mt-2">Testing & QA</h5>
-            </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-cloud fs-1 text-primary"></i>
-                <h5 class="mt-2">Server Maintenance</h5>
-            </div>
-            <div class="col-sm-5 col-md-3 col-4 mb-4 border-dark-subtle card px-1 mx-1">
-                <i class="bi bi-tools fs-1 text-primary"></i>
-                <h5 class="mt-2">Database Design</h5>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- Call to Action -->
-<section id="cta" class="py-5">
-    <div class="container text-center">
-        <div class="text-center mb-2 section-title">
-            <h2 class="text-black">Ready to start a project?</h2>
-        </div>
-        <p class="lead mb-3">Let's collaborate and bring your ideas to life!</p>
-        <a href="{% url 'app:contact' %}" class="btn btn-outline-primary">Get in Touch</a>
-    </div>
-</section>
 {% endblock %}

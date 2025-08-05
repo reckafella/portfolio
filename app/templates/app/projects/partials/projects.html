@@ -1,51 +1,46 @@
-<div class="row gx-3 gy-3 justify-content-center align-items-center">
-    <div class="row justify-content-center align-items-center">
-        {% for project in projects %}
-        <div class="col-lg-4 col-md-5 col-sm-12 mb-3" data-aos="flip-left" data-aos-delay="50">
-            <div class="card h-100 d-flex justify-content-center">
-                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="card-title fw-bold">
-                        <a href="{% url 'app:project_detail' project.id %}" class="text-decoration-none text-success">
-                            {{ project.title }}
-                        </a>
-                    </h5>
-                    <!-- Icon for editing -->
-                    {% if user.is_staff  %}
-                    <a href="{% url 'app:update_project' project.id %}" class="btn btn-link text-decoration-none text-primary">
-                        <i class="bi bi-pencil-square bi-pencil-fill"></i>
-                    </a>
-                    {% endif %}
-                </div>
-                {% if project.optimized_image_url %}
-                <div class="card-body">
-                    <img src="{{ project.optimized_image_url }}"
-                        alt="{{ project.title | default:'Project Image' }}"
-                        style="object-fit: cover; height: 150px; width: 100%;">
+{% load static %}
+{% load i18n %}
+
+<div id="project-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for project in projects %}
+    <div class="col-lg-4 col-md-6 project-item isotope-item filter-{{ project.category|slugify }}">
+        <div class="card shadow project-content h-100">
+            {% if project.first_image %}
+                <img src="{{ project.first_image.cloudinary_image_url }}" class="card-img-top img-fluid" alt="{{ project.title }}" loading="lazy">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 160px;">
+                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
                 </div>
                 {% endif %}
-                <p class="card-body card-text text-start">
-                    <span class="short-description">{{ project.description | safe | truncatechars:50 }}</span>
-                    <span class="full-description d-none" data-length="{{ project.description | safe | length }}">{{ project.description | safe }}</span>
-                    <button class="toggle-description btn btn-link p-0" style="display: none;" aria-expanded="false">More</button>
-                </p>
-                <div class="card-footer bg-transparent text-center">
-                    <a href="{% url 'app:project_detail' project.id %}" class="btn btn-outline-primary">
-                        <span>Project Details</span>
-                    </a>
-                </div>
+            <div class="project-info">
+                <h4>{{ project.title }}</h4>
+                <p class="card-text small">{{ project.description|truncatewords:10 }}</p>
+                <a href="{{ project.first_image.cloudinary_image_url }}" data-gallery="projectGallery" class="project-lightbox preview-link" title="Preview {{ project.title }}">
+                    <i class="bi bi-zoom-in"></i>
+                </a>
+                <a href="{% url 'app:project_details' project.slug %}" class="details-link"
+                title="View details for {{ project.title }}">
+                    <i class="bi bi-link-45deg"></i>
+                </a>
+                {% comment %}
+                <a role="button"
+                    class="btn btn-sm rounded-circle btn-border btn-info share-link"
+                    data-bs-toggle="modal" data-bs-target="#shareModal"
+                    data-share-url="{% url 'app:project_details' project.slug %}" 
+                    data-share-title="{{ project.title }}"
+                    data-share-image="{{ project.first_image.cloudinary_image_url|default:default_og_image }}"
+                    data-share-description="{{ project.project_type }}"
+                    title="Share {{ project.title }}">
+                    <i class="bi bi-share-fill"></i>
+                </a>
+                {% endcomment %}
             </div>
         </div>
-        {% empty %}
-        <div class="col-sm-10 col-lg-7 col-md-7 text-center mb-4 gap-2">
-            <div class="alert alert-danger text-center" role="alert">
-                <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 2rem;">
-                    <h3 class="alert-heading fw-bold">No projects found!</h3>
-                    {% if user.is_staff %}
-                    <a href="{% url 'app:add_project' %}" class="btn btn-outline-primary">Create project</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
     </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted">{% trans "No projects found" %}</p>
+    </div>
+    {% endfor %}
+</div>
 </div>

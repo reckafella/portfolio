@@ -1,0 +1,108 @@
+{% extends "app/base.html" %}
+{% load wagtailimages_tags wagtailcore_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<section class="mt-5 blog-index container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4">{{ page.title }}</h1>
+            <p class="lead text-muted">Latest articles and insights</p>
+        </div>
+
+        <div class="col-12">
+            <div class="row g-4">
+                {% for post in posts %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if post.cloudinary_image_url %}
+                                <img src="{{ post.cloudinary_image_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ post.title }}" loading="lazy">
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% pageurl post %}" class="text-decoration-none">
+                                        {{ post.title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted">
+                                    {% if post.content|length > 150 %}
+                                        {{ post.content|striptags|truncatechars:150 }}
+                                    {% else %}
+                                        {{ post.content|striptags }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            
+                            <div class="card-footer justify-content-center align-items-center">
+                                <small class="text-success text-start">
+                                    By {% if post.author.first_name and post.author.last_name %}
+                                        {{ post.author.first_name | capfirst}} {{ post.author.last_name | capfirst }}
+                                    {% else %}
+                                        {{ post.author.username | capfirst }}
+                                    {% endif %}
+                                    &nbsp; | &nbsp; {{ post.first_published_at | date:"F d, Y" }}
+                                </small>
+                                <div class="mt-2">
+                                    {% for tag in post.get_tags %}
+                                        <span class="badge bg-primary me-1">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="mt-2 d-flex justify-content-center">
+                                    <a href="{% pageurl post %}" class="btn btn-outline-primary">Read Article</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                <div class="col-11 text-center mb-4 gap-2">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <div class="bi bi-exclamation-circle-fill text-danger" style="font-size: 1.5rem;">
+                            <h3 class="alert-heading fw-bold">No articles found!</h3>
+                            {% if user.is_staff %}
+                            <a href="{% url 'blog:create_article' %}" class="btn btn-outline-primary">Create Article</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if is_paginated %}
+            <div class="col-12 mt-4">
+                <nav aria-label="Blog post navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page.paginator.page_range %}
+                            {% if page.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

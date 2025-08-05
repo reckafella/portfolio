@@ -1,0 +1,54 @@
+-- database: /workspaces/portfolio/db.sqlite3
+-- Use the ▷ button in the top right corner to run the entire file.
+SELECT
+    *
+FROM
+    app_projects;
+
+UPDATE app_projects
+SET
+    slug = 'project-1'
+WHERE
+    id = 1;
+
+UPDATE app_projects
+SET
+    slug = 'project-2'
+WHERE
+    id = 2;
+
+UPDATE app_projects
+SET
+    slug = 'project-3'
+WHERE
+    id = 3;
+
+UPDATE app_projects
+SET
+    slug = 'project-4'
+WHERE
+    id = 4;
+
+UPDATE app_projects
+SET
+    slug = 'project-5'
+WHERE
+    id = 5;
+
+UPDATE app_projects
+SET
+    slug = 'project-6'
+WHERE
+    id = 6;
+
+UPDATE app_projects
+SET
+    slug = 'project-7'
+WHERE
+    id = 7;
+
+UPDATE app_projects
+SET
+    slug = 'project-8'
+WHERE
+    id = 8;

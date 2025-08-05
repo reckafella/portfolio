@@ -1,76 +1,112 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from titlecase import titlecase
+from django.http import JsonResponse
+from django.db import transaction
+from django.utils.text import slugify
 
-from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
-from app.views.helpers.helpers import handle_no_permissions, is_ajax, return_response
-from blog.models import BlogPostPage
-from blog.forms import BlogPostForm
-from portfolio import settings
+from app.views.helpers.cloudinary import (
+    CloudinaryImageHandler)  # handle_image_upload
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
+from blog.models import BlogPostPage as BlogPost, BlogPostImage
+from blog.views.create import BasePostView
+# from portfolio import settings
 
 
-uploader = CloudinaryImageHandler()
+Uploader = CloudinaryImageHandler()
 
 
-class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = BlogPostPage
-    form_class = BlogPostForm
-    template_name = "blog/create_post.html"
-
-    def form_valid(self, form):
-        cover_image = form.files.get("cover_image")
-        post = form.instance
-        post.title = titlecase(post.title)
-
-        # Authorization check
-        if not self.test_func():
-            handle_no_permissions(self.request, "Not Allowed to edit this post.")
-
-        # Delete the old image from Cloudinary if a new image is being uploaded
-        if cover_image and post.cloudinary_image_id:
-            uploader.delete_image(post.cloudinary_image_id)
-
-        # Upload new image to cloudinary
-        if cover_image:
-            try:
-                image = handle_image_upload(
-                    instance=post,
-                    uploader=uploader,
-                    image=cover_image,
-                    folder=settings.POSTS_FOLDER,
-                )
-
-                if image:
-                    post.cloudinary_image_id = image["public_id"]
-                    post.cloudinary_image_url = image["secure_url"]
-                    post.optimized_image_url = uploader.get_optim_url(
-                        image["public_id"]
-                    )
-
-            except Exception as e:
-                errors = ", ".join(e) if isinstance(e, list) else str(e)
-                response = {"success": False, "errors": errors}
-                form.add_error(None, errors)
-                if is_ajax(self.request):
-                    return return_response(self.request, response, 400)
-                return return_response(self.request, response, 400)
-
-        return super().form_valid(form)
-
+class UpdatePostView(BasePostView, UpdateView):
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author or self.request.user.is_staff
-
-    def get_success_url(self):
-        return reverse_lazy("blog:post_detail", kwargs={"slug": self.object.slug})
-
-    def form_invalid(self, form, error=None):
-        if error:
-            form.add_error(None, error)
-        return super().form_invalid(form)
+        return self.request.user.is_staff or self.request.user == post.author
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f"Edit Post: {self.object.title}"
+        context.update({
+            "title": "Update Blog Post",
+            "submit_text": "Update Post",
+            "data_loading_text": "Updating Post",
+            "action_url": reverse_lazy(
+                "blog:update_article",
+                kwargs={"slug": self.object.slug}
+            ),
+            "form_id": "update-post-form",
+        })
         return context
+
+    def update_post_slug(self, original_post, current_post):
+        cp = current_post
+        if original_post.title != cp.title:
+            cp.title = titlecase(cp.title)
+            base_slug = slugify(cp.title)
+            counter = 1
+            ns = base_slug
+
+            while BlogPost.objects.filter(slug=ns).exclude(id=cp.id).exists():
+                ns = f"{base_slug}-{counter}"
+                counter += 1
+            cp.slug = ns
+
+    def form_valid(self, form):
+        """
+        Handle the form submission and save the post.
+        """
+        if not self.test_func():
+            handle_no_permissions(
+                self.request,
+                "Not Allowed to edit this post."
+            )
+
+        post = form.instance
+        original_post = self.get_object()
+        should_publish = form.cleaned_data.get('published', False)
+        post.author = self.request.user
+        cover_image = form.files.get("cover_image")
+
+        self.update_post_slug(original_post, post)
+
+        if cover_image:
+            self.save_image_to_db(post, form, cover_image)
+
+        with transaction.atomic():
+            response = super().form_valid(form)
+            self.publish_post(post, should_publish)
+
+        if is_ajax(self.request):
+            if should_publish:
+                message = "Post Updated and Published Successfully"
+            else:
+                message = "Post updated as Draft"
+            return JsonResponse({
+                "success": True,
+                "message": message,
+                "redirect_url": self.get_success_url()
+            })
+        return response
+
+    def save_image_to_db(self, post, form, cover_image):
+        """
+        Save the image data to the post and create a BlogPostImage instance.
+        """
+        if not post:
+            raise ValueError("Post instance is required.")
+        if not cover_image:
+            raise ValueError("No image provided.")
+
+        if post.first_image.cloudinary_image_id:
+            try:
+                Uploader.delete_image(post.first_image.cloudinary_image_id)
+            except Exception as e:
+                return self.handle_image_error(post, form, e)
+
+        image_data = self.upload_image(post, cover_image)
+        try:
+            BlogPostImage.objects.update_or_create(
+                post=post,
+                cloudinary_image_id=image_data["cloudinary_image_id"],
+                cloudinary_image_url=image_data["cloudinary_image_url"],
+                optimized_image_url=image_data["optimized_image_url"]
+            )
+        except Exception as e:
+            raise ValueError(f"Error saving image: {str(e)}")

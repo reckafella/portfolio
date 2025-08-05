@@ -1,16 +1,20 @@
 """
-this is the model for the blog post and it uses wagtail
+this is the model for the blog post using wagtail cms
 """
-
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.utils import timezone
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
+from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
+from taggit.managers import TaggableManager
+import hashlib
 
 
-class BlogIndexPage(Page):
+class BlogIndexPage(RoutablePageMixin, Page):
     subpage_types = ["blog.BlogPostPage"]
     max_count = 1
 
@@ -20,36 +24,65 @@ class BlogIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['page_title'] = 'self.title'
-        context["posts"] = BlogPostPage.objects.live().order_by("-first_published_at")
+
+        # Paginate blog posts
+        posts = BlogPostPage.objects.live().order_by("-first_published_at")
+        paginator = Paginator(posts, 6)  # 6 posts per page
+        page_number = request.GET.get('page')
+
+        try:
+            page_obj = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        context['posts'] = page_obj
+        context['is_paginated'] = page_obj.has_other_pages()
+
         return context
 
 
 class BlogPostPage(Page):
     author = models.ForeignKey(
-        User, on_delete=models.PROTECT, null=True, blank=True, related_name="blog_posts"
+        User,
+        on_delete=models.PROTECT,
+        null=True, blank=True,
+        related_name="blog_posts"
     )
     content = RichTextField()
     published = models.BooleanField(default=False)
-    topics = models.CharField(
-        max_length=200, default="all", help_text="Comma-separated list of topics"
-    )
-    cloudinary_image_id = models.CharField(max_length=200, blank=True, null=True)
+    post_created_at = models.DateTimeField(auto_now_add=True, null=True)
+    post_updated_at = models.DateTimeField(auto_now=True, null=True)
+    tags = TaggableManager(blank=True, help_text="Add comma-separated tags")
+    cloudinary_image_id = models.CharField(max_length=200, blank=True,
+                                           null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
+
+    view_count = models.PositiveIntegerField(default=0,
+                                             help_text="Number of page views")
+    last_view_increment = models.DateTimeField(
+        auto_now=True, null=True, blank=True,
+        help_text="Timestamp of the last view count increment"
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content"),
-        FieldPanel("topics"),
+        FieldPanel("tags"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),
                 FieldPanel("cloudinary_image_url", read_only=True),
                 FieldPanel("optimized_image_url", read_only=True),
+                FieldPanel("post_created_at", read_only=True),
+                FieldPanel("post_updated_at", read_only=True),
+                FieldPanel("view_count", read_only=True),
             ],
-            heading="Cloudinary Image Details",
-        )
+            heading="Cloudinary Image Details - Readonly",
+        ),
+        FieldPanel("published"),
     ]
 
     class Meta:
@@ -60,8 +93,140 @@ class BlogPostPage(Page):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
+    @property
+    def first_image(self):
+        return self.images.first() if self.images.first() else None
+
     def __str__(self):
         return self.title + " by " + self.author.username
 
-    def get_topics(self):
-        return [topic.strip() for topic in self.topics.split(",")]
+    def increment_view_count(self, request):
+        """Increment the view count for this post"""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR', '')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        visitor_hash = hashlib.sha256(
+            f"{ip}_{user_agent}".encode()).hexdigest()
+
+        _, created = ViewCountAttempt.objects.get_or_create(
+            article=self,
+            visitor_hash=visitor_hash,
+            defaults={
+                'ip_address': ip,
+                'user_agent': user_agent,
+                'user': request.user if request.user.is_authenticated else None
+            }
+        )
+        if created:
+            BlogPostPage.objects.filter(pk=self.pk).update(
+                view_count=models.F('view_count') + 1,
+                last_view_increment=timezone.now()
+            )
+            self.refresh_from_db(fields=['view_count', 'last_view_increment'])
+            return True
+        return False
+
+    def get_view_count_display(self):
+        """Return view count as a formatted string"""
+        if self.view_count == 1:
+            return "1 view"
+        else:
+            return f"{self.view_count} views"
+
+    def get_tags(self):
+        """Return list of tag names"""
+        return [tag.name for tag in self.tags.all()]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["author"] = self.author
+        context["post"] = self
+        context["tags"] = self.get_tags()
+        context["date_published"] = self.first_published_at or\
+            self.post_created_at
+        context["view_count"] = self.view_count
+
+        return context
+
+
+class ViewCountAttempt(models.Model):
+    """Track view count attempts for abuse detection"""
+    article = models.ForeignKey(BlogPostPage, on_delete=models.CASCADE)
+    visitor_hash = models.CharField(max_length=64, blank=True, null=True)
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)
+    reason = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,
+                             null=True, related_name="view_count_attempts")
+
+    class Meta:
+        db_table = 'view_count_attempts'
+        unique_together = ['article', 'visitor_hash']
+        indexes = [
+            models.Index(fields=['ip_address', 'timestamp']),
+            models.Index(fields=['article', 'visitor_hash']),
+        ]
+
+
+class BlogPostImage(models.Model):
+    post = models.ForeignKey(
+        BlogPostPage,
+        on_delete=models.PROTECT,
+        related_name="images"
+    )
+    cloudinary_image_id = models.CharField(max_length=255, blank=True,
+                                           null=True)
+    cloudinary_image_url = models.URLField(blank=True, null=True)
+    optimized_image_url = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.post.title} - Image"
+
+
+class BlogPostComment(models.Model):
+    post = models.ForeignKey(
+        BlogPostPage,
+        on_delete=models.PROTECT,
+        related_name="comments"
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="comments"
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author.username} on {self.post.title}"
+
+
+class BlogPostCommentReply(models.Model):
+    comment = models.ForeignKey(
+        BlogPostComment,
+        on_delete=models.PROTECT,
+        related_name="replies"
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="replies_to_comments"
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author.username} on {self.comment.post.title}"

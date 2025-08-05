@@ -1,9 +1,11 @@
 {% extends 'app/base.html' %}
 
 {% block title %}{% if form.instance.slug %}Edit{% else %}New{% endif %} Post - {{ block.super }}{% endblock %}
+{% load wagatailadmin_tags %}
+{% load wagtailcore_tags %}
 
 {% block extra_head %}
-{{ form.media }}  {# Include CKEditor JS/CSS #}
+{{ form.media }}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +13,8 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">{% if form.instance.slug %}Edit{% else %}New{% endif %} Post</h1>
-            <form method="post" enctype="multipart/form-data" id="other-form">
+            {% rich_text_editor_assets %}
+            <form method="post" enctype="multipart/form-data" id="{{ form_id|default:'other-form' }}">
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="mb-3">
@@ -23,8 +26,8 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-primary">Save</button>
+                <a href="{% url 'blog:list_articles' %}" class="btn btn-outline-secondary">Cancel</a>
             </form>
         </div>
     </div>

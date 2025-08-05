@@ -1,27 +1,53 @@
 {% if page_obj.has_other_pages %}
-<nav aria-label="Pagination" class="mt-4">
-    <ul class="pagination pagination-sm pagination-lg justify-content-center">
-        {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a></li>
-        {% else %}
-            <li class="page-item disabled"><span class="page-link d-flex justify-content-between align-items-center">&laquo; Previous</span></li>
-        {% endif %}
-        
-        {% for i in page_obj.paginator.page_range %}
-            {% if page_obj.number == i %}
-                <li class="page-item active"><span class="page-link d-flex justify-content-between align-items-center">{{ i }}</span></li>
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Pagination" class="mt-4">
+        <ul class="pagination pagination-sm pagination-lg justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link d-flex justify-content-between align-items-center"
+                        href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        &laquo; Previous
+                    </a>
+                </li>
             {% else %}
-                <li class="page-item"><a class="page-link d-flex justify-content-between align-items-center" href="?page={{ i }}">{{ i }}</a></li>
+                <li class="page-item disabled">
+                    <span class="page-link d-flex justify-content-between align-items-center">
+                        &laquo; Previous
+                    </span>
+                </li>
             {% endif %}
-        {% endfor %}
-        
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link d-flex justify-content-between align-items-center" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
-            </li>
-        {% else %}
-            <li class="page-item disabled"><span class="page-link  d-flex justify-content-between align-items-center">Next &raquo;</span></li>
-        {% endif %}
-    </ul>
-</nav>
+            
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active">
+                        <span class="page-link d-flex justify-content-between align-items-center">
+                            {{ i }}
+                        </span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link d-flex justify-content-between align-items-center"
+                            href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ i }}">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link d-flex justify-content-between align-items-center"
+                        href="?{% if current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_project_type != 'all' %}project_type={{ current_project_type }}&{% endif %}{% if current_client != 'all' %}client={{ current_client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}&{% endif %}page={{ page_obj.next_page_number }}">
+                        Next &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link  d-flex justify-content-between align-items-center">
+                        Next &raquo;
+                    </span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endif %}

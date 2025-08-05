@@ -1,10 +1,9 @@
 import cloudinary
 import cloudinary.uploader
 from django.conf import settings
-from django.http import JsonResponse
-from django.utils.text import slugify
+from uuid import uuid4
 
-from app.views.helpers.helpers import is_ajax
+from app.views.helpers.helpers import guess_file_type
 
 
 class CloudinaryImageHandler:
@@ -39,16 +38,17 @@ class CloudinaryImageHandler:
             overwrite: Whether to overwrite the image if it already exists.
             metadata: The metadata to add to the image.
         """
+        # Validate image type
+        _allowed = settings.ALLOWED_IMAGE_TYPES
+        if guess_file_type(image) not in _allowed:
+            raise ValueError(
+                f"Unsupported image type. Allowed types: {', '.join(_allowed)}"
+            )
+
         # Validate image before upload (size, type, etc.)
         if image.size > settings.MAX_UPLOAD_SIZE:
-            raise ValueError("Image is too large. Maximum size is 5MB")
-
-        # Validate image type
-        allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
-        if image.content_type not in allowed_types:
-            raise ValueError(
-                "Unsupported image type. Supported types are: JPEG, PNG, GIF, and WebP"
-            )
+            max_upload = f'{settings.MAX_UPLOAD_SIZE / (1024 * 1024):.2f}'
+            raise ValueError(f"Image too large. Max size is {max_upload}MB")
 
         try:
             options = {
@@ -66,7 +66,7 @@ class CloudinaryImageHandler:
         except ValueError as val_error:
             raise Exception(f"Validation Error: {str(val_error)}")
         except Exception as e:
-            raise Exception(f"Error uploading image to Cloudinary: {str(e)}")
+            raise Exception(f"{str(e)}")
         return response
 
     def delete_image(self, public_id: str) -> dict:
@@ -88,11 +88,11 @@ class CloudinaryImageHandler:
             "http://", "https://"
         )
 
-    def get_public_id(self, title: str) -> str:
+    def get_public_id(self) -> str:
         """
         Generate a public ID for the image uploaded to Cloudinary.
         """
-        return slugify(title)
+        return str(uuid4())
 
 
 def handle_image_upload(instance, uploader, image, folder):
@@ -105,25 +105,28 @@ def handle_image_upload(instance, uploader, image, folder):
         folder: The folder to upload the image to.
 
     Returns:
-        dict: A dictionary containing the image upload response or None if no upload occurred.
+        dict: A dictionary containing the image upload response or\
+            None if no upload occurred.
     """
     if not image:
         return None
 
     try:
-        image_data = uploader.upload_image(
+        # Upload image to cloudinary
+        # results saved _data
+        _data = uploader.upload_image(
             image,
             folder=folder,
-            public_id=uploader.get_public_id(instance.title),
+            public_id=uploader.get_public_id(),
             overwrite=True,
         )
-        if instance.cloudinary_image_id:
-            uploader.delete_image(instance.cloudinary_image_id)
+        """ if instance.image_id:
+            uploader.delete_image(instance.image_id) """
 
         return {
-            "cloudinary_image_id": image_data["public_id"],
-            "cloudinary_image_url": image_data["secure_url"],
-            "optimized_image_url": uploader.get_optim_url(image_data["public_id"]),
+            "cloudinary_image_id": _data["public_id"],
+            "cloudinary_image_url": _data["secure_url"],
+            "optimized_image_url": uploader.get_optim_url(_data["public_id"]),
         }
     except Exception as e:
-        raise Exception(f"Error uploading image: {str(e)}")
+        raise Exception(f"{str(e)}")

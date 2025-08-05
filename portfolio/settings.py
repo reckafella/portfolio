@@ -12,12 +12,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os.path
 from pathlib import Path
+# import random
 
-from django.contrib import staticfiles
+from app.views.helpers.helpers import get_error_files
+
+
+def csrf_failure_view(request, reason=""):
+    from authentication.views.auth.auth import CSRFFailureView
+    return CSRFFailureView.as_view()(request, reason=reason)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -28,53 +34,68 @@ FALLBACK_SECRET_KEY = (
 )
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
+""" All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True")
+DEBUG = False if DEBUG == "False" else True
 
-ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
+ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    ".onrender.com",
-    ".ethanmuthoni.me",
-    ".rohn.live",
-]
+# SECURITY WARNING: define the correct hosts in production!
+# See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0"
+if ENVIRONMENT == 'production':
+    # Allowed hosts
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+    # Installed Apps
+    INSTALLED_APPS = []
 
+    # Supabase settings
+    SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
+    SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
+    SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
+    SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
+    SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
-# Application definition
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "crispy_forms",
-    "corsheaders",
-    "django_ckeditor_5",
-    "app",
-    "blog",
-]
+    # Redis settings
+    REDIS_URL = os.environ.get("REDIS_URL", default="")
+    REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
+
+    # CLOUDINARY CONFIG SETTINGS
+    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
+    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
+    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
+else:
+    ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
+    ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
+    INSTALLED_APPS = ['daphne']
+    from app.views.helpers.helpers import get_redis_creds
+    REDIS_URL = get_redis_creds()[0]
+    REDIS_PASSWORD = get_redis_creds()[1]
+
+    # CLOUDINARY CONFIG SETTINGS
+    from app.views.helpers.helpers import get_cloudinary_creds
+    CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
+    CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
+    CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
+
 
 INSTALLED_APPS += [
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail',
-    
-    'modelcluster',
-    'taggit',
+    "django.contrib.admin", "django.contrib.auth",
+    "django.contrib.contenttypes", 'django.contrib.sites',
+    "django.contrib.sessions", "django.contrib.messages",
+    "django.contrib.staticfiles", "django.contrib.sitemaps",
+    "corsheaders", "app", "authentication", "blog",
+    'robots', 'captcha', "django_redis", "crispy_forms",
 ]
 
+# Wagtail related apps
+INSTALLED_APPS += [
+    'wagtail.contrib.forms', 'wagtail.contrib.redirects', 'wagtail.embeds',
+    'wagtail.sites', 'wagtail.users', 'wagtail.snippets', 'wagtail',
+    'wagtail.images', 'wagtail.search', 'wagtail.admin',
+    'modelcluster', 'taggit', 'wagtail.documents',
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -87,8 +108,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "portfolio.middlewares.rate_limit.RateLimitMiddleware",
+    "blog.middlewares.security.ViewCountSecurityMiddleware",
 ]
-# "portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware",
+
+# portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
+# - removed because of it interferes with wagtail's loading of pages
+
 ROOT_URLCONF = "portfolio.urls"
 
 TEMPLATES = [
@@ -106,42 +132,34 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "app.context_processors.metadata_context",
             ],
         },
     },
 ]
 
+ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-
-
 if (ENVIRONMENT == 'production' and not DEBUG):
-    DATABASES  = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("SUPABASE_DB_NAME"),
-            "USER": os.environ.get("SUPABASE_USER"),
-            "PASSWORD": os.environ.get("SUPABASE_DB_PW"),
-            "HOST": os.environ.get("SUPABASE_HOST"),
-            "PORT": os.environ.get("SUPABASE_PORT"),
-        }
-    }
-    PROJECTS_FOLDER = "portfolio/projests/live"
-    POSTS_FOLDER = "portfolio/posts/live"
-
-elif (ENVIRONMENT == 'development' and not DEBUG):
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": SUPABASE_DB_NAME,
+            "USER": SUPABASE_USER,
+            "PASSWORD": SUPABASE_DB_PW,
+            "HOST": SUPABASE_HOST,
+            "PORT": SUPABASE_PORT,
         }
     }
-    PROJECTS_FOLDER = "portfolio/projests/dev"
-    POSTS_FOLDER = "portfolio/posts/dev"
+
+    PROJECTS_FOLDER = "portfolio/projects/live"
+    POSTS_FOLDER = "portfolio/posts/live"
+    PROFILE_FOLDER = "portfolio/profiles/live"
+
 else:
     DATABASES = {
         "default": {
@@ -149,76 +167,79 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-    PROJECTS_FOLDER = "portfolio/projests/dev"
+
+    PROJECTS_FOLDER = "portfolio/projects/dev"
     POSTS_FOLDER = "portfolio/posts/dev"
+    PROFILE_FOLDER = "portfolio/profiles/dev"
 
+# sessions
+SESSION_CACHE_ALIAS = "default"
 
-# CKEditor Config
-CKEDITOR_5_UPLOAD_PATH = "uploads/"
-CKEDITOR_5_IMAGE_BACKEND = "pillow"
-CKEDITOR_5_IMAGE_QUALITY = 90
-CKEDITOR_5_CONFIGS = {
-    "default": {
-        "toolbar": "Custom",
-        "toolbar_Custom": [
-            {
-                "name": "basicstyles",
-                "items": ["Bold", "Italic", "Underline", "Strike", "RemoveFormat"],
+if ENVIRONMENT == 'production':
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://" + REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": REDIS_PASSWORD,
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "SOCKET_KEEPALIVE": True,
+                "SOCKET_KEEPALIVE_OPTIONS": {
+                    "TCP_KEEPIDLE": 1,
+                    "TCP_KEEPINTVL": 1,
+                    "TCP_KEEPCNT": 5,
+                },
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 10,
+                    "retry_on_timeout": True,
+                },
             },
-            {
-                "name": "paragraph",
-                "items": ["NumberedList", "BulletedList", "-", "Blockquote"],
-            },
-            {"name": "links", "items": ["Link", "Unlink"]},
-            {"name": "styles", "items": ["Format", "Styles"]},
-            {"name": "colors", "items": ["TextColor", "BGColor"]},
-            {"name": "tools", "items": ["Maximize"]},
-            {"name": "editing", "items": ["Scayt"]},
-            {"name": "document", "items": ["Source"]},
-        ],
-        "width": "100%",
-        "extraPlugins": ",".join(
-            [
-                "uploadimage",
-                "autolink",
-                "image2",
-            ]
-        ),
+        }
     }
-}
-
+else:
+    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/4.2/topics/auth/passwords/
+# declared this way to avoid flake8 errors
+_p = "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+_min = "django.contrib.auth.password_validation.MinimumLengthValidator"
+_common = "django.contrib.auth.password_validation.CommonPasswordValidator"
+_numeric = "django.contrib.auth.password_validation.NumericPasswordValidator"
+_complex = "app.views.helpers.password_validator.ComplexPasswordValidator"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": _p,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": _min,
         "OPTIONS": {
             "min_length": 8,
         },
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": _common,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": _numeric,
     },
     {
-        "NAME": "app.views.helpers.password_validator.ComplexPasswordValidator",
+        "NAME": _complex,
     },
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
@@ -232,16 +253,33 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 STATIC_URL = "/static/"
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+LOGIN_REDIRECT_URL = "home"
+
+LOGIN_URL = "/login"
+
+LOGOUT_REDIRECT_URL = "/"
+
+LOGOUT_URL = "/logout"
+
+APPEND_SLASH = True
+
 
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = "Ethan Muthoni"
+
+WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
+
 WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
+
 WAGTAILDOCS_EXTENSIONS = [
     'csv',
     'docx',
@@ -255,21 +293,43 @@ WAGTAILDOCS_EXTENSIONS = [
     'zip'
 ]
 
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
+        }
+    },
+    'full': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
+                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
+        }
+    },
+    'minimal': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
+                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
+                         'document-link', 'blockquote']
+        }
+    },
+}
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# LOGIN REDIRECT URL
-LOGIN_REDIRECT_URL = "home"
-LOGIN_URL = "/login"
-LOGOUT_REDIRECT_URL = "/"
-LOGOUT_URL = "/logout"
-APPEND_SLASH = True
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-if not DEBUG:
+if (ENVIRONMENT == 'production' and not DEBUG):
     CSRF_COOKIE_SECURE: bool = True
     SESSION_COOKIE_SECURE: bool = True
     SECURE_SSL_REDIRECT: bool = True
@@ -278,28 +338,102 @@ if not DEBUG:
     SECURE_HSTS_SECONDS: int = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS: bool = True
     SECURE_HSTS_PRELOAD: bool = True
-    CSRF_FAILURE_VIEW: str = "app.views.auth.csrf_failure"
     SECURE_PROXY_SSL_HEADER: tuple = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_REF: str = "no-referrer"
     SECURE_REF_POLICY: str = "strict-origin-when-cross-origin"
 
-# CLOUDINARY CONFIG SETTINGS
-if ENVIRONMENT == 'production':
-    CLOUDINARY_CLOUD_NAME: str = os.environ.get("CLOUDINARY_NAME", '')
-    CLOUDINARY_API_KEY: str = os.environ.get("CLOUDINARY_API_KEY", '')
-    CLOUDINARY_API_SECRET: str = os.environ.get("CLOUDINARY_API_SECRET", '')
-else:
-    from app.views.helpers.helpers import get_cloudinary_id_and_secret
-
-    CLOUDINARY_CLOUD_NAME: str = get_cloudinary_id_and_secret()[0]
-    CLOUDINARY_API_KEY: str = get_cloudinary_id_and_secret()[1]
-    CLOUDINARY_API_SECRET: str = get_cloudinary_id_and_secret()[2]
+CSRF_FAILURE_VIEW = csrf_failure_view
 
 # Maximum upload size for images in bytes
-MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB or 5242880 bytes
+MAX_UPLOAD_SIZE: int = 15 * 1024 * 1024  # 15MB or 15 * 1024 * 1024 bytes
+
+# Allowed image types
+# Note: This is a list of MIME types. You can add more types as needed.
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif",
+                       "image/webp", "image/svg+xml", "image/bmp",
+                       "image/tiff", "image/x-icon"]
+
 
 # Image links for Error Codes 400, 403, 404, 500
-ERROR_404: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hgl2jde4zhpslu6c25ne"
-ERROR_500: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/gm4xywf1xczjqu9gtrio"
-ERROR_403: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/hoflqilly08tlvmhbba8"
-ERROR_400: str = "https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/errors/aji2laz4uiyj4r1b9kph"
+ERROR_400: str = get_error_files()[0]
+
+ERROR_403: str = get_error_files()[1]
+
+ERROR_404: str = get_error_files()[2]
+
+ERROR_500: str = get_error_files()[3]
+
+
+# captcha settings
+""" CAPTCHA_CHOICES = (
+    'captcha.helpers.math_challenge',
+    'captcha.helpers.random_char_challenge',
+)
+
+CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
+ """
+
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
+CAPTCHA_TIMEOUT = 5
+# CAPTCHA_IMAGE_SIZE = (100, 50)
+CAPTCHA_LENGTH = 6
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
+                           'captcha.helpers.noise_arcs')
+# CAPTCHA_LETTER_ROTATION = (-30, 30)
+# CAPTCHA_FOREGROUND_COLOR = '#333'
+# CAPTCHA_BACKGROUND_COLOR = '#fff'
+CAPTCHA_FONT_SIZE = 30
+CAPTCHA_OUTPUT_FORMAT = 'png'
+CAPTCHA_IMAGE_BEFORE_FIELD = True
+CAPTCHA_REFRESH_CHALLENGE = True
+
+""" Session settings """
+# Browser session timeout (when user closes browser)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
+SESSION_COOKIE_AGE = 18400
+
+# Optional but recommended - update session on activity
+SESSION_SAVE_EVERY_REQUEST = True
+
+PROJECT_TYPES = [
+        ('personal', 'Personal'),
+        ('professional', 'Professional'),
+    ]
+
+# Software Development Project Categories
+CATEGORY_CHOICES = [('Web Development', 'Web Development'),
+                    ('Software Development', 'Software Development'),
+                    ('Database Management', 'Database Management'),
+                    ('DevOps', 'DevOps'),
+                    ('Networking', 'Networking'),
+                    ('UI/UX Design', 'UI/UX Design'),
+                    ('Cyber Security', 'Cyber Security'),
+                    ('Cloud Computing', 'Cloud Computing'),
+                    ('Machine Learning', 'Machine Learning'),
+                    ('Data Science', 'Data Science'),
+                    ('Artificial Intelligence', 'Artificial Intelligence'),
+                    ('Internet of Things', 'Internet of Things'),
+                    ('Game Development', 'Game Development'),
+                    ('Other', 'Other')
+                    ]
+
+SITE_ID = 1
+
+# get rate limit value from environment variable, default == 1000
+RATELIMIT = os.environ.get("RATELIMIT", default=1000)
+
+# if RATELIMIT is not an integer, set it to 1000
+try:
+    RATELIMIT = int(RATELIMIT)
+except ValueError:
+    RATELIMIT = 1000
+except TypeError:
+    RATELIMIT = 1000
+except Exception:
+    RATELIMIT = 1000
+
+# if RATELIMIT is less than 1000, set it to 1000
+if RATELIMIT < 1000:
+    RATELIMIT = 1000

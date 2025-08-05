@@ -1,18 +1,18 @@
 button[type=submit] {
     border: 0;
     padding: 10px 12px;
-    color: #01172b;
+    /* color: #01172b; */
     transition: 0.4s;
     border-radius: 10px;
-    border: 2px solid #01172b;
-    background: #fff;
-  }
+    /* border: 2px solid #01172b;
+    background: #fff; */
+}
   
 button[type=submit]:hover {
-    background: #01172b;
-    color: #fff;
+    /* background: #01172b;
+    color: #fff; */
     font-weight: bold;
-  }
+}
 
 /*--------------------------------------------------------------
 # Top Bar
@@ -108,35 +108,273 @@ button[type=submit]:hover {
 .bg-brown {
   background-color: #cccccb;
 }
-.search-bar {
-  z-index: 1050;
-}
-
-.search-bar form {
-  max-width: 800px;
-}
-
-@media (max-width: 767px) {
-  .search-bar .form-control,
-  .search-bar .form-select,
-  .search-bar .btn {
-      font-size: 1rem;
-  }
-  
-  .search-bar form {
-      padding-top: 2rem;
-      padding-bottom: 2rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .search-bar .form-control,
-  .search-bar .form-select,
-  .search-bar .btn {
-      font-size: 1.25rem;
-  }
-}
 
 .bg-opacity-90 {
   --bs-bg-opacity: 0.9;
+}
+
+.btn[data-bs-busy="true"] {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn[data-bs-busy="true"] .spinner-border {
+  position: relative;
+  margin-right: 8px;
+}
+
+/* Optional: Fade transition for state changes */
+.btn {
+  transition: all 0.5s ease;
+}
+
+/* Optional: Disable text selection during loading */
+.btn[data-bs-busy="true"] {
+  user-select: none;
+}
+
+
+.source-serif-4-regular {
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.source-serif-4-bold {
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.stix-two-text-regular {
+  font-family: "STIX Two Text", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.stix-two-text-bold {
+  font-family: "STIX Two Text", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.char-counter {
+  text-align: right;
+}
+
+.char-counter.warning {
+  color: #ff6b35 !important;
+}
+
+.char-counter.error {
+  color: #dc3545 !important;
+}
+
+.form-control.char-warning {
+  border-color: #ff6b35 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+}
+
+.form-control.char-error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.form-control.char-valid {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.validation-message {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.validation-message.error {
+  color: #dc3545;
+}
+
+.validation-message.warning {
+  color: #ff6b35;
+}
+
+
+/* Captcha input with refresh button styling */
+.captcha-input-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.captcha-input-with-refresh {
+  padding-right: 40px;
+}
+
+.captcha-refresh-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--default-color);
+  /* z-index: 10; */
+  transition: color 0.3s;
+}
+
+.captcha-refresh-btn:hover {
+  color: var(--accent-color);
+}
+
+@keyframes rotate {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.captcha-refresh-btn.rotating {
+  animation: rotate 1s ease-in-out infinite;
+}
+
+@keyframes flash-success {
+  0% { border-color: #28a745; box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); }
+  100% { border-color: #ced4da; box-shadow: none; }
+}
+
+.captcha.captcha-refreshed {
+  border: 2px solid #28a745;
+  animation: flash-success 1s ease-in-out;
+}
+
+.image-crop-container {
+  max-height: 450px;
+}
+.crop-preview {
+  width: 200px;
+  height: 200px;
+  border: 1px solid var(--default-color);
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.file-upload {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.file-drop-zone {
+  border: 2px dashed var(--default-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
+}
+.file-info {
+  background: var(--background-color);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Accordion */
+.accordion-item {
+  border: 1px solid var(--default-color);
+  border-radius: 8px;
+  padding: 1px 2px;
+  background-color: transparent;
+}
+
+.accordion-button:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--accent-color);
+  background-color: transparent;
+}
+
+.accordion-flush .accordion-button {
+  padding: 10px 0;
+  background: none;
+  border: 0;
+}
+
+.accordion-flush .accordion-button:not(.collapsed) {
+  box-shadow: none;
+  color: var(--accent-color);
+}
+
+.accordion-flush .accordion-body {
+  padding: 0 0 15px 0;
+  color: var(--accent-color);
+  font-size: 15px;
+}
+
+
+
+/****************************************
+* Rich text editor styles
+****************************************/
+/* Enhanced styles for rich text content editing */
+.rich-text-content {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 12px;
+  background-color: var(--background-color);
+}
+
+.rich-text-content:focus {
+  background-color: var(--background-color);
+  border-color: var(--accent-color);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem var(--accent-color);
+}
+
+.content-preview {
+  background: inherit;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 20px;
+  margin-top: 10px;
+  min-height: 200px;
+}
+
+.preview-toggle {
+  background: var(--default-color);
+  color: var(--color);
+  border: none;
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.preview-toggle:hover {
+  background: var(--accent-color);
+}
+
+.preview-toggle.active {
+  background: var(--primary-color);
 }

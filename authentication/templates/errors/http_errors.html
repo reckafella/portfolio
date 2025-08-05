@@ -1,0 +1,31 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- breadcrumbs -->
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section http-errors min-vh-100 d-flex flex-column align-items-center justify-content-center">
+    <div class="col-11 col-lg-10 d-flex flex-column align-items-center justify-content-center">
+        <!-- HTTP Errors -->
+        <h1>{{ code }}</h1>
+        <h2>{{ message }}</h2>
+        <img src="{{ image }}" alt="Image for {{ code }} Error" class="img-fluid mb-2" loading="lazy">
+        <div class="d-flex lead justify-content-center align-items-center gap-2 gap-lg-3">
+            <a class="btn btn-primary special-btn" href="{% url 'app:home' %}">Go to Home</a>
+            <a class="btn btn-secondary special-btn" href="{% url 'blog:list_articles' %}">View Blog</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

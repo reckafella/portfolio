@@ -8,68 +8,25 @@
             <div class="divider mx-auto my-3"></div>
             <p class="lead text-muted">Comprehensive web solutions to elevate your online presence</p>
         </div>
-        
+        {% if services %}
         <div class="row g-4 justify-content-center">
+            {% for service in services %}
             <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
+                <div class="service-item h-100 shadow-sm border-0 p-4 text-center">
                     <div class="icon-box mb-3">
-                        <i class="bi bi-code-square fs-1 text-primary"></i>
+                        <i class="{{ service.icon }} fs-1 text-info"></i>
                     </div>
-                    <h3 class="card-title fw-bold fs-4">Website Development</h3>
-                    <p class="card-text mt-3">Custom-built responsive websites tailored to your specific needs, ensuring an engaging and professional online presence.</p>
+                    <h3 class="fw-bold fs-4">{{ service.title }}</h3>
+                    <p class="mt-3">{{ service.description }}</p>
                 </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
-                    <div class="icon-box mb-3">
-                        <i class="bi bi-hdd-stack fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="card-title fw-bold fs-4">Website Hosting</h3>
-                    <p class="card-text mt-3">Reliable and secure hosting solutions with 99.9% uptime guarantee to ensure your website is always accessible to your audience.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
-                    <div class="icon-box mb-3">
-                        <i class="bi bi-database fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="card-title fw-bold fs-4">Backend Development</h3>
-                    <p class="card-text mt-3">Robust backend systems and RESTful APIs to power your applications with scalable and secure infrastructure.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
-                    <div class="icon-box mb-3">
-                        <i class="bi bi-bug fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="card-title fw-bold fs-4">QA & Testing</h3>
-                    <p class="card-text mt-3">Comprehensive testing to ensure your applications are bug-free, secure, and deliver optimal performance for all users.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
-                    <div class="icon-box mb-3">
-                        <i class="bi bi-cloud fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="card-title fw-bold fs-4">Maintenance & Support</h3>
-                    <p class="card-text mt-3">Ongoing technical support and scheduled maintenance to keep your systems updated, secure, and running smoothly.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card card h-100 shadow-sm border-0 p-4 text-center">
-                    <div class="icon-box mb-3">
-                        <i class="bi bi-tools fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="card-title fw-bold fs-4">Database Design</h3>
-                    <p class="card-text mt-3">Strategic database architecture ensuring efficient data storage, quick retrieval, and seamless scalability as your business grows.</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+        {% else %}
+        <div class="text-center">
+            <p class="text-muted">No services available at the moment.</p>
+        </div>
+        {% endif %}
     </div>
 </section>
 

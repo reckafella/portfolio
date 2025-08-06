@@ -4,13 +4,13 @@
 
 {% block content %}
 <!-- Resume Section -->
-<section id="resume" class="resume section py-5">
+<section id="resume" class="resume section py-4">
     <div class="container" data-aos="fade-up">
-        <div class="section-title text-center mb-5">
+        <div class="section-title text-center mb-1">
             <h2>Resume</h2>
             <p>My professional journey and experiences</p>
             <div class="mt-3">
-                <a href="{% static 'app/resume/Ethan_Wanyoike_Resume.pdf' %}" class="btn btn-primary" download>
+                <a href="{% url 'app:resume_pdf' %}" class="btn btn-info" download title="Download Resume">
                     <i class="bi bi-download me-2"></i>Download CV
                 </a>
             </div>
@@ -21,7 +21,7 @@
                 <!-- Left Column -->
                 <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
                     <h3 class="resume-title">Summary</h3>
-                    <div class="resume-item pb-0 mb-4">
+                    <div class="resume-item pb-0 mb-3">
                         <h4>Ethan Wanyoike</h4>
                         <p><em>
                             A software engineer with a passion for building scalable applications and improving user
@@ -50,6 +50,25 @@
                         <p>Graduated with a Second Class Honours degree specializing in Data Science and Analytics.
                             Completed a thesis on "Predictive Analytics in the Banking Sector".</p>
                     </div>
+                    <h3 class="resume-title">Skills</h3>
+                    <div class="resume-item">
+                        <h4>Technical Skills</h4>
+                        <div class="skill-tags">
+                            <span class="badge bg-success m-1">Python</span>
+                            <span class="badge bg-success m-1">Django</span>
+                            <span class="badge bg-success m-1">JavaScript</span>
+                            <span class="badge bg-success m-1">Git</span>
+                            <span class="badge bg-success m-1">TypeScript</span>
+                            <span class="badge bg-success m-1">Bootstap</span>
+                            <span class="badge bg-success m-1">Nodejs</span>
+                            <span class="badge bg-success m-1">C</span>
+                            <span class="badge bg-success m-1">Bash</span>
+                            <span class="badge bg-success m-1">SQL</span>
+                            <span class="badge bg-success m-1">Docker</span>
+                            <span class="badge bg-success m-1">REST APIs</span>
+                        </div>
+                    </div>
+                    {% comment %}
                     <div class="resume-item">
                         <h4>High School Diploma</h4>
                         <h5 class="text-success">2012 - 2015</h5>
@@ -57,14 +76,15 @@
                         <p>Graduated with a B+ grade. Participated in various extra-curricular activities including
                             marathons, math clubs, coding clubs and science fairs.</p>
                     </div>
+                    {% endcomment %}
                 </div>
                 
                 <!-- Right Column -->
                 <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
                     <h3 class="resume-title">Professional Experience</h3>
                     <div class="resume-item">
-                        <h4>Software Engineer Intern</h4>
-                        <h5 class="text-success">Jan. 2024 - Dec. 2024</h5>
+                        <h4>Software Engineer</h4>
+                        <h5 class="text-success">Apr. 2024 - Present</h5>
                         <p><em><i class="bi bi-building me-2"></i>Alphaflare Ltd</em></p>
                         <ul>
                             <li>Developed and maintained web applications using Django and JavaScript.</li>
@@ -76,36 +96,22 @@
                     <div class="resume-item">
                         <h4>Freelance Web Developer</h4>
                         <h5 class="text-success">2024 - 2025</h5>
-                        <p><em><i class="bi bi-laptop me-2"></i>Self-employed, Nairobi, Kenya</em></p>
+                        <p><em><i class="bi bi-laptop me-2"></i>Remote</em></p>
                         <ul>
                             <li>Designed and developed custom websites for small businesses.</li>
                             <li>Implemented SEO best practices to improve website visibility.</li>
                             <li>Provided ongoing maintenance and support for clients' websites.</li>
                         </ul>
                     </div>
-                    
-                    <h3 class="resume-title mt-4">Skills</h3>
                     <div class="resume-item">
-                        <h4>Technical Skills</h4>
-                        <div class="skill-tags">
-                            <span class="badge bg-success m-1">Python</span>
-                            <span class="badge bg-success m-1">Django</span>
-                            <span class="badge bg-success m-1">JavaScript</span>
-                            <span class="badge bg-success m-1">HTML/CSS</span>
-                            <span class="badge bg-success m-1">Git</span>
-                            <span class="badge bg-success m-1">TypeScript</span>
-                            <span class="badge bg-success m-1">Bootstap</span>
-                            <span class="badge bg-success m-1">Tailwind CSS</span>
-                            <span class="badge bg-success m-1">Nodejs</span>
-                            <span class="badge bg-success m-1">C</span>
-                            <span class="badge bg-success m-1">Bash</span>
-                            <span class="badge bg-success m-1">SQL</span>
-                            <span class="badge bg-success m-1">Docker</span>
-                            <span class="badge bg-success m-1">REST APIs</span>
-                            <span class="badge bg-success m-1">Cloud Computing</span>
-                            <span class="badge bg-success m-1">Agile Methodologies</span>
-                            <span class="badge bg-success m-1">Problem Solving</span>
-                        </div>
+                        <h4>Data Analyst Intern</h4>
+                        <h5 class="text-success">2020 - 2021</h5>
+                        <p><em><i class="bi bi-graph-up me-2"></i>Kenya Bureau of Statistics</em></p>
+                        <ul>
+                            <li>Assisted in data collection and analysis for national surveys.</li>
+                            <li>Developed data visualizations to present findings to stakeholders.</li>
+                            <li>Contributed to reports on economic indicators and trends.</li>
+                        </ul>
                     </div>
                 </div>
             </div>

@@ -10,7 +10,8 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
-from authentication.models import Profile, SocialLinks, UserSettings
+from authentication.models import (
+    Profile, SocialLinks, UserSettings, UserProfileImage)
 from app.views.helpers.helpers import handle_no_permissions
 from authentication.forms.profile import (
     ProfileForm, SocialLinksForm,
@@ -144,6 +145,15 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     uploader.delete_image(self.object.cloudinary_image_id)
                     _message = "Old profile picture deleted successfully!"
                     success_messages.append(_message)
+                """ delete userprofile image if exists """
+                profile_image = UserProfileImage.objects.filter(
+                    profile=profile).first()
+                if profile_image and profile_image.cloudinary_image_id:
+                    uploader.delete_image(profile_image.cloudinary_image_id)
+                    profile_image.delete()
+                    _message = "Old profile picture deleted successfully\
+                        [userprofileimage]!"
+                    success_messages.append(_message)
             except Exception as e:
                 # Handle any errors that occur during the deletion
                 _message = f"Error deleting old image: {str(e)}"
@@ -160,6 +170,14 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 profile.cloudinary_image_id = _data["cloudinary_image_id"]
                 profile.cloudinary_image_url = _data["cloudinary_image_url"]
                 profile.optimized_image_url = _data["optimized_image_url"]
+                UserProfileImage.objects.update_or_create(
+                    profile=profile,
+                    defaults={
+                        'cloudinary_image_id': _data["cloudinary_image_id"],
+                        'cloudinary_image_url': _data["cloudinary_image_url"],
+                        'optimized_image_url': _data["optimized_image_url"]
+                    }
+                )
                 success_messages.append("Success Updating Profile picture!")
             except Exception as e:
                 # Handle any errors that occur during the upload

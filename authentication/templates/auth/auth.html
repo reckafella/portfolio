@@ -1,6 +1,10 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %}{{ page_title }}{% endblock %}
+{% block description %}{{ page_description|default:"Explore my projects and professional work." }}{% endblock %}
+{% block keywords %}projects, portfolio, software development, web development{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
     <section id="profile" class="section">

@@ -2,6 +2,9 @@
 {% load static %}
 {% block title %} {{ title }} {% endblock %}
 {% load custom_encoding %}
+{% block description %}{{ page_description|default:"Explore my projects and professional work." }}{% endblock %}
+{% block keywords %}projects, portfolio, software development, web development{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'assets/css/projects.css' %}">

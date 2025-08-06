@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description|default:"An error occurred while processing your request." }}{% endblock %}
+{% block keywords %}error, http, portfolio, blog, {{ title }}{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
 <!-- breadcrumbs -->

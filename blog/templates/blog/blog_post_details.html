@@ -5,9 +5,13 @@
 {% load wagtailimages_tags %}
 {% load wagtailuserbar %}
 {% block title %}{{ post.title }}{% endblock %}
+{% block description %}{{ post.title|default:"" }}{% endblock %}
+{% block keywords %}blog, articles, posts, {{ post.title }}, portfolio{% endblock %}
+{% block author %}{{ post.author.get_full_name|default:post.author.username }}{% endblock %}
+
+{% include 'app/includes/meta_tags.html' with title=post.title description=post.excerpt image=post.optimized_image_url|default:default_og_image %}
 
 {% block content %}
-
 <section id="section" class="mt-5 blog ">
     <div class="container  col-lg-7 col-md-9 col-sm-10">
         <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">

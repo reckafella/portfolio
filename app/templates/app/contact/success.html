@@ -1,6 +1,10 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %} {{ page_title }} {% endblock %}
+{% block description %}{{ page_description|default:"Contact us for any inquiries or feedback." }}{% endblock %}
+{% block keywords %}contact, inquiries, feedback, portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
 <div class="page-title">

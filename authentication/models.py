@@ -10,12 +10,12 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, blank=True)
     bio = models.TextField(max_length=500, blank=True)
     country = models.CharField(max_length=100, blank=True)
-    city = models.CharField(max_length=100, blank=True)
     profile_pic = CloudinaryField('image', null=True, blank=True)
     cloudinary_image_id = models.CharField(max_length=255, blank=True,
                                            null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -62,6 +62,21 @@ class UserSettings(models.Model):
         super().save(*args, **kwargs)
 
 
+class UserProfileImage(models.Model):
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    profile_pic = CloudinaryField('image', null=True, blank=True)
+    cloudinary_image_id = models.CharField(max_length=255, blank=True,
+                                           null=True)
+    cloudinary_image_url = models.URLField(blank=True, null=True)
+    optimized_image_url = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.profile.user.username}'s profile image"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """
@@ -98,3 +113,20 @@ def create_user_settings(sender, instance, created, **kwargs):
     """
     if created:
         UserSettings.objects.create(user=instance.user)
+
+
+@receiver(post_save, sender=Profile)
+def create_user_profile_image(sender, instance, created, **kwargs):
+    """
+    Create a UserProfileImage instance when a new Profile is created
+    """
+    if created:
+        UserProfileImage.objects.create(profile=instance)
+    else:
+        # Ensure the UserProfileImage is updated if the Profile already exists
+        try:
+            instance.userprofileimage.save()
+        except UserProfileImage.DoesNotExist:
+            UserProfileImage.objects.create(profile=instance)
+        except Exception as e:
+            raise Exception(f"Error updating UserProfileImage: {e}")

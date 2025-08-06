@@ -1,6 +1,9 @@
 {% extends 'app/base.html' %}
 {% load static wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
 {% block title %} {{ page_title }}{% endblock %}
+{% block description %}{{ page_description|default:"Search for blog posts and projects." }}{% endblock %}
+{% block keywords %}search, blog, projects, portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
 
 {% block content %}
 <!-- Responsive Breadcrumb -->

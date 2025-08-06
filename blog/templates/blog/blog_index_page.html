@@ -2,6 +2,10 @@
 {% load wagtailimages_tags wagtailcore_tags %}
 
 {% block title %}{{ page.title }}{% endblock %}
+{% block description %}{{ page.description|default:"Explore the latest blog posts." }}{% endblock %}
+{% block keywords %}blog, articles, posts, portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
 <section class="mt-5 blog-index container py-5">

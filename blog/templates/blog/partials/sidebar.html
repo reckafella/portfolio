@@ -3,22 +3,23 @@
         <div class="blog-author-widget widget-item">
             <div class="d-flex flex-column align-items-center">
                 <div class="d-flex align-items-center w-100">
-                    <img src="{% static 'assets/images/profile.jpg' %}" alt="" class="rounded-circle flex-shrink-0" loading="lazy">
+                    {% static 'assets/images/profile.jpg' as default_profile_image %}
+                    <img src="{{ article.author.profile.optimized_image_url|default:default_profile_image }}" alt="" class="rounded-circle flex-shrink-0" loading="lazy">
                     <div>
                         <h4>{{ article.author.get_full_name | default:article.author.username|capfirst }}</h4>
                         <div class="social-links mt-2">
                             {% with social=article.author.profile.social_media.first %}
-                                {% if social.twitter_x %}
-                                    <a href="{{ social.twitter_x }}" target="_blank" class="twitter"><i class="bi bi-twitter"></i></a>
-                                {% endif %}
-                                {% if social.facebook %}
-                                    <a href="{{ social.facebook }}" target="_blank" class="facebook"><i class="bi bi-facebook"></i></a>
+                                {% if social.github %}
+                                    <a href="{{ social.github }}" target="_blank" class="github"><i class="bi bi-github"></i></a>
                                 {% endif %}
                                 {% if social.linkedin %}
                                     <a href="{{ social.linkedin }}" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
                                 {% endif %}
-                                {% if social.github %}
-                                    <a href="{{ social.github }}" target="_blank" class="github"><i class="bi bi-github"></i></a>
+                                {% if social.twitter_x %}
+                                    <a href="{{ social.twitter_x }}" target="_blank" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                                {% endif %}
+                                {% if social.facebook %}
+                                    <a href="{{ social.facebook }}" target="_blank" class="facebook"><i class="bi bi-facebook"></i></a>
                                 {% endif %}
                                 {% if social.youtube %}
                                     <a href="{{ social.youtube }}" target="_blank" class="youtube"><i class="bi bi-youtube"></i></a>
@@ -31,7 +32,7 @@
                     </div>
                 </div>
                 <p>
-                    {{ article.author.profile.bio | default:"Author Bio" }}
+                    {{ article.author.profile.bio | default:"" }}
                 </p>
             </div>
         </div>

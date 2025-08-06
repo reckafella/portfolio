@@ -53,4 +53,7 @@ urlpatterns = [
     ),
     path("app-running", app_is_running.as_view(), name="app_is_running"),
     path("favicon.ico", render_favicon, name="favicon"),
+    path("search/<path:invalid_path>", crv.as_view(redirect_to="/search")),
+    path("projects/<path:invalid_path>", crv.as_view(redirect_to="/projects")),
+    path("contact/<path:invalid_path>", crv.as_view(redirect_to="/contact"))
 ]

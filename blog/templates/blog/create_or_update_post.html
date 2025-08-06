@@ -6,108 +6,6 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block extra_head %}
-    {{ block.super }}
-    <!-- Wagtail Admin CSS and JS for rich text editor -->
-    <style>
-        /* Custom styles for Wagtail rich text editor in frontend */
-        .Draftail-Editor {
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            min-height: 300px;
-            background: white;
-        }
-        
-        .Draftail-Editor:focus-within {
-            border-color: #86b7fe;
-            outline: 0;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-        
-        .Draftail-Toolbar {
-            border-bottom: 1px solid #dee2e6;
-            background: #f8f9fa;
-            border-radius: 0.375rem 0.375rem 0 0;
-            padding: 8px;
-        }
-        
-        .Draftail-Editor__wrapper {
-            background: white;
-            border-radius: 0 0 0.375rem 0.375rem;
-        }
-        
-        .Draftail-Editor__editor {
-            padding: 15px;
-            min-height: 250px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        
-        /* Style the rich text content */
-        .Draftail-Editor__editor h1 {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 1rem 0;
-        }
-        
-        .Draftail-Editor__editor h2 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 0.875rem 0;
-        }
-        
-        .Draftail-Editor__editor h3 {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin: 0.75rem 0;
-        }
-        
-        .Draftail-Editor__editor p {
-            margin: 0.5rem 0;
-        }
-        
-        .Draftail-Editor__editor ul, 
-        .Draftail-Editor__editor ol {
-            margin: 0.5rem 0;
-            padding-left: 2rem;
-        }
-        
-        .Draftail-Editor__editor blockquote {
-            border-left: 4px solid #007bff;
-            padding-left: 1rem;
-            margin: 1rem 0;
-            font-style: italic;
-            color: #6c757d;
-        }
-        
-        /* Override some admin styles for better frontend appearance */
-        .halloeditor, .richtext {
-            background: white !important;
-            border-radius: 0.375rem !important;
-        }
-        
-        .rich-text-content {
-            display: none; /* Hide if fallback textarea exists */
-        }
-        
-        /* Button styling for rich text toolbar */
-        .Draftail-ToolbarButton {
-            border-radius: 3px;
-            margin: 2px;
-        }
-        
-        .Draftail-ToolbarButton:hover {
-            background: #e9ecef;
-        }
-        
-        .Draftail-ToolbarButton--active {
-            background: #007bff;
-            color: white;
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">
@@ -166,8 +64,12 @@
                                         </button>
                                     {% endif %}
                                 </label>
-                                <div class="wagtail-richtext-container">
-                                    {{ field }}
+                                {{ field }}
+                                <button type="button" class="preview-toggle" onclick="togglePreview('id_content', event)">
+                                    Preview
+                                </button>
+                                <div id="id_content_preview" class="content-preview" style="display: none;">
+                                    <p class="text-muted"><em>Preview will appear here...</em></p>
                                 </div>
                                 <small class="form-text text-muted">
                                     Use the toolbar above to format your text. You can create headings, bold/italic text, 
@@ -209,53 +111,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    {{ block.super }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Wagtail rich text editor
-            if (window.wagtail && window.wagtail.init) {
-                window.wagtail.init();
-            }
-            
-            // Alternative method if the above doesn't work
-            if (window.draftail) {
-                // Find all Draftail rich text areas and initialize them
-                document.querySelectorAll('[data-draftail-editor]').forEach(function(element) {
-                    if (!element.dataset.initialized) {
-                        element.dataset.initialized = 'true';
-                        if (window.draftail.initEditor) {
-                            window.draftail.initEditor(element);
-                        }
-                    }
-                });
-            }
-            
-            // Ensure character counters work for other fields
-            const textInputs = document.querySelectorAll('input[type="text"], textarea:not(.wagtail-richtext-editor)');
-            textInputs.forEach(function(input) {
-                const counter = document.getElementById(input.id + '-count');
-                if (counter) {
-                    function updateCounter() {
-                        const current = input.value.length;
-                        const max = input.getAttribute('maxlength');
-                        if (max) {
-                            counter.textContent = `${current}/${max} characters`;
-                            if (current > max * 0.9) {
-                                counter.className = 'text-warning';
-                            } else if (current === max) {
-                                counter.className = 'text-danger';
-                            } else {
-                                counter.className = 'text-muted';
-                            }
-                        } else {
-                            counter.textContent = `${current} characters`;
-                        }
-                    }
-                    
-                    input.addEventListener('input', updateCounter);
-                    updateCounter(); // Initial count
-                }
-            });
-        });
-    </script>
+<script src="{% static 'assets/javascript/forms/togglePreview.js' %}"></script>
 {% endblock %}

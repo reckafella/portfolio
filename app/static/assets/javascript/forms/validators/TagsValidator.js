@@ -25,7 +25,7 @@ export class TagsValidator extends FieldValidator {
         // Handle empty field
         if (!tagsText) {
             if (required) {
-                this.setFieldError(field, fieldId, 'Tags are required.');
+                this.setFieldError(field, fieldId, '');
             }
             return;
         }

@@ -374,7 +374,7 @@ CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
  """
 
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-CAPTCHA_TIMEOUT = 5
+CAPTCHA_TIMEOUT = 10  # Increased to 10 minutes
 # CAPTCHA_IMAGE_SIZE = (100, 50)
 CAPTCHA_LENGTH = 6
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',

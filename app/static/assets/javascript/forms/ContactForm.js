@@ -56,7 +56,8 @@ export class ContactForm {
         this.formManager.registerValidator('id_message',
             () => messageValidator.validate('id_message'));
         this.formManager.registerValidator('id_captcha_1',
-            () => captchaValidator.validate('id_captcha_1'));
+            () => captchaValidator.validate('id_captcha_1'),
+            captchaValidator);
 
         // Set up word counter for message
         messageValidator.setupWordCounter('id_message', 'id_message-word-count');

@@ -4,14 +4,16 @@
 .blog {
   padding: 5px;
   background-color: var(--blog-background-color);
+  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
 }
 
 .blog .entry {
   padding: 10px;
   margin-bottom: 30px;
-  box-shadow: 0px 1px 2px color-mix(in srgb, var(--default-color), transparent 80%);
+  box-shadow: 1px 1px color-mix(in srgb, var(--default-color), transparent 10%);
   border-radius: 5px;
-  background-color: color-mix(in srgb, var(--surface-color), transparent 10%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
+  background-color: var(--special-background-color);
 }
 
 
@@ -34,7 +36,7 @@
 }
 
 .blog .entry .entry-title a:hover {
-  color: #feaa00;
+  color: var(--accent-color);
 }
 
 .blog .entry .entry-meta {
@@ -381,10 +383,10 @@
 
 .widget-item {
   margin-bottom: 30px;
-  background-color: color-mix(in srgb, var(--background-color), transparent 98%);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  background-color: color-mix(in srgb, var(--background-color), transparent 8%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 8%);
   color: var(--default-color);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--default-color), transparent 80%);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--default-color), transparent 8%);
   padding: 30px;
   border-radius: 5px;
 }

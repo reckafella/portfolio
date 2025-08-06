@@ -70,7 +70,8 @@ export class AuthForm {
         // Set up captcha
         captchaValidator.setupCaptcha('id_captcha_1');
         this.formManager.registerValidator('id_captcha_1',
-            () => captchaValidator.validate('id_captcha_1'));
+            () => captchaValidator.validate('id_captcha_1'),
+            captchaValidator);
 
         // Add password toggle for all password fields
         passwordValidator.createToggle('password1');

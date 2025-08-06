@@ -162,52 +162,6 @@ button[type=submit]:hover {
   font-style: normal;
 }
 
-.char-counter {
-  text-align: right;
-}
-
-.char-counter.warning {
-  color: #ff6b35 !important;
-}
-
-.char-counter.error {
-  color: #dc3545 !important;
-}
-
-.form-control.char-warning {
-  border-color: #ff6b35 !important;
-  box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
-}
-
-.form-control.char-error {
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-}
-
-.form-control.char-valid {
-  border-color: #28a745 !important;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.validation-message {
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.validation-message.error {
-  color: #dc3545;
-}
-
-.validation-message.warning {
-  color: #ff6b35;
-}
-
-
 /* Captcha input with refresh button styling */
 .captcha-input-container {
   position: relative;
@@ -361,9 +315,9 @@ button[type=submit]:hover {
 }
 
 .preview-toggle {
-  background: var(--default-color);
-  color: var(--color);
-  border: none;
+  color: var(--default-color);
+  background-color: var(--accent-color);
+  border: 1px solid var(--default-color);
   padding: 5px 15px;
   border-radius: 4px;
   font-size: 12px;
@@ -372,9 +326,13 @@ button[type=submit]:hover {
 }
 
 .preview-toggle:hover {
-  background: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--default-color);
+  border: 1px solid var(--accent-color);
+  transition: 0.3s ease;
 }
 
 .preview-toggle.active {
-  background: var(--primary-color);
+  background: var(--special-background-color);
+  color: var(--default-color);
 }

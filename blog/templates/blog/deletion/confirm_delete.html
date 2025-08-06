@@ -1,6 +1,10 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %}Delete Post{% endblock %}
+{% block description %}Confirm deletion of the blog post.{% endblock %}
+{% block keywords %}blog, delete, confirm deletion, post{% endblock %}
+{% block author %}{{ object.author.get_full_name|default:object.author.username }}{% endblock %}
+
 
 {% block content %}
 <section class="mt-5 section ">

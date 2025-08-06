@@ -5,6 +5,10 @@
 {% load wagtailimages_tags %}
 {% load wagtailuserbar %}
 {% block title %}{{ post.title }}{% endblock %}
+{% block description %}{{ post.excerpt|default:"" }}{% endblock %}
+{% block keywords %}blog, articles, posts, {{ post.title }}, portfolio{% endblock %}
+{% block author %}{{ post.author.get_full_name|default:post.author.username }}{% endblock %}
+
 
 {% block content %}
 <section id="section" class="mt-5 section blog ">

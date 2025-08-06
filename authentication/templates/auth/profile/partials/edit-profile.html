@@ -13,11 +13,14 @@
                     class="img-fluid rounded-circle mb-2" style="max-width: 150px;">
                 {% endif %}
                 <div class="pt-2">
-                    <button type="button" class="btn btn-primary btn-sm" title="{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo" onclick="openImageCropModal()">
+                    <button type="button" class="btn btn-primary btn-sm"
+                        title="{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo"
+                        id="openImageCropModalBtn" onclick="openImageCropModal()">
                         <i class="bi bi-upload"></i>{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo
                     </button>
                     {% if profile.optimized_image_url %}
-                    <button type="button" class="btn btn-danger btn-sm" title="Delete Photo" onclick="confirmDeleteProfilePic()">
+                    <button type="button" class="btn btn-danger btn-sm" title="Delete Photo"
+                        id="confirmDeleteProfilePicBtn" onclick="confirmDeleteProfilePic()">
                         <i class="bi bi-trash"></i> Delete Photo
                     </button>
                     {% endif %}
@@ -50,6 +53,6 @@
             <button type="submit" class="btn btn-primary" data-loading-text="{{ data_loading_text }}">Save Changes</button>
         </div>
     </form>
-    {% include 'auth/profile/partials/crop-images-modal.html' %}
-    {% include 'auth/profile/partials/delete-image-modal.html' %}
+    {% include 'auth/profile/partials/modals/crop-images-modal.html' %}
+    {% include 'auth/profile/partials/modals/delete-image-modal.html' %}
 </div>

@@ -5,6 +5,10 @@
 {% load wagtailuserbar %}
 
 {% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description|default:"Create a new blog post." }}{% endblock %}
+{% block keywords %}blog, articles, posts, portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
 <div class="page-title">
@@ -112,4 +116,18 @@
 
 {% block extra_js %}
 <script src="{% static 'assets/javascript/forms/togglePreview.js' %}"></script>
+<!-- Quill Editor on Content Field -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#id_content', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['link', 'image'],
+                [{ list: 'ordered' }, { list: 'bullet' }]
+            ]
+        }
+    });
+</script>
 {% endblock %}

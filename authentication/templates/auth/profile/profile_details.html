@@ -1,6 +1,10 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block title %}{{ page_title }}{% endblock %}
+{% block description %}{{ page_description|default:"Explore my projects and professional work." }}{% endblock %}
+{% block keywords %}projects, portfolio, software development, web development{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
@@ -95,10 +99,10 @@
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="{% static 'assets/js/toast.js' %}" type="module"></script>
-<script src="{% static 'assets/js/cropImages.js' %}" type="module"></script>
+<script src="{% static 'assets/javascript/images/ImageCropping.js' %}" type="module"></script>
 <script type="module">
   // Initialize toast manager globally
-  import { ToastManager } from "{% static 'assets/js/toast.js' %}";
+  import { ToastManager } from '/static/assets/js/toast.js';
   window.toastManager = new ToastManager();
 </script>
 {% endblock %}

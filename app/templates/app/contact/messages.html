@@ -1,6 +1,10 @@
 {% extends 'app/base.html' %}
 
 {% block title %}{{ page_title }}{% endblock %}
+{% block description %}{{ page_description|default:"Explore the messages sent through the contact form." }}{% endblock %}
+{% block keywords %}contact, messages, portfolio, feedback{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
 
 {% block content %}
 <div class="page-title">

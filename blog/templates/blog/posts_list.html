@@ -1,9 +1,12 @@
 {% extends "app/base.html" %}
 {% load wagtailcore_tags wagtailimages_tags wagtailuserbar wagtailadmin_tags %}
-
 {% load static %}
-
 {% block title %} {{ page_title }} {% if not all_authors %} by {{ author.get_full_name | default:author.username }} {% endif %}{% endblock %}
+{% block description %}Explore articles {% if not all_authors %} by {{ author.get_full_name | default:author.username }}{% endif %} on my blog.{% endblock %}
+{% block keywords %}blog, articles, posts, {% if not all_authors %}{{ author.get_full_name | default:author.username }}, {% endif %}portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
+{% include 'app/includes/meta_tags.html' with title=page_title description=page_description image=page_image %}
 
 {% block content %}
 <div class="page-title">

@@ -4,9 +4,9 @@
  */
 
 import { ImageCropper } from './cropImages.js';
-import { PreviewUpdater } from './cropImages/utils/images/updatePreview.js';
-import { ImageUtils } from './cropImages/utils/images/utilityFunctions.js';
-import { ModalManager } from './cropImages/utils/images/modals.js';
+import { PreviewUpdater } from './cropImages/updatePreview.js';
+import { ImageUtils } from './cropImages/utilityFunctions.js';
+import { ModalManager } from './cropImages/modals.js';
 
 // Export all classes
 export {

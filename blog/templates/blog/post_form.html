@@ -3,6 +3,11 @@
 {% block title %}{% if form.instance.slug %}Edit{% else %}New{% endif %} Post - {{ block.super }}{% endblock %}
 {% load wagatailadmin_tags %}
 {% load wagtailcore_tags %}
+{% block description %}Create or edit a blog post.{% endblock %}
+{% block keywords %}blog, post, create, edit, {% if form.instance.slug %}edit{% else %}create{% endif %}{% endblock %}
+{% block author %}{{ form.instance.author.get_full_name|default:form.instance.author.username }}{% endblock %}
+
+{% include 'app/includes/meta_tags.html' with title=title description=description image=page_image %}
 
 {% block extra_head %}
 {{ form.media }}

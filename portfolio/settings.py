@@ -374,7 +374,7 @@ CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
  """
 
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-CAPTCHA_TIMEOUT = 5
+CAPTCHA_TIMEOUT = 10  # Increased to 10 minutes
 # CAPTCHA_IMAGE_SIZE = (100, 50)
 CAPTCHA_LENGTH = 6
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
@@ -437,3 +437,52 @@ except Exception:
 # if RATELIMIT is less than 1000, set it to 1000
 if RATELIMIT < 1000:
     RATELIMIT = 1000
+
+""" Services Offered Json format """
+OUR_SERVICES = [
+    {
+        "id": 1,
+        "title": "Website Development",
+        "description": "Custom-built responsive websites tailored to your\
+            specific needs, ensuring an engaging and professional online\
+                presence.",
+        "icon": "bi bi-code-square"
+    },
+    {
+        "id": 2,
+        "title": "Website Hosting",
+        "description": "Reliable and secure hosting solutions with 99.9%\
+            uptime guarantee to ensure your website is always accessible to\
+                your audience.",
+        "icon": "bi bi-hdd-stack"
+    },
+    {
+        "id": 3,
+        "title": "Backend Development",
+        "description": "Robust backend systems and RESTful APIs to power your\
+            applications with scalable and secure infrastructure.",
+        "icon": "bi bi-database"
+    },
+    {
+        "id": 4,
+        "title": "QA & Testing",
+        "description": "Comprehensive testing to ensure your applications are\
+            bug-free, secure, and deliver optimal performance for all users.",
+        "icon": "bi bi-bug"
+    },
+    {
+        "id": 5,
+        "title": "Maintenance & Support",
+        "description": "Ongoing technical support and scheduled maintenance\
+            to keep your systems updated, secure, and running smoothly.",
+        "icon": "bi bi-cloud"
+    },
+    {
+        "id": 6,
+        "title": "Database Design",
+        "description": "Strategic database architecture ensuring efficient\
+            data storage, quick retrieval, and seamless scalability as your\
+                business grows.",
+        "icon": "bi bi-tools"
+    }
+]

@@ -28,9 +28,8 @@ export class URLValidator extends FieldValidator {
 
         if (!url) {
             if (required) {
-                this.setFieldError(field, fieldId, 'URL is required.');
+                this.setFieldError(field, fieldId, '');
             }
-            // If not required and empty, no validation error
         } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
             this.setFieldError(field, fieldId, 'URL should start with http:// or https://');
         } else if (!this.isValidUrl(url)) {

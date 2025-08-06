@@ -1,4 +1,4 @@
-import { NameValidator } from "./validators/NameValidator.js";
+import { SubjectValidator } from "./validators/SubjectValidator.js";
 import { MessageValidator } from "./validators/MessageValidator.js";
 import { FormManager } from "./manager/FormManager.js";
 import { BooleanValidator } from "./validators/SelectValidator.js";
@@ -53,17 +53,17 @@ export class BlogPostForm {
      */
     setupValidators() {
         // Create validators and pass fieldConfigs to them
-        const nameValidator = new NameValidator(this.formManager);
+        const titleValidator = new SubjectValidator(this.formManager);
         const contentValidator = new MessageValidator(this.formManager);
         const imageValidator = new ImageValidator(this.formManager);
         const booleanValidator = new BooleanValidator(this.formManager);
         const tagsValidator = new TagsValidator(this.formManager);
 
         // Register validators for all blog post fields
-        this.formManager.registerValidator('id_title', () => nameValidator.validate('id_title'));
-        this.formManager.registerValidator('id_content', () => contentValidator.validate('id_content'));
-        this.formManager.registerValidator('id_tags', () => tagsValidator.validate('id_tags'));
-        this.formManager.registerValidator('id_cover_image', () => imageValidator.validate('id_cover_image'));
-        this.formManager.registerValidator('id_publish', () => booleanValidator.validate('id_publish'));
+        this.formManager.registerValidator('id_title', () => titleValidator.validate('id_title', 'Blog post title'));
+        this.formManager.registerValidator('id_content', () => contentValidator.validate('id_content', 'Blog post content'));
+        this.formManager.registerValidator('id_tags', () => tagsValidator.validate('id_tags', 'Blog post tags'));
+        this.formManager.registerValidator('id_cover_image', () => imageValidator.validate('id_cover_image', 'Blog post cover image'));
+        this.formManager.registerValidator('id_publish', () => booleanValidator.validate('id_publish', 'Publish status'));
     }
 }

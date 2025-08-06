@@ -42,12 +42,7 @@ export class ImagesValidator extends FieldValidator {
         
         if (!files || files.length === 0) {
             if (required) {
-                if (fieldId === 'id_images') {
-                    this.setFieldError(field, fieldId, 'Please select at least one image');
-                } else {
-                    this.setFieldError(field, fieldId, `${displayName} is required`);
-                }
-                
+                this.setFieldError(field, fieldId, '');
             }
             return;
         }

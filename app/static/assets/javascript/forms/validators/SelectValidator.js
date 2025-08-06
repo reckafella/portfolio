@@ -28,7 +28,7 @@ export class SelectValidator extends FieldValidator {
         this.clearFieldValidation(field, fieldId);
 
         if (required && (!value || value === '')) {
-            this.setFieldError(field, fieldId, `${fieldName} is required.`);
+            this.setFieldError(field, fieldId, '');
         } else if (value && value !== '') {
             // Check if the selected value is valid (exists in options)
             const selectedOption = field.querySelector(`option[value="${value}"]`);

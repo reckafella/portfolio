@@ -26,7 +26,9 @@ export class SubjectValidator extends FieldValidator {
         this.clearFieldValidation(field, fieldId);
         
         if (!subject) {
-            //this.setFieldError(field, fieldId, 'Subject is required');
+            if (required) {
+                this.setFieldError(field, fieldId, '');
+            }
         } else if (subject.length < minLength) {
             this.setFieldError(field, fieldId, `${fieldName} must be at least ${minLength} characters`);
         } else if (subject.length < (minLength + 30)) {
@@ -46,6 +48,7 @@ export class SubjectValidator extends FieldValidator {
     getFieldDisplayName(fieldId) {
         const displayNames = {
             'id_subject': 'Subject',
+            'id_title': 'Project title',
             // Add more field IDs and their display names as needed
         };
         return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Subject';

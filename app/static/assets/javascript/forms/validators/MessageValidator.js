@@ -29,7 +29,7 @@ export class MessageValidator extends FieldValidator {
         
         if (!message) {
             if (required) {
-                this.setFieldError(field, fieldId, `${displayName} is required`);
+                this.setFieldError(field, fieldId, '');
             }
             // If not required and empty, no validation error
         } else if (message.length > 0 && message.length < minLength) {

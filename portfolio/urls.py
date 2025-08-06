@@ -47,9 +47,10 @@ urlpatterns = [
     re_path("wagtail/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     re_path("wagtail/admin/", include(wagtailadmin_urls)),
     re_path("wagtail/", include(wagtail_urls)),
-    path("blog/", include("blog.urls"), name="blog"),
+    path("", include("blog.urls"), name="blog"),
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
     path("", include("app.urls"), name="app"),
     path("", include("authentication.urls"), name="auth"),
+    path("<path:invalid_path>", CustomRedirectView.as_view(redirect_to="/")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

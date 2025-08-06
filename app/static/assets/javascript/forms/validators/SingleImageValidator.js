@@ -40,7 +40,7 @@ export class ImageValidator extends FieldValidator {
         
         if (!files || files.length === 0) {
             if (required) {
-                this.setFieldError(field, fieldId, `${displayName} is required`);
+                this.setFieldError(field, fieldId, '');
             }
             return;
         }

@@ -7,21 +7,61 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card w-auto">
                     <div class="card-header">
                         <h3 class="text-center">Delete Post</h3>
                     </div>
                     <div class="card-body">
-                        <p class="text-center">Are you sure you want to delete "{{ object.title }}"?</p>
-                        <form method="post" id="other-post" class="text-center">
-                            {% csrf_token %}
-                            <button type="submit" id="submitButton" data-loading-text="{{ data_loading_text }}" class="btn btn-danger">Confirm Delete</button>
-                            <a href="{% url 'blog:article_details' object.slug %}" class="btn btn-secondary">Cancel</a>
-                        </form>
+                        <p class="text-center">Are you sure you want to delete this article?</p>
+                        <ul class="list-unstyled text-start">
+                            <li><strong>Title:</strong><span class="text-danger ms-1">{{ object.title }}</span></li>
+                            <li><strong>Author:</strong><span class="text-danger ms-1">{{ object.author.get_full_name|default:object.author.username }}</span></li>
+                            <li><strong>Published on:</strong><span class="text-danger ms-1">{{ object.first_published_at|date:"F j, Y" }}</span></li>
+                        </ul>
+                        <ul class="list-unstyled text-start mt-2">
+                            <li><i class="bi bi-exclamation-triangle-fill text-danger"></i>This action will permanently delete the article.</li>
+                            <li><i class="bi bi-exclamation-triangle-fill text-danger"></i>All associated comments and media will also be removed.</li>
+                            <li><i class="bi bi-exclamation-triangle-fill text-danger"></i>Make sure to back up any important information before proceeding.</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center d-flex justify-content-around">
+                        {% url 'blog:article_details' object.slug as article_url %}
+                        <button type="button" onclick="location.href='{{ article_url }}'" class="btn btn-primary text-white">
+                            <i class="bi bi-arrow-left text-white"></i> Go Back
+                        </button>
+                        <button class="btn btn-sm fs-5 btn-danger text-white text-decoration-none" data-bs-modal="confirm-delete"
+                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-danger">Are you REALLY sure you want to DELETE this article? This action cannot be undone.</h4>
+            </div>
+            <div class="modal-footer row justify-content-between">
+                <form method="post" id="other-post" class="text-center d-flex justify-content-between align-items-center">
+                    {% csrf_token %}
+                    <button type="button" data-bs-dismiss="modal"
+                        class="btn btn-sm btn-primary text-white text-decoration-none">
+                        Cancel
+                    </button>
+                    <button data-loading-text="{{ data_loading_text }}"
+                        type="submit" class="btn btn-danger btn-sm text-white">
+                        <i class="bi bi-trash text-white"></i> Confirm Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

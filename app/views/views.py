@@ -40,6 +40,12 @@ class ServicesView(TemplateView):
     template_name = "app/services/services.html"
     status = 200
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Services"
+        context["services"] = settings.OUR_SERVICES
+        return context
+
 
 class ResumeView(TemplateView):
     """Class-based view to render the resume page"""
@@ -72,6 +78,7 @@ class ResumePDFView(View):
         return FileResponse(
             open(resume_path, "rb"),
             content_type="application/pdf",
+            as_attachment=True,
             headers={"Content-Disposition": 'inline; filename="resume.pdf"'},
         )
 

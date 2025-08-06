@@ -18,7 +18,7 @@
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --preloader-bg-color: #100d08; /* black chocolate */
+  --preloader-background-color: #100d08; /* black chocolate */
   --nav-color: #121010;  /* The default color of the main navmenu links */
   --nav-hover-color: #1e044d; /* Applied to main navmenu links when they are hovered over or active */
   --nav-mobile-background-color: #cccbc8; /* Used as the background color for mobile navigation menu */
@@ -41,14 +41,15 @@
   --nav-dropdown-background-color: #f8f9fa;
   --accordion-button-background: #f0f8ff; /* alice blue */
   --breadcrumbs-background-color: #f8f9fa;
-  --footer-background-color: #f8f9fa;
+  --footer-background-color: beige; /*#F5F5F7 ghost white */
   --card-background-color: #f2f8fc;
   --special-background-color: #f0f8ff; /* alice blue */
   --scroll-top-background-color: #000000; /* alice blue */
   --scroll-top-color: #f0f8ff; /* black */
-  --search-background-color: rgba(255, 255, 255, 0.5);
-  --project-info-background-color: rgba(22, 22, 24, 0.8); /* jet black #161618 */
-  --project-info-color: #ffffff; /* white */
+  --search-background-color: rgba(255, 255, 255, 0.95);
+  --project-info-background-color: rgba(255, 255, 255, 0.7); /*#fffff0 ivory rgba(255, 255, 255, 0.8) */
+  --services-background-color: #f0f8ff; /* alice blue */
+  --project-info-color: #000; /* black */
   --nav-color: #444444;
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-background-color: #e9e8e6;
@@ -60,13 +61,14 @@
 /* https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73
  */
 [data-bs-theme="dark"] {
-  --header-background-color: #0a0a0a; /* rich black */
+  --about-background-color: #0a0a0a; /* rich black */
   --blog-background-color: #242526; /* black olive */
   --projects-background-color: #212121; /* midnight blue */
   --skills-background-color: #1d1f21; /* gunmetal */
-  --about-background-color: #0c0c0c; /* oil black */
+  --resume-background-color: #0c0c0c; /* oil black */
   --contact-background-color: #212124; /* Charleston green */
-  --resume-background-color: #0b1215; /* obsidian */
+  --header-background-color: #0b1215; /* obsidian */
+  --services-background-color: #212121; /* midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
   --special-background-color: #101720; /* smoky black */
   --accordion-button-background: #181818; /* iridium */
@@ -74,9 +76,9 @@
   --footer-background-color: #181818; /* iridium */
   --card-background-color: #11181c; /* arsenic */
   --background-color: #161618; /* jet black */
-  --search-background-color: rgba(0, 0, 0, 0.80);
-  --project-info-background-color: rgba(255, 255, 255, 0.4); /*#fffff0 ivory rgba(255, 255, 255, 0.8) */
-  --project-info-color: #000000; /* black */
+  --search-background-color: rgba(0, 0, 0, 0.98);
+  --project-info-color: #fff; /* white */
+  --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
   --nav-dropdown-background-color:  #191919; /* dark slate gray */
   --default-color: #ffffff;
   --scroll-top-background-color:var(--default-color); /* white */
@@ -554,8 +556,9 @@ h6 {
 #footer {
   color: var(--default-color);
   background-color: var(--footer-background-color);
-  box-shadow: 0px 5px 5px 0px color-mix(in srgb, var(--default-color), transparent 70%);
-  border-top: 1px solid color-mix(in srgb, var(--footer-background-color), transparent 70%);
+  /*box-shadow: 0px 5px 5px 0px color-mix(in srgb, var(--footer-background-color), transparent 20%);
+   box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--footer-background-color), transparent 20%); */
   font-size: 14px;
   padding: 0 0 30px 0;
   position: relative;
@@ -690,7 +693,7 @@ h6 {
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  background-color: var(--preloader-bg-color);
+  background-color: var(--preloader-background-color);
   transition: all 0.6s ease-out;
   width: 100%;
   height: 100vh;
@@ -786,7 +789,7 @@ h6 {
   background-color: var(--background-color);
   padding: 25px 0;
   position: relative;
-  border-bottom: 1px solid color-mix(in srgb, var(--background-color), transparent 90%);
+  border-bottom: 1px solid color-mix(in srgb, var(--background-color), transparent 50%);
 }
 
 .page-title h1 {
@@ -1250,7 +1253,7 @@ section,
 # Resume Section
 --------------------------------------------------------------*/
 .resume {
-  background-color: var(--resume-bg);
+  background-color: var(--resume-background-color); /* --resume-bg */
   padding: 60px 0;
 }
 
@@ -1313,9 +1316,14 @@ section,
 /*--------------------------------------------------------------
 # Services Section
 --------------------------------------------------------------*/
+.services {
+  background-color: var(--services-background-color);
+  padding: 60px 0;
+}
+
 .services .service-item {
-  background-color: var(--surface-color);
-  box-shadow: 0px 5px 90px 0px rgba(0, 0, 0, 0.1);
+  background-color: var(--special-background-color);
+  box-shadow: 0px 5px 5px 5px var(--default-color);
   height: 100%;
   padding: 60px 30px;
   text-align: center;
@@ -1348,7 +1356,7 @@ section,
 
 .services .service-item .icon svg path {
   transition: 0.5s;
-  fill: color-mix(in srgb, var(--default-color), transparent 95%);
+  fill: color-mix(in srgb, var(--default-color), transparent 25%);
 }
 
 .services .service-item h3 {
@@ -1445,6 +1453,7 @@ section,
 .contact {
   background-color: var(--contact-background-color);
   padding: 60px 0;
+  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
 }
 
 .contact .info-wrap {
@@ -1498,60 +1507,12 @@ section,
     padding: 2px;
   }
 }
-/* 
-.contact .contact-form input[type=text],
-.contact .contact-form input[type=email],
-.contact .contact-form textarea,
-.other .other-form input[type=text],
-.other .other-form input[type=email],
-.other .other-form input[type=password],
-.other .other-form textarea {
-  font-size: 14px;
-  padding: 10px 15px;
-  box-shadow: none;
-  border-radius: 0;
-  color: var(--default-color);
-  background-color: color-mix(in srgb, var(--background-color), transparent 50%);
-  border-color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.contact .contact-form input[type=text]:focus,
-.contact .contact-form input[type=email]:focus,
-.contact .contact-form textarea:focus
-.other .other-form input[type=text]:focus,
-.other .other-form input[type=email]:focus,
-.other .other-form input[type=password]:focus,
-.other .other-form textarea:focus {
-  border-color: var(--accent-color);
-}
-
-.contact .contact-form input[type=text]::placeholder,
-.contact .contact-form input[type=email]::placeholder,
-.contact .contact-form textarea::placeholder,
-.other .other-form input[type=text]::placeholder,
-.other .other-form input[type=email]::placeholder,
-.other .other-form textarea::placeholder {
-  color: color-mix(in srgb, var(--default-color), transparent 70%);
-}
-
-@keyframes animate-loading {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
- */
-
 /*--------------------------------------------------------------
 Cards
 --------------------------------------------------------------*/
 .card {
   background-color: var(--card-background-color);
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 80%);
+  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 20%);
   border-radius: 5px;
   overflow: hidden;
   color: var(--default-color);
@@ -1559,7 +1520,7 @@ Cards
 }
 
 .card:hover {
-  box-shadow: 0px 0px 10px color-mix(in srgb, var(--default-color), transparent 50%);
+  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .card .card-img {

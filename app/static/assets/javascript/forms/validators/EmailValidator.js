@@ -21,8 +21,10 @@ export class EmailValidator extends FieldValidator {
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
 
-        if (email === '') {
-            //this.setFieldError(field, fieldId, 'Email cannot be empty.');
+        if (!email) {
+            if (this.isFieldRequired(fieldId)) {
+                this.setFieldError(field, fieldId, '');
+            }
         } else if (email.length > maxLength) {
             this.setFieldError(field, fieldId, `Email exceeds maximum length of ${maxLength} characters.`);
         } else if (!emailRegex.test(email)) {

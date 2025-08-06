@@ -14,12 +14,16 @@ export class UsernameValidator extends FieldValidator {
 
         const username = field.value.trim();
         const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        // Get field configuration (merge with data attributes)
+        const required = this.isFieldRequired(fieldId);
 
         // Clear previous validation
         this.clearFieldValidation(field, fieldId);
 
         if (!username) {
-            //this.setFieldError(field, fieldId, 'Username cannot be empty.');
+            if (required) {
+                this.setFieldError(field, fieldId, '');
+            }
         } else if (username.length < 3) {
             this.setFieldError(field, fieldId, 'Username must be at least 3 characters.');
         } else if (username.length > 20) {

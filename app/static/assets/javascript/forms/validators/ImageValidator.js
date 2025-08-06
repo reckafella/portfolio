@@ -5,41 +5,9 @@ import { FieldValidator } from "./FieldValidator.js";
  * Provides comprehensive validation for single image uploads with preview functionality
  */
 export class ImageValidator extends FieldValidator {
-    constructor(config = {}) {
-        super(config);
-
-        // Default configuration for single image validation
-        this.config = {
-            required: false,
-            maxSizeBytes: 5 * 1024 * 1024, // 5MB default
-            allowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-            minWidth: null,
-            minHeight: null,
-            maxWidth: null,
-            maxHeight: null,
-            exactWidth: null,
-            exactHeight: null,
-            aspectRatio: null, // e.g., 16/9 for 16:9 ratio
-            allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-            showPreview: true,
-            previewMaxWidth: 200,
-            previewMaxHeight: 200,
-            previewContainerSelector: null, // If not provided, will create one
-            clearButtonText: 'Remove Image',
-            messages: {
-                required: 'Please select an image.',
-                invalidFormat: 'Please select a valid image format.',
-                fileTooLarge: 'Image size must be less than {maxSize}.',
-                dimensionsTooSmall: 'Image must be at least {minWidth}x{minHeight} pixels.',
-                dimensionsTooLarge: 'Image must be no larger than {maxWidth}x{maxHeight} pixels.',
-                exactDimensions: 'Image must be exactly {width}x{height} pixels.',
-                invalidAspectRatio: 'Image must have an aspect ratio of {ratio}.',
-                invalidMimeType: 'Invalid image type.',
-                loadError: 'Error loading image. Please try another file.'
-            },
-            ...config
-        };
-
+    constructor(formManager) {
+        super(formManager);
+        
         this.previewContainer = null;
         this.previewImage = null;
         this.clearButton = null;
@@ -47,172 +15,127 @@ export class ImageValidator extends FieldValidator {
     }
 
     /**
-     * Initialize the validator and set up preview functionality
+     * Validate a single image field
+     * @param {string} fieldId - The field ID to validate
      */
-    init() {
-        super.init();
+    validate(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
 
-        if (this.config.showPreview) {
-            this.setupPreviewContainer();
-            this.setupEventListeners();
-        }
+        const config = this.getFieldConfig(fieldId);
+        const required = this.isFieldRequired(fieldId);
+        const files = field.files;
 
-        // Store original value for reset functionality
-        this.originalValue = this.field.value;
+        // Clear previous validation
+        this.clearFieldValidation(field, fieldId);
 
-        return this;
-    }
-
-    /**
-     * Set up the preview container and elements
-     */
-    setupPreviewContainer() {
-        // Find or create preview container
-        if (this.config.previewContainerSelector) {
-            this.previewContainer = document.querySelector(this.config.previewContainerSelector);
-        }
-
-        if (!this.previewContainer) {
-            this.previewContainer = document.createElement('div');
-            this.previewContainer.className = 'image-preview-container mt-2';
-            this.field.parentNode.appendChild(this.previewContainer);
-        }
-
-        // Create preview elements
-        this.createPreviewElements();
-    }
-
-    /**
-     * Create preview image and control elements
-     */
-    createPreviewElements() {
-        this.previewContainer.innerHTML = '';
-
-        // Preview wrapper
-        const previewWrapper = document.createElement('div');
-        previewWrapper.className = 'image-preview-wrapper position-relative d-none';
-
-        // Preview image
-        this.previewImage = document.createElement('img');
-        this.previewImage.className = 'image-preview img-thumbnail';
-        this.previewImage.style.maxWidth = `${this.config.previewMaxWidth}px`;
-        this.previewImage.style.maxHeight = `${this.config.previewMaxHeight}px`;
-        this.previewImage.style.objectFit = 'cover';
-
-        // Clear button
-        this.clearButton = document.createElement('button');
-        this.clearButton.type = 'button';
-        this.clearButton.className = 'btn btn-sm btn-outline-danger mt-2';
-        this.clearButton.innerHTML = `<i class="bi bi-trash me-1"></i>${this.config.clearButtonText}`;
-
-        // Image info
-        const imageInfo = document.createElement('div');
-        imageInfo.className = 'image-info small text-muted mt-1';
-
-        previewWrapper.appendChild(this.previewImage);
-        previewWrapper.appendChild(imageInfo);
-        previewWrapper.appendChild(this.clearButton);
-        this.previewContainer.appendChild(previewWrapper);
-
-        // Clear button event
-        this.clearButton.addEventListener('click', () => {
-            this.clearImage();
-        });
-    }
-
-    /**
-     * Set up event listeners for file input
-     */
-    setupEventListeners() {
-        this.field.addEventListener('change', (e) => {
-            this.handleImageChange(e);
-        });
-    }
-
-    /**
-     * Handle image selection change
-     */
-    async handleImageChange(event) {
-        const file = event.target.files[0];
-
-        if (!file) {
-            this.hidePreview();
-            this.clearErrors();
-            return;
-        }
-
-        try {
-            // Validate the image
-            const isValid = await this.validateImage(file);
-
-            if (isValid) {
-                this.showPreview(file);
-                this.clearErrors();
+        // Handle empty field
+        if (!files || files.length === 0) {
+            if (required) {
+                this.setFieldError(field, fieldId, '');
             } else {
                 this.hidePreview();
             }
-        } catch (error) {
-            console.error('Image validation error:', error);
-            this.addError(this.config.messages.loadError);
-            this.hidePreview();
+            return;
         }
+
+        const file = files[0];
+        this.validateImage(file, field, fieldId, config);
     }
 
     /**
      * Validate a single image file
+     * @param {File} file - The file to validate
+     * @param {HTMLElement} field - The input field
+     * @param {string} fieldId - The field ID
+     * @param {Object} config - Field configuration
      */
-    async validateImage(file) {
-        // Check if file is required
-        if (this.config.required && !file) {
-            this.addError(this.config.messages.required);
-            return false;
-        }
+    async validateImage(file, field, fieldId, config) {
+        try {
+            // Default configuration
+            const defaultConfig = {
+                maxSizeBytes: 5 * 1024 * 1024, // 5MB default
+                allowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+                allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+                showPreview: true,
+                messages: {
+                    invalidFormat: 'Please select a valid image format.',
+                    fileTooLarge: 'Image size must be less than {maxSize}.',
+                    dimensionsTooSmall: 'Image must be at least {minWidth}x{minHeight} pixels.',
+                    dimensionsTooLarge: 'Image must be no larger than {maxWidth}x{maxHeight} pixels.',
+                    exactDimensions: 'Image must be exactly {width}x{height} pixels.',
+                    invalidAspectRatio: 'Image must have an aspect ratio of {ratio}.',
+                    invalidMimeType: 'Invalid image type.',
+                    loadError: 'Error loading image. Please try another file.'
+                }
+            };
 
-        if (!file) return true; // Not required and no file selected
+            const mergedConfig = { ...defaultConfig, ...config };
 
-        // Check file size
-        if (file.size > this.config.maxSizeBytes) {
-            const maxSizeMB = (this.config.maxSizeBytes / (1024 * 1024)).toFixed(1);
-            this.addError(this.config.messages.fileTooLarge.replace('{maxSize}', `${maxSizeMB}MB`));
-            return false;
-        }
-
-        // Check MIME type
-        if (!this.config.allowedMimeTypes.includes(file.type)) {
-            this.addError(this.config.messages.invalidMimeType);
-            return false;
-        }
-
-        // Check file extension
-        const extension = file.name.split('.').pop().toLowerCase();
-        if (!this.config.allowedFormats.includes(extension)) {
-            this.addError(this.config.messages.invalidFormat);
-            return false;
-        }
-
-        // Check image dimensions if specified
-        if (this.config.minWidth || this.config.minHeight ||
-            this.config.maxWidth || this.config.maxHeight ||
-            this.config.exactWidth || this.config.exactHeight ||
-            this.config.aspectRatio) {
-
-            const dimensions = await this.getImageDimensions(file);
-            if (!this.validateDimensions(dimensions)) {
-                return false;
+            // Check file size
+            if (file.size > mergedConfig.maxSizeBytes) {
+                const maxSizeMB = (mergedConfig.maxSizeBytes / (1024 * 1024)).toFixed(1);
+                this.setFieldError(field, fieldId, 
+                    mergedConfig.messages.fileTooLarge.replace('{maxSize}', `${maxSizeMB}MB`));
+                return;
             }
-        }
 
-        return true;
+            // Check MIME type
+            if (!mergedConfig.allowedMimeTypes.includes(file.type)) {
+                this.setFieldError(field, fieldId, mergedConfig.messages.invalidMimeType);
+                return;
+            }
+
+            // Check file extension
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (!mergedConfig.allowedFormats.includes(extension)) {
+                this.setFieldError(field, fieldId, mergedConfig.messages.invalidFormat);
+                return;
+            }
+
+            // Check if file is empty
+            if (file.size === 0) {
+                this.setFieldError(field, fieldId, 'File is empty');
+                return;
+            }
+
+            // Check image dimensions if specified
+            if (mergedConfig.minWidth || mergedConfig.minHeight || 
+                mergedConfig.maxWidth || mergedConfig.maxHeight ||
+                mergedConfig.exactWidth || mergedConfig.exactHeight ||
+                mergedConfig.aspectRatio) {
+                
+                const dimensions = await this.getImageDimensions(file);
+                if (!this.validateDimensions(dimensions, mergedConfig, field, fieldId)) {
+                    return;
+                }
+            }
+
+            // If we get here, validation passed
+            this.setFieldSuccess(field, fieldId, 'Valid image');
+            
+            // Show preview if enabled
+            if (mergedConfig.showPreview) {
+                this.showPreview(file, mergedConfig);
+            }
+
+        } catch (error) {
+            console.error('Image validation error:', error);
+            this.setFieldError(field, fieldId, mergedConfig.messages?.loadError || 'Error loading image. Please try another file.');
+            this.hidePreview();
+        }
     }
 
     /**
      * Get image dimensions from file
+     * @param {File} file - The image file
+     * @returns {Promise<Object>} Promise resolving to {width, height}
      */
     getImageDimensions(file) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             const url = URL.createObjectURL(file);
-
+            
             img.onload = () => {
                 URL.revokeObjectURL(url);
                 resolve({
@@ -220,75 +143,80 @@ export class ImageValidator extends FieldValidator {
                     height: img.naturalHeight
                 });
             };
-
+            
             img.onerror = () => {
                 URL.revokeObjectURL(url);
                 reject(new Error('Failed to load image'));
             };
-
+            
             img.src = url;
         });
     }
 
     /**
      * Validate image dimensions
+     * @param {Object} dimensions - {width, height}
+     * @param {Object} config - Configuration object
+     * @param {HTMLElement} field - The input field
+     * @param {string} fieldId - The field ID
+     * @returns {boolean} True if dimensions are valid
      */
-    validateDimensions(dimensions) {
+    validateDimensions(dimensions, config, field, fieldId) {
         const { width, height } = dimensions;
 
         // Check exact dimensions
-        if (this.config.exactWidth && width !== this.config.exactWidth) {
-            this.addError(this.config.messages.exactDimensions
-                .replace('{width}', this.config.exactWidth)
-                .replace('{height}', this.config.exactHeight || height));
+        if (config.exactWidth && width !== config.exactWidth) {
+            this.setFieldError(field, fieldId, config.messages.exactDimensions
+                .replace('{width}', config.exactWidth)
+                .replace('{height}', config.exactHeight || height));
             return false;
         }
 
-        if (this.config.exactHeight && height !== this.config.exactHeight) {
-            this.addError(this.config.messages.exactDimensions
-                .replace('{width}', this.config.exactWidth || width)
-                .replace('{height}', this.config.exactHeight));
+        if (config.exactHeight && height !== config.exactHeight) {
+            this.setFieldError(field, fieldId, config.messages.exactDimensions
+                .replace('{width}', config.exactWidth || width)
+                .replace('{height}', config.exactHeight));
             return false;
         }
 
         // Check minimum dimensions
-        if (this.config.minWidth && width < this.config.minWidth) {
-            this.addError(this.config.messages.dimensionsTooSmall
-                .replace('{minWidth}', this.config.minWidth)
-                .replace('{minHeight}', this.config.minHeight || 0));
+        if (config.minWidth && width < config.minWidth) {
+            this.setFieldError(field, fieldId, config.messages.dimensionsTooSmall
+                .replace('{minWidth}', config.minWidth)
+                .replace('{minHeight}', config.minHeight || 0));
             return false;
         }
 
-        if (this.config.minHeight && height < this.config.minHeight) {
-            this.addError(this.config.messages.dimensionsTooSmall
-                .replace('{minWidth}', this.config.minWidth || 0)
-                .replace('{minHeight}', this.config.minHeight));
+        if (config.minHeight && height < config.minHeight) {
+            this.setFieldError(field, fieldId, config.messages.dimensionsTooSmall
+                .replace('{minWidth}', config.minWidth || 0)
+                .replace('{minHeight}', config.minHeight));
             return false;
         }
 
         // Check maximum dimensions
-        if (this.config.maxWidth && width > this.config.maxWidth) {
-            this.addError(this.config.messages.dimensionsTooLarge
-                .replace('{maxWidth}', this.config.maxWidth)
-                .replace('{maxHeight}', this.config.maxHeight || 'any'));
+        if (config.maxWidth && width > config.maxWidth) {
+            this.setFieldError(field, fieldId, config.messages.dimensionsTooLarge
+                .replace('{maxWidth}', config.maxWidth)
+                .replace('{maxHeight}', config.maxHeight || 'any'));
             return false;
         }
 
-        if (this.config.maxHeight && height > this.config.maxHeight) {
-            this.addError(this.config.messages.dimensionsTooLarge
-                .replace('{maxWidth}', this.config.maxWidth || 'any')
-                .replace('{maxHeight}', this.config.maxHeight));
+        if (config.maxHeight && height > config.maxHeight) {
+            this.setFieldError(field, fieldId, config.messages.dimensionsTooLarge
+                .replace('{maxWidth}', config.maxWidth || 'any')
+                .replace('{maxHeight}', config.maxHeight));
             return false;
         }
 
         // Check aspect ratio
-        if (this.config.aspectRatio) {
+        if (config.aspectRatio) {
             const actualRatio = width / height;
             const tolerance = 0.01; // Allow small tolerance for floating point comparison
-
-            if (Math.abs(actualRatio - this.config.aspectRatio) > tolerance) {
-                this.addError(this.config.messages.invalidAspectRatio
-                    .replace('{ratio}', this.config.aspectRatio.toFixed(2)));
+            
+            if (Math.abs(actualRatio - config.aspectRatio) > tolerance) {
+                this.setFieldError(field, fieldId, config.messages.invalidAspectRatio
+                    .replace('{ratio}', config.aspectRatio.toFixed(2)));
                 return false;
             }
         }
@@ -297,48 +225,173 @@ export class ImageValidator extends FieldValidator {
     }
 
     /**
-     * Show image preview
+     * Initialize preview functionality for a field
+     * @param {string} fieldId - The field ID
+     * @param {Object} config - Field configuration
      */
-    showPreview(file) {
-        if (!this.previewImage || !this.config.showPreview) return;
+    initializePreview(fieldId, config = {}) {
+        const field = document.getElementById(fieldId);
+        if (!field || config.showPreview === false) return;
+
+        this.setupPreviewContainer(field, config);
+        this.setupEventListeners(field, fieldId);
+    }
+
+    /**
+     * Set up the preview container and elements
+     * @param {HTMLElement} field - The input field
+     * @param {Object} config - Configuration object
+     */
+    setupPreviewContainer(field, config) {
+        // Find or create preview container
+        let previewContainer = null;
+        if (config.previewContainerSelector) {
+            previewContainer = document.querySelector(config.previewContainerSelector);
+        }
+
+        if (!previewContainer) {
+            previewContainer = document.createElement('div');
+            previewContainer.className = 'image-preview-container mt-2';
+            field.parentNode.appendChild(previewContainer);
+        }
+
+        this.createPreviewElements(previewContainer, config);
+    }
+
+    /**
+     * Create preview image and control elements
+     * @param {HTMLElement} previewContainer - Container for preview elements
+     * @param {Object} config - Configuration object
+     */
+    createPreviewElements(previewContainer, config) {
+        previewContainer.innerHTML = '';
+
+        // Preview wrapper
+        const previewWrapper = document.createElement('div');
+        previewWrapper.className = 'image-preview-wrapper position-relative d-none';
+
+        // Preview image
+        const previewImage = document.createElement('img');
+        previewImage.className = 'image-preview img-thumbnail';
+        previewImage.style.maxWidth = `${config.previewMaxWidth || 200}px`;
+        previewImage.style.maxHeight = `${config.previewMaxHeight || 200}px`;
+        previewImage.style.objectFit = 'cover';
+
+        // Clear button
+        const clearButton = document.createElement('button');
+        clearButton.type = 'button';
+        clearButton.className = 'btn btn-sm btn-outline-danger mt-2';
+        clearButton.innerHTML = `<i class="bi bi-trash me-1"></i>${config.clearButtonText || 'Remove Image'}`;
+
+        // Image info
+        const imageInfo = document.createElement('div');
+        imageInfo.className = 'image-info small text-muted mt-1';
+
+        previewWrapper.appendChild(previewImage);
+        previewWrapper.appendChild(imageInfo);
+        previewWrapper.appendChild(clearButton);
+        previewContainer.appendChild(previewWrapper);
+
+        // Store references
+        previewContainer._previewImage = previewImage;
+        previewContainer._previewWrapper = previewWrapper;
+        previewContainer._imageInfo = imageInfo;
+
+        // Clear button event
+        clearButton.addEventListener('click', () => {
+            this.clearImage(previewContainer.parentNode.querySelector('input[type="file"]'), previewContainer);
+        });
+    }
+
+    /**
+     * Set up event listeners for file input
+     * @param {HTMLElement} field - The input field
+     * @param {string} fieldId - The field ID
+     */
+    setupEventListeners(field, fieldId) {
+        field.addEventListener('change', (e) => {
+            this.handleImageChange(e, fieldId);
+        });
+    }
+
+    /**
+     * Handle image selection change
+     * @param {Event} event - The change event
+     * @param {string} fieldId - The field ID
+     */
+    async handleImageChange(event, fieldId) {
+        const file = event.target.files[0];
+        const field = event.target;
+        const config = this.getFieldConfig(fieldId);
+        
+        if (!file) {
+            this.hidePreview(field);
+            return;
+        }
+
+        // Validate the image
+        await this.validateImage(file, field, fieldId, config);
+        
+        // Show preview if validation passed and preview is enabled
+        if (config.showPreview !== false && !this.formManager.validationErrors[fieldId]) {
+            this.showPreview(file, field, config);
+        }
+    }
+
+    /**
+     * Show image preview
+     * @param {File} file - The image file
+     * @param {HTMLElement} field - The input field
+     * @param {Object} config - Configuration object
+     */
+    showPreview(file, field, config = {}) {
+        const previewContainer = field.parentNode.querySelector('.image-preview-container');
+        if (!previewContainer || !previewContainer._previewImage) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            this.previewImage.src = e.target.result;
-            this.updateImageInfo(file);
-            this.previewContainer.querySelector('.image-preview-wrapper').classList.remove('d-none');
+            previewContainer._previewImage.src = e.target.result;
+            this.updateImageInfo(file, previewContainer);
+            previewContainer._previewWrapper.classList.remove('d-none');
         };
         reader.readAsDataURL(file);
     }
 
     /**
      * Hide image preview
+     * @param {HTMLElement} field - The input field
      */
-    hidePreview() {
-        if (this.previewContainer) {
-            this.previewContainer.querySelector('.image-preview-wrapper').classList.add('d-none');
+    hidePreview(field) {
+        if (!field) return;
+        const previewContainer = field.parentNode.querySelector('.image-preview-container');
+        if (previewContainer && previewContainer._previewWrapper) {
+            previewContainer._previewWrapper.classList.add('d-none');
         }
     }
 
     /**
      * Update image information display
+     * @param {File} file - The image file
+     * @param {HTMLElement} previewContainer - Preview container element
      */
-    updateImageInfo(file) {
-        const infoElement = this.previewContainer.querySelector('.image-info');
-        if (infoElement) {
+    updateImageInfo(file, previewContainer) {
+        if (previewContainer._imageInfo) {
             const sizeKB = (file.size / 1024).toFixed(1);
-            infoElement.textContent = `${file.name} (${sizeKB} KB)`;
+            previewContainer._imageInfo.textContent = `${file.name} (${sizeKB} KB)`;
         }
     }
 
     /**
      * Clear the selected image
+     * @param {HTMLElement} field - The input field
+     * @param {HTMLElement} previewContainer - Preview container element
      */
-    clearImage() {
-        this.field.value = '';
-        this.hidePreview();
-        this.clearErrors();
-        this.field.dispatchEvent(new Event('change'));
+    clearImage(field, previewContainer) {
+        if (field) {
+            field.value = '';
+            this.hidePreview(field);
+            field.dispatchEvent(new Event('change'));
+        }
     }
 
     /**

@@ -14,12 +14,16 @@ export class PasswordValidator extends FieldValidator {
         const field = document.getElementById(fieldId);
         this.clearFieldValidation(field, fieldId);
 
+        const displayName = this.getFieldDisplayName(fieldId) || 'Password';
+
         // Check password strength
         if (field) {
             const password = field?.value;
 
             if (password.length === 0) {
-                //this.setFieldError(field, fieldId, 'Password cannot be empty.');
+                if (this.isFieldRequired(fieldId)) {
+                    this.setFieldError(field, fieldId, '');
+                }
             } else {
                 const analysis = this.analyzePassword(password);
                 if (analysis.isStrong) {
@@ -404,5 +408,17 @@ export class PasswordValidator extends FieldValidator {
                 req.classList.remove('met');
             }
         });
+    }
+
+    getFieldDisplayName(fieldId) {
+        const displayNames = {
+            'id_password': 'Password',
+            'id_password1': 'Password',
+            'id_password2': 'Confirm Password',
+            'id_old_password': 'Old Password',
+            'id_new_password1': 'New Password',
+            'id_new_password2': 'Confirm New Password'
+        };
+        return displayNames[fieldId] || super.getFieldDisplayName(fieldId);
     }
 }

@@ -69,8 +69,12 @@
                                     {% endif %}
                                     {% if user.is_authenticated and user == article.author or user.is_staff %}
                                     <li class="d-flex align-items-center position-relative">
-                                        <div class="action-buttons">
-                                            {% include 'app/includes/action-buttons.html' %}
+                                        <div class="action-buttons gap-1 d-flex justify-content-center align-items-center">
+                                            {% url 'blog:delete_article' article.slug as delete_url %}
+                                            {% url 'blog:update_article' article.slug as update_url %}
+                                            {% with delete_url=delete_url|default_if_none:"" update_url=update_url|default_if_none:"" %}
+                                            {% include 'app/includes/action-buttons.html' with delete_url=delete_url update_url=update_url %}
+                                            {% endwith %}
                                         </div>
                                     </li>
                                     {% endif %}

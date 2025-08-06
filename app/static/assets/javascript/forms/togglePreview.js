@@ -36,14 +36,16 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // Auto-resize textarea as user types
 document.addEventListener('DOMContentLoaded', function() {
-    const textareas = document.querySelectorAll('.rich-text-content');
-    textareas.forEach(function(textarea) {
+    const textarea = document.getElementsByClassName('content');
+    if (!textarea || textarea.length === 0) return;
+
+    [textarea].forEach(function(textarea) {
         // Auto-resize function
         function autoResize() {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
         }
-        
+
         // Add event listeners
         textarea.addEventListener('input', autoResize);
         textarea.addEventListener('focus', function() {

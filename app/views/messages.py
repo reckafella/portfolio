@@ -69,13 +69,18 @@ class ContactView(FormView):
         if is_ajax(self.request):
             # Collect all form errors
             error_messages = []
+            field_errors = {}
 
-            # Field-specific errors
+            # Field-specific errors - use field ID format for JavaScript
             for field, errors in form.errors.items():
                 for error in errors:
                     if field == '__all__':
                         error_messages.append(str(error))
                     else:
+                        # Map field names to their HTML IDs
+                        field_id = f"id_{field}"
+                        field_errors[field_id] = str(error)
+
                         field_name = form.fields[field].label or\
                             field.replace('_', ' ').title()
                         error_messages.append(f"{field_name}: {error}")
@@ -86,8 +91,8 @@ class ContactView(FormView):
 
             return JsonResponse({
                 "success": False,
-                "errors": error_messages,
-                "messages": [],
+                "errors": error_messages,  # For JavaScript processing
+                "messages": [],  # Keep for display
                 "form_errors": form.errors.get_json_data()
             }, status=400)
 

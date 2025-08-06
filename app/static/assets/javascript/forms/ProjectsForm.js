@@ -1,5 +1,6 @@
 import { FormManager } from "./manager/FormManager.js";
-import { NameValidator } from "./validators/NameValidator.js"; // title, client
+import { NameValidator } from "./validators/NameValidator.js"; // client
+import { SubjectValidator } from "./validators/SubjectValidator.js"; // title
 import { URLValidator, YouTubeURLValidator } from "./validators/URLValidator.js"; // project URL, YouTube URLs
 import { MessageValidator } from "./validators/MessageValidator.js"; //description
 import { ImagesValidator } from "./validators/ImagesValidator.js"; // image URLs
@@ -62,7 +63,7 @@ export class ProjectsForm {
      */
     setupValidators() {
         // Create validators and pass fieldConfigs to them
-        const nameValidator = new NameValidator(this.formManager);
+        const projectTitleValidator = new SubjectValidator(this.formManager);
         const urlValidator = new URLValidator(this.formManager);
         const youtubeUrlValidator = new YouTubeURLValidator(this.formManager);
         const messageValidator = new MessageValidator(this.formManager);
@@ -72,7 +73,7 @@ export class ProjectsForm {
 
         // Register validators - now they can access their own fieldConfigs
         this.formManager.registerValidator('id_title',
-            () => nameValidator.validate('id_title'));
+            () => projectTitleValidator.validate('id_title', 'Project title'));
 
         this.formManager.registerValidator('id_description',
             () => messageValidator.validate('id_description'));

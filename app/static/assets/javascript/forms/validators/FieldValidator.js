@@ -49,9 +49,11 @@ export class FieldValidator {
 
         field.classList.remove('char-warning', 'char-valid');
         field.classList.add('char-error');
-        this.formManager.validationErrors[errorKey] = message;
-        if (window.validationErrors) {
-            window.validationErrors[errorKey] = message;
+        if (message) {
+            this.formManager.validationErrors[errorKey] = message;
+            if (window.validationErrors) {
+                window.validationErrors[errorKey] = message;
+            }
         }
 
         // Remove existing message first
@@ -60,10 +62,12 @@ export class FieldValidator {
             existingMessage.remove();
         }
 
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'validation-message error';
-        errorMessage.textContent = message;
-        field.parentElement.appendChild(errorMessage);
+        if (message) {
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'validation-message error';
+            errorMessage.textContent = message;
+            field.parentElement.appendChild(errorMessage);
+        }
         this.formManager.updateSubmitButton('disabled');
     }
 
@@ -89,12 +93,12 @@ export class FieldValidator {
             existingMessage.remove();
         }
 
-        /*
-        const successMessage = document.createElement('div');
-        successMessage.className = 'validation-message success';
-        successMessage.textContent = message;
-        field.parentElement.appendChild(successMessage);
-        */
+        if (message) {
+            const successMessage = document.createElement('div');
+            successMessage.className = 'validation-message success';
+            successMessage.textContent = message;
+            field.parentElement.appendChild(successMessage);
+        }
         this.formManager.updateSubmitButton('default');
     }
 
@@ -109,21 +113,24 @@ export class FieldValidator {
 
         field.classList.remove('char-error', 'char-valid');
         field.classList.add('char-warning');
-        this.formManager.validationErrors[errorKey] = message;
-        if (window.validationErrors) {
-            window.validationErrors[errorKey] = message;
+        if (message) {
+            this.formManager.validationErrors[errorKey] = message;
+            if (window.validationErrors) {
+                window.validationErrors[errorKey] = message;
+            }
         }
-
         // Remove existing message first
         const existingMessage = field.parentElement.querySelector('.validation-message');
         if (existingMessage) {
             existingMessage.remove();
         }
 
-        const warningMessage = document.createElement('div');
-        warningMessage.className = 'validation-message warning';
-        warningMessage.textContent = message;
-        field.parentElement.appendChild(warningMessage);
+        if (message) {
+            const warningMessage = document.createElement('div');
+            warningMessage.className = 'validation-message warning';
+            warningMessage.textContent = message;
+            field.parentElement.appendChild(warningMessage);
+        }
         this.formManager.updateSubmitButton('default');
     }
 }

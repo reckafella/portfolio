@@ -43,11 +43,20 @@ export class FormManager {
      * Register a custom validator for a field
      * @param {string} fieldId - The ID of the field to validate
      * @param {Function} validator - The validation function
+     * @param {Object} validatorInstance - Optional: The validator instance (for special handling)
      * @returns {FormManager} - Returns the instance for chaining
      */
-    registerValidator(fieldId, validator) {
+    registerValidator(fieldId, validator, validatorInstance = null) {
         if (typeof validator === 'function') {
             this.validators.set(fieldId, validator);
+            
+            // Store validator instance separately if provided (for special methods like captcha refresh)
+            if (validatorInstance) {
+                if (!this.validatorInstances) {
+                    this.validatorInstances = new Map();
+                }
+                this.validatorInstances.set(fieldId, validatorInstance);
+            }
         } else {
             console.warn(`Validator for field ${fieldId} is not a function.`);
         }
@@ -217,28 +226,96 @@ export class FormManager {
             }, 1000);
         }
     }
+
     /**
      * Handle form submission error
      * @param {Object} data - The error response data from the server
      */
     handleFormSubmissionError(data) {
         this.setButtonState('error');
-        const hasCaptchaError =
-            (data.errors &&
-                (data.errors.captcha ||
-                    data.captcha_error ||
-                    (typeof data.errors === 'string' && data.errors.toLowerCase().includes('captcha'))));
-        if (hasCaptchaError && this.captchaRefreshButton) {
+        
+        // Enhanced captcha handling - refresh on ANY form validation error
+        // since captcha becomes invalid after any failed submission attempt
+        const shouldRefreshCaptcha = this.shouldRefreshCaptcha(data.errors);
+        
+        if (shouldRefreshCaptcha) {
+            this.refreshCaptcha(data.errors);
+        }
+        
+        this.displayFieldErrors(data.errors);
+        if (window.toastManager) {
+            window.toastManager.show('danger', 'Please correct the following errors:', data.errors);
+        }
+    }
+
+    /**
+     * Check if captcha should be refreshed based on errors
+     * @param {Object} errors - Error response from server
+     * @returns {boolean} - True if captcha should be refreshed
+     */
+    shouldRefreshCaptcha(errors) {
+        // If no captcha on form, no need to refresh
+        if (!this.form.querySelector('.captcha') && !this.form.querySelector('input[name*="captcha"]')) {
+            return false;
+        }
+
+        // Refresh captcha if there are ANY validation errors
+        // This is because most captcha implementations invalidate the captcha after any failed submission
+        return !!(errors && Object.keys(errors).length > 0);
+    }
+
+    /**
+     * Refresh captcha after form submission errors
+     * @param {Object} errors - Error response from server
+     */
+    refreshCaptcha(errors = {}) {
+        // Try to find captcha validator in registered validators
+        const captchaValidator = this.findCaptchaValidator();
+        
+        if (captchaValidator) {
+            // Use the validator's refresh method
+            captchaValidator.handleFormSubmissionError();
+            return;
+        }
+
+        // Fallback: Direct captcha refresh if no validator found
+        if (this.captchaRefreshButton) {
+            console.log('FormManager: Refreshing captcha due to form validation errors');
             this.captchaRefreshButton.click();
             this.captchaRefreshButton.classList.add('rotating');
             setTimeout(() => {
                 this.captchaRefreshButton.classList.remove('rotating');
             }, 1000);
         }
-        this.displayFieldErrors(data.errors);
-        if (window.toastManager) {
-            window.toastManager.show('danger', 'Please correct the following errors:', data.errors);
+    }
+
+    /**
+     * Find captcha validator in registered validators
+     * @returns {Object|null} - CaptchaValidator instance or null
+     */
+    findCaptchaValidator() {
+        // First check validator instances (preferred method)
+        if (this.validatorInstances) {
+            for (const [fieldId, validatorInstance] of this.validatorInstances) {
+                if (fieldId.includes('captcha') || 
+                    (validatorInstance && validatorInstance.constructor.name === 'CaptchaValidator')) {
+                    return validatorInstance;
+                }
+            }
         }
+
+        // Fallback: Look for captcha refresh button reference
+        if (this.captchaRefreshButton) {
+            // If we have a captcha refresh button, we can still refresh manually
+            return {
+                handleFormSubmissionError: () => {
+                    console.log('FormManager: Using fallback captcha refresh');
+                    this.captchaRefreshButton.click();
+                }
+            };
+        }
+
+        return null;
     }
 
     /**
@@ -262,7 +339,7 @@ export class FormManager {
         if (!this.form) return;
         this.form.addEventListener('submit', this.handleFormSubmission.bind(this));
         this.form.querySelectorAll('input, textarea').forEach(input => {
-            input.addEventListener('input', () => this.clearFieldErrors());
+            input.addEventListener('input', (e) => this.clearFieldError(e.target));
             window.toastManager?.setupCloseButton();
         });
     }
@@ -282,6 +359,29 @@ export class FormManager {
     }
 
     /**
+     * Clear validation error for a specific field
+     * @param {HTMLElement} field - The field element to clear errors for
+     */
+    clearFieldError(field) {
+        if (!field || !field.id) return;
+        
+        const fieldId = field.id;
+        
+        // Only clear if this field has an error
+        if (this.validationErrors[fieldId]) {
+            delete this.validationErrors[fieldId];
+            field.classList.remove('char-warning', 'char-error', 'char-valid');
+            const existingMessage = field.parentElement.querySelector('.validation-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Update button state based on remaining errors
+            this.setButtonState();
+        }
+    }
+
+    /**
      * Clear all field validation errors
      */
     clearFieldErrors() {
@@ -298,6 +398,33 @@ export class FormManager {
             }
         });
         this.validationErrors = {};
+        this.setButtonState();
+    }
+
+    /**
+     * Clear validation for a specific field
+     * @param {HTMLElement} field - The input field element
+     * @param {string} errorKey - The key to remove from validationErrors object
+     */
+    clearFieldValidation(field, errorKey) {
+        if (!field || !errorKey) return;
+
+        // Remove validation classes
+        field.classList.remove('char-warning', 'char-error', 'char-valid');
+        
+        // Remove error from tracking
+        delete this.validationErrors[errorKey];
+        if (window.validationErrors) {
+            delete window.validationErrors[errorKey];
+        }
+
+        // Remove validation message
+        const existingMessage = field.parentElement.querySelector('.validation-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        // Update button state
         this.setButtonState();
     }
 

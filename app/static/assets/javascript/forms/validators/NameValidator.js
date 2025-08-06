@@ -30,7 +30,7 @@ export class NameValidator extends FieldValidator {
 
         if (!name) {
             if (required) {
-                this.setFieldError(field, fieldId, `${displayName} is required`);
+                this.setFieldError(field, fieldId, '');
             }
             // If not required and empty, no validation error
         } else if (name.length < minLength) {
@@ -57,8 +57,6 @@ export class NameValidator extends FieldValidator {
         const displayNames = {
             'id_first_name': 'First name',
             'id_last_name': 'Last name',
-            'id_username': 'Username',
-            'id_title': 'Project title',
             'id_client': 'Client name'
         };
         return displayNames[fieldId] || 'Name';

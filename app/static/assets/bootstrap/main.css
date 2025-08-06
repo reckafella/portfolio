@@ -18,7 +18,7 @@
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --preloader-bg-color: #100d08; /* black chocolate */
+  --preloader-background-color: #100d08; /* black chocolate */
   --nav-color: #121010;  /* The default color of the main navmenu links */
   --nav-hover-color: #1e044d; /* Applied to main navmenu links when they are hovered over or active */
   --nav-mobile-background-color: #cccbc8; /* Used as the background color for mobile navigation menu */
@@ -48,6 +48,7 @@
   --scroll-top-color: #f0f8ff; /* black */
   --search-background-color: rgba(255, 255, 255, 0.95);
   --project-info-background-color: rgba(255, 255, 255, 0.7); /*#fffff0 ivory rgba(255, 255, 255, 0.8) */
+  --services-background-color: #f0f8ff; /* alice blue */
   --project-info-color: #000; /* black */
   --nav-color: #444444;
   --nav-hover-color: var(--accent-color);
@@ -60,14 +61,14 @@
 /* https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73
  */
 [data-bs-theme="dark"] {
-  --header-background-color: #0a0a0a; /* rich black */
+  --about-background-color: #0a0a0a; /* rich black */
   --blog-background-color: #242526; /* black olive */
   --projects-background-color: #212121; /* midnight blue */
   --skills-background-color: #1d1f21; /* gunmetal */
-  --about-background-color: #0c0c0c; /* oil black */
+  --resume-background-color: #0c0c0c; /* oil black */
   --contact-background-color: #212124; /* Charleston green */
-  --resume-background-color: #0b1215; /* obsidian */
-  --services-background-color: #0b1215; /* obsidian */
+  --header-background-color: #0b1215; /* obsidian */
+  --services-background-color: #212121; /* midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
   --special-background-color: #101720; /* smoky black */
   --accordion-button-background: #181818; /* iridium */
@@ -692,7 +693,7 @@ h6 {
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  background-color: var(--preloader-bg-color);
+  background-color: var(--preloader-background-color);
   transition: all 0.6s ease-out;
   width: 100%;
   height: 100vh;
@@ -1252,7 +1253,7 @@ section,
 # Resume Section
 --------------------------------------------------------------*/
 .resume {
-  background-color: var(--resume-bg);
+  background-color: var(--resume-background-color); /* --resume-bg */
   padding: 60px 0;
 }
 
@@ -1315,9 +1316,14 @@ section,
 /*--------------------------------------------------------------
 # Services Section
 --------------------------------------------------------------*/
+.services {
+  background-color: var(--services-background-color);
+  padding: 60px 0;
+}
+
 .services .service-item {
-  background-color: var(--services-background-color, --special-background-color);
-  box-shadow: 0px 5px 90px 0px var(--default-color);
+  background-color: var(--special-background-color);
+  box-shadow: 0px 5px 5px 5px var(--default-color);
   height: 100%;
   padding: 60px 30px;
   text-align: center;

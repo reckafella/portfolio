@@ -1,5 +1,5 @@
 import openImageCropModal from './utils/images/modals.js';
-import { showAlert, formatFileSize } from './utils/images/utilityFunctions.js';
+import { showAlert, formatFileSize } from '../cropImages/utilityFunctions.js';
 
 let cropper = null;
 let selectedFile = null;

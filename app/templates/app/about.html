@@ -1,6 +1,9 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %} About Me {% endblock %}
+{% block description %}{{ page_description|default:"Learn more about me and my background." }}{% endblock %}
+{% block keywords %}about, me, portfolio, software engineer, full-stack developer{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
 
 {% block content %}
 <!-- Resume Section -->

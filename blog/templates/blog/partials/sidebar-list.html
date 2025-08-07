@@ -1,6 +1,6 @@
 {% load static %}
     <div class="widget-items-container">
-        <div class="widget-item recent-posts-widget">
+        <div class="widget-item recent-posts-widget mb-3">
             <h2 class="widget-title">Popular Articles</h2>
             {% for post in most_viewed_posts %}
             <div class="post-item">
@@ -20,7 +20,7 @@
             </div>
             {% endfor %}
         </div>
-        <div class="widget-item search-widget gap-3">
+        <div class="widget-item search-widget gap-3 mb-3">
             <div class="col-12">
                 <h3 class="widget-title">Search My Blog</h3>
                 <form id="search-form" method="get" action="{% url 'blog:list_articles' %}">
@@ -34,7 +34,7 @@
                 </form>
             </div>
             <!-- Filter and Sort Buttons - Compact on Mobile -->
-            <div class="d-flex my-4 gap-3">
+            <div class="d-flex my-4 gap-3 mb-3">
                 <button type="button" class="btn rounded-pill btn-primary btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="bi bi-funnel"></i>
                     <span class="d-inline">Filter</span>
@@ -48,7 +48,7 @@
         </div>
         <!-- End widget search form-->
 
-        <div class="widget-item tags-widget">
+        <div class="widget-item tags-widget mb-3">
            <h3 class="widget-title">Tags</h3>
            <ul>
                {% for tag, count in tags %}
@@ -62,7 +62,7 @@
     </div>
     <!-- End widget tags-->
 
-    <div class="widget-item recent-posts-widget">
+    <div class="widget-item recent-posts-widget mb-0">
         <h3 class="widget-title">Recent Posts</h3>
         {% for post in most_recent_posts %}
         <div class="post-item">

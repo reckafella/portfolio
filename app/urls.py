@@ -7,8 +7,8 @@ from app.views.messages import MarkMessageReadView as MarkAsRead
 from app.views.messages import MessagesView
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
-from app.views.projects.list_and_details import ProjectDetailView as PDV
-from app.views.projects.list_and_details import ProjectListView as PLV
+from app.views.projects.details import ProjectDetailView as PDV
+from app.views.projects.list import ProjectListView as PLV
 from app.views.projects.update import UpdateProjectView as UPV
 from app.views.views import AboutView
 from app.views.views import AppHealthCheckView as app_is_running

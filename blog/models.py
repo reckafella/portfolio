@@ -3,14 +3,18 @@ this is the model for the blog post using wagtail cms
 """
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils import timezone
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.models import Page
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, StreamField
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db import models
 from taggit.managers import TaggableManager
+from modelcluster.fields import ParentalKey
+from .wagtail_models import CloudinaryWagtailImage
+from .blocks import BlogStreamBlock
+from django.db.models import Count
 import hashlib
 
 
@@ -50,11 +54,29 @@ class BlogPostPage(Page):
         null=True, blank=True,
         related_name="blog_posts"
     )
-    content = RichTextField()
+    # Current RichTextField (to be converted to StreamField)
+    content = RichTextField(blank=True, null=True)
+
+    # Legacy RichTextField (to be deprecated after migration)
+    legacy_content = RichTextField(
+        blank=True, null=True,
+        help_text="Legacy content field - will be migrated to new format"
+    )
+
+    # New StreamField for rich content with inline images
+    # (to be enabled after migration)
+    stream_content = StreamField(
+        BlogStreamBlock(), use_json_field=True,
+        null=True, blank=True,
+        help_text="New content format with inline images"
+    )
+
     published = models.BooleanField(default=False)
     post_created_at = models.DateTimeField(auto_now_add=True, null=True)
     post_updated_at = models.DateTimeField(auto_now=True, null=True)
     tags = TaggableManager(blank=True, help_text="Add comma-separated tags")
+
+    # Legacy Cloudinary fields (to be deprecated after migration)
     cloudinary_image_id = models.CharField(max_length=200, blank=True,
                                            null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
@@ -69,8 +91,14 @@ class BlogPostPage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel("author"),
-        FieldPanel("content"),
+        FieldPanel("content", heading="Current Content (RichText)"),
+        FieldPanel("stream_content", heading="New Content (StreamField)",
+                   help_text="Use this for new posts with inline images"),
+        FieldPanel("legacy_content", heading="Legacy Content (Read-only)",
+                   read_only=True),
         FieldPanel("tags"),
+        InlinePanel("gallery_images", label="Legacy Gallery Images",
+                    help_text="Use inline images in content instead"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),
@@ -80,7 +108,7 @@ class BlogPostPage(Page):
                 FieldPanel("post_updated_at", read_only=True),
                 FieldPanel("view_count", read_only=True),
             ],
-            heading="Cloudinary Image Details - Readonly",
+            heading="Legacy Image Details (Readonly)",
         ),
         FieldPanel("published"),
     ]
@@ -95,7 +123,25 @@ class BlogPostPage(Page):
 
     @property
     def first_image(self):
-        return self.images.first() if self.images.first() else None
+        """Get the first image from the gallery or legacy image"""
+        gallery_image = self.gallery_images.first()
+        if gallery_image:
+            return gallery_image.image
+        # Fallback to legacy image system
+        return self.images.first() if hasattr(self, 'images') else None
+
+    @property
+    def cover_image_url(self):
+        """
+        Get the cover image URL (first image or legacy optimized_image_url)
+        """
+        first_img = self.first_image
+        if first_img and hasattr(first_img, 'optimized_image_url'):
+            return first_img.optimized_image_url
+        elif first_img and hasattr(first_img, 'file'):
+            return first_img.file.url
+        # Fallback to legacy system
+        return self.optimized_image_url or None
 
     def __str__(self):
         return self.title + " by " + self.author.username
@@ -129,6 +175,32 @@ class BlogPostPage(Page):
             return True
         return False
 
+    def get_tag_counts(self):
+        articles = BlogPostPage.objects.all()
+        if not articles.exists():
+            return []
+
+        # Get all tags used by the articles in the queryset
+        # Use distinct to avoid duplicates and annotate with count
+        from taggit.models import Tag
+
+        # Get tag IDs that are used by our filtered articles
+        article_ids = list(articles.values_list('id', flat=True))
+
+        # Query tags that are associated with these articles
+        tags_with_counts = (
+            Tag.objects
+            .filter(
+                taggit_taggeditem_items__object_id__in=article_ids,
+                taggit_taggeditem_items__content_type__model='blogpostpage'
+            ).annotate(article_count=Count('taggit_taggeditem_items',
+                                           distinct=True)).order_by('name'))
+
+        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
+
+        all_count = articles.count()
+        return [("all", all_count)] + tag_count
+
     def get_view_count_display(self):
         """Return view count as a formatted string"""
         if self.view_count == 1:
@@ -145,11 +217,37 @@ class BlogPostPage(Page):
         context["author"] = self.author
         context["post"] = self
         context["tags"] = self.get_tags()
+        context["all_tags"] = self.get_tag_counts()
         context["date_published"] = self.first_published_at or\
             self.post_created_at
         context["view_count"] = self.view_count
 
         return context
+
+
+class BlogPostPageGalleryImage(Orderable):
+    """
+    Through model for attaching Cloudinary-backed images to blog posts
+    """
+    page = ParentalKey(
+        BlogPostPage,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+    image = models.ForeignKey(
+        CloudinaryWagtailImage,
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(max_length=250, blank=True)
+
+    panels = [
+        FieldPanel('image'),
+        FieldPanel('caption'),
+    ]
+
+    def __str__(self):
+        return f"Image for {self.page.title}"
 
 
 class ViewCountAttempt(models.Model):

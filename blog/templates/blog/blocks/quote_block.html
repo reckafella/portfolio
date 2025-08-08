@@ -1,0 +1,8 @@
+<blockquote class="blockquote my-4 p-4 border-start border-primary border-4 bg-light rounded">
+    <p class="mb-0 fs-5 fst-italic">"{{ value.quote }}"</p>
+    {% if value.attribution %}
+        <footer class="blockquote-footer mt-2">
+            <cite title="Source Title">{{ value.attribution }}</cite>
+        </footer>
+    {% endif %}
+</blockquote>

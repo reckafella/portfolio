@@ -1,0 +1,11 @@
+<div class="heading-block my-4">
+    {% if value.size == 'h2' %}
+        <h2 class="fw-bold">{{ value.heading_text }}</h2>
+    {% elif value.size == 'h3' %}
+        <h3 class="fw-bold">{{ value.heading_text }}</h3>
+    {% elif value.size == 'h4' %}
+        <h4 class="fw-bold">{{ value.heading_text }}</h4>
+    {% else %}
+        <h5 class="fw-bold">{{ value.heading_text }}</h5>
+    {% endif %}
+</div>

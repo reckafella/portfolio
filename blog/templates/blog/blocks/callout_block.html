@@ -1,0 +1,18 @@
+{% load wagtailcore_tags %}
+
+<div class="callout-block my-4">
+    {% if value.type == 'info' %}
+        <div class="alert alert-info" role="alert">
+    {% elif value.type == 'success' %}
+        <div class="alert alert-success" role="alert">
+    {% elif value.type == 'warning' %}
+        <div class="alert alert-warning" role="alert">
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+    {% endif %}
+        {% if value.title %}
+            <h6 class="alert-heading mb-2">{{ value.title }}</h6>
+        {% endif %}
+        {{ value.content|richtext }}
+    </div>
+</div>

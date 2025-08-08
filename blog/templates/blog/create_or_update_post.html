@@ -37,8 +37,11 @@
                         <form id="blog-post-form" action="{{ action_url }}" method="post" enctype="multipart/form-data" class="contact-form">
                             {% csrf_token %}
                             {% for field in form %}
+                            <!-- Skip hidden content_type field - we'll handle it separately -->
+                            {% if field.name == 'content_type' %}
+                                {{ field }}
                             <!-- form switch for publish -->
-                            {% if field.label == 'Publish Article' %}
+                            {% elif field.label == 'Publish Article' %}
                             <div class="form-check form-switch">
                                 <input class="form-check
                                     form-check-input" type="checkbox"
@@ -51,34 +54,118 @@
                                 </label>
                             </div>
                             {% elif field.label == 'Article Content' %}
-                            <!-- Wagtail rich text editor -->
-                            <div class="form-group mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">
-                                    {{ field.label }}
-                                    {% if field.field.required %}
-                                        <span class="text-danger"><i class="bi bi-braces-asterisk"></i></span>
-                                    {% endif %}
-                                    {% if field.help_text %}
-                                        <button type="button"
-                                            class="btn btn-sm btn-link text-decoration-none p-0"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            title="{{ field.help_text }}">
-                                            <i class="bi bi-question-circle"></i>
-                                        </button>
-                                    {% endif %}
+                            <!-- Content Creation Options -->
+                            <div class="form-group mb-4">
+                                <label class="form-label fw-bold">
+                                    Article Content
+                                    <span class="text-danger"><i class="bi bi-braces-asterisk"></i></span>
                                 </label>
-                                {{ field }}
-                                <button type="button" class="preview-toggle" onclick="togglePreview('id_content', event)">
-                                    Preview
-                                </button>
-                                <div id="id_content_preview" class="content-preview" style="display: none;">
-                                    <p class="text-muted"><em>Preview will appear here...</em></p>
+                                
+                                <!-- Content Type Selector -->
+                                <div class="mb-3">
+                                    <div class="btn-group" role="group" aria-label="Content type selector">
+                                        <input type="radio" class="btn-check" name="content_type" id="simple_editor" value="simple" checked>
+                                        <label class="btn btn-outline-primary" for="simple_editor">
+                                            <i class="bi bi-pencil-square"></i> Simple Editor
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="content_type" id="advanced_editor" value="advanced">
+                                        <label class="btn btn-outline-primary" for="advanced_editor">
+                                            <i class="bi bi-layout-text-window-reverse"></i> Advanced Editor (with inline images)
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted d-block mt-2">
+                                        Choose your editing experience: Simple for basic text formatting, or Advanced for rich content with inline images and blocks.
+                                    </small>
                                 </div>
-                                <small class="form-text text-muted">
-                                    Use the toolbar above to format your text. You can create headings, bold/italic text, 
-                                    links, lists, and more. The editor shows exactly how your content will appear.
-                                </small>
+
+                                <!-- Simple Editor (Traditional RichText) -->
+                                <div id="simple_content_editor" class="content-editor-section">
+                                    <label for="{{ field.id_for_label }}" class="form-label">
+                                        {{ field.label }}
+                                        {% if field.help_text %}
+                                            <button type="button"
+                                                class="btn btn-sm btn-link text-decoration-none p-0"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="{{ field.help_text }}">
+                                                <i class="bi bi-question-circle"></i>
+                                            </button>
+                                        {% endif %}
+                                    </label>
+                                    {{ field }}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="togglePreview('id_content', event)">
+                                        <i class="bi bi-eye"></i> Preview
+                                    </button>
+                                    <div id="id_content_preview" class="content-preview mt-3" style="display: none;">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0"><i class="bi bi-eye"></i> Content Preview</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="text-muted"><em>Preview will appear here...</em></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Use the toolbar above to format your text. You can create headings, bold/italic text, 
+                                        links, lists, and more. The editor shows exactly how your content will appear.
+                                    </small>
+                                </div>
+
+                                <!-- Advanced Editor (StreamField) - Placeholder for now -->
+                                <div id="advanced_content_editor" class="content-editor-section" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i>
+                                        <strong>Advanced Editor with Inline Images</strong><br>
+                                        This feature allows you to create rich content with:
+                                        <ul class="mb-0 mt-2">
+                                            <li><strong>Inline Images:</strong> Position images anywhere in your content</li>
+                                            <li><strong>Multiple Block Types:</strong> Text, headings, quotes, code blocks, callouts</li>
+                                            <li><strong>Professional Layouts:</strong> Left/right/center image alignment</li>
+                                            <li><strong>Responsive Design:</strong> Optimized for all devices</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0"><i class="bi bi-layout-text-window-reverse"></i> Advanced Content Creation Workflow</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-1-circle-fill text-primary"></i> Create Basic Post</h6>
+                                                    <p class="text-muted">Fill in the title, tags, and basic details. The system will create your post structure.</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-2-circle-fill text-primary"></i> Advanced Editing</h6>
+                                                    <p class="text-muted">You'll be redirected to the Wagtail admin interface to build rich content with inline images.</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-3-circle-fill text-primary"></i> Content Blocks</h6>
+                                                    <p class="text-muted">Add text, images, headings, quotes, code blocks, and callouts in any order.</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-4-circle-fill text-primary"></i> Publish</h6>
+                                                    <p class="text-muted">Preview and publish your rich content with perfect inline image positioning.</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <i class="bi bi-magic display-4 text-primary mb-3"></i>
+                                                <h5>Ready to Create Advanced Content?</h5>
+                                                <p class="text-muted">Just click "Create Post" below and you'll be guided through the process!</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <small class="form-text text-muted">
+                                        <strong>How it works:</strong> When you submit this form with "Advanced Editor" selected, 
+                                        your post will be created and you'll be automatically redirected to the Wagtail admin 
+                                        interface where you can build rich content with inline images and professional layouts.
+                                    </small>
+                                </div>
                             </div>
                             {% else %}
                             <div class="form-group mb-3">
@@ -116,18 +203,104 @@
 
 {% block extra_js %}
 <script src="{% static 'assets/javascript/forms/togglePreview.js' %}"></script>
-<!-- Quill Editor on Content Field -->
+
+<!-- Quill Editor CDN -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<!-- Content Type Switching Logic -->
 <script>
-    var quill = new Quill('#id_content', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline'],
-                ['link', 'image'],
-                [{ list: 'ordered' }, { list: 'bullet' }]
-            ]
+    document.addEventListener('DOMContentLoaded', function () {
+        window.quill = null;
+        const simpleRadio = document.getElementById('simple_editor');
+        const advancedRadio = document.getElementById('advanced_editor');
+        const simpleEditor = document.getElementById('simple_content_editor');
+        const advancedEditor = document.getElementById('advanced_content_editor');
+        const contentTypeField = document.getElementById('id_content_type');
+
+        function switchContentEditor() {
+            if (simpleRadio.checked) {
+                simpleEditor.style.display = 'block';
+                advancedEditor.style.display = 'none';
+                // Set hidden field value
+                if (contentTypeField) {
+                    contentTypeField.value = 'simple';
+                }
+                // Initialize Quill for simple editor
+                //destroyQuill();
+                //initializeQuill();
+            } else if (advancedRadio.checked) {
+                simpleEditor.style.display = 'none';
+                advancedEditor.style.display = 'block';
+                // Set hidden field value
+                if (contentTypeField) {
+                    contentTypeField.value = 'advanced';
+                }
+                // Destroy Quill instance if it exists
+                //destroyQuill();
+            }
+        }
+
+        // Add event listeners
+        simpleRadio.addEventListener('change', switchContentEditor);
+        advancedRadio.addEventListener('change', switchContentEditor);
+
+        // Initialize with simple editor
+        switchContentEditor();
+
+        // Handle form submission for advanced editor
+        const form = document.getElementById('blog-post-form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                if (advancedRadio.checked) {
+                    // For advanced editor, we'll create a basic post and redirect to Wagtail admin
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.textContent = 'Creating Post...';
+                        submitButton.disabled = true;
+                    }
+                }
+            });
         }
     });
+
+    function destroyQuill() {
+        if (window.quill) {
+            // Get the container and remove all Quill-generated elements
+            const container = document.getElementById('id_content');
+            if (container) {
+                // Remove all Quill-generated content and restore original textarea
+                const quillContainer = container.closest('.ql-container')?.parentElement;
+                if (quillContainer && quillContainer.classList.contains('ql-editor')) {
+                    // Reset the container to its original state
+                    container.innerHTML = '';
+                    container.className = container.className.replace(/ql-\S+/g, '').trim();
+                }
+            }
+            window.quill = null;
+        }
+    }
+
+    function initializeQuill() {
+        // Always destroy existing instance first
+        destroyQuill();
+
+        const contentElement = document.getElementById('id_content');
+        if (contentElement && !window.quill) {
+            window.quill = new Quill('#id_content', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        ['link', 'image'],
+                        [{ 'header': [2, 3, 4, 5, false] }],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['blockquote', 'code-block'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Start writing your article content...'
+            });
+        }
+    }
 </script>
+
 {% endblock %}

@@ -436,11 +436,12 @@ h6 {
   .navmenu {
     padding: 0;
     z-index: 996;
-    max-width: 300px;
+    /* max-width: 300px; */
     scrollbar-width: thin;
-    scrollbar-color: var(--accent-color) var(--background-color);
+    scrollbar-color: var(--accent-color) var(--nav-mobile-background-color);
     overflow-y: auto;
     background-color: none;
+    transition: all 0.3s ease-in-out;
     left: -300px;
   }
 
@@ -451,11 +452,11 @@ h6 {
     padding: 10px 0;
     margin: 0;
     border-radius: 6px;
-    background-color: var(--nav-dropdown-background-color);
+    background-color: var(--nav-mobile-background-color);
     border: 1px solid color-mix(in srgb, var(--nav-color), transparent 60%);
     box-shadow: none;
     overflow-y: auto;
-    transition: 0.5s ease-in-out;
+    transition: all 0.3s ease-in-out;
     z-index: 999;
   }
 
@@ -470,7 +471,7 @@ h6 {
     align-items: center;
     justify-content: space-between;
     white-space: nowrap;
-    transition: 0.3s;
+    transition: all 0.3s ease-in-out;
   }
 
   .navmenu a i,
@@ -484,7 +485,7 @@ h6 {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: 0.3s;
+    transition: all 0.3s ease-in-out;
     color: var(--nav-dropdown-background-color);
     background-color: color-mix(in srgb, var(--nav-color), transparent 20%);
   }
@@ -515,11 +516,12 @@ h6 {
     padding: 10px 0;
     margin: 10px 20px;
     background-color: var(--nav-dropdown-background-color);
-    transition: all 0.5s ease-in-out 0.5s;
+    transition: all 0.3s ease-in-out;
   }
 
   .navmenu .dropdown ul ul {
     background-color: var(--nav-dropdown-background-color);
+    transition: all 0.3s ease-in-out;
   }
 
   .navmenu .dropdown>.dropdown-active {

@@ -105,29 +105,34 @@ class DraftailFormField(forms.CharField):
         block_type = block.get('type', 'unstyled')
         text = block.get('text', '')
 
-        if block_type == 'unstyled':
-            return f'<p>{styled_text}</p>' if text.strip() else None
-        elif block_type == 'header-one':
-            return f'<h1>{styled_text}</h1>'
-        elif block_type == 'header-two':
-            return f'<h2>{styled_text}</h2>'
-        elif block_type == 'header-three':
-            return f'<h3>{styled_text}</h3>'
-        elif block_type == 'header-four':
-            return f'<h4>{styled_text}</h4>'
-        elif block_type == 'header-five':
-            return f'<h5>{styled_text}</h5>'
-        elif block_type == 'header-six':
-            return f'<h6>{styled_text}</h6>'
-        elif block_type == 'blockquote':
-            return f'<blockquote><p>{styled_text}</p></blockquote>'
-        elif block_type == 'code-block':
-            return f'<pre><code>{styled_text}</code></pre>'
-        elif block_type in ['ordered-list-item', 'unordered-list-item']:
-            return f'<li>{styled_text}</li>'
+        # Get HTML template for block type
+        html_template = self._get_block_html_template(block_type)
+
+        if html_template:
+            return html_template.format(content=styled_text)
+        elif text.strip():
+            return f'<p>{styled_text}</p>'
         else:
-            # Default to paragraph
-            return f'<p>{styled_text}</p>' if text.strip() else None
+            return None
+
+    def _get_block_html_template(self, block_type):
+        """
+        Get HTML template for a given block type
+        """
+        block_templates = {
+            'unstyled': '<p>{content}</p>',
+            'header-one': '<h1>{content}</h1>',
+            'header-two': '<h2>{content}</h2>',
+            'header-three': '<h3>{content}</h3>',
+            'header-four': '<h4>{content}</h4>',
+            'header-five': '<h5>{content}</h5>',
+            'header-six': '<h6>{content}</h6>',
+            'blockquote': '<blockquote><p>{content}</p></blockquote>',
+            'code-block': '<pre><code>{content}</code></pre>',
+            'ordered-list-item': '<li>{content}</li>',
+            'unordered-list-item': '<li>{content}</li>',
+        }
+        return block_templates.get(block_type)
 
     def apply_inline_styles(self, text, style_ranges):
         """

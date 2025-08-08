@@ -9,12 +9,17 @@
                         <h4 class="footer-title">Social Links</h4>
                         <p>Connect with me on: </p>
                         <div class="social-links d-flex flex-wrap gap-2">
-                            <a href="https://x.com/devrohn" target="_blank" class="twitter"><i
-                                    class="bi bi-twitter-x"></i></a>
-                            <a href="https://facebook.com/reckafella" class="facebook" target="_blank"><i
-                                    class="bi bi-facebook"></i></a>
-                            <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
-                                    class="bi bi-linkedin"></i></a>
+                            {% with social=admin_socials %}
+                                {% if social.twitter_x %}
+                                    <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                                {% endif %}
+                                {% if social.facebook %}
+                                    <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                                {% endif %}
+                                {% if social.instagram %}
+                                    <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                                {% endif %}
+                                {% endwith %}
                         </div>
                     </div>
                 </div>

@@ -35,8 +35,7 @@ def move_cloudinary_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0015_alter_blogpostcomment_post_blogpostcommentreply_and_more'),
-    ]
+        ('blog', '0015_alter_blogpostcomment_post_blogpostcommentreply_and_more'), ]
 
     operations = [
         migrations.RunPython(move_cloudinary_data),

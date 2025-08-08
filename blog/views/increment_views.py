@@ -1,12 +1,12 @@
-import json
-from django.http import JsonResponse
-from django.views.generic import DetailView
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.db.models import Q
-from django.core.cache import cache
 import hashlib
+import json
 
+from django.core.cache import cache
+from django.db.models import Q
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_http_methods
+from django.views.generic import DetailView
 
 from app.views.helpers.helpers import is_ajax
 from blog.models import BlogPostPage, ViewCountAttempt
@@ -80,7 +80,7 @@ class IncrementViewCountView(DetailView):
                 return JsonResponse({
                     'success': False, 'message': 'Page already viewed',
                     'view_count': article.view_count
-                    }, status=200)
+                }, status=200)
 
             # Increment the view count
             article.increment_view_count()

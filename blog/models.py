@@ -1,21 +1,23 @@
 """
 this is the model for the blog post using wagtail cms
 """
+import hashlib
+
+from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.db.models import Count
 from django.utils import timezone
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
-from wagtail.models import Page, Orderable
+from django.utils.text import slugify
+from modelcluster.fields import ParentalKey
+from taggit.managers import TaggableManager
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField, StreamField
-from django.utils.text import slugify
-from django.contrib.auth.models import User
-from django.db import models
-from taggit.managers import TaggableManager
-from modelcluster.fields import ParentalKey
-from .wagtail_models import CloudinaryWagtailImage
+from wagtail.models import Orderable, Page
+
 from .blocks import BlogStreamBlock
-from django.db.models import Count
-import hashlib
+from .wagtail_models import CloudinaryWagtailImage
 
 
 class BlogIndexPage(RoutablePageMixin, Page):

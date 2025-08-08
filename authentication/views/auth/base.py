@@ -1,8 +1,8 @@
+from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.http import JsonResponse
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.contrib import messages
 from django.views.generic import FormView
 
 from app.views.helpers.helpers import is_ajax

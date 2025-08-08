@@ -1,35 +1,50 @@
-from django.core.cache import cache
-import time
-from django.conf import settings
+"""
+Improved Rate Limiting Middleware
+Uses the unified rate limiting system
+"""
+from django.http import JsonResponse
 
-
-class RateLimitExceeded(Exception):
-    pass
+from authentication.views.auth.errors import handler_429 as _429
+# from django.conf import settings
+from portfolio.utils.rate_limiting import RateLimiter, RateLimitExceeded
 
 
 class RateLimitMiddleware:
+    """
+    Global rate limiting middleware using unified rate limiting system
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
+        self.rate_limiter = RateLimiter('GLOBAL')
 
     def __call__(self, request):
-        ip = request.META.get('REMOTE_ADDR')
-        key = f'ratelimit:{ip}'
+        # Check rate limit
+        is_limited, info = self.rate_limiter.is_rate_limited(request)
 
-        # get request count & last reset time
-        data = cache.get(key, {'count': 0, 'reset': time.time()})
-
-        # reset if an hour has passed since last reset time
-        if (time.time() - data['reset'] > 3600):
-            data = {'count': 0, 'reset': time.time()}
-
-        # check limit (set in settings.py, DEFAULT to 100)
-        rate_limit = settings.RATELIMIT if settings.RATELIMIT >= 100 else 100
-        if (data['count'] >= rate_limit):
-            from authentication.views.auth.errors import handler_429 as _429
-            return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
-
-        data['count'] += 1
-        cache.set(key, data, timeout=3600)
+        if is_limited:
+            # Return appropriate error response
+            if request.path.startswith('/api/'):
+                # API endpoints get JSON response
+                return JsonResponse({
+                    'error': 'Rate limit exceeded',
+                    'detail': f'Too many requests. Try again in\
+                     {info["reset_time"] - info.get("current_time", 0):.0f}\
+                     seconds.',
+                    'requests_made': info['requests_made'],
+                    'max_requests': info['max_requests'],
+                    'window': info['window']
+                }, status=429)
+            else:
+                # Web pages get error handler
+                return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
 
         response = self.get_response(request)
+
+        # Add rate limit headers for API responses
+        if request.path.startswith('/api/'):
+            response['X-RateLimit-Limit'] = str(info.get('max_requests', 0))
+            response['X-RateLimit-Remaining'] = str(info.get('remaining', 0))
+            response['X-RateLimit-Window'] = str(info.get('window', 0))
+
         return response

@@ -1,11 +1,11 @@
-import os
-from wagtail.models import Page
-from django.conf import settings
-from django.http import (
-    FileResponse, Http404, JsonResponse, HttpResponseRedirect
-)
-from django.views.generic.base import RedirectView, TemplateView, View
 import datetime
+import os
+
+from django.conf import settings
+from django.http import (FileResponse, Http404, HttpResponseRedirect,
+                         JsonResponse)
+from django.views.generic.base import RedirectView, TemplateView, View
+from wagtail.models import Page
 
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost

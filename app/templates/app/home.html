@@ -13,7 +13,7 @@
     <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h2 class="stix-two-text-bold">Ethan Wanyoike</h2>
+                <h2 class="stix-two-text-bold">{{ admin_profile.name|default:"Ethan Wanyoike" }}</h2>
                 <div>
                     <p>
                         <span class="text-decoration-underline typed source-serif-4-bold"
@@ -25,7 +25,12 @@
                 </div>
                 <div class="d-flex flex-column mt-3">
                     <p>Let's bring your project to life!</p>
-                    <p><a href="{% url 'app:contact' %}" class="btn special-btn">Get in Touch</a></p>
+                    <p>
+                        {% url 'app:contact' as contact_url %}
+                        <button type="button" class="btn btn-sm btn-success" onclick="location.href='{{ contact_url }}'">
+                            Get in Touch <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </p>
                 </div>
             </div>
         </div>
@@ -40,37 +45,53 @@
     <div class="container">
         <div class="row gy-4 justify-content-between">
             <div class="col-lg-4 text-center">
+                {% if admin_image %}
+                <img src="{{ admin_image }}" alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 390px;" loading="lazy">
+                {% else %}
                 <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/profile/reckafella"
                     alt="Profile Picture" class="img-fluid rounded-circle shadow-lg mb-2 w-75" style="max-width: 390px;" loading="lazy">
+                {% endif %}
                 <div class="social-links mt-3">
-                    <a href="https://github.com/reckafella" class="github" target="_blank"><i
-                            class="bi bi-github"></i></a>
-                    <a href="https://linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
-                            class="bi bi-linkedin"></i></a>
-                    <a href="https://twitter.com/devrohn" class="twitter twitter-x" target="_blank"><i
-                            class="bi bi-twitter-x"></i></a>
+                    {% if admin_socials %}
+                    {% with social=admin_socials %}
+                    {% if social.linkedin %}
+                    <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                    {% endif %}
+                    {% if social.github %}
+                    <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                    {% endif %}
+                    {% if social.twitter_x %}
+                    <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
+                    {% if social.facebook %}
+                    <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if social.instagram %}
+                    <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% endwith %}
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-8 content">
                 <h2>Software Engineer</h2>
-                <p class="fst-italic py-3">I am a passionate software engineer with expertise in backend development, cloud architecture, and
-                    DevOps practices. With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
-                    business growth and enhance user experience.
-                </p>
+                {% if admin_bio %}
+                <p class="fst-italic py-3">{{ admin_bio }}</p>
+                {% else %}
+                <p class="py-3 fst-italic">I am a passionate software engineer with expertise in backend development, cloud architecture, and
+                DevOps practices. With a strong analytical mindset and attention to detail, I deliver robust solutions that drive
+                business growth and enhance user experience.</p>
+                {% endif %}
                 <div class="row">
                     <div class="col-lg-7">
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <i class="bi bi-check-circle-fill me-2"></i>
-                                <strong>Email:</strong> ethanmuthoni@gmail.com
+                                <strong>Email:</strong>{{ admin_email|default:'ethanmuthoni@mail.com' }}
                             </li>
                             <li class="mb-2">
                                 <i class="bi bi-check-circle-fill me-2"></i>
                                 <strong>Education:</strong> Software Engineering
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <strong>Availability:</strong> Open to Opportunities
                             </li>
                         </ul>
                     </div>
@@ -78,15 +99,11 @@
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <i class="bi bi-check-circle-fill me-2"></i>
-                                <strong>Location:</strong> Nairobi, Kenya
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <strong>Phone:</strong> +254719272150
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-check-circle-fill me-2"></i>
                                 <strong>Experience:</strong> 2+ Years
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <strong>Availability:</strong> Open to Opportunities
                             </li>
                         </ul>
                     </div>

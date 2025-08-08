@@ -15,24 +15,33 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="blogpost",
             name="cloudflare_image_id",
-            field=models.CharField(blank=True, default="", max_length=200, null=True),
+            field=models.CharField(
+                blank=True,
+                default="",
+                max_length=200,
+                null=True),
         ),
         migrations.AlterField(
             model_name="blogpost",
             name="cloudflare_image_url",
-            field=models.URLField(blank=True, default="", null=True),
+            field=models.URLField(
+                blank=True,
+                default="",
+                null=True),
         ),
         migrations.AlterField(
             model_name="blogpost",
             name="content",
-            field=django_ckeditor_5.fields.CKEditor5Field(default=""),
+            field=django_ckeditor_5.fields.CKEditor5Field(
+                default=""),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name="blogpost",
             name="cover_image",
             field=cloudflare_images.field.CloudflareImagesField(
-                blank=True, default="", null=True
-            ),
+                blank=True,
+                default="",
+                null=True),
         ),
     ]

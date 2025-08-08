@@ -1,17 +1,15 @@
 from django.urls import path
+
+from app.views.views import CustomRedirectView as CRV
 from blog.views.create import CreatePostView as CPV
 from blog.views.delete import DeletePostView as DPV
 from blog.views.details import PostDetailView as PDV
-from blog.views.list import (
-    AuthorPostsView as APV,
-    PostListView as PLV,
-    PostsByDateView as PBDV,
-    PostsByTagView as PBTV
-)
-
+from blog.views.list import AuthorPostsView as APV
+from blog.views.list import PostListView as PLV
+from blog.views.list import PostsByDateView as PBDV
+from blog.views.list import PostsByTagView as PBTV
 # from blog.views.increment_views import IncrementViewCountView as IVV
 from blog.views.update import UpdatePostView as UPV
-from app.views.views import CustomRedirectView as CRV
 
 app_name = "blog"
 

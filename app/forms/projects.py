@@ -1,13 +1,9 @@
 from django import forms
-from django.contrib import admin
 from django.conf import settings
-from django.core.validators import (
-    MaxLengthValidator,
-    URLValidator,
-    MinLengthValidator
-)
+from django.contrib import admin
 from django.core.exceptions import ValidationError
-# from django.forms import MultipleFileField
+from django.core.validators import (MaxLengthValidator, MinLengthValidator,
+                                    URLValidator)
 
 from app.models import Projects
 from app.views.helpers.helpers import guess_file_type
@@ -150,6 +146,69 @@ class BaseProjectsForm(forms.ModelForm):
 
         return cleaned_urls
 
+    def _get_image_validation_config(self):
+        """Get image validation configuration"""
+        return {
+            'max_size': 5 * 1024 * 1024,  # 5MB per file
+            'max_files': 5,
+            'max_total_size': 25 * 1024 * 1024,  # 25MB total
+            'allowed_types': [
+                'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+                'image/webp', 'image/bmp', 'image/svg+xml'
+            ]
+        }
+
+    def _validate_file_count(self, images, max_files):
+        """Validate the number of uploaded files"""
+        if len(images) > max_files:
+            raise ValidationError(
+                f"Too many files uploaded. Maximum {max_files} images "
+                f"allowed, but {len(images)} were provided."
+            )
+
+    def _validate_single_image(self, image, file_index, config):
+        """Validate a single image file and return error message if invalid"""
+        try:
+            # Check file type
+            file_type = guess_file_type(image)
+            if not file_type.startswith('image/'):
+                return (
+                    f"File {file_index} ({
+                        image.name}): Not a valid image file " f"(detected type: {file_type})")
+
+            # Check specific image format
+            if file_type not in config['allowed_types']:
+                return (f"File {file_index} ({image.name}): Unsupported image format "
+                        f"({file_type}). Allowed formats: JPG, PNG, GIF, "
+                        f"WebP, BMP, SVG")
+
+            # Check file size
+            if image.size > config['max_size']:
+                max_size_mb = config['max_size'] / (1024 * 1024)
+                file_size_mb = image.size / (1024 * 1024)
+                return (f"File {file_index} ({image.name}): Too large "
+                        f"({file_size_mb:.1f}MB). Maximum {max_size_mb}MB "
+                        f"per file allowed")
+
+            # Check if file is empty
+            if image.size == 0:
+                return f"File {file_index} ({image.name}): File is empty"
+
+            return None  # No error
+
+        except Exception as e:
+            return (f"File {file_index} ({image.name}): Error processing file - "
+                    f"{str(e)}")
+
+    def _validate_total_size(self, total_size, max_total_size):
+        """Validate total file size"""
+        if total_size > max_total_size:
+            max_total_mb = max_total_size / (1024 * 1024)
+            total_mb = total_size / (1024 * 1024)
+            return (f"Total file size too large ({total_mb:.1f}MB). "
+                    f"Maximum {max_total_mb}MB total allowed")
+        return None
+
     def clean_images(self):
         """Validate uploaded images with detailed error messages"""
         images = self.files.getlist('images')
@@ -157,81 +216,27 @@ class BaseProjectsForm(forms.ModelForm):
         if not images:
             return images
 
-        # Configuration
-        max_size = 5 * 1024 * 1024  # 5MB per file
-        max_files = 5
-        max_total_size = 25 * 1024 * 1024  # 25MB total
-        allowed_types = [
-            'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-            'image/webp', 'image/bmp', 'image/svg+xml'
-        ]
-
-        # Check file count
-        if len(images) > max_files:
-            raise ValidationError(
-                f"Too many files uploaded. Maximum {max_files} images "
-                f"allowed, but {len(images)} were provided."
-            )
+        config = self._get_image_validation_config()
+        self._validate_file_count(images, config['max_files'])
 
         valid_images = []
         total_size = 0
         errors = []
 
         for i, image in enumerate(images, 1):
-            try:
-                # Check file type
-                file_type = guess_file_type(image)
-                if not file_type.startswith('image/'):
-                    errors.append(
-                        f"File {i} ({image.name}): Not a valid image file "
-                        f"(detected type: {file_type})"
-                    )
-                    continue
+            error = self._validate_single_image(image, i, config)
+            if error:
+                errors.append(error)
+                continue
 
-                # Check specific image format
-                if file_type not in allowed_types:
-                    errors.append(
-                        f"File {i} ({image.name}): Unsupported image format "
-                        f"({file_type}). Allowed formats: JPG, PNG, GIF, "
-                        f"WebP, BMP, SVG"
-                    )
-                    continue
-
-                # Check file size
-                if image.size > max_size:
-                    max_size_mb = max_size / (1024 * 1024)
-                    file_size_mb = image.size / (1024 * 1024)
-                    errors.append(
-                        f"File {i} ({image.name}): Too large "
-                        f"({file_size_mb:.1f}MB). Maximum {max_size_mb}MB "
-                        f"per file allowed"
-                    )
-                    continue
-
-                # Check if file is empty
-                if image.size == 0:
-                    errors.append(
-                        f"File {i} ({image.name}): File is empty"
-                    )
-                    continue
-
-                total_size += image.size
-                valid_images.append(image)
-
-            except Exception as e:
-                errors.append(
-                    f"File {i} ({image.name}): Error processing file - "
-                    f"{str(e)}"
-                )
+            total_size += image.size
+            valid_images.append(image)
 
         # Check total size
-        if total_size > max_total_size:
-            max_total_mb = max_total_size / (1024 * 1024)
-            total_mb = total_size / (1024 * 1024)
-            errors.append(
-                f"Total file size too large ({total_mb:.1f}MB). "
-                f"Maximum {max_total_mb}MB total allowed"
-            )
+        total_size_error = self._validate_total_size(
+            total_size, config['max_total_size'])
+        if total_size_error:
+            errors.append(total_size_error)
 
         # Raise validation errors if any
         if errors:
@@ -254,12 +259,14 @@ class BaseProjectsForm(forms.ModelForm):
 
 class ProjectsForm(BaseProjectsForm):
     """Form to handle project info"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
 class ProjectsAdminForm(BaseProjectsForm):
     """form to handle project info in admin"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

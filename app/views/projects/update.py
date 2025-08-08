@@ -1,9 +1,9 @@
 from django.contrib import messages
 # from django.conf import settings
 from django.http import JsonResponse
+from django.urls import reverse
 from django.views.generic import UpdateView
 from titlecase import titlecase
-from django.urls import reverse
 
 # from app.models import Image, Video
 from app.views.helpers.helpers import handle_no_permissions, is_ajax

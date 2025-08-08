@@ -21,17 +21,11 @@
                                 {% if social.facebook %}
                                     <a href="{{ social.facebook }}" target="_blank" class="facebook"><i class="bi bi-facebook"></i></a>
                                 {% endif %}
-                                {% if social.youtube %}
-                                    <a href="{{ social.youtube }}" target="_blank" class="youtube"><i class="bi bi-youtube"></i></a>
-                                {% endif %}
-                                {% if social.whatsapp %}
-                                    <a href="https://wa.me/{{ social.whatsapp }}" target="_blank" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
-                                {% endif %}
                             {% endwith %}
                         </div>
                     </div>
                 </div>
-                <p>
+                <p class="fst-italic">
                     {{ article.author.profile.bio | default:"" }}
                 </p>
             </div>

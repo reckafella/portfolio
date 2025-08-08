@@ -1,5 +1,7 @@
+from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
+                         HttpResponseNotFound, HttpResponseServerError)
 from django.shortcuts import render
-from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest, HttpResponseForbidden
+
 
 class CustomErrorHandlingMiddleware:
     def __init__(self, get_response):

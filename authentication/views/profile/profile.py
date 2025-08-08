@@ -1,100 +1,24 @@
-# views.py
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import redirect
-from django.urls import reverse_lazy as reverse
-from django.views.generic import UpdateView
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.conf import settings
+from django.shortcuts import redirect
 
+# App Specific Imports
+from app.views.helpers.cloudinary import (CloudinaryImageHandler,
+                                          handle_image_upload)
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
+from authentication.forms.profile import (SocialLinksForm,
+                                          UserPasswordChangeForm,
+                                          UserSettingsForm)
+from authentication.models import SocialLinks, UserProfileImage, UserSettings
 
-from authentication.models import (
-    Profile, SocialLinks, UserSettings, UserProfileImage)
-from app.views.helpers.helpers import handle_no_permissions
-from authentication.forms.profile import (
-    ProfileForm, SocialLinksForm,
-    UserPasswordChangeForm, UserSettingsForm
-)
-from app.views.helpers.cloudinary import (
-    CloudinaryImageHandler, handle_image_upload
-)
-from app.views.helpers.helpers import is_ajax
+from .base import BaseProfileView
 
 uploader = CloudinaryImageHandler()
 
 
-class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Profile
-    form_class = ProfileForm
-    template_name = 'auth/profile/profile_details.html'
-
-    def test_func(self):
-        # Check if user is viewing their own profile or is an admin
-        username = self.kwargs.get('username')
-        return (self.request.user.is_authenticated and
-                (self.request.user.username == username or
-                 self.request.user.is_superuser))
-
-    def get_object(self):
-        username = self.kwargs.get('username')
-        user_profile = get_object_or_404(Profile, user__username=username)
-        return user_profile
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Get the profile user based on URL
-        username = self.kwargs.get('username')
-        profile_user = self.object.user
-
-        # Add forms for all tabs
-        social_links = SocialLinks.objects.get_or_create(
-            profile=self.object,
-            defaults={}
-        )[0]
-        settings = UserSettings.objects.get_or_create(
-            user=profile_user,
-            defaults={
-                'changes_notifications': True,
-                'new_products_notifications': True,
-                'marketing_notifications': False,
-                'security_notifications': True
-            }
-        )[0]
-
-        if 'social_form' not in kwargs:
-            context['social_form'] = SocialLinksForm(instance=social_links)
-        if 'password_form' not in kwargs:
-            context['password_form'] = (
-                UserPasswordChangeForm(profile_user)
-            )
-        if 'settings_form' not in kwargs:
-            context['settings_form'] = UserSettingsForm(instance=settings)
-
-        username_display = username.capitalize()
-        active_tabs = [
-            'profile-edit', 'profile-change-password', 'profile-settings'
-            ]
-        active_tab = self.request.session.get('active_tab', 'profile-overview')
-        context['page_title'] = f"{username_display}'s Profile"
-        context['active_tab'] = active_tab
-        context['active_tab'] = ('profile-overview' if context['active_tab']
-                                 not in active_tabs else context['active_tab'])
-
-        # Add flag to indicate if viewing user is owner or admin
-        context['is_owner'] = self.request.user.username == username
-        context['is_admin'] = self.request.user.is_superuser
-        context['can_edit'] = context['is_owner'] or context['is_admin']
-
-        context['search_form_id'] = "search-form"
-        context['settings_form_id'] = "settings-form"
-        context['profile_form_id'] = "profile-form"
-        context['change_password_id'] = 'change-password-form'
-        context["data_loading_text"] = "Saving changes..."
-
-        return context
-
+class ProfileView(BaseProfileView):
     def post(self, request, **_):
         if not self.test_func():
             return handle_no_permissions(
@@ -132,80 +56,97 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def handle_valid_profile_forms(self, form, social_form):
         profile = form.save(commit=False)
-
         success_messages = []
         error_messages = []
 
         # Handle profile picture upload
         if 'profile_pic' in self.request.FILES:
-            try:
-                # Check if the user has a profile picture already
-                if self.object.cloudinary_image_id:
-                    # Delete the old image before uploading a new one
-                    uploader.delete_image(self.object.cloudinary_image_id)
-                    _message = "Old profile picture deleted successfully!"
-                    success_messages.append(_message)
-                """ delete userprofile image if exists """
-                profile_image = UserProfileImage.objects.filter(
-                    profile=profile).first()
-                if profile_image and profile_image.cloudinary_image_id:
-                    uploader.delete_image(profile_image.cloudinary_image_id)
-                    profile_image.delete()
-                    _message = "Old profile picture deleted successfully\
-                        [userprofileimage]!"
-                    success_messages.append(_message)
-            except Exception as e:
-                # Handle any errors that occur during the deletion
-                _message = f"Error deleting old image: {str(e)}"
-                error_messages.append(_message)
-
-            try:
-                # results of image upload
-                _data = handle_image_upload(
-                    instance=profile,
-                    uploader=uploader,
-                    image=self.request.FILES['profile_pic'],
-                    folder=settings.PROFILE_FOLDER
-                )
-                profile.cloudinary_image_id = _data["cloudinary_image_id"]
-                profile.cloudinary_image_url = _data["cloudinary_image_url"]
-                profile.optimized_image_url = _data["optimized_image_url"]
-                UserProfileImage.objects.update_or_create(
-                    profile=profile,
-                    defaults={
-                        'cloudinary_image_id': _data["cloudinary_image_id"],
-                        'cloudinary_image_url': _data["cloudinary_image_url"],
-                        'optimized_image_url': _data["optimized_image_url"]
-                    }
-                )
-                success_messages.append("Success Updating Profile picture!")
-            except Exception as e:
-                # Handle any errors that occur during the upload
-                error_messages.append(f"Image Upload Failed: {str(e)}")
-
-                # Return error response for AJAX requests
-                if is_ajax(self.request):
-                    return JsonResponse({
-                        "success": False,
-                        "errors": error_messages,
-                        "messages": []
-                    }, status=400)
-
-                # For non-AJAX requests, add error msg and return form invalid
-                messages.error(self.request, f"Image Upload Failed: {str(e)}")
-                return self.form_invalid_with_context(form, social_form)
+            image_result = self._handle_profile_image_upload(
+                profile, success_messages, error_messages, form, social_form
+            )
+            if image_result is not None:  # Error occurred
+                return image_result
 
         profile.save()
+        self._update_social_links(profile, social_form)
+        success_messages.append('Profile updated successfully!')
 
-        # Update or create social links
+        return self._create_success_response(success_messages, error_messages)
+
+    def _handle_profile_image_upload(
+            self,
+            profile,
+            success_messages,
+            error_messages,
+            form,
+            social_form):
+        """Handle profile image upload and deletion of old images"""
+        # Delete old images first
+        self._delete_existing_images(profile, success_messages, error_messages)
+
+        # Upload new image
+        try:
+            _data = handle_image_upload(
+                instance=profile,
+                uploader=uploader,
+                image=self.request.FILES['profile_pic'],
+                folder=settings.PROFILE_FOLDER
+            )
+            profile.cloudinary_image_id = _data["cloudinary_image_id"]
+            profile.cloudinary_image_url = _data["cloudinary_image_url"]
+            profile.optimized_image_url = _data["optimized_image_url"]
+            UserProfileImage.objects.update_or_create(
+                profile=profile,
+                defaults={
+                    'cloudinary_image_id': _data["cloudinary_image_id"],
+                    'cloudinary_image_url': _data["cloudinary_image_url"],
+                    'optimized_image_url': _data["optimized_image_url"]
+                }
+            )
+            success_messages.append("Success Updating Profile picture!")
+            return None  # Success
+        except Exception as e:
+            error_messages.append(f"Image Upload Failed: {str(e)}")
+            if is_ajax(self.request):
+                return JsonResponse({
+                    "success": False,
+                    "errors": error_messages,
+                    "messages": []
+                }, status=400)
+            messages.error(self.request, f"Image Upload Failed: {str(e)}")
+            return self.form_invalid_with_context(form, social_form)
+
+    def _delete_existing_images(
+            self,
+            profile,
+            success_messages,
+            error_messages):
+        """Delete existing profile images before uploading new one"""
+        try:
+            if self.object.cloudinary_image_id:
+                uploader.delete_image(self.object.cloudinary_image_id)
+                success_messages.append(
+                    "Old profile picture deleted successfully!")
+
+            profile_image = UserProfileImage.objects.filter(
+                profile=profile).first()
+            if profile_image and profile_image.cloudinary_image_id:
+                uploader.delete_image(profile_image.cloudinary_image_id)
+                profile_image.delete()
+                success_messages.append(
+                    "Old profile picture deleted successfully [userprofileimage]!")
+        except Exception as e:
+            error_messages.append(f"Error deleting old image: {str(e)}")
+
+    def _update_social_links(self, profile, social_form):
+        """Update or create social links for the profile"""
         social_links = SocialLinks.objects.get_or_create(profile=profile)[0]
         for field, value in social_form.cleaned_data.items():
             setattr(social_links, field, value)
         social_links.save()
 
-        success_messages.append('Profile updated successfully!')
-
-        # Prepare response data
+    def _create_success_response(self, success_messages, error_messages):
+        """Create and return success response for both AJAX and regular requests"""
         response_data = {
             "success": True,
             "messages": success_messages,
@@ -216,10 +157,8 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if is_ajax(self.request):
             return JsonResponse(response_data)
 
-        # For non-AJAX requests, add success message and redirect
         for message in success_messages:
             messages.success(self.request, message)
-
         return redirect(self.get_success_url())
 
     def handle_password_change(self):
@@ -371,7 +310,7 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                         "success": False,
                         "errors": error_messages,
                         "messages": []
-                        }, status=400)
+                    }, status=400)
 
         error_messages.append("No profile picture to delete")
         return JsonResponse({
@@ -379,59 +318,3 @@ class ProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             "errors": error_messages,
             "messages": []
         }, status=400)
-
-    def form_invalid_with_context(self, form, social_form=None):
-        """
-        Handle form validation errors with proper context for multiple forms
-        """
-        if is_ajax(self.request):
-            error_messages = []
-
-            # Handle profile form errors
-            for field, errors in form.errors.items():
-                for error in errors:
-                    if field == '__all__':
-                        error_messages.append(str(error))
-                    else:
-                        field_name = form.fields[field].label or\
-                            field.replace('_', ' ').title()
-                        error_messages.append(f"{field_name}: {error}")
-
-            # Handle social form errors if provided
-            if social_form and not social_form.is_valid():
-                for field, errors in social_form.errors.items():
-                    for error in errors:
-                        if field == '__all__':
-                            error_messages.append(str(error))
-                        else:
-                            field_name = social_form.fields[field].label or\
-                                field.replace('_', ' ').title()
-                            error_messages.append(f"{field_name}: {error}")
-
-            # Handle non-field errors
-            for error in form.non_field_errors():
-                error_messages.append(str(error))
-
-            return JsonResponse({
-                'success': False,
-                'errors': error_messages,
-                'messages': []
-            }, status=400)
-
-        # For non-AJAX requests
-        context_data = self.get_context_data()
-        if social_form:
-            context_data['social_form'] = social_form
-        return self.render_to_response(context_data)
-
-    def get_success_url(self):
-        """Redirect to the profile detail page after successful update"""
-        username = self.kwargs.get('username')
-        return reverse('authentication:user_profile',
-                       kwargs={'username': username})
-
-    def form_invalid(self, form):
-        """
-        Handles form validation errors, esp. in AJAX requests
-        """
-        return self.form_invalid_with_context(form)

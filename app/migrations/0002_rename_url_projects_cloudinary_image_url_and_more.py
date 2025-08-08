@@ -19,17 +19,24 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="projects",
             name="cloudinary_image_id",
-            field=models.CharField(default=django.utils.timezone.now, max_length=255),
+            field=models.CharField(
+                default=django.utils.timezone.now,
+                max_length=255),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name="projects",
             name="optimized_image_url",
-            field=models.URLField(blank=True, null=True),
+            field=models.URLField(
+                blank=True,
+                null=True),
         ),
         migrations.AlterField(
             model_name="projects",
             name="image",
-            field=models.ImageField(blank=True, null=True, upload_to=""),
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to=""),
         ),
     ]

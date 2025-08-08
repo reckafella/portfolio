@@ -1,8 +1,8 @@
-from django.views.generic import ListView
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse
+from django.views.generic import ListView
 
 from app.models import Projects
 from app.views.helpers.helpers import is_ajax

@@ -1,12 +1,13 @@
 import datetime
-from django.views import View
+
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-from django.utils.timezone import now
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
+from django.views import View
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ManageSessionView(LoginRequiredMixin, View):

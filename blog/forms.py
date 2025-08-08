@@ -4,12 +4,11 @@ Forms to allow users create/update blog posts
 from django import forms
 # from wagtail.admin.rich_text import DraftailRichTextArea
 from django.contrib import admin
-
-from wagtail.admin.widgets.tags import AdminTagWidget
 from taggit.forms import TagField
+from wagtail.admin.widgets.tags import AdminTagWidget
 
-from blog.models import BlogPostPage
 from blog.form_utils.fields import DraftailFormField
+from blog.models import BlogPostPage
 
 
 class BlogPostForm(forms.ModelForm):
@@ -71,7 +70,7 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={
             "class": "form-check-input",
             "role": "switch"
-            }),
+        }),
         help_text="Check this box to publish the article",
     )
 
@@ -85,7 +84,7 @@ class BlogPostForm(forms.ModelForm):
         instance = super().save(commit=False)
         if user and not instance.author:
             instance.author = user
-        
+
         # Handle content type logic
         content_type = self.cleaned_data.get('content_type', 'simple')
         if content_type == 'advanced':
@@ -93,7 +92,7 @@ class BlogPostForm(forms.ModelForm):
             # For now, just save simple content and let users edit in
             # Wagtail admin
             pass
-            
+
         if commit:
             instance.save()
             self.save_m2m()
@@ -108,7 +107,7 @@ class BlogPostForm(forms.ModelForm):
 
         if not title:
             raise forms.ValidationError("Title is required.")
-            
+
         # For simple content, require content
         if content_type == 'simple' and not content:
             raise forms.ValidationError(
@@ -121,7 +120,7 @@ class BlogPostForm(forms.ModelForm):
             cleaned_data['content'] = (
                 "<p>Content will be created using advanced editor...</p>"
             )
-                
+
         return cleaned_data
 
 

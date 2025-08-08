@@ -16,12 +16,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BlogPostComment',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='comments', to=settings.AUTH_USER_MODEL)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='blog.blogpostpage')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('content',
+                 models.TextField()),
+                ('created_at',
+                 models.DateTimeField(
+                     auto_now_add=True)),
+                ('updated_at',
+                 models.DateTimeField(
+                     auto_now=True)),
+                ('author',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.PROTECT,
+                     related_name='comments',
+                     to=settings.AUTH_USER_MODEL)),
+                ('post',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='comments',
+                     to='blog.blogpostpage')),
             ],
             options={
                 'ordering': ['-created_at'],

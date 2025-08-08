@@ -10,11 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 import os.path
 from pathlib import Path
-# import random
 
 from app.views.helpers.helpers import get_error_files
+
+# import random
 
 
 def csrf_failure_view(request, reason=""):
@@ -132,7 +134,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "app.context_processors.metadata_context",
+                "app.context.context_processors.metadata_context",
+                "app.context.context_processors.admin_profile",
             ],
         },
     },
@@ -401,9 +404,9 @@ SESSION_COOKIE_AGE = 18400
 SESSION_SAVE_EVERY_REQUEST = True
 
 PROJECT_TYPES = [
-        ('personal', 'Personal'),
-        ('professional', 'Professional'),
-    ]
+    ('personal', 'Personal'),
+    ('professional', 'Professional'),
+]
 
 # Software Development Project Categories
 CATEGORY_CHOICES = [('Web Development', 'Web Development'),
@@ -424,22 +427,70 @@ CATEGORY_CHOICES = [('Web Development', 'Web Development'),
 
 SITE_ID = 1
 
-# get rate limit value from environment variable, default == 1000
+# ============================
+# RATE LIMITING CONFIGURATION
+# ============================
+
+# General rate limit value from environment variable, default == 1000
 RATELIMIT = os.environ.get("RATELIMIT", default=1000)
+LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
+                                 default="googlebot,bravebot").split(",")
+SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
+                                 default="crawler,spider,scraper").split(",")
 
 # if RATELIMIT is not an integer, set it to 1000
 try:
     RATELIMIT = int(RATELIMIT)
-except ValueError:
-    RATELIMIT = 1000
-except TypeError:
-    RATELIMIT = 1000
-except Exception:
+except (ValueError, TypeError, Exception):
     RATELIMIT = 1000
 
 # if RATELIMIT is less than 1000, set it to 1000
 if RATELIMIT < 1000:
     RATELIMIT = 1000
+
+# Comprehensive Rate Limiting Settings
+RATE_LIMITING = {
+    # Global rate limiting (requests per hour per IP)
+    'GLOBAL': {
+        'REQUESTS': RATELIMIT,  # requests per hour
+        'WINDOW': 3600,  # 1 hour in seconds
+        'CACHE_KEY_PREFIX': 'global_rate_limit',
+    },
+
+    # Blog view count specific rate limiting
+    'BLOG_VIEW_COUNT': {
+        'REQUESTS': 10,  # max 10 view count increments per hour per IP
+        'WINDOW': 3600,  # 1 hour in seconds
+        'CACHE_KEY_PREFIX': 'blog_view_count_rate_limit',
+        'SESSION_COOLDOWN': 600,  # 10 minutes for session-based view tracking
+    },
+
+    # Authentication rate limiting (login attempts, etc.)
+    'AUTH': {
+        'REQUESTS': 10,  # max 10 auth attempts per hour per IP
+        'WINDOW': 3600,  # 1 hour in seconds
+        'CACHE_KEY_PREFIX': 'auth_rate_limit',
+    },
+
+    # API rate limiting (if you have APIs)
+    'API': {
+        'REQUESTS': 100,  # max 100 API calls per hour per IP
+        'WINDOW': 3600,  # 1 hour in seconds
+        'CACHE_KEY_PREFIX': 'api_rate_limit',
+    },
+
+    # Bot detection settings
+    'BOT_DETECTION': {
+        'LEGITIMATE_BOTS': LEGITIMATE_BOTS,
+        'SUSPICIOUS_PATTERNS': SUSPICIOUS_BOTS,
+        'MIN_USER_AGENT_LENGTH': 10,
+    }
+}
+
+# Session settings for view count tracking
+VIEW_COUNT_SESSION_TIMEOUT = RATE_LIMITING['BLOG_VIEW_COUNT'][
+    'SESSION_COOLDOWN'
+]
 
 """ Services Offered Json format """
 OUR_SERVICES = [

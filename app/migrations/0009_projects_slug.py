@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
             model_name="projects",
             name="slug",
             field=models.SlugField(
-                blank=True, default="djangodbmodelsfieldscharfield", max_length=100
-            ),
+                blank=True,
+                default="djangodbmodelsfieldscharfield",
+                max_length=100),
         ),
     ]

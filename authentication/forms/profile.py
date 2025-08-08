@@ -7,13 +7,15 @@ from authentication.models import Profile, SocialLinks, UserSettings
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'profile_pic', 'country', 'city', 'title']
+        fields = ['bio', 'profile_pic', 'country',
+                  'city', 'title', 'experience']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
             'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
             'country': forms.TextInput(attrs={'class': 'form-control'}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'title': forms.TextInput(attrs={'class': 'form-control'})
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'experience': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 
@@ -37,7 +39,7 @@ class SocialLinksForm(forms.ModelForm):
         cleaned_data = super().clean()
         for field in self.fields:
             if cleaned_data.get(field) and not cleaned_data['whatsapp'] and\
-              not cleaned_data[field].startswith(('http://', 'https://')):
+                    not cleaned_data[field].startswith(('http://', 'https://')):
                 raise forms.ValidationError(
                     f'{field} must start with http:// or https://')
 

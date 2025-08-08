@@ -47,11 +47,11 @@
             <!-- End Filter and Sort Buttons-->
         </div>
         <!-- End widget search form-->
-
+        {% if all_tags %}
         <div class="widget-item tags-widget mb-3">
            <h3 class="widget-title">Tags</h3>
            <ul>
-               {% for tag, count in tags %}
+               {% for tag, count in all_tags %}
                <li>
                    <a href="{% url 'blog:articles_by_tag' tag %}">
                    {{ tag }} <span>({{ count }})</span></a>
@@ -61,6 +61,7 @@
        </div>
     </div>
     <!-- End widget tags-->
+     {% endif %}
 
     <div class="widget-item recent-posts-widget mb-0">
         <h3 class="widget-title">Recent Posts</h3>

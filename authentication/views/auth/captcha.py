@@ -1,7 +1,7 @@
+from captcha.helpers import captcha_image_url
+from captcha.models import CaptchaStore
 from django.http import JsonResponse
 from django.views.generic import View
-from captcha.models import CaptchaStore
-from captcha.helpers import captcha_image_url
 
 
 class CaptchaRefreshView(View):

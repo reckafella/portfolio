@@ -22,17 +22,25 @@ class Migration(migrations.Migration):
             model_name="blogpost",
             name="cloudinary_image_id",
             field=models.CharField(
-                blank=True, default="image_id", max_length=200, null=True
-            ),
+                blank=True,
+                default="image_id",
+                max_length=200,
+                null=True),
         ),
         migrations.AddField(
             model_name="blogpost",
             name="cloudinary_image_url",
-            field=models.URLField(blank=True, default="http://127.0.0.1", null=True),
+            field=models.URLField(
+                blank=True,
+                default="http://127.0.0.1",
+                null=True),
         ),
         migrations.AddField(
             model_name="blogpost",
             name="optimized_image_url",
-            field=models.URLField(blank=True, default="http://127.0.0.1", null=True),
+            field=models.URLField(
+                blank=True,
+                default="http://127.0.0.1",
+                null=True),
         ),
     ]

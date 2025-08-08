@@ -2,9 +2,11 @@
 Custom form fields for handling Wagtail rich text content
 """
 import json
+
 from django import forms
 from wagtail.admin.rich_text import DraftailRichTextArea
 from wagtail.rich_text import RichText
+
 # from wagtail.rich_text.pages import PageLinkHandler
 
 
@@ -12,6 +14,7 @@ class DraftailFormField(forms.CharField):
     """
     Custom form field for handling Draftail rich text editor
     """
+
     def __init__(self, *args, **kwargs):
         # Set the widget to DraftailRichTextArea if not specified
         if 'widget' not in kwargs:
@@ -78,7 +81,6 @@ class DraftailFormField(forms.CharField):
         entity_map = draftail_data.get('entityMap', {})
 
         for block in blocks:
-            block_type = block.get('type', 'unstyled')
             text = block.get('text', '')
 
             # Apply inline styles
@@ -89,37 +91,48 @@ class DraftailFormField(forms.CharField):
             styled_text = self.apply_entity_ranges(
                 styled_text, block.get('entityRanges', []), entity_map)
 
-            # Wrap in appropriate block element
-            if block_type == 'unstyled':
-                if text.strip():
-                    html_parts.append(f'<p>{styled_text}</p>')
-            elif block_type == 'header-one':
-                html_parts.append(f'<h1>{styled_text}</h1>')
-            elif block_type == 'header-two':
-                html_parts.append(f'<h2>{styled_text}</h2>')
-            elif block_type == 'header-three':
-                html_parts.append(f'<h3>{styled_text}</h3>')
-            elif block_type == 'header-four':
-                html_parts.append(f'<h4>{styled_text}</h4>')
-            elif block_type == 'header-five':
-                html_parts.append(f'<h5>{styled_text}</h5>')
-            elif block_type == 'header-six':
-                html_parts.append(f'<h6>{styled_text}</h6>')
-            elif block_type == 'blockquote':
-                html_parts.append(
-                    f'<blockquote><p>{styled_text}</p></blockquote>')
-            elif block_type == 'code-block':
-                html_parts.append(f'<pre><code>{styled_text}</code></pre>')
-            elif block_type in ['ordered-list-item', 'unordered-list-item']:
-                # Handle lists
-                tag = 'li'
-                html_parts.append(f'<{tag}>{styled_text}</{tag}>')
-            else:
-                # Default to paragraph
-                if text.strip():
-                    html_parts.append(f'<p>{styled_text}</p>')
+            # Convert block to HTML
+            html_block = self._convert_block_to_html(block, styled_text)
+            if html_block:
+                html_parts.append(html_block)
 
         return '\n'.join(html_parts)
+
+    def _convert_block_to_html(self, block, styled_text):
+        """
+        Convert a single block to HTML based on its type
+        """
+        block_type = block.get('type', 'unstyled')
+        text = block.get('text', '')
+
+        # Get HTML template for block type
+        html_template = self._get_block_html_template(block_type)
+
+        if html_template:
+            return html_template.format(content=styled_text)
+        elif text.strip():
+            return f'<p>{styled_text}</p>'
+        else:
+            return None
+
+    def _get_block_html_template(self, block_type):
+        """
+        Get HTML template for a given block type
+        """
+        block_templates = {
+            'unstyled': '<p>{content}</p>',
+            'header-one': '<h1>{content}</h1>',
+            'header-two': '<h2>{content}</h2>',
+            'header-three': '<h3>{content}</h3>',
+            'header-four': '<h4>{content}</h4>',
+            'header-five': '<h5>{content}</h5>',
+            'header-six': '<h6>{content}</h6>',
+            'blockquote': '<blockquote><p>{content}</p></blockquote>',
+            'code-block': '<pre><code>{content}</code></pre>',
+            'ordered-list-item': '<li>{content}</li>',
+            'unordered-list-item': '<li>{content}</li>',
+        }
+        return block_templates.get(block_type)
 
     def apply_inline_styles(self, text, style_ranges):
         """

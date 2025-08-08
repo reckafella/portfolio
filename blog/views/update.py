@@ -1,15 +1,17 @@
+from django.db import transaction
+from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.views.generic import UpdateView
 from titlecase import titlecase
-from django.http import JsonResponse
-from django.db import transaction
-from django.utils.text import slugify
 
-from app.views.helpers.cloudinary import (
-    CloudinaryImageHandler)  # handle_image_upload
+from app.views.helpers.cloudinary import \
+    CloudinaryImageHandler  # handle_image_upload
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.models import BlogPostPage as BlogPost, BlogPostImage
+from blog.models import BlogPostImage
+from blog.models import BlogPostPage as BlogPost
 from blog.views.create import BasePostView
+
 # from portfolio import settings
 
 

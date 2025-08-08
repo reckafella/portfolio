@@ -2,8 +2,8 @@
 Custom Wagtail StreamField blocks for rich blog content with inline images
 """
 from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.images.blocks import ImageChooserBlock
 
 
 class RichTextBlock(blocks.RichTextBlock):

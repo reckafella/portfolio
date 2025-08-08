@@ -1,8 +1,10 @@
 from datetime import datetime
-from django.shortcuts import redirect
+
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
+from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView
+from taggit.models import Tag
 
 from blog.models import BlogPostPage
 
@@ -11,22 +13,40 @@ class BasePostListView(ListView):
     model = BlogPostPage
     template_name = "blog/posts_list.html"
     context_object_name = "articles"
-    paginate_by = 5
+    paginate_by = 6
 
     def get_queryset(self):
         return BlogPostPage.objects.live()
 
-    def add_tags(self):
+    def get_tag_counts(self):
         """
         Returns a list of tuples for all tags in the queryset
         + total number of articles for each tag
+        + Get all tags used by the articles in the queryset
+        + Use distinct to avoid duplicates and annotate with count
+        + Get tag IDs that are used by our filtered articles
         """
-        try:
-            return BlogPostPage.get_tag_counts()
-        except Exception:
+        articles = self.get_queryset()
+        if not articles.exists():
             return []
 
-    def add_sorting_options(self):
+        article_ids = list(articles.values_list('id', flat=True))
+
+        # Query tags that are associated with these articles
+        tags_with_counts = (
+            Tag.objects
+            .filter(
+                taggit_taggeditem_items__object_id__in=article_ids,
+                taggit_taggeditem_items__content_type__model='blogpostpage'
+            ).annotate(article_count=Count('taggit_taggeditem_items',
+                                           distinct=True)).order_by('name'))
+
+        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
+
+        all_count = articles.count()
+        return [("all", all_count)] + tag_count
+
+    def get_sorting_options(self):
         return {
             "author-asc": "Author Asc",
             "author-desc": "Author Desc",
@@ -57,13 +77,12 @@ class BasePostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # articles = self.get_queryset()
 
         context["page_title"] = "Blog Posts"
-        context["tags"] = self.add_tags()
+        context["all_tags"] = self.get_tag_counts()
         context["current_tag"] = self.request.GET.get("tag", "all")
         context["current_sort"] = self.request.GET.get("sort", "date-desc")
-        context["sorting_options"] = self.add_sorting_options()
+        context["sorting_options"] = self.get_sorting_options()
         context["submit_text"] = "Read Article"
         context['share_article'] = "Share Article"
         context["q"] = self.request.GET.get("q", "")
@@ -94,7 +113,7 @@ class PostListView(BasePostListView):
 
         order_by = self.get_sorting_attribute(sort)
 
-        articles = BlogPostPage.objects.live()
+        articles = super().get_queryset()
 
         if search_query:
             articles = articles.filter(
@@ -108,9 +127,8 @@ class PostListView(BasePostListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        articles = self.get_queryset()
-        context["tags"] = self.add_tags(articles)
-        context["sorting_options"] = self.add_sorting_options()
+        context["all_tags"] = self.get_tag_counts()
+        context["sorting_options"] = self.get_sorting_options()
 
         return context
 
@@ -124,7 +142,7 @@ class AuthorPostsView(BasePostListView):
 
         order_by = self.get_sorting_attribute(sort)
 
-        articles = BlogPostPage.objects.live().filter(author=self.author)
+        articles = super().get_queryset()
 
         if search_query:
             articles = articles.filter(title__icontains=search_query) |\
@@ -135,7 +153,7 @@ class AuthorPostsView(BasePostListView):
 
         return articles.order_by(order_by)
 
-    def add_sorting_options(self):
+    def get_sorting_options(self):
         return {
             "date-asc": "Date Asc",
             "date-desc": "Date Desc",
@@ -159,8 +177,8 @@ class AuthorPostsView(BasePostListView):
         context["page_title"] = f'Posts by {self.author.username}'
         context["current_tag"] = self.request.GET.get("tag", "all")
         context["current_sort"] = self.request.GET.get("sort", "date-desc")
-        context["sorting_options"] = self.add_sorting_options()
-        context["tags"] = self.add_tags(self.get_queryset())
+        context["sorting_options"] = self.get_sorting_options()
+        context["all_tags"] = self.get_tag_counts()
 
         return context
 
@@ -178,15 +196,15 @@ class PostsByDateView(BasePostListView):
         except (ValueError, IndexError):
             return None, None, None
 
-    def add_sorting_options(self):
-        return super().add_sorting_options()
+    def get_sorting_options(self):
+        return super().get_sorting_options()
 
     def get_queryset(self):
         year, month, day = self.get_date_components()
         if year is None:
             return redirect('blog:posts_list')
 
-        articles = BlogPostPage.objects.live()
+        articles = super().get_queryset()
 
         # Build date filter
         date_filter = {'first_published_at__year': year}
@@ -222,8 +240,8 @@ class PostsByDateView(BasePostListView):
         context["current_tag"] = self.request.GET.get("tag", "all")
         context["search_query"] = self.request.GET.get("q", "")
         context["current_sort"] = self.request.GET.get("sort", "date-desc")
-        context["tags"] = self.add_tags(self.get_queryset())
-        context["sorting_options"] = self.add_sorting_options()
+        context["all_tags"] = self.get_tag_counts()
+        context["sorting_options"] = self.get_sorting_options()
 
         return context
 
@@ -236,6 +254,11 @@ class PostsByTagView(BasePostListView):
 
         order_by = self.get_sorting_attribute(sort)
 
+        """ if tag == 'all':
+            articles = super().get_queryset()
+        else:
+            articles = super().get_queryset()
+            articles = articles.filter(tags__name__iexact=tag) """
         articles = BlogPostPage.objects.live() if tag == 'all' else\
             BlogPostPage.objects.live().filter(tags__name__iexact=tag)
 
@@ -245,17 +268,16 @@ class PostsByTagView(BasePostListView):
 
         return articles.order_by(order_by)
 
-    def add_sorting_options(self):
-        return super().add_sorting_options()
+    def get_sorting_options(self):
+        return super().get_sorting_options()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        articles = self.get_queryset()
 
         context["page_title"] = f'Tag: {self.kwargs["tag"].capitalize()}'
-        context["tags"] = self.add_tags(articles)
+        context["all_tags"] = self.get_tag_counts()
         context["current_tag"] = self.kwargs["tag"]
         context["current_sort"] = self.request.GET.get("sort", "date-desc")
-        context["sorting_options"] = self.add_sorting_options()
+        context["sorting_options"] = self.get_sorting_options()
 
         return context

@@ -7,13 +7,15 @@ from authentication.models import Profile, SocialLinks, UserSettings
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'profile_pic', 'country', 'city', 'title']
+        fields = ['bio', 'profile_pic', 'country',
+                  'city', 'title', 'experience']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
             'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
             'country': forms.TextInput(attrs={'class': 'form-control'}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'title': forms.TextInput(attrs={'class': 'form-control'})
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'experience': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 

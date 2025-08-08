@@ -85,7 +85,7 @@ class BlogPostForm(forms.ModelForm):
         instance = super().save(commit=False)
         if user and not instance.author:
             instance.author = user
-        
+
         # Handle content type logic
         content_type = self.cleaned_data.get('content_type', 'simple')
         if content_type == 'advanced':
@@ -93,7 +93,7 @@ class BlogPostForm(forms.ModelForm):
             # For now, just save simple content and let users edit in
             # Wagtail admin
             pass
-            
+
         if commit:
             instance.save()
             self.save_m2m()
@@ -108,7 +108,7 @@ class BlogPostForm(forms.ModelForm):
 
         if not title:
             raise forms.ValidationError("Title is required.")
-            
+
         # For simple content, require content
         if content_type == 'simple' and not content:
             raise forms.ValidationError(
@@ -121,7 +121,7 @@ class BlogPostForm(forms.ModelForm):
             cleaned_data['content'] = (
                 "<p>Content will be created using advanced editor...</p>"
             )
-                
+
         return cleaned_data
 
 

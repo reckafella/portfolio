@@ -16,13 +16,6 @@
                             <a href="https://www.linkedin.com/in/ethanwanyoike" class="linkedin" target="_blank"><i
                                     class="bi bi-linkedin"></i></a>
                         </div>
-                        {% comment %}
-                        <div class="social-links d-flex flex-wrap gap-2">
-                            <a href="https://wa.me/254719272150" class="whatsapp" target="_blank"><i class="bi bi-whatsapp"></i></a>
-                            <a href="tel:+254719272150" class="call"><i class="bi bi-telephone-inbound-fill"></i></a>
-                            <a href="mailto:ethanmuthoni@gmail.com" class="email"><i class="bi bi-envelope-fill"></i></a>
-                        </div>
-                        {% endcomment %}
                     </div>
                 </div>
 
@@ -32,17 +25,7 @@
                         <h4 class="footer-title">Contact Me</h4>
                         <ul>
                             <li>
-                                <a href="tel:+254-719-272-150" class="text-decoration-none">
-                                    <p class="mb-0 fs-6"><i class="bi bi-telephone-inbound-fill"></i> Call</p>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://wa.me/254719272150" target="_blank" class="text-decoration-none">
-                                    <p class="mb-0 fs-6"><i class="bi bi-whatsapp"></i> WhatsApp</p>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="mailto:ethanmuthoni@gmail.com">
+                                <a href="mailto:{{ admin_email }}">
                                     <p class="mb-0 fs-6"><i class="bi bi-envelope-fill"></i> Send Email</p>
                                 </a>
                             </li>
@@ -94,7 +77,7 @@
                         <strong><span>&copy;
                                 <script> document.write(new Date().getFullYear());</script>
                             </span> &mdash;
-                            Ethan Wanyoike &mdash; All Rights Reserved.</strong>
+                            {{ admin_name }} &mdash; All Rights Reserved.</strong>
                     </div>
                 </div>
             </div>

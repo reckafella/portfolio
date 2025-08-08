@@ -21,22 +21,13 @@
 <section id="contact" class="section contact">
     <div class="container">
         <div class="info-wrap card col-12 col-md-11 col-lg-10 mx-auto">
-            <div class="row d-flex gy-3">
+            <div class="row justify-content-around d-flex gy-3">
                 <div class="col-2 col-md-6 col-lg-3 col-xl-3">
                     <a href="https://x.com/frmundu" target="_blank" class="info-item d-flex phone">
                         <i class="bi bi-telephone"></i>
                         <div class="d-none d-md-block">
                             <h3>Twitter</h3>
                             <p>Ethan Wanyoike</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-2 col-md-6 col-lg-3 col-xl-3">
-                    <a href="https://wa.me/254719272150" target="_blank" class="info-item d-flex phone">
-                        <i class="bi bi-whatsapp"></i>
-                        <div class="d-none d-md-block">
-                            <h3>WhatsApp</h3>
-                            <p>+254719272150</p>
                         </div>
                     </a>
                 </div>
@@ -51,11 +42,11 @@
                     </a>
                 </div>
                 <div class="col-2 col-md-6 col-lg-4 col-xl-3">
-                    <a href="mailto:ethanmuthoni@gmail.com" target="_blank" class="info-item d-flex email">
+                    <a href="mailto:{{ admin_email }}" target="_blank" class="info-item d-flex email">
                         <i class="bi bi-envelope-paper-fill py-1 px-2"></i>
                         <div class="d-none d-md-block">
                             <h3>Email Me</h3>
-                            <p>ethanmuthoni@gmail.com</p>
+                            <p>{{ admin_email }}</p>
                         </div>
                     </a>
                 </div>

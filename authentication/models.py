@@ -7,10 +7,11 @@ from django.dispatch import receiver
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, blank=True)
-    bio = models.TextField(max_length=500, blank=True)
-    country = models.CharField(max_length=100, blank=True)
-    profile_pic = CloudinaryField('image', null=True, blank=True)
+    title = models.CharField(max_length=100, blank=True, null=True)
+    bio = models.TextField(max_length=500, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    experience = models.CharField(max_length=50, blank=True, null=True)
+    profile_pic = CloudinaryField('image', blank=True, null=True)
     cloudinary_image_id = models.CharField(max_length=255, blank=True,
                                            null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)

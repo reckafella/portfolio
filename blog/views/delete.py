@@ -51,7 +51,8 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                 self._delete_post_images(post, success_messages, error_messages)
                 self._delete_post(post, success_messages, error_messages)
         except Exception as e:
-            return self._handle_deletion_error(request, e, success_messages, error_messages)
+            return self._handle_deletion_error(
+                request, e, success_messages, error_messages)
 
         return self._handle_deletion_success(request, success_messages)
 
@@ -88,7 +89,12 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             error_messages.append(f"Failed to delete post: {str(e)}")
             raise
 
-    def _handle_deletion_error(self, request, exception, success_messages, error_messages):
+    def _handle_deletion_error(
+            self,
+            request,
+            exception,
+            success_messages,
+            error_messages):
         """Handle errors during deletion process"""
         error_messages = list(set(error_messages))
         if str(exception) not in error_messages:

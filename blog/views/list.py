@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from django.db.models import Count
 
 from blog.models import BlogPostPage
 
@@ -17,33 +16,15 @@ class BasePostListView(ListView):
     def get_queryset(self):
         return BlogPostPage.objects.live()
 
-    def add_tags(self, articles):
+    def add_tags(self):
         """
         Returns a list of tuples for all tags in the queryset
         + total number of articles for each tag
         """
-        if not articles.exists():
+        try:
+            return BlogPostPage.get_tag_counts()
+        except Exception:
             return []
-
-        # Get all tags used by the articles in the queryset
-        from taggit.models import Tag
-
-        # Get article IDs that are in our filtered queryset
-        article_ids = list(articles.values_list('id', flat=True))
-
-        # Query tags that are associated with these articles
-        tags_with_counts = (
-            Tag.objects
-            .filter(
-                taggit_taggeditem_items__object_id__in=article_ids,
-                taggit_taggeditem_items__content_type__model='blogpostpage')
-            .annotate(article_count=Count('taggit_taggeditem_items',
-                                          distinct=True)).order_by('name'))
-
-        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
-
-        all_count = articles.count()
-        return [("all", all_count)] + tag_count
 
     def add_sorting_options(self):
         return {
@@ -76,10 +57,10 @@ class BasePostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        articles = self.get_queryset()
+        # articles = self.get_queryset()
 
         context["page_title"] = "Blog Posts"
-        context["tags"] = self.add_tags(articles)
+        context["tags"] = self.add_tags()
         context["current_tag"] = self.request.GET.get("tag", "all")
         context["current_sort"] = self.request.GET.get("sort", "date-desc")
         context["sorting_options"] = self.add_sorting_options()

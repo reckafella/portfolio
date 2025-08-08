@@ -17,7 +17,8 @@
 }
 
 
-.blog .entry .entry-img {
+.blog .entry .entry-img,
+.blog .entry .entry-content img {
   max-height: 450px;
   overflow: hidden;
 }
@@ -593,4 +594,317 @@
   font-style: italic;
   color: color-mix(in srgb, var(--default-color), transparent 30%);
   margin: 10px 0 0 0;
+}
+
+.content-editor-section {
+    transition: all 0.3s ease;
+}
+
+.btn-group .btn-check:checked + .btn {
+    background-color: var(--background-color);
+    border-color: var(--default-color);
+    color: var(--accent-color);
+}
+
+.content-preview .card {
+    border: 1px solid var(--default-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.ql-editor {
+    min-height: 200px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.ql-toolbar {
+    border-top: 1px solid var(--default-color);
+    border-left: 1px solid var(--default-color);
+    border-right: 1px solid var(--default-color);
+}
+
+.ql-container {
+    border-bottom: 1px solid var(--default-color);
+    border-left: 1px solid var(--default-color);
+    border-right: 1px solid var(--default-color);
+}
+
+/* Custom alert styling for advanced editor info */
+.alert-info {
+    background-color: color-mix(in srgb, var(--background-color), transparent 94%);
+    border-color: color-mix(in srgb, var(--default-color), transparent 70%);
+    color: color-mix(in srgb, var(--default-color), transparent 30%);
+}
+
+/* Loading animation for future StreamField integration */
+.streamfield-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--default-color);
+    border-top: 3px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* Block CSS */
+.blog-image-block {
+    /* Ensure the block never exceeds container width */
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.blog-image-left {
+    float: left;
+    margin: 0 1.5rem 1rem 0;
+    max-width: 40%;
+}
+
+.blog-image-right {
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+    max-width: 40%;
+}
+
+.blog-image-center {
+    text-align: center;
+    margin: 2rem 0;
+    max-width: 100%;
+}
+
+.blog-image-full {
+    margin: 2rem 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Responsive image sizing that respects container boundaries */
+.blog-image-small img {
+    max-width: min(300px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-medium img {
+    max-width: min(500px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-large img {
+    max-width: min(700px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-full img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Fallback for browsers that don't support min() function */
+@supports not (max-width: min(300px, 100%)) {
+    .blog-image-small img {
+        max-width: 300px;
+        width: 100%;
+    }
+    
+    .blog-image-medium img {
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    .blog-image-large img {
+        max-width: 700px;
+        width: 100%;
+    }
+}
+
+/* Additional safety for all images in blog content */
+.blog-image-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-image-left,
+    .blog-image-right {
+        float: none;
+        margin: 1rem 0;
+        max-width: 100%;
+        text-align: center;
+    }
+    
+    /* On mobile, all images should be responsive */
+    .blog-image-small img,
+    .blog-image-medium img,
+    .blog-image-large img {
+        max-width: 100%;
+        width: auto;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+    .blog-image-left,
+    .blog-image-right {
+        margin: 1rem 0;
+    }
+    
+    /* Reduce horizontal margins on small screens */
+    .blog-image-left {
+        margin-right: 0.5rem;
+    }
+    
+    .blog-image-right {
+        margin-left: 0.5rem;
+    }
+}
+
+
+/* Enhanced styling for StreamField blog content */
+.blog-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    /* Ensure content doesn't overflow container */
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Global image container rules */
+.blog-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+/* Handle any media elements with hardcoded dimensions */
+.blog-content img[width],
+.blog-content img[height] {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+.blog-content figure {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content .rich-text-block {
+    margin: 1.5rem 0;
+    max-width: 100%;
+}
+
+.blog-content .rich-text-block p {
+    margin-bottom: 1.2rem;
+    max-width: 100%;
+}
+
+/* Handle images in rich text content */
+.blog-content .rich-text-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+    margin: 1rem auto;
+}
+
+.blog-content .rich-text-block h2,
+.blog-content .rich-text-block h3,
+.blog-content .rich-text-block h4,
+.blog-content .rich-text-block h5 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.blog-content .rich-text-block ul,
+.blog-content .rich-text-block ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.blog-content .rich-text-block li {
+    margin-bottom: 0.5rem;
+}
+
+/* Image block specific styling is in the image_block.html template */
+
+.blog-content .heading-block {
+    clear: both;
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.blog-content .quote-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .code-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .callout-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .embed-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+/* Ensure proper spacing after floating images */
+.blog-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Container overflow protection */
+.blog-content {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* Prevent horizontal scrolling on the main container */
+.container, .card {
+    overflow-x: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-content {
+        font-size: 1rem;
+        padding: 0 0.5rem; /* Add some padding on mobile */
+    }
+    
+    .blog-content .rich-text-block h2,
+    .blog-content .rich-text-block h3,
+    .blog-content .rich-text-block h4,
+    .blog-content .rich-text-block h5 {
+        margin-top: 2rem;
+    }
+    
+    /* Ensure all floating elements are contained on mobile */
+    .blog-content .rich-text-block img {
+        float: none !important;
+        margin: 1rem auto;
+        display: block;
+        text-align: center;
+    }
 }

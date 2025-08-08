@@ -1,0 +1,29 @@
+{% load wagtailimages_tags %}
+
+<div class="blog-image-block blog-image-{{ value.alignment }} blog-image-{{ value.size }}">
+    {% if value.image %}
+        {% if value.size == 'small' %}
+            {% image value.image width-300 as img %}
+        {% elif value.size == 'medium' %}
+            {% image value.image width-500 as img %}
+        {% elif value.size == 'large' %}
+            {% image value.image width-700 as img %}
+        {% else %}
+            {% image value.image width-1200 as img %}
+        {% endif %}
+
+        <figure class="mb-4">
+            <img src="{{ img.url }}" 
+                 alt="{{ value.image.title|default:'Blog image' }}" 
+                 class="img-fluid rounded shadow-sm"
+                 loading="lazy">
+            {% if value.caption %}
+                <figcaption class="figure-caption text-center mt-2">{{ value.caption }}</figcaption>
+            {% endif %}
+        </figure>
+    {% endif %}
+</div>
+
+<style>
+
+</style>

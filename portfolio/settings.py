@@ -276,6 +276,9 @@ APPEND_SLASH = True
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = "Ethan Muthoni"
 
+# Custom Image Model for Cloudinary integration
+WAGTAILIMAGES_IMAGE_MODEL = 'blog.CloudinaryWagtailImage'
+
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
 
 WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
@@ -299,7 +302,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
                          'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote']
+                         'document-link', 'blockquote', 'image', 'embed']
         }
     },
     'full': {
@@ -307,7 +310,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
                          'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote']
+                         'document-link', 'blockquote', 'image', 'embed']
         }
     },
     'minimal': {
@@ -315,7 +318,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
                          'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote']
+                         'document-link', 'blockquote', 'image']
         }
     },
 }

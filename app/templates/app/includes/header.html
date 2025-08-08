@@ -13,7 +13,7 @@
             <button type="button" class="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
                 <i class="bi bi-sun-fill theme-icon"></i>
             </button>
-            <nav id="navmenu" class="navmenu">
+            <nav id="navmenu" class="navmenu navbar navbar-expanded-lg navbar-scroll">
                 <ul>
                     <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
                     {% comment %}
@@ -37,7 +37,18 @@
                         <ul>
                             <li><a href="{% url 'blog:list_articles' %}"><span>Blog</span></a></li>
                             <li><a href="{% url 'blog:create_article' %}"><span>Create Blog Post</span></a></li>
-                            <li><a href="/wagtail/admin/" target="_blank"><span>Wagtail Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
+                            <li>
+                                <a href="/wagtail/admin" target="_blank">
+                                    <span>Wagtail Admin</span>
+                                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/wagtail/admin/pages/6/" target="_blank">
+                                    <span>Wagtail Pages</span>
+                                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     {% else %}

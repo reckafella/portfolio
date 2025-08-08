@@ -152,6 +152,7 @@ class CreatePostView(BasePostView, CreateView):
         post.slug = slugify(post.title)
         cover_image = form.files.get("cover_image")
         should_publish: bool = form.cleaned_data.get('published', False)
+        content_type = form.cleaned_data.get('content_type', 'simple')
 
         try:
             with transaction.atomic():
@@ -186,11 +187,28 @@ class CreatePostView(BasePostView, CreateView):
                 message = "Blog Post Created and Published Successfully"
             else:
                 message = "Blog Post Draft Created Successfully"
+
+            # For advanced content type, redirect to Wagtail admin
+            if content_type == 'advanced':
+                wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
+                return JsonResponse({
+                    "success": True,
+                    "message": f"{message}. Redirecting to advanced editor...",
+                    "redirect_url": wagtail_edit_url
+                })
+
             return JsonResponse({
                 "success": True,
                 "message": message,
                 "redirect_url": self.get_success_url()
             })
+
+        # For non-AJAX requests
+        if content_type == 'advanced':
+            from django.shortcuts import redirect
+            wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
+            return redirect(wagtail_edit_url)
+
         return response
 
     def get_success_url(self):

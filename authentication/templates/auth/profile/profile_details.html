@@ -99,10 +99,15 @@
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="{% static 'assets/js/toast.js' %}" type="module"></script>
-<script src="{% static 'assets/javascript/images/ImageCropping.js' %}" type="module"></script>
 <script type="module">
   // Initialize toast manager globally
   import { ToastManager } from '/static/assets/js/toast.js';
   window.toastManager = new ToastManager();
+
+  // Initialize the new profile image cropper
+  import { profileImageCropper } from '/static/assets/javascript/images/ProfileImageCropper.js';
+
+  // The cropper is automatically initialized
+  console.log('Profile image cropper initialized');
 </script>
 {% endblock %}

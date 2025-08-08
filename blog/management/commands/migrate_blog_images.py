@@ -69,7 +69,8 @@ class Command(BaseCommand):
         errors = 0
 
         for post in blog_posts:
-            post_migrated, post_errors = self._process_single_post(post, dry_run)
+            post_migrated, post_errors = self._process_single_post(
+                post, dry_run)
             migrated_images += post_migrated
             errors += post_errors
 

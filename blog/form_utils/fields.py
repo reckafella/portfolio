@@ -81,7 +81,6 @@ class DraftailFormField(forms.CharField):
         entity_map = draftail_data.get('entityMap', {})
 
         for block in blocks:
-            block_type = block.get('type', 'unstyled')
             text = block.get('text', '')
 
             # Apply inline styles
@@ -92,37 +91,43 @@ class DraftailFormField(forms.CharField):
             styled_text = self.apply_entity_ranges(
                 styled_text, block.get('entityRanges', []), entity_map)
 
-            # Wrap in appropriate block element
-            if block_type == 'unstyled':
-                if text.strip():
-                    html_parts.append(f'<p>{styled_text}</p>')
-            elif block_type == 'header-one':
-                html_parts.append(f'<h1>{styled_text}</h1>')
-            elif block_type == 'header-two':
-                html_parts.append(f'<h2>{styled_text}</h2>')
-            elif block_type == 'header-three':
-                html_parts.append(f'<h3>{styled_text}</h3>')
-            elif block_type == 'header-four':
-                html_parts.append(f'<h4>{styled_text}</h4>')
-            elif block_type == 'header-five':
-                html_parts.append(f'<h5>{styled_text}</h5>')
-            elif block_type == 'header-six':
-                html_parts.append(f'<h6>{styled_text}</h6>')
-            elif block_type == 'blockquote':
-                html_parts.append(
-                    f'<blockquote><p>{styled_text}</p></blockquote>')
-            elif block_type == 'code-block':
-                html_parts.append(f'<pre><code>{styled_text}</code></pre>')
-            elif block_type in ['ordered-list-item', 'unordered-list-item']:
-                # Handle lists
-                tag = 'li'
-                html_parts.append(f'<{tag}>{styled_text}</{tag}>')
-            else:
-                # Default to paragraph
-                if text.strip():
-                    html_parts.append(f'<p>{styled_text}</p>')
+            # Convert block to HTML
+            html_block = self._convert_block_to_html(block, styled_text)
+            if html_block:
+                html_parts.append(html_block)
 
         return '\n'.join(html_parts)
+
+    def _convert_block_to_html(self, block, styled_text):
+        """
+        Convert a single block to HTML based on its type
+        """
+        block_type = block.get('type', 'unstyled')
+        text = block.get('text', '')
+
+        if block_type == 'unstyled':
+            return f'<p>{styled_text}</p>' if text.strip() else None
+        elif block_type == 'header-one':
+            return f'<h1>{styled_text}</h1>'
+        elif block_type == 'header-two':
+            return f'<h2>{styled_text}</h2>'
+        elif block_type == 'header-three':
+            return f'<h3>{styled_text}</h3>'
+        elif block_type == 'header-four':
+            return f'<h4>{styled_text}</h4>'
+        elif block_type == 'header-five':
+            return f'<h5>{styled_text}</h5>'
+        elif block_type == 'header-six':
+            return f'<h6>{styled_text}</h6>'
+        elif block_type == 'blockquote':
+            return f'<blockquote><p>{styled_text}</p></blockquote>'
+        elif block_type == 'code-block':
+            return f'<pre><code>{styled_text}</code></pre>'
+        elif block_type in ['ordered-list-item', 'unordered-list-item']:
+            return f'<li>{styled_text}</li>'
+        else:
+            # Default to paragraph
+            return f'<p>{styled_text}</p>' if text.strip() else None
 
     def apply_inline_styles(self, text, style_ranges):
         """

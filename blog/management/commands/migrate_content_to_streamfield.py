@@ -2,6 +2,7 @@
 Management command to migrate existing RichText content to StreamField format
 """
 from django.core.management.base import BaseCommand
+
 from blog.models import BlogPostPage
 
 

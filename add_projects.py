@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import os
 import json
-import django
-from titlecase import titlecase
-from django.conf import settings
+import os
 
+import django
+from django.conf import settings
+from titlecase import titlecase
 
 img = "https://res.cloudinary.com/dg4sl9jhw"
 loc = "/image/upload/v1732720607/cld-sample-4.webp"

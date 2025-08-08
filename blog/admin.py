@@ -1,9 +1,9 @@
-from wagtail_modeladmin.options import (
-    ModelAdmin, ModelAdminGroup, modeladmin_register)
-from .models import BlogPostPage
-from .forms import BlogPostAdminForm
 from django.contrib import admin
+from wagtail_modeladmin.options import (ModelAdmin, ModelAdminGroup,
+                                        modeladmin_register)
 
+from .forms import BlogPostAdminForm
+from .models import BlogPostPage
 
 admin.site.register(BlogPostPage, BlogPostAdminForm)
 

@@ -1,9 +1,9 @@
 from datetime import datetime
-from django.shortcuts import redirect
+
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView
 from taggit.models import Tag
 
 from blog.models import BlogPostPage

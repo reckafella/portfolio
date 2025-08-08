@@ -1,4 +1,5 @@
 import re
+
 import requests
 from cloudinary.models import CloudinaryField
 from django.conf import settings

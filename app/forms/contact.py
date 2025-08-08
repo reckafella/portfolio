@@ -1,10 +1,7 @@
+from captcha.fields import CaptchaField, CaptchaTextInput
 from django import forms
 from django.contrib import admin
-from django.core.validators import (
-    EmailValidator,
-    MaxLengthValidator,
-)
-from captcha.fields import CaptchaField, CaptchaTextInput
+from django.core.validators import EmailValidator, MaxLengthValidator
 
 from app.models import Message
 

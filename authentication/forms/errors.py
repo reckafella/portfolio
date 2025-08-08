@@ -3,6 +3,7 @@ from django.forms.utils import ErrorList
 
 class CustomErrorList(ErrorList):
     """Custom Error List"""
+
     def __str__(self):
         return self.as_divs()
 

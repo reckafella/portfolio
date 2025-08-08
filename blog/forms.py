@@ -4,12 +4,11 @@ Forms to allow users create/update blog posts
 from django import forms
 # from wagtail.admin.rich_text import DraftailRichTextArea
 from django.contrib import admin
-
-from wagtail.admin.widgets.tags import AdminTagWidget
 from taggit.forms import TagField
+from wagtail.admin.widgets.tags import AdminTagWidget
 
-from blog.models import BlogPostPage
 from blog.form_utils.fields import DraftailFormField
+from blog.models import BlogPostPage
 
 
 class BlogPostForm(forms.ModelForm):
@@ -71,7 +70,7 @@ class BlogPostForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={
             "class": "form-check-input",
             "role": "switch"
-            }),
+        }),
         help_text="Check this box to publish the article",
     )
 

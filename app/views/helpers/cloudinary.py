@@ -1,7 +1,8 @@
+from uuid import uuid4
+
 import cloudinary
 import cloudinary.uploader
 from django.conf import settings
-from uuid import uuid4
 
 from app.views.helpers.helpers import guess_file_type
 

@@ -39,7 +39,7 @@ class SocialLinksForm(forms.ModelForm):
         cleaned_data = super().clean()
         for field in self.fields:
             if cleaned_data.get(field) and not cleaned_data['whatsapp'] and\
-              not cleaned_data[field].startswith(('http://', 'https://')):
+                    not cleaned_data[field].startswith(('http://', 'https://')):
                 raise forms.ValidationError(
                     f'{field} must start with http:// or https://')
 

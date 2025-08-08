@@ -1,29 +1,20 @@
 from django.urls import path
 
 from app.views import search
-from app.views.views import (
-    HomeView,
-    AboutView,
-    ServicesView,
-    ResumePDFView,
-    SitemapView,
-    CustomRedirectView as crv,
-    AppHealthCheckView as app_is_running,
-    render_favicon
-)
+from app.views.messages import ContactSuccessView as CSV
+from app.views.messages import ContactView
+from app.views.messages import MarkMessageReadView as MarkAsRead
+from app.views.messages import MessagesView
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
+from app.views.projects.list_and_details import ProjectDetailView as PDV
+from app.views.projects.list_and_details import ProjectListView as PLV
 from app.views.projects.update import UpdateProjectView as UPV
-from app.views.projects.list_and_details import (
-    ProjectDetailView as PDV,
-    ProjectListView as PLV
-)
-from app.views.messages import (
-    MessagesView,
-    ContactSuccessView as CSV,
-    ContactView,
-    MarkMessageReadView as MarkAsRead
-)
+from app.views.views import AboutView
+from app.views.views import AppHealthCheckView as app_is_running
+from app.views.views import CustomRedirectView as crv
+from app.views.views import (HomeView, ResumePDFView, ServicesView,
+                             SitemapView, render_favicon)
 
 app_name = "app"
 

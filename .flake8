@@ -1,0 +1,30 @@
+[flake8]
+max-line-length = 80
+extend-ignore = 
+    E203,
+    E501,
+    W503,
+    F401,
+    E402,
+
+exclude = 
+    .git,
+    __pycache__,
+    .env,
+    venv,
+    env,
+    migrations,
+    node_modules,
+    .vscode,
+    static/assets/js,
+    */migrations/*,
+    manage.py,
+    */settings/*,
+
+per-file-ignores =
+    __init__.py:F401
+    settings.py:E402,F401,F403
+    */settings.py:E402,F401,F403
+    */settings/*:E402,F401,F403
+
+max-complexity = 10

@@ -13,9 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import os.path
 from pathlib import Path
-# import random
 
 from app.views.helpers.helpers import get_error_files
+
+# import random
 
 
 def csrf_failure_view(request, reason=""):
@@ -403,9 +404,9 @@ SESSION_COOKIE_AGE = 18400
 SESSION_SAVE_EVERY_REQUEST = True
 
 PROJECT_TYPES = [
-        ('personal', 'Personal'),
-        ('professional', 'Professional'),
-    ]
+    ('personal', 'Personal'),
+    ('professional', 'Professional'),
+]
 
 # Software Development Project Categories
 CATEGORY_CHOICES = [('Web Development', 'Web Development'),

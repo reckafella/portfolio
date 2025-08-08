@@ -1,5 +1,6 @@
-import requests
 import csv
+
+import requests
 
 
 def fetch_public_suffix_list():
@@ -17,7 +18,9 @@ def fetch_public_suffix_list():
     return suffixes
 
 
-def save_to_csv(suffixes, filename="./app/static/assets/data/public_suffix_list.csv"):
+def save_to_csv(
+        suffixes,
+        filename="./app/static/assets/data/public_suffix_list.csv"):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Suffix"])  # Header

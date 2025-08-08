@@ -1,18 +1,18 @@
 import json
-from django.shortcuts import get_object_or_404
-from django.views.generic import FormView, TemplateView, ListView
+
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy as reverse
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.contrib import messages
-
-from app.models import Message
-from app.forms.contact import ContactForm
-from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
+from django.views.generic import FormView, ListView, TemplateView
 
+from app.forms.contact import ContactForm
+from app.models import Message
 from app.views.helpers.helpers import is_ajax
 
 

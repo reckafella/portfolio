@@ -3,10 +3,9 @@ Blog View Count Security Middleware
 Enhanced security using unified rate limiting system
 """
 from django.http import JsonResponse
-from portfolio.utils.rate_limiting import (
-    RateLimiter, is_bot_request
-)
+
 from app.views.helpers.helpers import is_ajax
+from portfolio.utils.rate_limiting import RateLimiter, is_bot_request
 
 
 class ViewCountSecurityMiddleware:

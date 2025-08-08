@@ -1,10 +1,9 @@
 from django.urls import path
 
-from authentication.views.auth.sessions import ManageSessionView
-from authentication.views.auth.auth import LoginView, SignupView, LogoutView
-from authentication.views.profile.profile import ProfileView as _PV
 from app.views.views import CustomRedirectView as RedirectView
-
+from authentication.views.auth.auth import LoginView, LogoutView, SignupView
+from authentication.views.auth.sessions import ManageSessionView
+from authentication.views.profile.profile import ProfileView as _PV
 
 app_name = "authentication"
 

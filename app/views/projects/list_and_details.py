@@ -1,10 +1,10 @@
 from django.db.models import Prefetch
-from django.views.generic import DetailView, ListView
 from django.http import Http404
 from django.urls import reverse
+from django.views.generic import DetailView, ListView
 
-from app.models import Projects, Image, Video
 from app.forms.projects import ProjectsForm
+from app.models import Image, Projects, Video
 
 
 class ProjectListView(ListView):

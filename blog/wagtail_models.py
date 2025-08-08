@@ -1,11 +1,13 @@
 """
 Custom Wagtail models for blog image management with Cloudinary integration
 """
+import logging
+
+from django.conf import settings
 from django.db import models
 from wagtail.images.models import AbstractImage, AbstractRendition, Image
+
 from app.views.helpers.cloudinary import CloudinaryImageHandler
-from django.conf import settings
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='projects',
             name='slug',
-            field=models.SlugField(default='djangodbmodelsfieldscharfield', max_length=100),
+            field=models.SlugField(
+                default='djangodbmodelsfieldscharfield',
+                max_length=100),
         ),
     ]

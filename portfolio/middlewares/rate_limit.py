@@ -3,9 +3,10 @@ Improved Rate Limiting Middleware
 Uses the unified rate limiting system
 """
 from django.http import JsonResponse
+
+from authentication.views.auth.errors import handler_429 as _429
 # from django.conf import settings
 from portfolio.utils.rate_limiting import RateLimiter, RateLimitExceeded
-from authentication.views.auth.errors import handler_429 as _429
 
 
 class RateLimitMiddleware:

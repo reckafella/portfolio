@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+
 import django
 
 
@@ -12,11 +13,9 @@ def fix_project_slug():
     django.setup()
 
     # Import Django models after setting up Django
-    from django.contrib.auth.models import User
-    from django.contrib.sites.models import Site
-    from django.contrib.auth.models import Group
+    from django.contrib.auth.models import Group, Permission, User
     from django.contrib.contenttypes.models import ContentType
-    from django.contrib.auth.models import Permission
+    from django.contrib.sites.models import Site
 
     # Retrieve superuser credentials from environment variables
     # these are set directly for local development
@@ -63,7 +62,7 @@ def fix_project_slug():
     # Create a content type object
     content_type_name = os.getenv("DJANGO_CONTENT_TYPE_NAME", "app")
     content_type_app_label = os.getenv("DJANGO_CONTENT_TYPE_APP_LABEL", "app")
-    content_type_model = os.getenv("DJANGO_CONTENT_TYPE_MODEL", "projects") 
+    content_type_model = os.getenv("DJANGO_CONTENT_TYPE_MODEL", "projects")
     content_type, created = ContentType.objects.get_or_create(
         app_label=content_type_app_label,
         model=content_type_model

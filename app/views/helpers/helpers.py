@@ -1,9 +1,10 @@
-import os
 import json
+import os
 from typing import Tuple
+
 from django.conf import settings
-from django.http import HttpRequest, JsonResponse
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest, JsonResponse
 
 
 def is_ajax(request: HttpRequest) -> bool:

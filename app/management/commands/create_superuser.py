@@ -1,11 +1,12 @@
 import os
-from django.core.management.base import BaseCommand
+
 from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
     help = "Create a superuser"
-    
+
     def handle(self, *args, **options):
         username = os.getenv("DJANGO_SUPERUSER_USERNAME", "ethan")
         password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "@100/Chem")
@@ -14,7 +15,8 @@ class Command(BaseCommand):
         last_name = os.getenv("DJANGO_SUPERUSER_LAST_NAME", "Wanyoike")
 
         if not username or not email or not password:
-            raise ValueError("Please provide a username, password, and email. Required for account creation.")
+            raise ValueError(
+                "Please provide a username, password, and email. Required for account creation.")
 
         # Create the superuser if it doesn't already exist
         if not User.objects.filter(username=username).exists():
@@ -30,9 +32,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Superuser `{username}` already exists. Updating details..."
-                )
-            )
+                    f"Superuser `{username}` already exists. Updating details..."))
             User.objects.filter(username=username).update(
                 email=email, first_name=first_name, last_name=last_name
             )

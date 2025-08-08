@@ -1,15 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy as reverse
 from django.http import JsonResponse
+from django.urls import reverse_lazy as reverse
 
-from authentication.forms.errors import CustomErrorList
 from app.forms.projects import ProjectsForm
 from app.models import Image, Projects, Video
-from app.views.helpers.cloudinary import (
-    CloudinaryImageHandler, handle_image_upload
-)
+from app.views.helpers.cloudinary import (CloudinaryImageHandler,
+                                          handle_image_upload)
 from app.views.helpers.helpers import is_ajax
+from authentication.forms.errors import CustomErrorList
 
 uploader = CloudinaryImageHandler()
 

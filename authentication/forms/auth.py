@@ -1,11 +1,9 @@
+from captcha.fields import CaptchaField, CaptchaTextInput
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.core.validators import (
-    MaxLengthValidator, MinLengthValidator, EmailValidator
-)
-
-from captcha.fields import CaptchaField, CaptchaTextInput
+from django.core.validators import (EmailValidator, MaxLengthValidator,
+                                    MinLengthValidator)
 
 
 class LoginForm(forms.Form):

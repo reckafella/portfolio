@@ -2,8 +2,8 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
 
-from blog.models import BlogPostPage
 from blog.forms import BlogPostForm
+from blog.models import BlogPostPage
 from portfolio.utils.rate_limiting import can_increment_view_count
 
 

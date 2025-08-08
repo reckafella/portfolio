@@ -2,18 +2,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
 from django.utils.text import slugify
+from django.views.generic import CreateView
 from titlecase import titlecase
 
-from app.views.helpers.cloudinary import (
-    CloudinaryImageHandler, handle_image_upload)
+from app.views.helpers.cloudinary import (CloudinaryImageHandler,
+                                          handle_image_upload)
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.models import BlogPostPage, BlogIndexPage
 from blog.forms import BlogPostForm
+from blog.models import BlogIndexPage, BlogPostImage, BlogPostPage
 from portfolio import settings
-from blog.models import BlogPostImage
-
 
 uploader = CloudinaryImageHandler()
 
@@ -141,34 +139,76 @@ class CreatePostView(BasePostView, CreateView):
 
         parent_page.add_child(instance=post)
 
+    def prepare_post_data(self, form):
+        """Prepare post instance with form data."""
+        post = form.instance
+        post.author = self.request.user
+        post.title = titlecase(post.title)
+        post.slug = slugify(post.title)
+        return post
+
+    def create_post_with_image(self, post, cover_image, should_publish):
+        """Create post with optional cover image and publishing."""
+        with transaction.atomic():
+            # Save the post to the parent first
+            self.save_post_to_parent(post)
+
+            # Save the post instance
+            post.save()
+
+            # Handle cover image if provided
+            if cover_image:
+                self.save_image_to_db(post, cover_image)
+
+            # Publish if requested
+            self.publish_post(post, should_publish)
+
+    def get_success_message(self, should_publish):
+        """Get appropriate success message."""
+        if should_publish:
+            return "Blog Post Created and Published Successfully"
+        else:
+            return "Blog Post Draft Created Successfully"
+
+    def handle_ajax_response(self, should_publish, content_type):
+        """Handle AJAX response with appropriate redirects."""
+        message = self.get_success_message(should_publish)
+
+        # For advanced content type, redirect to Wagtail admin
+        if content_type == 'advanced':
+            wagtail_edit_url = f"/wagtail/admin/pages/{self.object.id}/edit/"
+            return JsonResponse({
+                "success": True,
+                "message": f"{message}. Redirecting to advanced editor...",
+                "redirect_url": wagtail_edit_url
+            })
+
+        return JsonResponse({
+            "success": True,
+            "message": message,
+            "redirect_url": self.get_success_url()
+        })
+
+    def handle_non_ajax_response(self, content_type, response):
+        """Handle non-AJAX response with appropriate redirects."""
+        if content_type == 'advanced':
+            from django.shortcuts import redirect
+            wagtail_edit_url = f"/wagtail/admin/pages/{self.object.id}/edit/"
+            return redirect(wagtail_edit_url)
+        return response
+
     def form_valid(self, form):
         if not self.test_func():
             handle_no_permissions(self.request,
                                   "Not allowed to create a blog post.")
 
-        post = form.instance
-        post.author = self.request.user
-        post.title = titlecase(post.title)
-        post.slug = slugify(post.title)
+        post = self.prepare_post_data(form)
         cover_image = form.files.get("cover_image")
-        should_publish: bool = form.cleaned_data.get('published', False)
+        should_publish = form.cleaned_data.get('published', False)
         content_type = form.cleaned_data.get('content_type', 'simple')
 
         try:
-            with transaction.atomic():
-                # Save the post to the parent first
-                self.save_post_to_parent(post)
-
-                # Save the post instance
-                post.save()
-
-                # Handle cover image if provided
-                if cover_image:
-                    self.save_image_to_db(post, cover_image)
-
-                # Publish if requested
-                self.publish_post(post, should_publish)
-
+            self.create_post_with_image(post, cover_image, should_publish)
         except Exception as e:
             # If anything fails, clean up
             if post.pk:
@@ -183,33 +223,9 @@ class CreatePostView(BasePostView, CreateView):
         response = super().form_valid(form)
 
         if is_ajax(self.request):
-            if should_publish:
-                message = "Blog Post Created and Published Successfully"
-            else:
-                message = "Blog Post Draft Created Successfully"
+            return self.handle_ajax_response(should_publish, content_type)
 
-            # For advanced content type, redirect to Wagtail admin
-            if content_type == 'advanced':
-                wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
-                return JsonResponse({
-                    "success": True,
-                    "message": f"{message}. Redirecting to advanced editor...",
-                    "redirect_url": wagtail_edit_url
-                })
-
-            return JsonResponse({
-                "success": True,
-                "message": message,
-                "redirect_url": self.get_success_url()
-            })
-
-        # For non-AJAX requests
-        if content_type == 'advanced':
-            from django.shortcuts import redirect
-            wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
-            return redirect(wagtail_edit_url)
-
-        return response
+        return self.handle_non_ajax_response(content_type, response)
 
     def get_success_url(self):
         return super().get_success_url()

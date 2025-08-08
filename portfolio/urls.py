@@ -17,14 +17,14 @@ Including another URLconf
 # ignore linting errors
 # flake8: noqa
 
-from django.conf.urls import handler400, handler403, handler404, handler500
-from django.contrib import admin
 import django.contrib.auth.urls as django_auth_urls
-from django.urls import include, path, re_path
 from django.conf import settings
+from django.conf.urls import handler400, handler403, handler404, handler500
 from django.conf.urls.static import static
-from wagtail.admin import urls as wagtailadmin_urls
+from django.contrib import admin
+from django.urls import include, path, re_path
 from wagtail import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView

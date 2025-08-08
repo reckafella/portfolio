@@ -15,12 +15,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserProfileImage',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('profile_pic', cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image')),
-                ('cloudinary_image_id', models.CharField(blank=True, max_length=255, null=True)),
-                ('cloudinary_image_url', models.URLField(blank=True, null=True)),
-                ('optimized_image_url', models.URLField(blank=True, null=True)),
-                ('profile', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='authentication.profile')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('profile_pic',
+                 cloudinary.models.CloudinaryField(
+                     blank=True,
+                     max_length=255,
+                     null=True,
+                     verbose_name='image')),
+                ('cloudinary_image_id',
+                 models.CharField(
+                     blank=True,
+                     max_length=255,
+                     null=True)),
+                ('cloudinary_image_url',
+                 models.URLField(
+                     blank=True,
+                     null=True)),
+                ('optimized_image_url',
+                 models.URLField(
+                     blank=True,
+                     null=True)),
+                ('profile',
+                 models.OneToOneField(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='authentication.profile')),
             ],
         ),
     ]

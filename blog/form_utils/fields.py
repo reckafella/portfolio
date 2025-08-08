@@ -2,9 +2,11 @@
 Custom form fields for handling Wagtail rich text content
 """
 import json
+
 from django import forms
 from wagtail.admin.rich_text import DraftailRichTextArea
 from wagtail.rich_text import RichText
+
 # from wagtail.rich_text.pages import PageLinkHandler
 
 
@@ -12,6 +14,7 @@ class DraftailFormField(forms.CharField):
     """
     Custom form field for handling Draftail rich text editor
     """
+
     def __init__(self, *args, **kwargs):
         # Set the widget to DraftailRichTextArea if not specified
         if 'widget' not in kwargs:

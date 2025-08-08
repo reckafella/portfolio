@@ -7,14 +7,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0017_remove_blogpostpage_topics_blogpostpage_tags'),
-        ('taggit', '0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx'),
+        ('blog',
+         '0017_remove_blogpostpage_topics_blogpostpage_tags'),
+        ('taggit',
+         '0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='blogpostpage',
             name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='Add comma-separated tags', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'),
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text='Add comma-separated tags',
+                through='taggit.TaggedItem',
+                to='taggit.Tag',
+                verbose_name='Tags'),
         ),
     ]

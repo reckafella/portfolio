@@ -5,11 +5,13 @@ This command moves images from the legacy BlogPostImage model to the new
 CloudinaryWagtailImage and BlogPostPageGalleryImage models.
 """
 
+import logging
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
+
 from blog.models import BlogPostImage, BlogPostPage, BlogPostPageGalleryImage
 from blog.wagtail_models import CloudinaryWagtailImage
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ class Command(BaseCommand):
             help='Migrate images for a specific post ID only',
         )
 
-    def handle(self, *args, **options):
+    def handle(self, **options):
         dry_run = options['dry_run']
         post_id = options.get('post_id')
 
@@ -38,73 +40,90 @@ class Command(BaseCommand):
                 self.style.WARNING('DRY RUN MODE - No changes will be made')
             )
 
-        # Get blog posts to migrate
+        blog_posts = self._get_blog_posts(post_id)
+        if blog_posts is None:
+            return
+
+        total_posts = blog_posts.count()
+        self.stdout.write(f'Found {total_posts} blog posts to process')
+
+        migrated_images, errors = self._process_blog_posts(blog_posts, dry_run)
+        self._print_summary(total_posts, migrated_images, errors, dry_run)
+
+    def _get_blog_posts(self, post_id):
+        """Get blog posts to migrate based on post_id filter"""
         if post_id:
             blog_posts = BlogPostPage.objects.filter(id=post_id)
             if not blog_posts.exists():
                 self.stdout.write(
                     self.style.ERROR(f'No blog post found with ID {post_id}')
                 )
-                return
+                return None
         else:
             blog_posts = BlogPostPage.objects.all()
+        return blog_posts
 
-        total_posts = blog_posts.count()
-        self.stdout.write(f'Found {total_posts} blog posts to process')
-
+    def _process_blog_posts(self, blog_posts, dry_run):
+        """Process all blog posts and migrate their images"""
         migrated_images = 0
         errors = 0
 
         for post in blog_posts:
-            self.stdout.write(f'\nProcessing post: {post.title}')
+            post_migrated, post_errors = self._process_single_post(post, dry_run)
+            migrated_images += post_migrated
+            errors += post_errors
 
-            # Get legacy images for this post
-            legacy_images = BlogPostImage.objects.filter(post=post)
+        return migrated_images, errors
 
-            if not legacy_images.exists():
-                self.stdout.write('  No legacy images found')
-                continue
+    def _process_single_post(self, post, dry_run):
+        """Process images for a single blog post"""
+        self.stdout.write(f'\nProcessing post: {post.title}')
 
-            self.stdout.write(
-                f'  Found {legacy_images.count()} legacy images'
-            )
+        legacy_images = BlogPostImage.objects.filter(post=post)
+        if not legacy_images.exists():
+            self.stdout.write('  No legacy images found')
+            return 0, 0
 
-            for legacy_image in legacy_images:
-                try:
-                    if not dry_run:
-                        success = self._migrate_image(legacy_image, post)
-                        if success:
-                            migrated_images += 1
-                        else:
-                            errors += 1
-                    else:
-                        self.stdout.write(
-                            f'    Would migrate: '
-                            f'{legacy_image.cloudinary_image_id}'
-                        )
+        self.stdout.write(f'  Found {legacy_images.count()} legacy images')
+
+        migrated_images = 0
+        errors = 0
+
+        for legacy_image in legacy_images:
+            try:
+                if not dry_run:
+                    success = self._migrate_image(legacy_image, post)
+                    if success:
                         migrated_images += 1
-
-                except Exception as e:
+                    else:
+                        errors += 1
+                else:
                     self.stdout.write(
-                        self.style.ERROR(
-                            f'    Error migrating image {legacy_image.id}: {e}'
-                        )
+                        f'    Would migrate: '
+                        f'{legacy_image.cloudinary_image_id}'
                     )
-                    errors += 1
+                    migrated_images += 1
 
-        # Summary
+            except Exception as e:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'    Error migrating image {legacy_image.id}: {e}'
+                    )
+                )
+                errors += 1
+
+        return migrated_images, errors
+
+    def _print_summary(self, total_posts, migrated_images, errors, dry_run):
+        """Print migration summary"""
         self.stdout.write('\nMigration Summary:')
         self.stdout.write(f'  Posts processed: {total_posts}')
         self.stdout.write(f'  Images migrated: {migrated_images}')
         if errors:
-            self.stdout.write(
-                self.style.ERROR(f'  Errors: {errors}')
-            )
+            self.stdout.write(self.style.ERROR(f'  Errors: {errors}'))
 
         if not dry_run:
-            self.stdout.write(
-                self.style.SUCCESS('Migration completed!')
-            )
+            self.stdout.write(self.style.SUCCESS('Migration completed!'))
         else:
             self.stdout.write(
                 self.style.WARNING(

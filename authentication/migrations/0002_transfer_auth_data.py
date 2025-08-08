@@ -3,8 +3,9 @@
 
 from django.db import migrations
 
-
 """ no longer needed """
+
+
 def transfer_auth_data(apps, schema_editor):
     # Get the models
     try:
@@ -49,7 +50,7 @@ def transfer_auth_data(apps, schema_editor):
                 website=old_social.website
             )
             new_social.save()
-    
+
     if OldUserSettings.objects.exists():
         # Transfer UserSettings data
         for old_settings in OldUserSettings.objects.all():
@@ -58,10 +59,8 @@ def transfer_auth_data(apps, schema_editor):
                 changes_notifications=old_settings.changes_notifications,
                 new_products_notifications=old_settings.new_products_notifications,
                 marketing_notifications=old_settings.marketing_notifications,
-                security_notifications=old_settings.security_notifications
-            )
+                security_notifications=old_settings.security_notifications)
             new_settings.save()
-
 
 
 def noop(apps, schema_editor):

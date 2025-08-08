@@ -75,6 +75,6 @@ def handler_500(request, exception=None):
         "code": "500",
         "title": "Internal Server Error",
         "message": f"Internal Server error {exception}.\n Try again later.",
-        "image":  settings.ERROR_500,
+        "image": settings.ERROR_500,
     }
     return render(request, "errors/http_errors.html", context, status=500)

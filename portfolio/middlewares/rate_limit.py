@@ -4,8 +4,6 @@ Uses the unified rate limiting system
 """
 from django.http import JsonResponse
 
-from authentication.views.auth.errors import handler_429 as _429
-# from django.conf import settings
 from portfolio.utils.rate_limiting import RateLimiter, RateLimitExceeded
 
 
@@ -37,6 +35,7 @@ class RateLimitMiddleware:
                 }, status=429)
             else:
                 # Web pages get error handler
+                from authentication.views.auth.errors import handler_429 as _429
                 return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
 
         response = self.get_response(request)

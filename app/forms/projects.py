@@ -201,8 +201,8 @@ class BaseProjectsForm(forms.ModelForm):
             return None  # No error
 
         except Exception as e:
-            return (f"File {_i} ({image.name}): Error processing file - "
-                    f"{str(e)}")
+            return (
+                f"File {_i} ({image.name}): Error processing file - {str(e)}")
 
     def _validate_total_size(self, total_size, max_total_size):
         """Validate total file size"""

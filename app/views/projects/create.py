@@ -147,8 +147,7 @@ class CreateProjectView(BaseProjectView, CreateView):
             return self._handle_response(success_messages, error_messages, form)
 
         except Exception as e:
-            error_mes = f"An error occurred while creating the project: {
-                str(e)}"
+            error_mes = f"An error occurred while creating the project: {str(e)}"
 
             if is_ajax(self.request):
                 return JsonResponse({

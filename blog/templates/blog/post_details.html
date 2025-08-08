@@ -96,8 +96,19 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="entry-content">
-                        {{ article.content | richtext | safe }}
+                    <div class="entry-content blog-content">
+                        {% if article.stream_content %}
+                            <!-- New StreamField Content -->
+                            {% for block in article.stream_content %}
+                                {% include_block block %}
+                            {% endfor %}
+                        {% elif article.content %}
+                            <!-- Current RichText content -->
+                            {{ article.content | richtext | safe }}
+                        {% elif article.legacy_content %}
+                            <!-- Legacy Content -->
+                            {{ article.legacy_content | richtext | safe }}
+                        {% endif %}
                     </div>
 
                     <div class="entry-footer d-flex">

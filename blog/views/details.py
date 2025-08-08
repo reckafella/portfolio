@@ -1,4 +1,4 @@
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
 from django.utils import timezone
@@ -153,29 +153,10 @@ class PostDetailView(DetailView):
         Returns a list of tuples for all tags in the queryset
         + total number of articles for each tag
         """
-        if not articles.exists():
+        try:
+            return BlogPostPage.get_tag_counts()
+        except Exception:
             return []
-
-        # Get all tags used by the articles in the queryset
-        # Use distinct to avoid duplicates and annotate with count
-        from taggit.models import Tag
-
-        # Get tag IDs that are used by our filtered articles
-        article_ids = list(articles.values_list('id', flat=True))
-
-        # Query tags that are associated with these articles
-        tags_with_counts = (
-            Tag.objects
-            .filter(
-                taggit_taggeditem_items__object_id__in=article_ids,
-                taggit_taggeditem_items__content_type__model='blogpostpage'
-            ).annotate(article_count=Count('taggit_taggeditem_items',
-                                           distinct=True)).order_by('name'))
-
-        tag_count = [(tag.name, tag.article_count) for tag in tags_with_counts]
-
-        all_count = articles.count()
-        return [("all", all_count)] + tag_count
 
 
 '''

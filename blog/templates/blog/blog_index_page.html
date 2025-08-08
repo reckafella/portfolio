@@ -17,13 +17,28 @@
 
         <div class="col-12">
             <div class="row g-4">
-                {% for post in posts %}
+                {% for post in posts_ %}
                     <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            {% if post.cloudinary_image_url %}
+                <div class="card h-100 shadow-sm">
+                            <!-- Use new cover image system with legacy fallback -->
+                            {% if post.cover_image_url %}
+                                <img src="{{ post.cover_image_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ post.title }}" 
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
+                            {% elif post.cloudinary_image_url %}
                                 <img src="{{ post.cloudinary_image_url }}" 
                                      class="card-img-top" 
-                                     alt="{{ post.title }}" loading="lazy">
+                                     alt="{{ post.title }}" 
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
+                            {% elif post.optimized_image_url %}
+                                <img src="{{ post.optimized_image_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ post.title }}" 
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
                             {% endif %}
                             
                             <div class="card-body">

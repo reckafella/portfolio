@@ -1,0 +1,137 @@
+{% extends "app/base.html" %}
+{% load wagtailcore_tags wagtailimages_tags blog_tags %}
+
+{% block title %}{% if page %}{{ page.title }}{% else %}Blog{% endif %}{% endblock %}
+{% block description %}{% if page %}{{ page.intro|default:"Explore the latest blog posts." }}{% else %}Explore the latest blog posts.{% endif %}{% endblock %}
+{% block keywords %}blog, articles, posts, portfolio{% endblock %}
+{% block author %}Ethan Wanyoike{% endblock %}
+
+{% block content %}
+<section class="mt-5 blog-index container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4">{% if page %}{{ page.title }}{% else %}Blog{% endif %}</h1>
+            <p class="lead text-muted">
+                {% if page.intro %}
+                    {{ page.intro|richtext }}
+                {% else %}
+                    Latest articles and insights
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="col-12">
+            <div class="row g-4">
+                {% for post in posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Cover image with fallback chain -->
+                        {% if post.cover_image_url %}
+                            <img src="{{ post.cover_image_url }}" class="card-img-top" alt="{{ post.title }}" loading="lazy"
+                                style="height: 200px; object-fit: cover;">
+                        {% elif post.cloudinary_image_url %}
+                            <img src="{{ post.cloudinary_image_url }}" class="card-img-top" alt="{{ post.title }}"
+                                loading="lazy" style="height: 200px; object-fit: cover;">
+                        {% elif post.optimized_image_url %}
+                            <img src="{{ post.optimized_image_url }}" class="card-img-top" alt="{{ post.title }}"
+                                loading="lazy" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <!-- Placeholder for posts without images -->
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 200px;">
+                                <i class="bi bi-file-text text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% pageurl post %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted">
+                                {{ post|get_excerpt }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer">
+                            <small class="text-success">
+                                By {% if post.author.first_name and post.author.last_name %}
+                                    {{ post.author.first_name|capfirst }} {{ post.author.last_name|capfirst }}
+                                {% else %}
+                                    {{ post.author.username|capfirst }}
+                                {% endif %}
+                                &nbsp; | &nbsp; {{ post.first_published_at|date:"F d, Y" }}
+                            </small>
+                            
+                            {% if post.get_tags %}
+                            <div class="mt-2">
+                                {% for tag in post.get_tags %}
+                                <span class="badge bg-primary me-1">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mt-2 d-flex justify-content-center">
+                                <a href="{% pageurl post %}" class="btn btn-outline-primary btn-sm">Read Article</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">No articles found!</h4>
+                        <p>There are no published blog posts yet.</p>
+                        {% if user.is_staff %}
+                            <hr>
+                            <p class="mb-0">
+                                <a href="/wagtail/admin/" 
+                                   class="btn btn-primary">Create First Article</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination (only show if there are multiple pages) -->
+        {% if posts.has_other_pages %}
+        <div class="col-12 mt-4">
+            <nav aria-label="Blog post navigation">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.previous_page_number }}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in posts.paginator.page_range %}
+                        {% if posts.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.next_page_number }}">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

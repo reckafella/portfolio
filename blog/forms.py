@@ -24,23 +24,9 @@ class BlogPostForm(forms.ModelForm):
         help_text="Enter the title of your article",
     )
 
-    """ content = PlainTextFormField(
-        label="Article Content",
-        required=True,
-        widget=forms.Textarea(attrs={
-            'cols': 80,
-            'rows': 20,
-            'class': 'form-control'
-        }),
-        help_text=("Write your article content using the rich text editor. "
-                   "Use the toolbar to format text, add headings, "
-                   "create lists, add links, and more. The editor shows "
-                   "exactly how your content will appear to readers.")
-    ) """
-
     content = DraftailFormField(
         label="Article Content",
-        required=True,
+        required=False,
         widget=forms.Textarea(attrs={
             'cols': 80,
             'rows': 20,
@@ -50,6 +36,13 @@ class BlogPostForm(forms.ModelForm):
                    "Use the toolbar to format text, add headings, "
                    "create lists, add links, and more. The editor shows "
                    "exactly how your content will appear to readers.")
+    )
+
+    # Hidden field to track which content type was used
+    content_type = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False,
+        initial='simple'
     )
 
     cover_image = forms.ImageField(
@@ -84,13 +77,23 @@ class BlogPostForm(forms.ModelForm):
 
     class Meta:
         model = BlogPostPage
-        fields = ["title", "content", "cover_image", "tags", "published"]
+        fields = ["title", "content", "content_type", "cover_image",
+                  "tags", "published"]
 
     def save(self, commit=True, user=None):
         """Customize save behavior to update the author and other details."""
         instance = super().save(commit=False)
         if user and not instance.author:
             instance.author = user
+        
+        # Handle content type logic
+        content_type = self.cleaned_data.get('content_type', 'simple')
+        if content_type == 'advanced':
+            # For advanced content, we'll handle StreamField in the view
+            # For now, just save simple content and let users edit in
+            # Wagtail admin
+            pass
+            
         if commit:
             instance.save()
             self.save_m2m()
@@ -101,10 +104,24 @@ class BlogPostForm(forms.ModelForm):
         cleaned_data = super().clean()
         title = cleaned_data.get("title")
         content = cleaned_data.get("content")
+        content_type = cleaned_data.get("content_type", "simple")
 
-        if not title or not content:
-            _m = "Fill in all required fields (title and content)."
-            raise forms.ValidationError(_m)
+        if not title:
+            raise forms.ValidationError("Title is required.")
+            
+        # For simple content, require content
+        if content_type == 'simple' and not content:
+            raise forms.ValidationError(
+                "Please add content in the simple editor."
+            )
+
+        # For advanced content, we'll create with basic content and
+        # redirect to Wagtail admin
+        if content_type == 'advanced' and not content:
+            cleaned_data['content'] = (
+                "<p>Content will be created using advanced editor...</p>"
+            )
+                
         return cleaned_data
 
 

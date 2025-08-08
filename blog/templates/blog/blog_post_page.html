@@ -9,69 +9,322 @@
 {% block keywords %}blog, articles, posts, {{ post.title }}, portfolio{% endblock %}
 {% block author %}{{ post.author.get_full_name|default:post.author.username }}{% endblock %}
 
+{% include 'app/includes/meta_tags.html' with title=post.title description=post.excerpt image=post.cover_image_url|default:default_og_image %}
+
+{% block extra_css %}
+<style>
+/* Enhanced styling for StreamField blog content */
+.blog-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    /* Ensure content doesn't overflow container */
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* Global image container rules */
+.blog-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+/* Handle any media elements with hardcoded dimensions */
+.blog-content img[width],
+.blog-content img[height] {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+.blog-content figure {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content .rich-text-block {
+    margin: 1.5rem 0;
+    max-width: 100%;
+}
+
+.blog-content .rich-text-block p {
+    margin-bottom: 1.2rem;
+    max-width: 100%;
+}
+
+/* Handle images in rich text content */
+.blog-content .rich-text-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+    margin: 1rem auto;
+}
+
+.blog-content .rich-text-block h2,
+.blog-content .rich-text-block h3,
+.blog-content .rich-text-block h4,
+.blog-content .rich-text-block h5 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.blog-content .rich-text-block ul,
+.blog-content .rich-text-block ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.blog-content .rich-text-block li {
+    margin-bottom: 0.5rem;
+}
+
+/* Image block specific styling is in the image_block.html template */
+
+.blog-content .heading-block {
+    clear: both;
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.blog-content .quote-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .code-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .callout-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .embed-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+/* Ensure proper spacing after floating images */
+.blog-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Container overflow protection */
+.blog-content {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* Prevent horizontal scrolling on the main container */
+.container, .card {
+    overflow-x: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-content {
+        font-size: 1rem;
+        padding: 0 0.5rem; /* Add some padding on mobile */
+    }
+    
+    .blog-content .rich-text-block h2,
+    .blog-content .rich-text-block h3,
+    .blog-content .rich-text-block h4,
+    .blog-content .rich-text-block h5 {
+        margin-top: 2rem;
+    }
+    
+    /* Ensure all floating elements are contained on mobile */
+    .blog-content .rich-text-block img {
+        float: none !important;
+        margin: 1rem auto;
+        display: block;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<section id="section" class="mt-5 section blog ">
-    <div class="container  col-lg-7 col-md-9 col-sm-10">
-        <div class="card  mx-auto" style="max-width: 100%;" data-aos="fade-up" data-aos-delay="200">
-            <div class="card-header text-center">
-                <div class="info-wrap mb-2" data-aos="fade-up">
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted text-center">
-                            <a href="{% url 'blog:list_articles' %}" class="text-decoration-none p-2 text-danger" title="View all articles">
-                                <i class="bi bi-arrow-left-square"></i> Blog Posts
-                            </a>
-                        </small>
-                        <h2 class="fw-bold text-success text-decoration-none">{{ post.title }}</h2>
-                        <!-- Icon for editing -->
-                        {% if user.is_authenticated and user == post.author or user.is_staff %}
-                        <a href="{% url 'blog:update_article' post.slug %}" class="btn btn-link text-decoration-none text-primary">
-                            <i class="bi bi-pencil-square bi-pencil-fill"></i>
-                        </a>
+<div class="page-title">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+        <nav class="breadcrumbs">
+            <ol>
+                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li>Blog Post</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section id="blog" class="blog">
+    <div class="container" data-aos="fade-up">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <article class="entry entry-single p-2">
+
+                    <div class="entry-img my-1">
+                        {% if post.cover_image_url %}
+                            <img src="{{ post.cover_image_url }}" alt="{{ post.title }}"
+                                class="img-fluid mb-1" loading="lazy">
+                        {% elif post.optimized_image_url %}
+                            <!-- Legacy fallback -->
+                            <img src="{{ post.optimized_image_url }}" alt="{{ post.title }}"
+                                class="img-fluid mb-1" loading="lazy">
+                        {% else %}
+                            <div class="bg-light-dark d-flex align-items-center justify-content-center" style="height: 300px;">
+                                <div class="d-flex flex-column justify-content-between align-items-center">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    <span class="text-muted text-center">No image available</span>
+                                </div>
+                            </div>
                         {% endif %}
                     </div>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            By 
-                            <a href="{% url 'blog:articles_by_author' post.author.username %}" class="text-success text-decoration-none">
-                                {% if post.author.first_name and post.author.last_name %}
-                                    {{ post.author.first_name }} {{ post.author.last_name }}
-                                {% else %}
-                                    {{ post.author.username | capfirst }}
-                                {% endif %}
-                            </a>
-                            {% comment %} | &nbsp; {{ post.first_published_at | date:"N j, Y" }} {% endcomment %}
-                            <!-- use post.post_created_at as fallback -->
-                            | &nbsp; {% if post.first_published_at %}
-                                        {{ post.first_published_at | date:"N j, Y" }} 
-                                    {% else %}
-                                        {{ post.post_created_at | date:"N j, Y" }}
-                                    {% endif %}
 
-                        </small>
-                    </p>
-                    {% if user.is_authenticated and user == post.author or user.is_staff %}
-                    <div class="action-buttons mb-2">
-                        {% include 'app/includes/action-buttons.html' %}
+                    <h2 class="entry-title">{{ post.title }}</h2>
+                    
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-person"></i>
+                                <a href="{% url 'blog:articles_by_author' post.author.username %}">{{ post.author.get_full_name | default:post.author.username|capfirst }}</a>
+                            </li>
+                            {% if post.first_published_at %}
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-clock"></i>
+                                {% with year=post.first_published_at|date:"Y" month=post.first_published_at|date:"m" day=post.first_published_at|date:"d" %}
+                                <span class="date-links">
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month|add:'-'|add:day %}"
+                                        title="View all posts from this day">
+                                        {{ post.first_published_at|date:"d" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}"
+                                        title="View all posts from this month">
+                                        {{ post.first_published_at|date:"m" }}
+                                    </a>
+                                    <span class="separator">-</span>
+                                    <a href="{% url 'blog:articles_by_date' year %}"
+                                        title="View all posts from this year">
+                                        {{ post.first_published_at|date:"Y" }}
+                                    </a>
+                                </span>
+                                {% endwith %}
+                            </li>
+                            {% endif %}
+                            <!-- View count display -->
+                            <li class="d-flex align-items-center">
+                                <i class="bi bi-eye"></i>
+                                <span class="me-1">{{ post.view_count }} view{{ post.view_count|pluralize }}</span>
+                            </li>
+                            {% if user.is_authenticated and user == post.author or user.is_staff %}
+                            <li class="d-flex align-items-center position-relative">
+                                <div class="action-buttons">
+                                    {% include 'app/includes/action-buttons.html' %}
+                                </div>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex d-none d-md-inline align-items-center">
+                                <a type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#shareModal"
+                                    data-share-url="{% url 'blog:article_details' post.slug %}"
+                                    data-share-title="Article"
+                                    data-share-image="{{ post.cover_image_url|default:default_og_image }}"
+                                    class="btn btn-sm special-btn share-link">
+                                    <i class="bi bi-share-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                    {% endif %}
-                </div>
-            </div>
+                    
+                    <div class="entry-content blog-content">
+                        {% if post.stream_content %}
+                            <!-- New StreamField Content -->
+                            {% for block in post.stream_content %}
+                                {% include_block block %}
+                            {% endfor %}
+                        {% elif post.content %}
+                            <!-- Current RichText content -->
+                            {{ post.content | richtext | safe }}
+                        {% elif post.legacy_content %}
+                            <!-- Legacy Content -->
+                            {{ post.legacy_content | richtext | safe }}
+                        {% endif %}
+                    </div>
 
-            <div class="card-body">
-                <!-- Cover Image -->
-                {% if post.optimized_image_url %}
-                <img src="{{ post.optimized_image_url }}" class="img-fluid mb-4" alt="{{ post.title }}" style="width: 100%; max-height: 400px; object-fit: cover;" loading="lazy">
-                {% endif %}
-                <div class="text-start">
-                    {{ post.content | richtext | safe }}
+                    <div class="entry-footer d-flex">
+                        <i class="bi bi-tags"></i>
+                        <ul class="tags mx-2">
+                            {% for tag in post.get_tags %}
+                            <li>
+                                <a href="{% url 'blog:articles_by_tag' tag %}">
+                                    {{ tag }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="">
+                            <li class="d-flex align-items-center">
+                                <a type="button"
+                                    data-bs-toggle="modal" data-bs-target="#shareModal"
+                                    data-share-url="{% url 'blog:article_details' post.slug %}"
+                                    data-share-image="{{ post.cover_image_url|default:default_og_image }}"
+                                    data-share-description="{{ post.content|truncatewords:20 }}"
+                                    data-share-title="Article"
+                                    class="share-link">
+                                        <i class="bi bi-share-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </article>
+
+                {% if request.user.is_staff or request.user == post.author %}
+                <div class="edit-delete">
+                    {% include 'blog/partials/edit_delete_posts_modal.html' %}
                 </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 sidebar">
+                {% include 'blog/partials/sidebar.html' with other_posts=other_posts article=post all_tags=all_tags %}
             </div>
         </div>
-        
-        <!-- Recommended Articles Section -->
-        {# include 'blog/partials/recommended.html' #}
     </div>
-    {# include 'blog/partials/edit_delete_posts_modal.html' #}
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new FormValidator("{{ update_form_id }}", {
+            fields: {
+                title: {
+                    required: true,
+                    errorMessage: "Please enter a title for your post."
+                },
+                content: {
+                    required: true,
+                    errorMessage: "Content cannot be empty."
+                }
+            }
+        });
+        new FormValidator("{{ delete_form_id }}", {
+            fields: {
+                confirm: {
+                    required: true,
+                    errorMessage: "Please confirm deletion."
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

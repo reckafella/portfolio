@@ -36,13 +36,13 @@
             // Set the opposite theme color for the overlay (what we're transitioning from)
             const oppositeTheme = theme === 'dark' ? 'light' : 'dark';
             const overlayColor = oppositeTheme === 'dark' ? '#212529' : '#f8f9fa';
-            
+
             // Show overlay with current theme's background
             overlay.style.transition = 'none';
             overlay.style.background = overlayColor;
             overlay.style.display = 'block';
             overlay.style.opacity = '1';
-            
+
             // Start with full coverage - like a page completely covering the screen
             overlay.style.clipPath = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
             
@@ -53,12 +53,18 @@
             document.documentElement.setAttribute('data-bs-theme', theme);
             setStoredTheme(theme);
             
-            // Create dramatic page-turning animation from top-left to bottom-right
+            // Create dramatic page-turning animation based on theme direction
             overlay.style.transition = 'clip-path 1.2s cubic-bezier(0.23, 1, 0.32, 1)';
             
-            // Animate the page being "turned" diagonally from top-left corner
+            // Animate the page being "turned" based on theme change direction
             setTimeout(() => {
-                overlay.style.clipPath = 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)';
+                if (theme === 'light') {
+                    // Dark to Light: Turn page from right to left (backward)
+                    overlay.style.clipPath = 'polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)';
+                } else {
+                    // Light to Dark: Turn page from left to right (forward)
+                    overlay.style.clipPath = 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)';
+                }
             }, 50);
             
             // Update icon during the animation for better visual feedback
@@ -66,7 +72,7 @@
                 themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
                 themeIcon.classList.add(theme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
             }, 300);
-            
+
             // Clean up after animation completes
             setTimeout(() => {
                 overlay.style.display = 'none';
@@ -75,7 +81,7 @@
                 overlay.style.clipPath = 'none';
             }, 1400);
         }
-        
+
         // Set initial theme (without transition)
         const initialTheme = getStoredTheme();
         document.documentElement.setAttribute('data-bs-theme', initialTheme);

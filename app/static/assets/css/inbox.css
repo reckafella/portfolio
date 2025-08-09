@@ -35,7 +35,7 @@
 
 .inbox-folders .folder-link.active {
     background-color: var(--accent-color);
-    color: white;
+    color: var(--default-color);
     font-weight: 500;
 }
 
@@ -74,7 +74,7 @@
 
 /* Message List Styles */
 .messages-container {
-    max-height: 70vh;
+    max-height: 90vh;
     overflow-y: auto;
 }
 
@@ -166,11 +166,11 @@
 }
 
 .message-star:hover {
-    color: #ffc107;
+    color: var(--accent-color);
 }
 
 .message-star.starred {
-    color: #ffc107;
+    color: var(--accent-color);
 }
 
 /* Checkbox Styles */
@@ -207,7 +207,7 @@
 }
 
 .message-content .card {
-    border: 1px solid var(--special-background-color);
+    border: 1px solid var(--card-background-color);
 }
 
 .message-content .card-body {
@@ -286,8 +286,8 @@
 
 .pagination .page-item.active .page-link {
     background-color: var(--accent-color);
-    border-color: var(--accent-color);
-    color: white;
+    border-color: var(--default-color);
+    color: var(--default-color);
 }
 
 /* Responsive Design */
@@ -370,18 +370,4 @@
 
 .messages-container::-webkit-scrollbar-thumb:hover {
     background: var(--accent-color);
-}
-
-/* Status badges */
-.badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #000;
-}
-
-.badge.bg-success {
-    background-color: #198754 !important;
-}
-
-.badge.bg-secondary {
-    background-color: #6c757d !important;
 }

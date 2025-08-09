@@ -122,7 +122,7 @@
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/javascript/ValidateForms.js' %}"></script>
     <script src="{% static 'assets/js/themes.js' %}"></script>
-    <script src="{% static 'assets/js/sessionTimeout.js' %}"></script>
+    <script src="{# static 'assets/js/sessionTimeout.js' #}"></script> {% comment %} Session timeout script {% endcomment %}
 
     {% block extra_js %}
     {% endblock %}

@@ -16,12 +16,24 @@ class RateLimitMiddleware:
         self.get_response = get_response
         self.rate_limiter = RateLimiter('GLOBAL')
         # Endpoints that should bypass global rate limiting
-        self.excluded_paths = [
-            '/session',  # Session management has its own rate limiting
-            '/static/',  # Static files
-            '/media/',   # Media files
-            '/favicon.ico',
-        ]
+
+        # Paths to exclude from rate limiting
+        self.excluded_paths = {
+            '/session',           # Session management
+            '/static/',          # Static files
+            '/media/',           # Media files
+            '/favicon.ico',      # Favicon requests
+            '/robots.txt',       # SEO files
+            '/sitemap.xml',      # SEO files
+            '/wagtail/admin/',       # Wagtail admin (has its own protection)
+        }
+
+        # File extensions to exclude
+        self.excluded_extensions = {
+            '.css', '.js', '.ico', '.png', '.jpg', '.jpeg',
+            '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot',
+            '.map', '.webp', '.avif'
+        }
 
     def __call__(self, request):
         # Check if path should be excluded from global rate limiting

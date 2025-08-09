@@ -1,249 +1,237 @@
-class SessionTimeout {
-  constructor(options = {}) {
-		this.warningTime = options.warningTime || 300;
-		this.redirectUrl = options.redirectUrl || '/login';
-		this.sessionLength = options.sessionLength || 3600;
-		this.logoutUrl = options.logoutUrl || '/logout';
-		this.warningShown = false;
-		this.checkInterval = null;
-		this.countdownInterval = null;
-		this.isLoggingOut = false;
-		this.boundResetTimer = this.resetTimer.bind(this);
-		this.resetTimerTimeout = null;
-		this.lastActivityTime = Date.now();
-		this.startTimer();
-		this.userActivity = ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+/**
+ * Session Timeout Manager
+ * Reduces request frequency and handles rate limiting gracefully
+ */
 
-		window.addEventListener('beforeunload', () => this.cleanup());
-  }
+class SessionTimeoutManager {
+    constructor() {
+        this.config = null;
+        this.sessionTimer = null;
+        this.warningTimer = null;
+        this.activityTimer = null;
+        this.lastUpdate = 0;
+        this.isActive = false;
+        this.failureCount = 0;
+        this.maxFailures = 3;
+        this.backoffMultiplier = 2;
+        this.requestInProgress = false;
+        
+        // Only initialize if user is authenticated
+        if (document.getElementById('session-config')) {
+            this.init();
+        }
+    }
 
-	getCsrfToken() {
-		const name = 'csrftoken';
-		let cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
+    init() {
+        try {
+            const configElement = document.getElementById('session-config');
+            if (!configElement) return;
+            
+            this.config = JSON.parse(configElement.textContent);
+            this.log('Session manager initialized', this.config);
+            
+            // Increase update intervals to reduce requests
+            this.config.updateInterval = Math.max(this.config.updateInterval, 180); // Min 3 minutes
+            this.config.maxUpdateInterval = Math.max(this.config.maxUpdateInterval, 900); // Max 15 minutes
+            
+            this.bindEvents();
+            this.startSessionCheck();
+            
+        } catch (error) {
+            console.error('Session manager initialization failed:', error);
+        }
+    }
 
-	resetTimer() {
-		if (this.isLoggingOut || this.resetTimerTimeout) {
-			return;
-		}
+    bindEvents() {
+        // Throttled activity detection - only check once per minute
+        const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+        let lastActivity = 0;
+        
+        const throttledActivity = () => {
+            const now = Date.now();
+            if (now - lastActivity > 60000) { // Only trigger once per minute
+                lastActivity = now;
+                this.onUserActivity();
+            }
+        };
 
-		this.resetTimerTimeout = setTimeout(async () => {
-			try {
-				const response = await fetch('/session', {
-					method: 'POST',
-					headers: {
-						'X-CSRFToken': this.getCsrfToken(),
-						// 'Content-Type': 'application/json',
-						'X-Requested-With': 'XMLHttpRequest'
-					},
-					credentials: 'same-origin'
-				});
-				if (!response.ok) {
-					if (response.status === 401 || response.status === 403) {
-						this.handleTimeout();
-					}
-					console.error('Failed to update session');
-				}
-			} catch (error) {
-				console.error('Error updating session:', error);
-			} finally {
-				this.resetTimerTimeout = null;
-			}
-		}, 500);
-	}
+        activityEvents.forEach(event => {
+            document.addEventListener(event, throttledActivity, { passive: true });
+        });
 
-  async checkSession() {
-		if (this.isLoggingOut) {
-			return;
-		}
+        // Page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && this.isActive) {
+                this.checkSessionStatus();
+            }
+        });
+    }
 
-		try {
-			const response = await fetch('/session', {
-				method: 'GET',
-				headers: {'X-Requested-With': 'XMLHttpRequest'}
-			});
-			if (!response.ok) {
-				if (response.status === 401 || response.status === 403) {
-					this.handleTimeout();
-					return;
-				}
-				throw new Error('Session check failed');
-			}
+    onUserActivity() {
+        this.isActive = true;
+        const now = Date.now();
+        
+        // Only update if enough time has passed and no request is in progress
+        if (!this.requestInProgress && 
+            now - this.lastUpdate > this.config.updateInterval * 1000) {
+            this.updateSession();
+        }
+    }
 
-			// If 302 status code, reduce the check frequency
-			if (response.status === 302) {
-				this.checkInterval = setInterval(() => this.checkSession(), 30000); // 5 minutes
-				return;
-			}
+    async updateSession() {
+        if (this.requestInProgress) return;
+        
+        try {
+            this.requestInProgress = true;
+            const response = await this.makeSessionRequest('POST');
+            
+            if (response.ok) {
+                this.lastUpdate = Date.now();
+                this.failureCount = 0;
+                this.log('Session updated successfully');
+            } else if (response.status === 429) {
+                this.handleRateLimit();
+            } else {
+                this.handleFailure();
+            }
+        } catch (error) {
+            this.log('Session update error:', error);
+            this.handleFailure();
+        } finally {
+            this.requestInProgress = false;
+        }
+    }
 
-			const data = await response.json();
-			const timeLeft = data.expires_in;
+    async checkSessionStatus() {
+        if (this.requestInProgress) return;
+        
+        try {
+            this.requestInProgress = true;
+            const response = await this.makeSessionRequest('GET');
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.handleSessionResponse(data);
+                this.failureCount = 0;
+            } else if (response.status === 429) {
+                this.handleRateLimit();
+            } else if (response.status === 401) {
+                this.handleSessionExpired();
+            } else {
+                this.handleFailure();
+            }
+        } catch (error) {
+            this.log('Session check error:', error);
+            this.handleFailure();
+        } finally {
+            this.requestInProgress = false;
+        }
+    }
 
-			if (timeLeft <= this.warningTime && !this.warningShown) {
-				this.showWarning(timeLeft);
-			} else if (timeLeft <= 0) {
-				this.handleTimeout();
-			}
-		} catch (error) {
-			console.error('Error checking session:', error);
-		}
-  }
+    async makeSessionRequest(method) {
+        const options = {
+            method: method,
+            headers: {
+                'X-CSRFToken': this.config.csrfToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        };
 
-  async showWarning(timeLeft) {
-		this.warningShown = true;
-		let remainingSeconds = timeLeft;
-		const timeToSessionExp = 'Your session will expire in ';
-		const warning = 'When the timer runs out, you\'ll be logged out';
-		const callToAct = 'Would you like to extend your session?';
+        return fetch(this.config.sessionUrl, options);
+    }
 
-		const result = await Swal.fire({
-			title: 'Session Expiring Soon!',
-			html: `${timeToSessionExp}<b id="countdown">--:--</b><br>${warning}</br>${callToAct}`,
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonText: 'Yes, extend session',
-			cancelButtonText: 'Logout now',
-			allowOutsideClick: false,
-			allowEscapeKey: false,
-			didOpen: () => {
-				const countdownElement = Swal.getHtmlContainer().querySelector('#countdown');
-				this.countdownInterval = setInterval(() => {
-					remainingSeconds--;
-					const minutes = Math.floor(remainingSeconds / 60);
-					const seconds = remainingSeconds % 60;
-					countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-					
-					if (remainingSeconds <= 0) {
-						clearInterval(this.countdownInterval);
-						this.handleTimeout();
-					}
-				}, 1000);
-			},
-			willClose: () => {
-				clearInterval(this.countdownInterval);
-			}
-		});
+    handleRateLimit() {
+        this.failureCount++;
+        const backoffTime = this.config.maxUpdateInterval * this.backoffMultiplier;
+        
+        this.log(`Rate limited. Backing off for ${backoffTime} seconds`);
+        
+        // Exponential backoff - wait longer before next request
+        setTimeout(() => {
+            this.lastUpdate = 0; // Reset to allow next update
+        }, backoffTime * 1000);
+    }
 
-		if (result.isConfirmed) {
-			this.resetTimer();
-			this.warningShown = false;
-		} else {
-			await this.performLogout();
-		}
-	}
+    handleFailure() {
+        this.failureCount++;
+        
+        if (this.failureCount >= this.maxFailures) {
+            this.log('Max failures reached. Stopping session updates.');
+            this.stopSessionCheck();
+            return;
+        }
+        
+        // Linear backoff for failures
+        const delay = this.failureCount * 60000; // 1, 2, 3 minutes
+        setTimeout(() => {
+            this.lastUpdate = 0;
+        }, delay);
+    }
 
-	async performLogout() {
-		this.isLoggingOut = true;
-		await this.cleanup();
-		await this.logout();
-	}
+    handleSessionResponse(data) {
+        if (data.remaining_time) {
+            const remaining = data.remaining_time;
+            
+            // Only show warning if session is actually ending soon
+            if (remaining <= this.config.warningTime && !this.warningTimer) {
+                this.showSessionWarning(remaining);
+            }
+        }
+    }
 
-	async logout() {
-		try {
-			const response = await fetch(this.logoutUrl, {
-				method: 'POST',
-				headers: {
-					'X-CSRFToken': this.getCsrfToken(),
-					// 'Content-Type': 'application/json',
-					'X-Requested-With': 'XMLHttpRequest'
-				},
-				credentials: 'same-origin'
-			});
-			if (!response.ok) {
-				throw new Error('Logout failed');
-			}
-			const data = await response.json();
-			if (data.success) {
-			// Use the redirect URL from the server response
-				window.location.href = data.redirect_url;
-			} else {
-				throw new Error(data.message || 'Logout failed');
-			}
-		} catch (error) {
-			console.error('Error during logout:', error);
-			// Fallback to GET logout
-			window.location.href = this.logoutUrl;
-		}
-	}
+    showSessionWarning(remainingTime) {
+        // Implementation for session warning modal
+        this.log(`Session warning: ${remainingTime} seconds remaining`);
+        
+        // Dispatch custom event for other components
+        document.dispatchEvent(new CustomEvent('sessionWarning', {
+            detail: { remainingTime }
+        }));
+    }
 
-	async handleTimeout() {
-		this.isLoggingOut = true;
-		await this.cleanup();
+    startSessionCheck() {
+        // Initial check after a short delay
+        setTimeout(() => this.checkSessionStatus(), 5000);
+        
+        // Regular checks with increased interval
+        this.sessionTimer = setInterval(() => {
+            if (this.isActive) {
+                this.checkSessionStatus();
+            }
+        }, this.config.updateInterval * 1000);
+    }
 
-		await Swal.fire({
-			title: 'Session Expired',
-			text: 'Your session has expired. Please log in again.',
-			icon: 'info',
-			confirmButtonText: 'Login',
-			allowOutsideClick: false,
-			allowEscapeKey: false
-		});
-		await this.logout();
-	}
-	startTimer() {
-		let checkFrequency = 30000; // 30 seconds
-		let maxFrequncy = 120000; // 1 minute
-		this.checkInterval = setInterval(() => {
-			this.checkSession();
-			/* if not user activity, reduce check frequency */
-			const timeSinceLastActivity = Date.now() - this.lastActivityTime;
-			if (timeSinceLastActivity > 5 * 60 * 1000) { // 5 minutes
-				clearInterval(this.checkInterval);
-				checkFrequency = Math.min(checkFrequency * 2, maxFrequncy);
-				this.checkInterval = setInterval(() => this.checkSession(), checkFrequency);
-			}
-		}, checkFrequency);
-		this.lastActivityTime = Date.now();
-		// Reset the timer on user activity
+    stopSessionCheck() {
+        if (this.sessionTimer) {
+            clearInterval(this.sessionTimer);
+            this.sessionTimer = null;
+        }
+        if (this.warningTimer) {
+            clearInterval(this.warningTimer);
+            this.warningTimer = null;
+        }
+    }
 
-		this.userActivity.forEach(event => {
-			document.addEventListener(event, () => {
-				this.lastActivityTime = Date.now();
-				this.boundResetTimer();
-			});
-		});
-	}
+    handleSessionExpired() {
+        this.log('Session expired. Redirecting to login.');
+        this.stopSessionCheck();
+        window.location.href = this.config.redirectUrl;
+    }
 
-	cleanup() {
-		return new Promise((resolve) => {
-			clearInterval(this.checkInterval);
-			clearInterval(this.countdownInterval);
-
-			this.userActivity.forEach(event => {
-				document.removeEventListener(event, this.boundResetTimer);
-			});
-
-			// Give a small delay to ensure all pending operations are complete
-			setTimeout(resolve, 2000);
-		});
-	}
+    log(message, data = null) {
+        if (this.config?.debug) {
+            console.log(`[SessionManager] ${message}`, data || '');
+        }
+    }
 }
 
-// Initialize when document is ready
-let sessionTimeoutInstance = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-  const userLoggedIn = document.getElementById('user-logged-in') !== null;
-
-  if (userLoggedIn) {
-      sessionTimeoutInstance = new SessionTimeout({
-          sessionLength: 3600,
-          warningTime: 300,
-          redirectUrl: "/login",
-          logoutUrl: "/logout",
-      });
-  }
-});
-
-export const sessionTimeout = new SessionTimeout();
+// Initialize session manager when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.sessionManager = new SessionTimeoutManager();
+    });
+} else {
+    window.sessionManager = new SessionTimeoutManager();
+}

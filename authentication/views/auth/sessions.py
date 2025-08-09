@@ -18,7 +18,7 @@ class ManageSessionView(LoginRequiredMixin, View):
     Handles session management for checking and updating session expiration.
     Enhanced with security and rate limiting.
     """
-    
+
     @method_decorator(never_cache)
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
@@ -34,7 +34,7 @@ class ManageSessionView(LoginRequiredMixin, View):
                     'error': 'Rate limit exceeded',
                     'retry_after': info.get('reset_time', 3600)
                 }, status=429)
-        
+
         return super().dispatch(*args, **kwargs)
 
     def get(self, request):
@@ -44,7 +44,7 @@ class ManageSessionView(LoginRequiredMixin, View):
         """
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'Authentication required'}, status=401)
-        
+
         try:
             current_time = now()
             last_activity = request.session.get('last_activity')
@@ -76,7 +76,7 @@ class ManageSessionView(LoginRequiredMixin, View):
             }
 
             return JsonResponse(response_data)
-            
+
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)
@@ -89,13 +89,13 @@ class ManageSessionView(LoginRequiredMixin, View):
         """
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'Authentication required'}, status=401)
-        
+
         user_id = request.user.id
-        
+
         # Rate limiting with per-user cache key
         cache_key = f'session_update_{user_id}'
         last_update = cache.get(cache_key)
-        
+
         # Prevent too frequent updates (max once per 30 seconds per user)
         if last_update:
             time_since_last = time.time() - last_update
@@ -104,29 +104,29 @@ class ManageSessionView(LoginRequiredMixin, View):
                     'status': 'rate_limited',
                     'retry_after': int(30 - time_since_last)
                 }, status=429)
-        
+
         try:
             current_time = now()
-            
+
             # Update session activity
             request.session['last_activity'] = current_time.isoformat()
             request.session.modified = True
-            
+
             # Set cache to prevent rapid updates
             cache.set(cache_key, time.time(), 60)  # 1 minute cache
-            
+
             # Calculate new expiration time
             session_age = settings.SESSION_COOKIE_AGE
             expires_in = session_age
-            
+
             response_data = {
                 'status': 'success',
                 'expires_in': expires_in,
                 'updated_at': current_time.isoformat()
             }
-            
+
             return JsonResponse(response_data)
-            
+
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)

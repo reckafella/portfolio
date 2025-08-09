@@ -103,12 +103,8 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             error_messages.append(f"Project Deletion Failed: {str(e)}")
             raise
 
-    def _handle_deletion_error(
-            self,
-            request,
-            exception,
-            success_messages,
-            error_messages):
+    def _handle_deletion_error(self, request, exception, success_messages,
+                               error_messages):
         """Handle errors during project deletion"""
         error_messages = list(set(error_messages))
         if str(exception) not in error_messages:

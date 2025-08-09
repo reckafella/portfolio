@@ -1,0 +1,115 @@
+<!-- Modal Header -->
+<div class="modal-header">
+    <h5 class="modal-title" id="messageModalLabel">
+        <i class="bi bi-envelope-open me-2"></i>
+        {{ message.subject|default:"(No Subject)" }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <!-- Message Header Info -->
+    <div class="message-header mb-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="sender-info">
+                    <h6 class="mb-1">
+                        <i class="bi bi-person-circle me-2"></i>
+                        From: <strong>{{ message.name }}</strong>
+                    </h6>
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-envelope me-2"></i>
+                        Email: <a href="mailto:{{ message.email }}">{{ message.email }}</a>
+                    </p>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        Received: {{ message.created_at|date:"F j, Y, g:i a" }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="message-status">
+                    {% if message.is_read %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-envelope-open me-1"></i>
+                            Read
+                        </span>
+                    {% else %}
+                        <span class="badge bg-warning">
+                            <i class="bi bi-envelope me-1"></i>
+                            Unread
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Content -->
+    <div class="message-content">
+        <div class="card bg-light">
+            <div class="card-body">
+                {{ message.message|safe }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="message-quick-actions mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject|default:'Your Message' }}" 
+                       class="btn btn-primary">
+                        <i class="bi bi-reply me-2"></i>
+                        Reply via Email
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="btn-group" role="group">
+                    {% if not message.is_read %}
+                    <button type="button" 
+                            class="btn btn-outline-success mark-read-btn"
+                            data-message-id="{{ message.id }}">
+                        <i class="bi bi-envelope-open me-1"></i>
+                        Mark as Read
+                    </button>
+                    {% else %}
+                    <button type="button" 
+                            class="btn btn-outline-warning mark-unread-btn"
+                            data-message-id="{{ message.id }}">
+                        <i class="bi bi-envelope me-1"></i>
+                        Mark as Unread
+                    </button>
+                    {% endif %}
+                    <button type="button" 
+                            class="btn btn-outline-danger delete-message-btn"
+                            data-message-id="{{ message.id }}"
+                            data-bs-dismiss="modal">
+                        <i class="bi bi-trash me-1"></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    <div class="row w-100">
+        <div class="col-md-6">
+            <small class="text-muted">
+                Message ID: #{{ message.id }} | 
+                {{ message.created_at|timesince }} ago
+            </small>
+        </div>
+        <div class="col-md-6 text-end">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+            </button>
+        </div>
+    </div>
+</div>

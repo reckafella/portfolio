@@ -15,8 +15,20 @@ class RateLimitMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.rate_limiter = RateLimiter('GLOBAL')
+        # Endpoints that should bypass global rate limiting
+        self.excluded_paths = [
+            '/session',  # Session management has its own rate limiting
+            '/static/',  # Static files
+            '/media/',   # Media files
+            '/favicon.ico',
+        ]
 
     def __call__(self, request):
+        # Check if path should be excluded from global rate limiting
+        for excluded_path in self.excluded_paths:
+            if request.path.startswith(excluded_path):
+                return self.get_response(request)
+
         # Check rate limit
         is_limited, info = self.rate_limiter.is_rate_limited(request)
 

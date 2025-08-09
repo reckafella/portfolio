@@ -1,0 +1,111 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Session Timeout Test{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Session Timeout Test Page</h3>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                        <div class="alert alert-success">
+                            <h5>✅ You are logged in as: {{ user.username }}</h5>
+                            <p>The secure session timeout manager is now active and will:</p>
+                            <ul>
+                                <li>Monitor your session automatically</li>
+                                <li>Show a warning when 5 minutes remain</li>
+                                <li>Allow you to extend your session</li>
+                                <li>Only make requests for authenticated users</li>
+                                <li>Handle rate limiting gracefully</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h6>Session Information:</h6>
+                            <ul>
+                                <li><strong>Session Age:</strong> {{ request.session.get_expiry_age }} seconds</li>
+                                <li><strong>Session Key:</strong> {{ request.session.session_key|slice:":8" }}...</li>
+                                <li><strong>CSRF Token:</strong> {{ csrf_token|slice:":8" }}...</li>
+                            </ul>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Test Actions:</h6>
+                            <button onclick="sessionManager.checkSession()" class="btn btn-primary me-2">
+                                Check Session Status
+                            </button>
+                            <button onclick="sessionManager.updateSession()" class="btn btn-secondary me-2">
+                                Extend Session
+                            </button>
+                            <button onclick="sessionManager.showWarning()" class="btn btn-warning me-2">
+                                Test Warning Modal
+                            </button>
+                            <button onclick="console.log(sessionManager)" class="btn btn-info">
+                                Log Session Manager
+                            </button>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Session Events:</h6>
+                            <div id="session-events" class="border p-3" style="height: 200px; overflow-y: auto; background: #f8f9fa;">
+                                <p class="text-muted">Session events will appear here...</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <strong>Note:</strong> Open your browser's developer console to see detailed session manager logs.
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <h5>⚠️ You are not logged in</h5>
+                            <p>The session timeout manager will <strong>NOT</strong> initialize for unauthenticated users.</p>
+                            <p>This prevents unnecessary HTTP requests and improves security.</p>
+                            <a href="{% url 'authentication:login' %}" class="btn btn-primary">Login to Test</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add event listeners to log session events
+document.addEventListener('sessionWarning', (event) => {
+    logEvent('⚠️ Session Warning', `${Math.floor(event.detail.timeLeft / 60)} minutes remaining`);
+});
+
+document.addEventListener('sessionWarningDismissed', () => {
+    logEvent('✅ Session Warning Dismissed', 'Session extended successfully');
+});
+
+function logEvent(title, message) {
+    const eventsDiv = document.getElementById('session-events');
+    if (eventsDiv) {
+        const timestamp = new Date().toLocaleTimeString();
+        const eventHtml = `
+            <div class="mb-2">
+                <strong>[${timestamp}] ${title}:</strong> ${message}
+            </div>
+        `;
+        eventsDiv.innerHTML = eventHtml + eventsDiv.innerHTML;
+    }
+}
+
+// Log when session manager is ready
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        if (window.sessionManager) {
+            logEvent('✅ Session Manager Initialized', 'Secure session timeout is active');
+        } else {
+            logEvent('ℹ️ Session Manager', 'Not initialized (user not authenticated)');
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

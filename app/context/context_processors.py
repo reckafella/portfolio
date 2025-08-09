@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 from authentication.models import Profile
+from django.conf import settings
 
 """
 Context processor to add metadata variables to templates
@@ -34,3 +35,10 @@ def admin_profile(request):
         }
     except (User.DoesNotExist, Profile.DoesNotExist):
         return {}
+
+
+def our_services(request):
+    """Add our services context variables to templates"""
+    return {
+        'our_services': settings.OUR_SERVICES
+    }

@@ -9,7 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="X-UA-Compatible" content="IE=7">
     
-    {# include 'app/includes/meta_tags.html' with title=page_title|default:site_title description=page_description|default:site_description image=page_image|default:default_og_image #} 
+    <!-- Meta tags placeholder -->
+    {# {% include 'app/includes/meta_tags.html' with title=page_title|default:site_title description=page_description|default:site_description image=page_image|default:default_og_image %} #}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.css" rel="stylesheet">
 
@@ -42,9 +43,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/projects.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/project-cards.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/passwords.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/search.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/inbox.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/search.css' %}">
 
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
@@ -63,6 +65,20 @@
 <body>
     {% if user.is_authenticated %}
     <div id="user-logged-in" hidden></div>
+    <!-- Session Configuration for Authenticated Users -->
+    <script id="session-config" type="application/json">
+    {
+        "sessionLength": {{ request.session.get_expiry_age|default:3600 }},
+        "warningTime": 300,
+        "updateInterval": 60,
+        "maxUpdateInterval": 300,
+        "redirectUrl": "{% url 'authentication:login' %}",
+        "logoutUrl": "{% url 'authentication:logout' %}",
+        "sessionUrl": "{% url 'authentication:manage_session' %}",
+        "csrfToken": "{{ csrf_token }}",
+        "debug": {% if debug %}true{% else %}false{% endif %}
+    }
+    </script>
     {% endif %}
     {% csrf_token %}
     {% include 'app/includes/header.html' %}
@@ -106,8 +122,7 @@
     <script src="{% static 'assets/js/search.js' %}"></script>
     <script type="module" src="{% static 'assets/javascript/ValidateForms.js' %}"></script>
     <script src="{% static 'assets/js/themes.js' %}"></script>
-
-    <script type="module" src="{# static 'assets/js/sessions.js' #}"></script>
+    <script src="{% static 'assets/js/sessionTimeout.js' %}"></script>
 
     {% block extra_js %}
     {% endblock %}

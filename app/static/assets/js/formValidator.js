@@ -1,7 +1,7 @@
 // form-validator.js
 import { toastManager } from './toast.js';
 
-class FormValidator {
+class DefaultFormValidator {
     constructor(formId) {
         this.form = document.getElementById(formId);
         if (this.form) {
@@ -284,9 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
     forms.forEach(formId => {
         const form = document.getElementById(formId);
         if (form) {
-            new FormValidator(formId);
+            new DefaultFormValidator(formId);
         }
     });
 });
 
-export default FormValidator;
+export default DefaultFormValidator;

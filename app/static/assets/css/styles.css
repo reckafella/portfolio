@@ -336,3 +336,79 @@ button[type=submit]:hover {
   background: var(--special-background-color);
   color: var(--default-color);
 }
+
+/*--------------------------------------------------------------
+# Session Warning Modal
+--------------------------------------------------------------*/
+.session-warning-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.session-warning-content {
+  background: var(--background-color);
+  border: 1px solid var(--default-color);
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: var(--default-color);
+}
+
+.session-warning-content h4 {
+  color: var(--heading-color);
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+}
+
+.session-warning-content p {
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.session-warning-content #session-countdown {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.session-warning-content .btn {
+  margin: 5px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.session-warning-content .btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.session-warning-content .btn-primary:hover {
+  background-color: var(--heading-color);
+  transform: translateY(-1px);
+}
+
+.session-warning-content .btn-secondary {
+  background-color: var(--default-color);
+  color: var(--background-color);
+}
+
+.session-warning-content .btn-secondary:hover {
+  background-color: var(--heading-color);
+  transform: translateY(-1px);
+}

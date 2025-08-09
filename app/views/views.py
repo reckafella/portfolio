@@ -21,6 +21,7 @@ class HomeView(TemplateView):
         n = 4
         # featured projects
         context["projects"] = Projects.objects.filter(live=True)[:n]
+        context["services"] = settings.OUR_SERVICES
         # latest blog posts
 
         posts = BlogPost.objects.live()\

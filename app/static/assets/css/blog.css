@@ -90,11 +90,11 @@
 
 .blog .entry .entry-content blockquote {
   overflow: hidden;
-  background-color: color-mix(in srgb, var(--background-color), transparent 48%);
-  padding: 60px;
+  /* background-color: color-mix(in srgb, var(--background-color), transparent 48%); */
+  padding: 20px;
   position: relative;
-  text-align: center;
-  margin: 20px 0;
+  text-align: start;
+  margin: 10px 0;
 }
 
 .blog .entry .entry-content blockquote p {

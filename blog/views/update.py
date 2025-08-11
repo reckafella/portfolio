@@ -63,7 +63,7 @@ class UpdatePostView(BasePostView, UpdateView):
         post = form.instance
         original_post = self.get_object()
         should_publish = form.cleaned_data.get('published', False)
-        content_type = form.cleaned_data.get('content_type', 'simple')
+        editor_type = form.cleaned_data.get('editor_type', 'simple')
         post.author = self.request.user
         cover_image = form.files.get("cover_image")
 
@@ -83,7 +83,7 @@ class UpdatePostView(BasePostView, UpdateView):
                 message = "Post updated as Draft"
 
             # For advanced content type, redirect to Wagtail admin
-            if content_type == 'advanced':
+            if editor_type == 'advanced':
                 wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
                 return JsonResponse({
                     "success": True,
@@ -98,7 +98,7 @@ class UpdatePostView(BasePostView, UpdateView):
             })
 
         # For non-AJAX requests
-        if content_type == 'advanced':
+        if editor_type == 'advanced':
             from django.shortcuts import redirect
             wagtail_edit_url = f"/wagtail/admin/pages/{post.id}/edit/"
             return redirect(wagtail_edit_url)
@@ -114,7 +114,7 @@ class UpdatePostView(BasePostView, UpdateView):
         if not cover_image:
             raise ValueError("No image provided.")
 
-        if post.first_image.cloudinary_image_id:
+        if (post.first_image) and (post.first_image.cloudinary_image_id):
             try:
                 Uploader.delete_image(post.first_image.cloudinary_image_id)
             except Exception as e:

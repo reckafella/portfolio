@@ -84,7 +84,13 @@ class BasePostView(LoginRequiredMixin, UserPassesTestMixin):
     def publish_post(self, post, should_publish):
         if should_publish:
             revision = post.save_revision()
+            revision.live = True
+            revision.has_unpublished_changes = False
             revision.publish()
+        else:
+            revision.live = False
+            # revision.has_unpublished_changes = True
+            revision.unpublish()
 
     def handle_image_error(self, post, form, e):
         if post.cloudinary_image_id:
@@ -145,6 +151,8 @@ class CreatePostView(BasePostView, CreateView):
         post.author = self.request.user
         post.title = titlecase(post.title)
         post.slug = slugify(post.title)
+        post.seo_title = titlecase(post.title) or ''
+        post.seo_description = post.seo_title or ''
         return post
 
     def create_post_with_image(self, post, cover_image, should_publish):
@@ -170,12 +178,12 @@ class CreatePostView(BasePostView, CreateView):
         else:
             return "Blog Post Draft Created Successfully"
 
-    def handle_ajax_response(self, should_publish, content_type):
+    def handle_ajax_response(self, should_publish, editor_type):
         """Handle AJAX response with appropriate redirects."""
         message = self.get_success_message(should_publish)
 
         # For advanced content type, redirect to Wagtail admin
-        if content_type == 'advanced':
+        if editor_type == 'advanced':
             wagtail_edit_url = f"/wagtail/admin/pages/{self.object.id}/edit/"
             return JsonResponse({
                 "success": True,
@@ -189,9 +197,9 @@ class CreatePostView(BasePostView, CreateView):
             "redirect_url": self.get_success_url()
         })
 
-    def handle_non_ajax_response(self, content_type, response):
+    def handle_non_ajax_response(self, editor_type, response):
         """Handle non-AJAX response with appropriate redirects."""
-        if content_type == 'advanced':
+        if editor_type == 'advanced':
             from django.shortcuts import redirect
             wagtail_edit_url = f"/wagtail/admin/pages/{self.object.id}/edit/"
             return redirect(wagtail_edit_url)
@@ -205,7 +213,7 @@ class CreatePostView(BasePostView, CreateView):
         post = self.prepare_post_data(form)
         cover_image = form.files.get("cover_image")
         should_publish = form.cleaned_data.get('published', False)
-        content_type = form.cleaned_data.get('content_type', 'simple')
+        editor_type = form.cleaned_data.get('editor_type', 'simple')
 
         try:
             self.create_post_with_image(post, cover_image, should_publish)
@@ -223,9 +231,9 @@ class CreatePostView(BasePostView, CreateView):
         response = super().form_valid(form)
 
         if is_ajax(self.request):
-            return self.handle_ajax_response(should_publish, content_type)
+            return self.handle_ajax_response(should_publish, editor_type)
 
-        return self.handle_non_ajax_response(content_type, response)
+        return self.handle_non_ajax_response(editor_type, response)
 
     def get_success_url(self):
         return super().get_success_url()

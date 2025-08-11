@@ -33,7 +33,7 @@ class CloudinaryWagtailImage(AbstractImage):
 
     def save(self, *args, **kwargs):
         """Override save to upload to Cloudinary when image is added"""
-        upload_to_cloudinary = kwargs.pop('upload_to_cloudinary', True)
+        upload_to_cloudinary = True  # kwargs.pop('upload_to_cloudinary', True)
 
         if self.file and upload_to_cloudinary and not self.cloudinary_image_id:
             # Upload to Cloudinary using your custom handler

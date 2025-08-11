@@ -36,9 +36,8 @@ class BlogPostForm(forms.ModelForm):
                    "create lists, add links, and more. The editor shows "
                    "exactly how your content will appear to readers.")
     )
-
     # Hidden field to track which content type was used
-    content_type = forms.CharField(
+    editor_type = forms.CharField(
         widget=forms.HiddenInput(),
         required=False,
         initial='simple'
@@ -76,7 +75,7 @@ class BlogPostForm(forms.ModelForm):
 
     class Meta:
         model = BlogPostPage
-        fields = ["title", "content", "content_type", "cover_image",
+        fields = ["title", "content", "editor_type", "cover_image",
                   "tags", "published"]
 
     def save(self, commit=True, user=None):
@@ -86,11 +85,8 @@ class BlogPostForm(forms.ModelForm):
             instance.author = user
 
         # Handle content type logic
-        content_type = self.cleaned_data.get('content_type', 'simple')
-        if content_type == 'advanced':
-            # For advanced content, we'll handle StreamField in the view
-            # For now, just save simple content and let users edit in
-            # Wagtail admin
+        editor_type = self.cleaned_data.get('editor_type', 'simple')
+        if editor_type == 'advanced':
             pass
 
         if commit:
@@ -103,20 +99,20 @@ class BlogPostForm(forms.ModelForm):
         cleaned_data = super().clean()
         title = cleaned_data.get("title")
         content = cleaned_data.get("content")
-        content_type = cleaned_data.get("content_type", "simple")
+        editor_type = cleaned_data.get("editor_type", "simple")
 
         if not title:
             raise forms.ValidationError("Title is required.")
 
         # For simple content, require content
-        if content_type == 'simple' and not content:
+        if editor_type == 'simple' and not content:
             raise forms.ValidationError(
                 "Please add content in the simple editor."
             )
 
         # For advanced content, we'll create with basic content and
         # redirect to Wagtail admin
-        if content_type == 'advanced' and not content:
+        if editor_type == 'advanced' and not content:
             cleaned_data['content'] = (
                 "<p>Content will be created using advanced editor...</p>"
             )

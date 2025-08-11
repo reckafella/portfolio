@@ -94,21 +94,17 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             protected_details = [
                 f"{obj.__class__.__name__} (ID: {obj.pk})" for obj in protected_objects]
             error_message = (
-                f"Failed. Project still referenced by {
-                    len(protected_objects)} objects: " f"{
-                    ', '.join(protected_details)}")
+                f"Failed. Project still referenced by {len(protected_objects)} objects: "
+                f"{', '.join(protected_details)}"
+            )
             error_messages.append(error_message)
             raise
         except Exception as e:
             error_messages.append(f"Project Deletion Failed: {str(e)}")
             raise
 
-    def _handle_deletion_error(
-            self,
-            request,
-            exception,
-            success_messages,
-            error_messages):
+    def _handle_deletion_error(self, request, exception, success_messages,
+                               error_messages):
         """Handle errors during project deletion"""
         error_messages = list(set(error_messages))
         if str(exception) not in error_messages:

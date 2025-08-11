@@ -1,15 +1,17 @@
 {% load static %}
+
 {% load wagtailimages_tags %}
 {% load wagtailuserbar %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="X-UA-Compatible" content="IE=7">
-    
-    {# include 'app/includes/meta_tags.html' with title=page_title|default:site_title description=page_description|default:site_description image=page_image|default:default_og_image #} 
+
+    {% include 'app/includes/meta_tags.html' with title=page_title|default:site_title description=page_description|default:site_description image=page_image|default:default_og_image %}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.css" rel="stylesheet">
 
@@ -19,13 +21,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
 
     <!-- Favicons -->
-    <link rel="icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico" type="image/x-icon">
+    <link rel="icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico"
+        type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-favicon_tdrrpe.ico"
+        type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
@@ -45,12 +51,16 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/blog.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/passwords.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/search.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/inbox.css' %}">
+
 
     <!-- Page title -->
     <title>Ethan Wanyoike | {% block title %} Base {% endblock %}</title>
     <!-- SEO -->
-    <meta name="description" content="{% block description %}Welcome to my portfolio! Explore my projects, blog, and more.{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}portfolio, software engineer, web development, projects, blog, contact{% endblock %}">
+    <meta name="description"
+        content="{% block description %}Welcome to my portfolio! Explore my projects, blog, and more.{% endblock %}">
+    <meta name="keywords"
+        content="{% block keywords %}portfolio, software engineer, web development, projects, blog, contact{% endblock %}">
     <meta name="author" content="{% block author %}Ethan Wanyoike{% endblock %}">
     <meta name="robots" content="index, follow">
     <meta name="google" content="translate">
@@ -60,6 +70,7 @@
     <meta name="googlebot-video" content="index, follow">
     <meta name="googlebot-mobile" content="index, follow">
 </head>
+
 <body>
     {% if user.is_authenticated %}
     <div id="user-logged-in" hidden></div>
@@ -79,11 +90,14 @@
     <!-- Preloader -->
     {% include 'app/includes/preloader.html' %}
     <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex justify-content-center align-items-center"><i class="bi bi-arrow-up-short fw-bold"></i></a>
+    <a href="#" id="scroll-top" class="scroll-top d-flex justify-content-center align-items-center"><i
+            class="bi bi-arrow-up-short fw-bold"></i></a>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.js" integrity="sha512-M60HsJC4M4A8pgBOj7oC/lvJXuOc9CraWXdD4PF+KNmKl8/Mnz6AH9FANgi4SJM6D9rqPvgQt4KRFR1rPN+EUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.15.10/sweetalert2.min.js"
+        integrity="sha512-M60HsJC4M4A8pgBOj7oC/lvJXuOc9CraWXdD4PF+KNmKl8/Mnz6AH9FANgi4SJM6D9rqPvgQt4KRFR1rPN+EUw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Vendor JS Files -->
     <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
@@ -107,9 +121,8 @@
     <script type="module" src="{% static 'assets/javascript/ValidateForms.js' %}"></script>
     <script src="{% static 'assets/js/themes.js' %}"></script>
 
-    <script type="module" src="{# static 'assets/js/sessions.js' #}"></script>
-
     {% block extra_js %}
     {% endblock %}
 </body>
+
 </html>

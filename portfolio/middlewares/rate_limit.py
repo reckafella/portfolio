@@ -4,8 +4,6 @@ Uses the unified rate limiting system
 """
 from django.http import JsonResponse
 
-from authentication.views.auth.errors import handler_429 as _429
-# from django.conf import settings
 from portfolio.utils.rate_limiting import RateLimiter, RateLimitExceeded
 
 
@@ -17,8 +15,32 @@ class RateLimitMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.rate_limiter = RateLimiter('GLOBAL')
+        # Endpoints that should bypass global rate limiting
+
+        # Paths to exclude from rate limiting
+        self.excluded_paths = {
+            '/session',           # Session management
+            '/static/',          # Static files
+            '/media/',           # Media files
+            '/favicon.ico',      # Favicon requests
+            '/robots.txt',       # SEO files
+            '/sitemap.xml',      # SEO files
+            '/wagtail/admin/',       # Wagtail admin (has its own protection)
+        }
+
+        # File extensions to exclude
+        self.excluded_extensions = {
+            '.css', '.js', '.ico', '.png', '.jpg', '.jpeg',
+            '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot',
+            '.map', '.webp', '.avif'
+        }
 
     def __call__(self, request):
+        # Check if path should be excluded from global rate limiting
+        for excluded_path in self.excluded_paths:
+            if request.path.startswith(excluded_path):
+                return self.get_response(request)
+
         # Check rate limit
         is_limited, info = self.rate_limiter.is_rate_limited(request)
 
@@ -37,6 +59,7 @@ class RateLimitMiddleware:
                 }, status=429)
             else:
                 # Web pages get error handler
+                from authentication.views.auth.errors import handler_429 as _429
                 return _429(request, RateLimitExceeded("Rate Limit Exceeded"))
 
         response = self.get_response(request)

@@ -1,15 +1,17 @@
 // form-validator.js
-import { toastManager } from './toast.js';
+import { ToastManager } from './toast.js';
 
-class FormValidator {
-    constructor(formId) {
+class DefaultFormValidator {
+    constructor(formId, submitButtonId) {
         this.form = document.getElementById(formId);
         if (this.form) {
-            this.submitButton = window.updateSubmitButton || this.form.querySelector('#submitButton');
+            this.submitButton = this.form.querySelector(`#${submitButtonId}`) || this.form.querySelector('button[type="submit"]');
             this.originalButtonText = this.submitButton?.innerHTML || 'Submit';
             this.setupEventListeners();
             this.setupCaptcha();
         }
+        // Set up toast manager
+        this.toastManager = new ToastManager();
     }
 
     setupCaptcha() {
@@ -156,7 +158,7 @@ class FormValidator {
             }
             
         } catch (error) {
-            toastManager.show('danger', error.message);
+            this.toastManager.show('danger', error.message);
             // Restore original image if available
             if (captchaImage && originalSrc) {
                 captchaImage.src = originalSrc;
@@ -193,7 +195,7 @@ class FormValidator {
         if (typeof errors === 'object' && Object.keys(errors).length === 0) return;
 
         if (typeof errors === 'string') {
-            toastManager.show('danger', errors);
+            this.toastManager.show('danger', errors);
             return;
         }
 
@@ -229,7 +231,7 @@ class FormValidator {
 
             if (data.success) {
                 this.setButtonState('success');
-                toastManager.show('success', data.message, data.messages);
+                this.toastManager.show('success', data.message, data.messages);
                 if (data.redirect_url) {
                     setTimeout(() => {
                         window.location.href = data.redirect_url;
@@ -256,7 +258,7 @@ class FormValidator {
                 }
 
                 this.displayFieldErrors(data.errors);
-                toastManager.show(
+                this.toastManager.show(
                     'danger',
                     'Please correct the following errors:',
                     data.errors
@@ -264,7 +266,7 @@ class FormValidator {
             }
         } catch (error) {
             this.setButtonState('error');
-            toastManager.show('danger', 'An error occurred', error.message);
+            this.toastManager.show('danger', 'An error occurred', error.message);
         }
     }
 
@@ -279,14 +281,27 @@ class FormValidator {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const forms = ["auth-form", "contact-form", "project-form", "delete-project-form", "change-password-form", "profile-form", "settings-form"];
+    const forms = {
+        "delete_post_form": {
+            "id": "delete-post-form",
+            "submit_button": "confirm-delete-button"
+        },
+        "profile_form": {
+            "id": "profile-form",
+            "submit_button": "profile-submit-button"
+        },
+        "settings_form": {
+            "id": "settings-form",
+            "submit_button": "settings-submit-button"
+        }
+    };
 
-    forms.forEach(formId => {
-        const form = document.getElementById(formId);
+    Object.entries(forms).forEach(([formKey, formData]) => {
+        const form = document.getElementById(formData.id);
         if (form) {
-            new FormValidator(formId);
+            new DefaultFormValidator(form, formData.submit_button);
         }
     });
 });
 
-export default FormValidator;
+export default DefaultFormValidator;

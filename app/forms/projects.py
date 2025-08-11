@@ -168,37 +168,41 @@ class BaseProjectsForm(forms.ModelForm):
 
     def _validate_single_image(self, image, file_index, config):
         """Validate a single image file and return error message if invalid"""
+        _i = file_index
         try:
             # Check file type
             file_type = guess_file_type(image)
             if not file_type.startswith('image/'):
-                return (
-                    f"File {file_index} ({
-                        image.name}): Not a valid image file " f"(detected type: {file_type})")
+                _part1 = f"File {_i} ({image.name}): Not a valid image file "
+                _part2 = f"(detected type: {file_type})"
+                return (_part1 + _part2)
 
             # Check specific image format
             if file_type not in config['allowed_types']:
-                return (f"File {file_index} ({image.name}): Unsupported image format "
-                        f"({file_type}). Allowed formats: JPG, PNG, GIF, "
-                        f"WebP, BMP, SVG")
+                _part1 = f"File {_i} ({image.name}): Unsupported image format "
+                _part2 = f"({file_type}). Allowed formats: JPG, PNG, GIF, "
+                _part3 = "WebP, BMP, SVG"
+                return (_part1 + _part2 + _part3)
 
             # Check file size
             if image.size > config['max_size']:
                 max_size_mb = config['max_size'] / (1024 * 1024)
                 file_size_mb = image.size / (1024 * 1024)
-                return (f"File {file_index} ({image.name}): Too large "
-                        f"({file_size_mb:.1f}MB). Maximum {max_size_mb}MB "
-                        f"per file allowed")
+
+                _part1 = f"File {_i} ({image.name}): Too large "
+                _part2 = f"({file_size_mb:.1f}MB). Maximum {max_size_mb}MB "
+                _part3 = "per file allowed"
+                return (_part1 + _part2 + _part3)
 
             # Check if file is empty
             if image.size == 0:
-                return f"File {file_index} ({image.name}): File is empty"
+                return f"File {_i} ({image.name}): File is empty"
 
             return None  # No error
 
         except Exception as e:
-            return (f"File {file_index} ({image.name}): Error processing file - "
-                    f"{str(e)}")
+            return (
+                f"File {_i} ({image.name}): Error processing file - {str(e)}")
 
     def _validate_total_size(self, total_size, max_total_size):
         """Validate total file size"""

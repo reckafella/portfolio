@@ -110,4 +110,18 @@
   // The cropper is automatically initialized
   console.log('Profile image cropper initialized');
 </script>
+<script src="{% static 'assets/js/formValidator.js' %}" type="module"></script>
+<script>
+    import { DefaultFormValidator } from '/static/assets/js/formValidator.js';
+    document.addEventListener('DOMContentLoaded', () => {
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+            new DefaultFormValidator(profileForm, 'profile-submit-button');
+        }
+        const settingsForm = document.getElementById('settings-form');
+        if (settingsForm) {
+            new DefaultFormValidator(settingsForm, 'settings-submit-button');
+        }
+    });
+</script>
 {% endblock %}

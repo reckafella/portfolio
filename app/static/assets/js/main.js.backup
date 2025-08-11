@@ -48,28 +48,16 @@
     window.addEventListener('load', toggleScrolled);
 
     /**
-     * Mobile nav toggle with overlay support
+     * Mobile nav toggle
      */
     const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-    const navOverlay = document.querySelector('.nav-overlay');
 
     function mobileNavToogle() {
       document.querySelector('body').classList.toggle('mobile-nav-active');
       mobileNavToggleBtn.classList.toggle('bi-list');
       mobileNavToggleBtn.classList.toggle('bi-x');
     }
-    
-    // Toggle on button click
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
-    
-    // Close on overlay click
-    if (navOverlay) {
-      navOverlay.addEventListener('click', () => {
-        if (document.querySelector('.mobile-nav-active')) {
-          mobileNavToogle();
-        }
-      });
-    }
 
     /**
      * Hide mobile nav on same-page/hash links

@@ -1,14 +1,18 @@
 from django.urls import path
+from django.views.generic import TemplateView
 
 from app.views import search
 from app.views.messages import ContactSuccessView as CSV
 from app.views.messages import ContactView
 from app.views.messages import MarkMessageReadView as MarkAsRead
+from app.views.messages import MessageDetailView as MessageDetail
+from app.views.messages import DeleteMessageView as DeleteMessage
+from app.views.messages import BulkMessageActionsView as BulkActions
 from app.views.messages import MessagesView
 from app.views.projects.create import CreateProjectView as CPV
 from app.views.projects.delete import DeleteProjectView as DPV
-from app.views.projects.list_and_details import ProjectDetailView as PDV
-from app.views.projects.list_and_details import ProjectListView as PLV
+from app.views.projects.details import ProjectDetailView as PDV
+from app.views.projects.list import ProjectListView as PLV
 from app.views.projects.update import UpdateProjectView as UPV
 from app.views.views import AboutView
 from app.views.views import AppHealthCheckView as app_is_running
@@ -37,12 +41,12 @@ urlpatterns = [
     path("contact", ContactView.as_view(), name="contact"),
     path("contact/success", CSV.as_view(), name="contact_success"),
     path("messages/inbox", MessagesView.as_view(), name="messages"),
-    path(
-        "messages/<int:message_id>/mark-read/",
-        MarkAsRead.as_view(),
-        name="mark_as_read"
-    ),
+    path("messages/<int:message_id>/", MessageDetail.as_view(), name="message_detail"),
+    path("messages/<int:message_id>/mark-read/", MarkAsRead.as_view(), name="mark_as_read"),
+    path("messages/<int:message_id>/delete/", DeleteMessage.as_view(), name="delete_message"),
+    path("messages/bulk-actions/", BulkActions.as_view(), name="bulk_message_actions"),
     path("app-running", app_is_running.as_view(), name="app_is_running"),
+    path("session-test", TemplateView.as_view(template_name="app/session_test.html"), name="session_test"),
     path("favicon.ico", render_favicon, name="favicon"),
     path("search/<path:invalid_path>", crv.as_view(redirect_to="/search")),
     path("projects/<path:invalid_path>", crv.as_view(redirect_to="/projects")),

@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.views.generic import UpdateView
 from titlecase import titlecase
 
-# from app.models import Image, Video
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from app.views.projects.base import BaseProjectView
 
@@ -39,9 +38,6 @@ class UpdateProjectView(BaseProjectView, UpdateView):
                                success_messages, error_messages)
 
         if youtube_urls:
-            # First, delete existing videos if you want to replace them
-            # Video.objects.filter(project=project).delete()
-            # Create new video objects
             self.handle_youtube_urls(youtube_urls, project,
                                      success_messages, error_messages)
 

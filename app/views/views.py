@@ -43,7 +43,6 @@ class ServicesView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Services"
-        context["services"] = settings.OUR_SERVICES
         return context
 
 

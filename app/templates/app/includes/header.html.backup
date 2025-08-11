@@ -38,7 +38,13 @@
                             <li><a href="{% url 'blog:list_articles' %}"><span>Blog</span></a></li>
                             <li><a href="{% url 'blog:create_article' %}"><span>Create Blog Post</span></a></li>
                             <li>
-                                <a href="/wagtail/admin/" target="_blank">
+                                <a href="/wagtail/admin" target="_blank">
+                                    <span>Wagtail Admin</span>
+                                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/wagtail/admin/pages/6/" target="_blank">
                                     <span>Wagtail Pages</span>
                                     <i class="bi bi-box-arrow-up-right ms-2"></i>
                                 </a>

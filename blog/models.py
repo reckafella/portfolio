@@ -65,8 +65,6 @@ class BlogPostPage(Page):
         help_text="Legacy content field - will be migrated to new format"
     )
 
-    # New StreamField for rich content with inline images
-    # (to be enabled after migration)
     stream_content = StreamField(
         BlogStreamBlock(), use_json_field=True,
         null=True, blank=True,

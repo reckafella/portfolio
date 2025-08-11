@@ -136,6 +136,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "app.context.context_processors.metadata_context",
                 "app.context.context_processors.admin_profile",
+                "app.context.context_processors.our_services",
             ],
         },
     },

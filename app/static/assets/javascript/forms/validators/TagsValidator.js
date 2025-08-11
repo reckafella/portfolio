@@ -31,7 +31,10 @@ export class TagsValidator extends FieldValidator {
         }
 
         // Parse tags (split by comma and trim whitespace)
-        const tags = tagsText.split(',').map(tag => tag.trim()).filter(tag => tag);
+        let tags = tagsText.split(',').map(tag => tag.trim()).filter(tag => tag);
+
+        // remove double quotes
+        tags = tags.map(tag => tag.replace(/^"|"$/g, ''));
 
         if (tags.length === 0) {
             if (required) {
@@ -46,7 +49,7 @@ export class TagsValidator extends FieldValidator {
         const minTagLength = config.minTagLength || 2;
         const maxTagLength = config.maxTagLength || 30;
         const allowDuplicates = config.allowDuplicates !== false; // Default to true
-        const invalidCharsPattern = config.invalidCharsPattern || /[<>\"'&]/; // HTML-unsafe chars
+        const invalidCharsPattern = config.invalidCharsPattern || /[<>'&]/; // HTML-unsafe chars
 
         const errors = [];
         const warnings = [];

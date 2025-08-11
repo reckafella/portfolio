@@ -37,8 +37,8 @@
                         <form id="blog-post-form" action="{{ action_url }}" method="post" enctype="multipart/form-data" class="contact-form">
                             {% csrf_token %}
                             {% for field in form %}
-                            <!-- Skip hidden content_type field - we'll handle it separately -->
-                            {% if field.name == 'content_type' %}
+                            <!-- Skip hidden editor_type field - we'll handle it separately -->
+                            {% if field.name == 'editor_type' %}
                                 {{ field }}
                             <!-- form switch for publish -->
                             {% elif field.label == 'Publish Article' %}
@@ -64,12 +64,12 @@
                                 <!-- Content Type Selector -->
                                 <div class="mb-3">
                                     <div class="btn-group" role="group" aria-label="Content type selector">
-                                        <input type="radio" class="btn-check" name="content_type" id="simple_editor" value="simple" checked>
+                                        <input type="radio" class="btn-check" name="editor_type" id="simple_editor" value="simple" checked>
                                         <label class="btn btn-outline-primary" for="simple_editor">
                                             <i class="bi bi-pencil-square"></i> Simple Editor
                                         </label>
 
-                                        <input type="radio" class="btn-check" name="content_type" id="advanced_editor" value="advanced">
+                                        <input type="radio" class="btn-check" name="editor_type" id="advanced_editor" value="advanced">
                                         <label class="btn btn-outline-primary" for="advanced_editor">
                                             <i class="bi bi-layout-text-window-reverse"></i> Advanced Editor (with inline images)
                                         </label>
@@ -214,7 +214,7 @@
         const advancedRadio = document.getElementById('advanced_editor');
         const simpleEditor = document.getElementById('simple_content_editor');
         const advancedEditor = document.getElementById('advanced_content_editor');
-        const contentTypeField = document.getElementById('id_content_type');
+        const contentTypeField = document.getElementById('id_editor_type');
 
         function switchContentEditor() {
             if (simpleRadio.checked) {

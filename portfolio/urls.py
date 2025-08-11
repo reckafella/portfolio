@@ -39,12 +39,12 @@ handler400 = "authentication.views.auth.errors.handler_400"
 
 urlpatterns = [
     path("admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
+    re_path("wagtail/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
+    re_path("wagtail/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     path("admin/", admin.site.urls),
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include(django_auth_urls)),
     path("robots.txt", include('robots.urls')),
-    re_path("wagtail/admin/login", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
-    re_path("wagtail/login/", CustomRedirectView.as_view(redirect_to="/login", permanent=True)),
     re_path("wagtail/admin/", include(wagtailadmin_urls)),
     re_path("wagtail/", include(wagtail_urls)),
     path("", include("blog.urls"), name="blog"),
@@ -52,5 +52,4 @@ urlpatterns = [
     path("captcha/", include("captcha.urls")),
     path("", include("app.urls"), name="app"),
     path("", include("authentication.urls"), name="auth"),
-    path("<path:invalid_path>", CustomRedirectView.as_view(redirect_to="/")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

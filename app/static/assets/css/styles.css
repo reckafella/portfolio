@@ -211,8 +211,25 @@ button[type=submit]:hover {
 }
 
 .image-crop-container {
-  max-height: 450px;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+
 }
+.cropper-container {
+  border: 1px solid var(--default-divider);
+  display: flex;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.cropper-container, .crop-wrap-box {
+  display: none;
+}
+
 .crop-preview {
   width: 200px;
   height: 200px;

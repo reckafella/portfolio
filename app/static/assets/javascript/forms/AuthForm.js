@@ -57,9 +57,9 @@ export class AuthForm {
      */
     setupValidators(isSignupForm) {
         // Create validators and pass fieldConfigs to them
-        const usernameValidator = new UsernameValidator(this.formManager, this.formManager.fieldConfigs);
-        const passwordValidator = new PasswordValidator(this.formManager, this.formManager.fieldConfigs);
-        const captchaValidator = new CaptchaValidator(this.formManager, this.formManager.fieldConfigs);
+        const usernameValidator = new UsernameValidator(this.formManager);
+        const passwordValidator = new PasswordValidator(this.formManager);
+        const captchaValidator = new CaptchaValidator(this.formManager);
 
         // Register validators for all auth forms
         this.formManager.registerValidator('id_username',
@@ -81,8 +81,8 @@ export class AuthForm {
 
         // For signup forms, add additional validation
         if (isSignupForm) {
-            const emailValidator = new EmailValidator(this.formManager, this.formManager.fieldConfigs);
-            const nameValidator = new NameValidator(this.formManager, this.formManager.fieldConfigs);
+            const emailValidator = new EmailValidator(this.formManager);
+            const nameValidator = new NameValidator(this.formManager);
 
             // Set up name validation
             this.formManager.registerValidator('id_first_name',
@@ -104,3 +104,10 @@ export class AuthForm {
         }
     }
 }
+
+// Initialize authentication form when the DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('auth-form')) {
+        new AuthForm('auth-form');
+    }
+});

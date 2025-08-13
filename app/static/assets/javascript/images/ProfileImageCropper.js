@@ -15,7 +15,7 @@ export class ProfileImageCropper extends ImageCropManager {
             minSize: { width: 500, height: 500 },
             outputSize: { width: 500, height: 500 },
             uploadFieldName: 'profile_pic',
-            formType: 'profile',
+            formType: 'profile_pic',
             enableRotation: true,
             enableZoom: true,
             enableMove: true,
@@ -30,9 +30,9 @@ export class ProfileImageCropper extends ImageCropManager {
 
         // Merge profile defaults with user options
         const mergedOptions = Object.assign({}, profileDefaults, options);
-        
+
         super(mergedOptions);
-        
+
         // Setup profile-specific functionality
         this.setupProfileDeletion();
     }
@@ -52,19 +52,6 @@ export class ProfileImageCropper extends ImageCropManager {
             if (deleteModalButton) {
                 deleteModalButton.addEventListener('click', () => this.deleteProfilePic());
             }
-
-            // Ensure cancel button works properly
-            const cancelButton = document.querySelector('#deleteConfirmModal button[data-bs-dismiss="modal"]');
-            if (cancelButton) {
-                cancelButton.addEventListener('click', (e) => {
-                    // Ensure the modal closes even if other handlers interfere
-                    e.preventDefault();
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-                    if (modal) {
-                        modal.hide();
-                    }
-                });
-            }
         };
 
         if (document.readyState === 'loading') {
@@ -82,8 +69,6 @@ export class ProfileImageCropper extends ImageCropManager {
         if (deleteModal) {
             const modal = new bootstrap.Modal(deleteModal);
             modal.show();
-        } else {
-            console.error('Delete confirmation modal not found');
         }
     }
 

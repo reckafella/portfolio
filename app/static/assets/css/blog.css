@@ -79,7 +79,7 @@
 }
 
 .blog .entry .entry-content p {
-  line-height: 1.6;
+  line-height: 2.0;
 }
 
 .blog .entry .entry-content h3 {
@@ -90,11 +90,11 @@
 
 .blog .entry .entry-content blockquote {
   overflow: hidden;
-  background-color: color-mix(in srgb, var(--background-color), transparent 48%);
-  padding: 60px;
+  /* background-color: color-mix(in srgb, var(--background-color), transparent 48%); */
+  padding: 20px;
   position: relative;
-  text-align: center;
-  margin: 20px 0;
+  text-align: start;
+  margin: 10px 0;
 }
 
 .blog .entry .entry-content blockquote p {
@@ -744,6 +744,10 @@
         max-width: 100%;
         text-align: center;
     }
+
+    .blog .entry .entry-content p {
+      line-height: 1.6;
+    }
     
     /* On mobile, all images should be responsive */
     .blog-image-small img,
@@ -759,6 +763,9 @@
     .blog-image-left,
     .blog-image-right {
         margin: 1rem 0;
+    }
+    .blog .entry .entry-content p {
+      line-height: 1.4;
     }
     
     /* Reduce horizontal margins on small screens */

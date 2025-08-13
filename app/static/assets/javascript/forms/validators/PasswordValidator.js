@@ -27,9 +27,9 @@ export class PasswordValidator extends FieldValidator {
             } else {
                 const analysis = this.analyzePassword(password);
                 if (analysis.isStrong) {
-                    this.setFieldSuccess(field, fieldId, 'Strong password');
+                    this.setFieldSuccess(field, fieldId, `${displayName} is a strong password`);
                 } else if (analysis.isWeak) {
-                    this.setFieldError(field, fieldId, 'Password does not meet requirements');
+                    this.setFieldError(field, fieldId, `${displayName} does not meet requirements`);
                 }
             }
         }
@@ -419,6 +419,6 @@ export class PasswordValidator extends FieldValidator {
             'id_new_password1': 'New Password',
             'id_new_password2': 'Confirm New Password'
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId);
+        return displayNames[fieldId] || 'Password';
     }
 }

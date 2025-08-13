@@ -16,8 +16,8 @@ export class ImageCropManager {
         this.isInitialized = false;
         
         // Initialize toast manager
-        this.initializeToastManager();
-        
+        this.toastManager = window.toastManager || null;
+
         // Auto-initialize if DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -34,48 +34,24 @@ export class ImageCropManager {
     mergeOptions(userOptions) {
         const defaults = {
             // Modal configuration
-            modalId: 'imageCropModal',
-            cropImageId: 'cropImage',
-            previewId: 'cropPreview',
-            fileInputId: 'imageFileInput',
-            cropButtonId: 'cropAndUpload',
-            uploadSectionId: 'fileUploadSection',
-            cropSectionId: 'cropSection',
-            fileInfoId: 'fileInfo',
-            fileNameId: 'fileName',
-            fileSizeId: 'fileSize',
+            modalId: 'imageCropModal', cropImageId: 'cropImage', previewId: 'cropPreview',
+            fileInputId: 'imageFileInput', cropButtonId: 'cropAndUpload', uploadSectionId: 'fileUploadSection',
+            cropSectionId: 'cropSection', fileInfoId: 'fileInfo', fileNameId: 'fileName', fileSizeId: 'fileSize',
 
             // Cropping configuration
-            aspectRatio: 1, // 1:1 for profile pictures
-            circular: true,
-            minSize: { width: 500, height: 500 },
-            maxSize: 20 * 1024 * 1024, // 20MB
-            maxDimensions: { width: 2000, height: 2000 }, // Maximum pixel dimensions
-            outputSize: { width: 1000, height: 1000 }, // Higher output resolution
-            quality: 0.9,
+            // 1:1 for profile pictures
+            aspectRatio: 1, circular: true, minSize: { width: 500, height: 500 },
+            maxSize: 20 * 1024 * 1024, maxDimensions: { width: 2000, height: 2000 }, // Maximum pixel dimensions
+            quality: 0.9, outputSize: { width: 1000, height: 1000 }, // Higher output resolution
 
             // Upload configuration
-            uploadEndpoint: window.location.href,
-            uploadFieldName: 'profile_pic',
-            formType: 'profile',
-            csrfTokenName: 'csrfmiddlewaretoken',
-            
+            uploadEndpoint: window.location.href, uploadFieldName: 'profile_pic', formType: 'profile', csrfTokenName: 'csrfmiddlewaretoken',
+
             // UI configuration
-            enableRotation: true,
-            enableZoom: true,
-            enableMove: true,
-            enableMobileControls: true,
-            showPreview: false,
-            
+            enableRotation: true, enableZoom: true, enableMove: true, enableMobileControls: true, showPreview: false,
             // Event callbacks
-            onInit: null,
-            onFileSelect: null,
-            onCropStart: null,
-            onCropEnd: null,
-            onUploadStart: null,
-            onUploadSuccess: null,
-            onUploadError: null,
-            onDestroy: null
+            onInit: null, onFileSelect: null, onCropStart: null, onCropEnd: null,
+            onUploadSuccess: null, onUploadError: null, onDestroy: null, onUploadStart: null
         };
 
         return Object.assign({}, defaults, userOptions);
@@ -97,7 +73,6 @@ export class ImageCropManager {
                 this.options.onInit(this);
             }
             
-            console.log('ImageCropManager initialized successfully');
         } catch (error) {
             console.error('Failed to initialize ImageCropManager:', error);
             this.showAlert('Failed to initialize image cropping system.', 'danger');
@@ -112,18 +87,6 @@ export class ImageCropManager {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                ('ontouchstart' in window) ||
                (navigator.maxTouchPoints > 0);
-    }
-
-    /**
-     * Initialize toast manager for notifications
-     */
-    initializeToastManager() {
-        try {
-            this.toastManager = window.toastManager || null;
-        } catch (error) {
-            console.warn('ToastManager not available, using fallback alerts', error);
-            this.toastManager = null;
-        }
     }
 
     /**
@@ -263,17 +226,6 @@ export class ImageCropManager {
                     return;
                 }
 
-                // Check if image is square (for profile pictures)
-                if (this.options.aspectRatio === 1 && img.width !== img.height) {
-                    this.showAlert(
-                        `Image must be square (equal width and height). ` +
-                        `This image is ${img.width}x${img.height} pixels.`,
-                        'danger'
-                    );
-                    this.clearSelectedFile();
-                    return;
-                }
-
                 // Initialize cropper
                 this.initializeCropper(e.target.result);
             };
@@ -348,12 +300,11 @@ export class ImageCropManager {
                 rotatable: this.options.enableRotation,
                 
                 // Cropper container configuration
-                container: document.getElementById('image-crop-container'),
-                modal: true,
-                preview: this.options.showPreview ? `#${this.options.previewId}` : '',
+                container: '.image-crop-container',
+                /* modal: true,
+                preview: this.options.showPreview ? `#${this.options.previewId}` : '', */
 
                 ready: () => {
-                    console.log('Cropper initialized successfully');
                     if (cropButton) cropButton.disabled = false;
 
                     // Hide any duplicate images that may appear outside the cropper
@@ -751,10 +702,6 @@ export class ImageCropManager {
     }
 
     /**
-     * Public API methods for external control
-     */
-
-    /**
      * Rotate the image
      * @param {number} degrees - Rotation degrees
      */
@@ -824,9 +771,6 @@ export class ImageCropManager {
             return;
         }
 
-        // Fallback alert system
-        console.log(`${type.toUpperCase()}: ${message}`);
-        
         // Create alert element
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -841,7 +785,7 @@ export class ImageCropManager {
         
         if (alertContainer) {
             alertContainer.insertBefore(alertDiv, alertContainer.firstChild);
-            
+
             // Auto-remove after 5 seconds
             setTimeout(() => {
                 if (alertDiv.parentNode) {

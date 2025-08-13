@@ -328,6 +328,6 @@ export class ImageValidator extends FieldValidator {
             'id_featured_image': 'Featured Image',
             // Add more field IDs and their display names as needed
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Image';
+        return displayNames[fieldId] || 'Image';
     }
 }

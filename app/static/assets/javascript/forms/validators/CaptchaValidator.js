@@ -32,18 +32,6 @@ export class CaptchaValidator extends FieldValidator {
     }
 
     /**
-     * Get display name for field based on field ID
-     * @param {string} fieldId - The field ID
-     * @returns {string} - Human-readable field name
-     */
-    getFieldDisplayName(fieldId) {
-        const displayNames = {
-            'id_captcha_1': 'Captcha',
-        };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Captcha';
-    }
-
-    /**
      * Setup captcha input with refresh button
      * @param {string} fieldId - The ID of the captcha input field
      */

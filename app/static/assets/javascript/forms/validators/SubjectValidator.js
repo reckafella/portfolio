@@ -51,6 +51,6 @@ export class SubjectValidator extends FieldValidator {
             'id_title': 'Project title',
             // Add more field IDs and their display names as needed
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Subject';
+        return displayNames[fieldId] || 'Subject';
     }
 }

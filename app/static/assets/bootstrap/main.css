@@ -2123,3 +2123,36 @@ Cards
   background-color: var(--default-color);
   border: 1px solid var(--default-color);
 }
+
+/* Country/City Selector Styles */
+.form-select.loading {
+  background-color: #f8f9fa;
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.form-select.loading option {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.form-select.error {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.form-select.error option {
+  color: #dc3545;
+  font-style: italic;
+}
+
+/* Dark theme adjustments for country/city selector */
+[data-bs-theme="dark"] .form-select.loading {
+  background-color: #2b2b2b;
+  color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .form-select.error {
+  background-color: #2b1f1f;
+  border-color: #dc3545;
+}

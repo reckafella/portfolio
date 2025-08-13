@@ -3,6 +3,8 @@ import { BlogPostForm } from './forms/BlogPostForm.js';
 import { ContactForm } from './forms/ContactForm.js';
 import { PasswordChangeForm } from './forms/PasswordChangeForm.js';
 import { ProjectsForm } from './forms/ProjectsForm.js';
+import { SettingsForm } from './forms/SettingsForm.js';
+import { EditProfileForm } from './forms/EditProfileForm.js';
 import { ToastManager } from '../js/toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -42,8 +44,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('project-form')) {
         new ProjectsForm('project-form');
     }
+
     // Blog post form
     if (document.getElementById('blog-post-form')) {
         new BlogPostForm('blog-post-form');
+    }
+
+    // Settings form
+    if (document.getElementById('settings-form')) {
+        new SettingsForm('settings-form');
+    }
+
+    // Edit profile form
+    if (document.getElementById('profile-form')) {
+        new EditProfileForm('profile-form');
     }
 });

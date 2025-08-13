@@ -45,6 +45,6 @@ export class EmailValidator extends FieldValidator {
             'id_contact_email': 'Contact Email',
             'id_user_email': 'User Email'
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId);
+        return displayNames[fieldId] || 'Email';
     }
 }

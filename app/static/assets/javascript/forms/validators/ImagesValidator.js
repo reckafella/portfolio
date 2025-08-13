@@ -20,7 +20,6 @@ export class ImagesValidator extends FieldValidator {
 
         // Get field configuration (merge with data attributes)
         const config = this.getFieldConfig(fieldId);
-        const displayName = this.getFieldDisplayName(fieldId) || 'Images';
         
         // Override config with data attributes if present
         const maxFiles = field?.dataset.maxFiles ? parseInt(field.dataset.maxFiles) : (config.maxFiles || 10);
@@ -386,20 +385,5 @@ export class ImagesValidator extends FieldValidator {
             modal.querySelector('.btn-close').addEventListener('click', closeModal);
             backdrop.addEventListener('click', closeModal);
         }
-    }
-
-    /**
-     * Get display name for field based on field ID
-     * @param {string} fieldId - The field ID
-     * @returns {string} - Human-readable field name
-     */
-    getFieldDisplayName(fieldId) {
-        const displayNames = {
-            'id_images': 'Images',
-            'id_gallery': 'Image Gallery',
-            'id_uploads': 'Uploads',
-            // Add more field IDs and their display names as needed
-        };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Images';
     }
 }

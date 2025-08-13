@@ -27,39 +27,67 @@
         <div class="col-xl-4">
             <div class="card">
                 <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                    {% if profile.optimized_image_url %}
-                    <img src="{{ profile.optimized_image_url }}" alt="Profile" class="rounded-circle" loading="lazy">
-                    {% endif %}
+                    <form method="post" enctype="multipart/form-data" id="profile-photo-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="profile_pic">
+                        <div class="row d-flex flex-column align-items-center mb-3">
+                            <label class="text-center col-form-label">Profile Photo</label>
+                            <div class="col-sm-12 d-flex flex-column align-items-center">
+                                {% if profile.optimized_image_url %}
+                                <img src="{{ profile.optimized_image_url }}" alt="Profile" loading="lazy"
+                                    class="img-fluid rounded-circle mb-2">
+                                {% endif %}
+                                <div class="pt-2">
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        title="{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Profile Photo"
+                                        id="openImageCropModalBtn" onclick="openImageCropModal()">
+                                        <i class="bi bi-upload"></i>{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo
+                                    </button>
+                                    {% if profile.optimized_image_url %}
+                                    <button type="button" class="btn btn-sm btn-danger" title="Delete Profile Photo"
+                                        id="confirmDeleteProfilePicBtn" onclick="confirmDeleteProfilePic()">
+                                        <i class="bi bi-trash"></i> Delete Photo
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    Min size: 500x500px, Max file size: 20MB
+                                </small>
+                            </div>
+                        </div>
+                    </form>
                     <h2>{{ user.get_full_name }}</h2>
                     <h3>{{ profile.title|default:"Software Developer" }}</h3>
                     <div class="social-links mt-2">
                         {% with social=profile.social_media.first %}
                             {% if social.twitter_x %}
-                                <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                                <a href="{{ social.twitter_x }}" target="_blank" class="twitter"><i class="bi bi-twitter"></i></a>
                             {% endif %}
                             {% if social.facebook %}
-                                <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="{{ social.facebook }}" target="_blank" class="facebook"><i class="bi bi-facebook"></i></a>
                             {% endif %}
                             {% if social.instagram %}
-                                <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                                <a href="{{ social.instagram }}" target="_blank" class="instagram"><i class="bi bi-instagram"></i></a>
                             {% endif %}
                             {% if social.linkedin %}
-                                <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                                <a href="{{ social.linkedin }}" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
                             {% endif %}
                             {% if social.github %}
-                                <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                                <a href="{{ social.github }}" target="_blank" class="github"><i class="bi bi-github"></i></a>
                             {% endif %}
                             {% if social.youtube %}
-                                <a href="{{ social.youtube }}" class="youtube"><i class="bi bi-youtube"></i></a>
+                                <a href="{{ social.youtube }}" target="_blank" class="youtube"><i class="bi bi-youtube"></i></a>
                             {% endif %}
                             {% if social.website %}
-                                <a href="{{ social.website }}" class="website"><i class="bi bi-globe"></i></a>
+                                <a href="{{ social.website }}" target="_blank" class="website"><i class="bi bi-globe"></i></a>
                             {% endif %}
                             {% if social.whatsapp %}
-                                <a href="https://wa.me/{{ social.whatsapp }}" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
+                                <a href="https://wa.me/{{ social.whatsapp }}" target="_blank" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
                             {% endif %}
                         {% endwith %}
                     </div>
+                    {% include 'auth/profile/partials/modals/crop-images-modal.html' %}
+                    {% include 'auth/profile/partials/modals/delete-image-modal.html' %}
                 </div>
             </div>
         </div>
@@ -69,16 +97,28 @@
                 <div class="card-body pt-3">
                     <ul class="nav nav-tabs nav-tabs-bordered">
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="d-none d-md-inline ms-1">Overview</span>
+                            </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">
+                                <i class="bi bi-pencil-square"></i>
+                                <span class="d-none d-md-inline ms-1">Edit Profile</span>
+                            </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">
+                                <i class="bi bi-gear"></i>
+                                <span class="d-none d-md-inline ms-1">Settings</span>
+                            </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">
+                                <i class="bi bi-shield-lock"></i>
+                                <span class="d-none d-md-inline ms-1">Change Password</span>
+                            </button>
                         </li>
                     </ul>
 
@@ -109,19 +149,5 @@
 
   // The cropper is automatically initialized
   console.log('Profile image cropper initialized');
-</script>
-<script src="{% static 'assets/js/formValidator.js' %}" type="module"></script>
-<script>
-    import { DefaultFormValidator } from '/static/assets/js/formValidator.js';
-    document.addEventListener('DOMContentLoaded', () => {
-        const profileForm = document.getElementById('profile-form');
-        if (profileForm) {
-            new DefaultFormValidator(profileForm, 'profile-submit-button');
-        }
-        const settingsForm = document.getElementById('settings-form');
-        if (settingsForm) {
-            new DefaultFormValidator(settingsForm, 'settings-submit-button');
-        }
-    });
 </script>
 {% endblock %}

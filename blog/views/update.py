@@ -5,12 +5,11 @@ from django.utils.text import slugify
 from django.views.generic import UpdateView
 from titlecase import titlecase
 
-from app.views.helpers.cloudinary import \
-    CloudinaryImageHandler  # handle_image_upload
+from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from blog.models import BlogPostImage
 from blog.models import BlogPostPage as BlogPost
-from blog.views.create import BasePostView
+from blog.views.base import BasePostView
 
 # from portfolio import settings
 
@@ -20,8 +19,9 @@ Uploader = CloudinaryImageHandler()
 
 class UpdatePostView(BasePostView, UpdateView):
     def test_func(self):
-        post = self.get_object()
-        return self.request.user.is_staff or self.request.user == post.author
+        """ post = self.get_object()
+        return self.request.user.is_staff or self.request.user == post.author """
+        return super().test_func()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -104,29 +104,3 @@ class UpdatePostView(BasePostView, UpdateView):
             return redirect(wagtail_edit_url)
 
         return response
-
-    def save_image_to_db(self, post, form, cover_image):
-        """
-        Save the image data to the post and create a BlogPostImage instance.
-        """
-        if not post:
-            raise ValueError("Post instance is required.")
-        if not cover_image:
-            raise ValueError("No image provided.")
-
-        if (post.first_image) and (post.first_image.cloudinary_image_id):
-            try:
-                Uploader.delete_image(post.first_image.cloudinary_image_id)
-            except Exception as e:
-                return self.handle_image_error(post, form, e)
-
-        image_data = self.upload_image(post, cover_image)
-        try:
-            BlogPostImage.objects.update_or_create(
-                post=post,
-                cloudinary_image_id=image_data["cloudinary_image_id"],
-                cloudinary_image_url=image_data["cloudinary_image_url"],
-                optimized_image_url=image_data["optimized_image_url"]
-            )
-        except Exception as e:
-            raise ValueError(f"Error saving image: {str(e)}")

@@ -1,8 +1,11 @@
+import json
+import os
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.views import View
 
 # App Specific Imports
 from app.views.helpers.cloudinary import (CloudinaryImageHandler,
@@ -318,3 +321,67 @@ class ProfileView(BaseProfileView):
             "errors": error_messages,
             "messages": []
         }, status=400)
+
+
+class CitiesAPIView(View):
+    """
+    API endpoint to fetch cities for a given country
+    """
+    def get(self, request):
+        country_code = request.GET.get('country')
+
+        if not country_code:
+            return JsonResponse({
+                'success': False,
+                'error': 'Country code is required'
+            }, status=400)
+
+        cities = self.get_cities_for_country(country_code)
+
+        return JsonResponse({
+            'success': True,
+            'cities': cities
+        })
+
+    def get_cities_for_country(self, country_code):
+        """
+        Get cities for a given country code.
+        """
+        # Path to cities data file
+        cities_file = os.path.join(
+            os.path.dirname(__file__),
+            '..', '..', 'data', 'cities.json'
+        )
+
+        try:
+            if os.path.exists(cities_file):
+                with open(cities_file, 'r', encoding='utf-8') as f:
+                    cities_data = json.load(f)
+                    country_cities = cities_data.get(country_code, [])
+                    return [{'value': city, 'label': city} for city in country_cities]
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+
+        # Fallback to common cities if data file doesn't exist
+        common_cities = {
+            'US': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'],
+            'GB': ['London', 'Birmingham', 'Liverpool', 'Sheffield', 'Bristol'],
+            'CA': ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton'],
+            'AU': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'],
+            'DE': ['Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt'],
+            'FR': ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice'],
+            'IT': ['Rome', 'Milan', 'Naples', 'Turin', 'Palermo'],
+            'ES': ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Zaragoza'],
+            'JP': ['Tokyo', 'Yokohama', 'Osaka', 'Nagoya', 'Sapporo'],
+            'CN': ['Shanghai', 'Beijing', 'Chongqing', 'Tianjin', 'Guangzhou'],
+            'IN': ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Ahmedabad'],
+            'BR': ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza'],
+            'MX': ['Mexico City', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana'],
+            'RU': ['Moscow', 'Saint Petersburg', 'Novosibirsk', 'Yekaterinburg', 'Nizhny Novgorod'],
+            'ZA': ['Cape Town', 'Johannesburg', 'Durban', 'Pretoria', 'Port Elizabeth'],
+            'NG': ['Lagos', 'Kano', 'Ibadan', 'Abuja', 'Port Harcourt'],
+            'KE': ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret'],
+        }
+
+        cities = common_cities.get(country_code, [])
+        return [{'value': city, 'label': city} for city in cities]

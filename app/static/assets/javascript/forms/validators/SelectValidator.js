@@ -56,7 +56,7 @@ export class SelectValidator extends FieldValidator {
             'id_dropdown_menu': 'Dropdown Menu',
             // Add more field IDs and their display names as needed
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Select Field';
+        return displayNames[fieldId] || 'Select Field';
     }
 }
 
@@ -111,7 +111,7 @@ export class BooleanValidator extends FieldValidator {
             'id_notifications': 'Notifications',
             // Add more field IDs and their display names as needed
         };
-        return displayNames[fieldId] || super.getFieldDisplayName(fieldId) || 'Boolean Field';
+        return displayNames[fieldId] || 'Boolean Field';
     }
 
 }

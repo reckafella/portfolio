@@ -44,14 +44,12 @@ class InboxManager {
 
     bindSearchEvents() {
         const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
+        const searchInput = document.getElementById('search-messages-input');
 
-        console.log('Binding search events. Form:', searchForm, 'Input:', searchInput);
 
         if (searchForm) {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                console.log('Search form submitted');
                 this.performSearch();
             });
         }
@@ -60,18 +58,16 @@ class InboxManager {
             // Real-time search with debounce
             let searchTimeout;
             searchInput.addEventListener('input', (e) => {
-                console.log('Search input changed:', e.target.value);
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     this.performSearch();
-                }, 500);
+                }, 1000);
             });
-            
+
             // Also handle keypress for immediate search on Enter
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    console.log('Enter key pressed in search');
                     this.performSearch();
                 }
             });
@@ -218,15 +214,13 @@ class InboxManager {
 
     // Search and Filter Methods
     performSearch() {
-        const searchInput = document.getElementById('search-input');
+        const searchInput = document.getElementById('search-messages-input');
         this.searchQuery = searchInput ? searchInput.value.trim() : '';
-        console.log('Performing search with query:', this.searchQuery);
         this.loadMessages();
     }
 
     applyFilter(filter) {
         this.currentFilter = filter;
-        console.log('Applying filter:', filter);
         this.clearSelection();
         this.loadMessages();
     }
@@ -247,7 +241,6 @@ class InboxManager {
         }
 
         const url = `/messages/inbox?${params.toString()}`;
-        console.log('Loading messages from URL:', url);
 
         fetch(url, {
             headers: {
@@ -256,14 +249,12 @@ class InboxManager {
             }
         })
         .then(response => {
-            console.log('Response status:', response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            console.log('Response data:', data);
             if (data.success) {
                 document.getElementById('inbox-content').innerHTML = data.html;
                 this.updateSidebarCounts(data);
@@ -684,7 +675,7 @@ class InboxManager {
         this.currentFilter = urlParams.get('filter') || 'all';
         this.searchQuery = urlParams.get('search') || '';
 
-        const searchInput = document.getElementById('search-input');
+        const searchInput = document.getElementById('search-messages-input');
         if (searchInput) {
             searchInput.value = this.searchQuery;
         }
@@ -784,25 +775,9 @@ class InboxManager {
 
 // Initialize inbox manager when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM Content Loaded - Initializing inbox manager');
-    
+
     // Only initialize on inbox page
     if (document.getElementById('inbox-content')) {
-        console.log('Inbox content found, creating InboxManager');
         window.inboxManager = new InboxManager();
-        
-        // Add a global debug function for testing
-        window.debugSearch = (query) => {
-            console.log('Debug search with query:', query);
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.value = query;
-                window.inboxManager.performSearch();
-            }
-        };
-        
-        console.log('InboxManager initialized. Use window.debugSearch("test") to test search functionality.');
-    } else {
-        console.log('Inbox content not found - not on inbox page');
     }
 });

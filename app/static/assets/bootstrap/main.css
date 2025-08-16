@@ -7,13 +7,37 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
-  --background-color: #e8e7e4; /* Background color for the entire website, including individual sections */
-  --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #6008ad; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --about-background-color: #0a0a0a; /* rich black */
+  --blog-background-color: #242526; /* black olive */
+  --projects-background-color: #212121; /* midnight blue */
+  --skills-background-color: #1d1f21; /* gunmetal */
+  --resume-background-color: #0c0c0c; /* oil black */
+  --contact-background-color: #212124; /* Charleston green */
+  --header-background-color: #0b1215; /* obsidian */
+  --services-background-color: #212121; /* midnight blue */
+  --nav-mobile-background-color: var(--header-background-color);
+  --special-background-color: #101720; /* smoky black */
+  --accordion-button-background: #181818; /* iridium */
+  --breadcrumbs-background-color: #252525; /* outer space */
+  --footer-background-color: #181818; /* iridium */
+  --card-background-color: #11181c; /* arsenic */
+  --background-color: #161618; /* jet black */
+  --search-background-color: rgba(0, 0, 0, 0.98);
+  --project-info-color: #fff; /* white */
+  --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
+  --nav-dropdown-background-color:  #191919; /* dark slate gray */
+  --default-color: #ffffff;
+  --scroll-top-background-color:var(--default-color); /* white */
+  --scroll-top-color: #1f1f1f; /* charcoal */
+  --heading-color: var(--default-color);
+  --surface-color: #252525;
+  --contrast-color: var(--default-color);
+  --search-bar-background-color: var(--special-background-color);
+  --accent-color:#fe8c00;
+  --nav-color: var(--default-color);
+  --nav-hover-color: var(--accent-color);
+  --nav-dropdown-color: var(--default-color);
+  --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
@@ -57,9 +81,13 @@
   --contrast-color: #000;
   --search-bar-background-color: #1d0723;
   --nav-dropdown-hover-color: var(--accent-color);
+  --background-color: #e8e7e4; /* Background color for the entire website, including individual sections */
+  --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #6008ad; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
 }
-/* https://res.cloudinary.com/dg4sl9jhw/image/upload/f_auto,q_auto/v1/portfolio/xjqvliwji7pmdmivvl73
- */
+
 [data-bs-theme="dark"] {
   --about-background-color: #0a0a0a; /* rich black */
   --blog-background-color: #242526; /* black olive */

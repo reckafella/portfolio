@@ -5,88 +5,86 @@
         <div class="message-row {% if not message.is_read %}message-unread{% endif %}" 
              data-message-id="{{ message.id }}"
              data-is-read="{{ message.is_read|yesno:'true,false' }}">
-            <div class="card message-card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <!-- Checkbox -->
-                        <div class="col-auto">
-                            <div class="form-check">
-                                <input class="form-check-input message-checkbox" 
-                                       type="checkbox" 
-                                       value="{{ message.id }}"
-                                       id="message-{{ message.id }}">
+            <div class="message-card">
+                <div class="row align-items-center">
+                    <!-- Checkbox -->
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input message-checkbox" 
+                                    type="checkbox" 
+                                    value="{{ message.id }}"
+                                    id="message-{{ message.id }}">
+                        </div>
+                    </div>
+
+                    <!-- Star/Priority (future feature) -->
+                    <div class="col-auto">
+                        <i class="bi bi-star message-star" 
+                            data-message-id="{{ message.id }}"
+                            title="Star message"></i>
+                    </div>
+
+                    <!-- Sender Info -->
+                    <div class="col-md-3">
+                        <div class="message-sender">
+                            <strong class="sender-name">{{ message.name }}</strong>
+                            <div class="sender-email text-muted">{{ message.email }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Subject & Preview -->
+                    <div class="col-md-5">
+                        <div class="message-subject-preview">
+                            <div class="message-subject">
+                                {% if not message.is_read %}
+                                    <span class="unread-indicator"></span>
+                                {% endif %}
+                                <strong>{{ message.subject|default:"(No Subject)" }}</strong>
+                            </div>
+                            <div class="message-preview text-muted">
+                                {{ message.message|striptags|truncatechars:80 }}
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Star/Priority (future feature) -->
-                        <div class="col-auto">
-                            <i class="bi bi-star message-star" 
-                               data-message-id="{{ message.id }}"
-                               title="Star message"></i>
+                    <!-- Date -->
+                    <div class="col-md-2">
+                        <div class="message-date text-muted">
+                            {{ message.created_at|timesince }} ago
                         </div>
+                    </div>
 
-                        <!-- Sender Info -->
-                        <div class="col-md-3">
-                            <div class="message-sender">
-                                <strong class="sender-name">{{ message.name }}</strong>
-                                <div class="sender-email text-muted">{{ message.email }}</div>
-                            </div>
-                        </div>
-
-                        <!-- Subject & Preview -->
-                        <div class="col-md-5">
-                            <div class="message-subject-preview">
-                                <div class="message-subject">
-                                    {% if not message.is_read %}
-                                        <span class="unread-indicator"></span>
-                                    {% endif %}
-                                    <strong>{{ message.subject|default:"(No Subject)" }}</strong>
-                                </div>
-                                <div class="message-preview text-muted">
-                                    {{ message.message|striptags|truncatechars:80 }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Date -->
-                        <div class="col-md-2">
-                            <div class="message-date text-muted">
-                                {{ message.created_at|timesince }} ago
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="col-auto">
-                            <div class="message-actions">
-                                <div class="btn-group" role="group">
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-primary view-message-btn"
-                                            data-message-id="{{ message.id }}"
-                                            title="View Message">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    {% if not message.is_read %}
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-success mark-read-btn"
-                                            data-message-id="{{ message.id }}"
-                                            title="Mark as Read">
-                                        <i class="bi bi-envelope-open"></i>
-                                    </button>
-                                    {% else %}
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-warning mark-unread-btn"
-                                            data-message-id="{{ message.id }}"
-                                            title="Mark as Unread">
-                                        <i class="bi bi-envelope"></i>
-                                    </button>
-                                    {% endif %}
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-danger delete-message-btn"
-                                            data-message-id="{{ message.id }}"
-                                            title="Delete Message">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
+                    <!-- Actions -->
+                    <div class="col-auto">
+                        <div class="message-actions">
+                            <div class="btn-group" role="group">
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-primary view-message-btn"
+                                        data-message-id="{{ message.id }}"
+                                        title="View Message">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                {% if not message.is_read %}
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-success mark-read-btn"
+                                        data-message-id="{{ message.id }}"
+                                        title="Mark as Read">
+                                    <i class="bi bi-envelope-open"></i>
+                                </button>
+                                {% else %}
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-warning mark-unread-btn"
+                                        data-message-id="{{ message.id }}"
+                                        title="Mark as Unread">
+                                    <i class="bi bi-envelope"></i>
+                                </button>
+                                {% endif %}
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger delete-message-btn"
+                                        data-message-id="{{ message.id }}"
+                                        title="Delete Message">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

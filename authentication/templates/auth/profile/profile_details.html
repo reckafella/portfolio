@@ -36,17 +36,21 @@
                                 {% if profile.optimized_image_url %}
                                 <img src="{{ profile.optimized_image_url }}" alt="Profile" loading="lazy"
                                     class="img-fluid rounded-circle mb-2">
+                                {% else %}
+                                <div class="rounded-circle justify-content-center align-items-center" style="height: 100px;">
+                                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                                </div>
                                 {% endif %}
                                 <div class="pt-2">
                                     <button type="button" class="btn btn-sm btn-primary"
                                         title="{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Profile Photo"
                                         id="openImageCropModalBtn" onclick="openImageCropModal()">
-                                        <i class="bi bi-upload"></i>{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %} Photo
+                                        <i class="bi bi-upload"></i>{% if profile.optimized_image_url %} Update {% else %} Upload {% endif %}
                                     </button>
                                     {% if profile.optimized_image_url %}
                                     <button type="button" class="btn btn-sm btn-danger" title="Delete Profile Photo"
                                         id="confirmDeleteProfilePicBtn" onclick="confirmDeleteProfilePic()">
-                                        <i class="bi bi-trash"></i> Delete Photo
+                                        <i class="bi bi-trash"></i> Delete
                                     </button>
                                     {% endif %}
                                 </div>
@@ -74,15 +78,6 @@
                             {% endif %}
                             {% if social.github %}
                                 <a href="{{ social.github }}" target="_blank" class="github"><i class="bi bi-github"></i></a>
-                            {% endif %}
-                            {% if social.youtube %}
-                                <a href="{{ social.youtube }}" target="_blank" class="youtube"><i class="bi bi-youtube"></i></a>
-                            {% endif %}
-                            {% if social.website %}
-                                <a href="{{ social.website }}" target="_blank" class="website"><i class="bi bi-globe"></i></a>
-                            {% endif %}
-                            {% if social.whatsapp %}
-                                <a href="https://wa.me/{{ social.whatsapp }}" target="_blank" class="whatsapp"><i class="bi bi-whatsapp"></i></a>
                             {% endif %}
                         {% endwith %}
                     </div>

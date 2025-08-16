@@ -9,7 +9,7 @@ class InboxManager {
         this.currentFilter = 'all';
         this.searchQuery = '';
         this.isLoading = false;
-        
+
         this.init();
     }
 
@@ -22,37 +22,38 @@ class InboxManager {
     bindEvents() {
         // Search functionality
         this.bindSearchEvents();
-        
+
         // Folder navigation
         this.bindFolderEvents();
-        
+
         // Message selection
         this.bindSelectionEvents();
-        
+
         // Bulk actions
         this.bindBulkActionEvents();
-        
+
         // Individual message actions
         this.bindMessageActionEvents();
-        
+
         // Modal events
         this.bindModalEvents();
-        
+
         // Pagination
         this.bindPaginationEvents();
     }
 
     bindSearchEvents() {
         const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        
+        const searchInput = document.getElementById('search-messages-input');
+
+
         if (searchForm) {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 this.performSearch();
             });
         }
-        
+
         if (searchInput) {
             // Real-time search with debounce
             let searchTimeout;
@@ -60,7 +61,15 @@ class InboxManager {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     this.performSearch();
-                }, 500);
+                }, 1000);
+            });
+
+            // Also handle keypress for immediate search on Enter
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.performSearch();
+                }
             });
         }
     }
@@ -148,7 +157,7 @@ class InboxManager {
                 const messageId = btn.dataset.messageId;
                 this.markMessageRead(messageId);
             }
-            
+
             if (e.target.matches('.mark-unread-btn') || e.target.closest('.mark-unread-btn')) {
                 const btn = e.target.closest('.mark-unread-btn') || e.target;
                 const messageId = btn.dataset.messageId;
@@ -205,7 +214,7 @@ class InboxManager {
 
     // Search and Filter Methods
     performSearch() {
-        const searchInput = document.getElementById('search-input');
+        const searchInput = document.getElementById('search-messages-input');
         this.searchQuery = searchInput ? searchInput.value.trim() : '';
         this.loadMessages();
     }
@@ -218,7 +227,7 @@ class InboxManager {
 
     loadMessages(page = 1) {
         if (this.isLoading) return;
-        
+
         this.isLoading = true;
         this.showLoading();
 
@@ -231,13 +240,20 @@ class InboxManager {
             params.append('search', this.searchQuery);
         }
 
-        fetch(`/messages/inbox?${params.toString()}`, {
+        const url = `/messages/inbox?${params.toString()}`;
+
+        fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 document.getElementById('inbox-content').innerHTML = data.html;
@@ -268,7 +284,7 @@ class InboxManager {
     toggleSelectAll() {
         const checkboxes = document.querySelectorAll('.message-checkbox');
         const allSelected = this.selectedMessages.size === checkboxes.length;
-        
+
         if (allSelected) {
             this.clearSelection();
         } else {
@@ -279,7 +295,7 @@ class InboxManager {
                 checkbox.closest('.message-row').classList.add('selected');
             });
         }
-        
+
         this.updateBulkActionButtons();
         this.updateSelectAllButton();
     }
@@ -297,7 +313,7 @@ class InboxManager {
     updateBulkActionButtons() {
         const hasSelection = this.selectedMessages.size > 0;
         const buttons = ['mark-read-btn', 'mark-unread-btn', 'delete-selected-btn'];
-        
+
         buttons.forEach(btnId => {
             const btn = document.getElementById(btnId);
             if (btn) {
@@ -309,11 +325,10 @@ class InboxManager {
     updateSelectAllButton() {
         const selectAllBtn = document.getElementById('select-all-btn');
         const checkboxes = document.querySelectorAll('.message-checkbox');
-        
+
         if (selectAllBtn && checkboxes.length > 0) {
             const allSelected = this.selectedMessages.size === checkboxes.length;
-            const someSelected = this.selectedMessages.size > 0;
-            
+
             if (allSelected) {
                 selectAllBtn.innerHTML = '<i class="bi bi-square"></i> Deselect All';
             } else {
@@ -325,7 +340,7 @@ class InboxManager {
     // Message Action Methods
     async viewMessage(messageId) {
         this.showLoading();
-        
+
         try {
             const response = await fetch(`/messages/${messageId}/`, {
                 headers: {
@@ -333,14 +348,14 @@ class InboxManager {
                     'Accept': 'application/json'
                 }
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 document.getElementById('modal-content-container').innerHTML = data.html;
                 const modal = new bootstrap.Modal(document.getElementById('messageModal'));
                 modal.show();
-                
+
                 // Update message row to show as read
                 if (data.is_read) {
                     this.updateMessageRowStatus(messageId, true);
@@ -385,7 +400,7 @@ class InboxManager {
             if (data.success) {
                 this.updateMessageRowStatus(messageId, isRead);
                 this.showSuccess(`Message marked as ${action}`);
-                
+
                 // Update sidebar counts
                 this.refreshSidebarCounts();
             } else {
@@ -408,7 +423,7 @@ class InboxManager {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
+            cancelButtonColor: '#494d52ff',
             confirmButtonText: 'Yes, delete it!'
         });
 
@@ -437,7 +452,7 @@ class InboxManager {
             if (data.success) {
                 // Remove from selection if selected
                 this.selectedMessages.delete(parseInt(messageId));
-                
+
                 // Animate and remove message row
                 if (messageRow) {
                     messageRow.style.opacity = '0';
@@ -448,9 +463,9 @@ class InboxManager {
                         this.refreshSidebarCounts();
                     }, 300);
                 }
-                
+
                 this.showSuccess(data.message);
-                
+
                 // Close modal if it's open
                 const modal = bootstrap.Modal.getInstance(document.getElementById('messageModal'));
                 if (modal) {
@@ -530,10 +545,10 @@ class InboxManager {
 
     handleBulkActionSuccess(data) {
         const { action, affected_ids } = data;
-        
+
         affected_ids.forEach(messageId => {
             const messageRow = document.querySelector(`[data-message-id="${messageId}"]`);
-            
+
             if (action === 'delete') {
                 if (messageRow) {
                     messageRow.style.opacity = '0';
@@ -557,7 +572,7 @@ class InboxManager {
         if (!messageRow) return;
 
         messageRow.dataset.isRead = isRead.toString();
-        
+
         if (isRead) {
             messageRow.classList.remove('message-unread');
             // Update unread indicator
@@ -619,7 +634,7 @@ class InboxManager {
                     'Accept': 'application/json'
                 }
             });
-            
+
             const data = await response.json();
             if (data.success) {
                 this.updateSidebarCounts(data);
@@ -633,7 +648,7 @@ class InboxManager {
         document.querySelectorAll('.folder-link').forEach(link => {
             link.classList.remove('active');
         });
-        
+
         const activeLink = document.querySelector(`.folder-link[href*="filter=${this.currentFilter}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
@@ -642,15 +657,15 @@ class InboxManager {
 
     updateURL() {
         const params = new URLSearchParams();
-        
+
         if (this.currentFilter !== 'all') {
             params.append('filter', this.currentFilter);
         }
-        
+
         if (this.searchQuery) {
             params.append('search', this.searchQuery);
         }
-        
+
         const newURL = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
         window.history.replaceState({}, '', newURL);
     }
@@ -659,8 +674,8 @@ class InboxManager {
         const urlParams = new URLSearchParams(window.location.search);
         this.currentFilter = urlParams.get('filter') || 'all';
         this.searchQuery = urlParams.get('search') || '';
-        
-        const searchInput = document.getElementById('search-input');
+
+        const searchInput = document.getElementById('search-messages-input');
         if (searchInput) {
             searchInput.value = this.searchQuery;
         }
@@ -742,24 +757,25 @@ class InboxManager {
         if (meta) {
             return meta.getAttribute('content');
         }
-        
+
         const input = document.querySelector('input[name="csrfmiddlewaretoken"]');
         if (input) {
             return input.value;
         }
-        
+
         const cookie = document.cookie.split(';')
             .find(row => row.trim().startsWith('csrftoken='));
         if (cookie) {
             return cookie.split('=')[1];
         }
-        
+
         return '';
     }
 }
 
 // Initialize inbox manager when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+
     // Only initialize on inbox page
     if (document.getElementById('inbox-content')) {
         window.inboxManager = new InboxManager();

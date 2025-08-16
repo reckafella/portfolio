@@ -42,6 +42,13 @@
                             <div class="entry-img my-2">
                                 <img src="{{ article.first_image.optimized_image_url }}" alt="{{ article.title |default:'Post image' }}" class="img-fluid" loading="lazy">
                             </div>
+                            {% else %}
+                            <div class="bg-light-dark d-flex align-items-center justify-content-center" style="height: 300px;">
+                                <div class="d-flex flex-column justify-content-between align-items-center">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    <span class="text-muted text-center">No image available</span>
+                                </div>
+                            </div>
                             {% endif %}
                             <div class="entry-meta">
                                 <ul>

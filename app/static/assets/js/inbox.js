@@ -407,7 +407,7 @@ class InboxManager {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
+            cancelButtonColor: '#494d52ff',
             confirmButtonText: 'Yes, delete it!'
         });
 

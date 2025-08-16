@@ -5,7 +5,7 @@
         <div class="message-row {% if not message.is_read %}message-unread{% endif %}" 
              data-message-id="{{ message.id }}"
              data-is-read="{{ message.is_read|yesno:'true,false' }}">
-            <div class="message-card">
+            <div class="message-card p-1">
                 <div class="row align-items-center">
                     <!-- Checkbox -->
                     <div class="col-auto">
@@ -22,36 +22,6 @@
                         <i class="bi bi-star message-star" 
                             data-message-id="{{ message.id }}"
                             title="Star message"></i>
-                    </div>
-
-                    <!-- Sender Info -->
-                    <div class="col-md-3">
-                        <div class="message-sender">
-                            <strong class="sender-name">{{ message.name }}</strong>
-                            <div class="sender-email text-muted">{{ message.email }}</div>
-                        </div>
-                    </div>
-
-                    <!-- Subject & Preview -->
-                    <div class="col-md-5">
-                        <div class="message-subject-preview">
-                            <div class="message-subject">
-                                {% if not message.is_read %}
-                                    <span class="unread-indicator"></span>
-                                {% endif %}
-                                <strong>{{ message.subject|default:"(No Subject)" }}</strong>
-                            </div>
-                            <div class="message-preview text-muted">
-                                {{ message.message|striptags|truncatechars:80 }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Date -->
-                    <div class="col-md-2">
-                        <div class="message-date text-muted">
-                            {{ message.created_at|timesince }} ago
-                        </div>
                     </div>
 
                     <!-- Actions -->
@@ -88,6 +58,36 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Sender Info -->
+                    <div class="col-md-3">
+                        <div class="message-sender">
+                            <strong class="sender-name">{{ message.name }}</strong>
+                            <div class="sender-email text-muted">{{ message.email }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Subject & Preview -->
+                    <div class="col-md-5">
+                        <div class="message-subject-preview">
+                            <div class="message-subject">
+                                {% if not message.is_read %}
+                                    <span class="unread-indicator"></span>
+                                {% endif %}
+                                <strong>{{ message.subject|default:"(No Subject)" }}</strong>
+                            </div>
+                            <div class="message-preview text-muted">
+                                {{ message.message|striptags|truncatechars:80 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="col-md-2">
+                        <div class="message-date text-muted">
+                            {{ message.created_at|timesince }} ago
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

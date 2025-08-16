@@ -8,72 +8,82 @@
 {% block content %}
 <section class="section contact">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row" id="inbox-layout">
             <!-- Sidebar -->
-            <div class="col-lg-3 col-md-4">
+            <div class="col-12 col-md-4 col-lg-3" id="inbox-sidebar-wrapper">
                 <div class="inbox-sidebar" id="inbox-sidebar">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="card-title mb-0">
+                                <h5 class="card-title mb-0" id="sidebar-title">
                                     <i class="bi bi-inbox-fill me-2"></i>
-                                    Message Inbox
+                                    <span class="sidebar-text">Message Inbox</span>
                                 </h5>
-                                <!-- Minimize Button -->
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebar-toggle-btn" title="Minimize sidebar">
-                                    <i class="bi bi-chevron-left"></i>
+                                <!-- Minimize Button for Desktop / Toggle Button for Mobile -->
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebar-toggle-btn" title="Toggle sidebar">
+                                    <i class="bi bi-chevron-left d-none d-lg-inline"></i>
+                                    <i class="bi bi-chevron-down d-lg-none"></i>
                                 </button>
                             </div>
 
-                            <!-- Compose button (future feature) -->
-                            <div class="d-grid mb-3">
-                                <button class="btn btn-primary" disabled>
-                                    <i class="bi bi-plus-circle me-2"></i>
-                                    Compose (Coming Soon)
-                                </button>
-                            </div>
-
-                            <!-- Folder Navigation -->
-                            <div class="inbox-folders">
-                                <ul class="list-unstyled">
-                                    <li class="folder-item">
-                                        <a href="?filter=all" class="folder-link {% if current_filter == 'all' %}active{% endif %}">
-                                            <i class="bi bi-inbox me-3"></i>
-                                            All Messages
-                                            <span class="badge bg-info ms-auto">{{ total_messages }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="folder-item">
-                                        <a href="?filter=unread" class="folder-link {% if current_filter == 'unread' %}active{% endif %}">
-                                            <i class="bi bi-envelope me-3"></i>
-                                            Unread
-                                            <span class="badge bg-info ms-auto">{{ unread_count }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="folder-item">
-                                        <a href="?filter=read" class="folder-link {% if current_filter == 'read' %}active{% endif %}">
-                                            <i class="bi bi-envelope-open me-3"></i>
-                                            Read
-                                            <span class="badge bg-success ms-auto">{{ read_count }}</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Quick Stats -->
-                            <div class="inbox-stats mt-4">
-                                <h6 class="text-muted">Quick Stats</h6>
-                                <div class="stat-item">
-                                    <small class="text-muted">Total Messages:</small>
-                                    <strong class="float-end">{{ total_messages }}</strong>
+                            <!-- Sidebar Content -->
+                            <div class="sidebar-content" id="sidebar-content">
+                                <!-- Compose button (future feature) -->
+                                <div class="d-grid mb-3">
+                                    <button class="btn btn-primary" disabled>
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        <span class="sidebar-text">Compose (Coming Soon)</span>
+                                    </button>
                                 </div>
-                                <div class="stat-item">
-                                    <small class="text-muted">Unread:</small>
-                                    <strong class="float-end text-warning">{{ unread_count }}</strong>
+
+                                <!-- Folder Navigation -->
+                                <div class="inbox-folders">
+                                    <ul class="list-unstyled">
+                                        <li class="folder-item">
+                                            <a href="?filter=all" class="folder-link {% if current_filter == 'all' %}active{% endif %}">
+                                                <div class="folder-link-content">
+                                                    <i class="bi bi-inbox me-3"></i>
+                                                    <span class="sidebar-text">All Messages</span>
+                                                </div>
+                                                <span class="badge bg-info sidebar-text">{{ total_messages }}</span>
+                                            </a>
+                                        </li>
+                                        <li class="folder-item">
+                                            <a href="?filter=unread" class="folder-link {% if current_filter == 'unread' %}active{% endif %}">
+                                                <div class="folder-link-content">
+                                                    <i class="bi bi-envelope me-3"></i>
+                                                    <span class="sidebar-text">Unread</span>
+                                                </div>
+                                                <span class="badge bg-info sidebar-text">{{ unread_count }}</span>
+                                            </a>
+                                        </li>
+                                        <li class="folder-item">
+                                            <a href="?filter=read" class="folder-link {% if current_filter == 'read' %}active{% endif %}">
+                                                <div class="folder-link-content">
+                                                    <i class="bi bi-envelope-open me-3"></i>
+                                                    <span class="sidebar-text">Read</span>
+                                                </div>
+                                                <span class="badge bg-success sidebar-text">{{ read_count }}</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="stat-item">
-                                    <small class="text-muted">Read:</small>
-                                    <strong class="float-end text-success">{{ read_count }}</strong>
+
+                                <!-- Quick Stats -->
+                                <div class="inbox-stats mt-4">
+                                    <h6 class="text-muted sidebar-text">Quick Stats</h6>
+                                    <div class="stat-item">
+                                        <small class="text-muted sidebar-text">Total Messages:</small>
+                                        <strong class="float-end sidebar-text">{{ total_messages }}</strong>
+                                    </div>
+                                    <div class="stat-item">
+                                        <small class="text-muted sidebar-text">Unread:</small>
+                                        <strong class="float-end text-warning sidebar-text">{{ unread_count }}</strong>
+                                    </div>
+                                    <div class="stat-item">
+                                        <small class="text-muted sidebar-text">Read:</small>
+                                        <strong class="float-end text-success sidebar-text">{{ read_count }}</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -82,7 +92,7 @@
             </div>
 
             <!-- Main Content -->
-            <div id="inbox-main" class="col-lg-9 col-md-8">
+            <div id="inbox-main" class="col-12 col-md-8 col-lg-9">
                 <div class="inbox-main">
                     <!-- Toolbar -->
                     <div class="inbox-toolbar">
@@ -177,17 +187,115 @@
 <script src="{% static 'assets/js/inbox.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const sidebarWrapper = document.getElementById('inbox-sidebar-wrapper');
     const sidebar = document.getElementById('inbox-sidebar');
+    const sidebarContent = document.getElementById('sidebar-content');
     const toggleBtn = document.getElementById('sidebar-toggle-btn');
-    let minimized = false;
+    const mainContent = document.getElementById('inbox-main');
+    const inboxLayout = document.getElementById('inbox-layout');
+    
+    let isMinimized = false;
+    let isMobileCollapsed = false;
 
-    toggleBtn.addEventListener('click', function() {
-        minimized = !minimized;
-        sidebar.classList.toggle('sidebar-minimized', minimized);
-        toggleBtn.innerHTML = minimized
-            ? '<i class="bi bi-chevron-right"></i>'
-            : '<i class="bi bi-chevron-left"></i>';
-    });
+    function updateToggleButton() {
+        const isLargeScreen = window.innerWidth >= 992; // lg breakpoint
+        
+        if (isLargeScreen) {
+            // Desktop behavior
+            toggleBtn.innerHTML = isMinimized 
+                ? '<i class="bi bi-chevron-right d-none d-lg-inline"></i>' 
+                : '<i class="bi bi-chevron-left d-none d-lg-inline"></i>';
+            toggleBtn.title = isMinimized ? 'Expand sidebar' : 'Minimize sidebar';
+        } else {
+            // Mobile/tablet behavior  
+            toggleBtn.innerHTML = isMobileCollapsed 
+                ? '<i class="bi bi-chevron-down d-lg-none"></i>' 
+                : '<i class="bi bi-chevron-up d-lg-none"></i>';
+            toggleBtn.title = isMobileCollapsed ? 'Show sidebar' : 'Hide sidebar';
+        }
+    }
+
+    function handleSidebarToggle() {
+        const isLargeScreen = window.innerWidth >= 992;
+        
+        if (isLargeScreen) {
+            // Desktop behavior - minimize/expand
+            isMinimized = !isMinimized;
+            
+            if (isMinimized) {
+                // Minimize sidebar
+                sidebarWrapper.className = 'col-lg-1 col-md-4 col-12';
+                mainContent.className = 'col-lg-11 col-md-8 col-12';
+                sidebar.classList.add('sidebar-minimized');
+                inboxLayout.classList.add('sidebar-minimized');
+            } else {
+                // Expand sidebar
+                sidebarWrapper.className = 'col-lg-3 col-md-4 col-12';
+                mainContent.className = 'col-lg-9 col-md-8 col-12';
+                sidebar.classList.remove('sidebar-minimized');
+                inboxLayout.classList.remove('sidebar-minimized');
+            }
+        } else {
+            // Mobile/tablet behavior - collapse/expand
+            isMobileCollapsed = !isMobileCollapsed;
+            
+            if (isMobileCollapsed) {
+                sidebarContent.style.display = 'none';
+                sidebar.classList.add('mobile-collapsed');
+            } else {
+                sidebarContent.style.display = 'block';
+                sidebar.classList.remove('mobile-collapsed');
+            }
+        }
+        
+        updateToggleButton();
+    }
+
+    // Handle window resize
+    function handleResize() {
+        const isLargeScreen = window.innerWidth >= 992;
+        
+        if (isLargeScreen) {
+            // Reset mobile states when switching to desktop
+            isMobileCollapsed = false;
+            sidebarContent.style.display = 'block';
+            sidebar.classList.remove('mobile-collapsed');
+            
+            // Apply desktop minimized state if needed
+            if (isMinimized) {
+                sidebarWrapper.className = 'col-lg-1 col-md-4 col-12';
+                mainContent.className = 'col-lg-11 col-md-8 col-12';
+                sidebar.classList.add('sidebar-minimized');
+                inboxLayout.classList.add('sidebar-minimized');
+            } else {
+                sidebarWrapper.className = 'col-lg-3 col-md-4 col-12';
+                mainContent.className = 'col-lg-9 col-md-8 col-12';
+                sidebar.classList.remove('sidebar-minimized');
+                inboxLayout.classList.remove('sidebar-minimized');
+            }
+        } else {
+            // Reset desktop states when switching to mobile
+            isMinimized = false;
+            sidebarWrapper.className = 'col-lg-3 col-md-4 col-12';
+            mainContent.className = 'col-lg-9 col-md-8 col-12';
+            sidebar.classList.remove('sidebar-minimized');
+            inboxLayout.classList.remove('sidebar-minimized');
+            
+            // On mobile, start with sidebar expanded on small screens
+            if (window.innerWidth < 768) {
+                sidebarWrapper.style.width = '100%';
+            }
+        }
+        
+        updateToggleButton();
+    }
+
+    // Event listeners
+    toggleBtn.addEventListener('click', handleSidebarToggle);
+    window.addEventListener('resize', handleResize);
+    
+    // Initialize
+    handleResize();
 });
 </script>
 {% endblock %}

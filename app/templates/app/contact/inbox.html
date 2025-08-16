@@ -11,13 +11,19 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-lg-3 col-md-4">
-                <div class="inbox-sidebar">
+                <div class="inbox-sidebar" id="inbox-sidebar">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="bi bi-inbox-fill me-2"></i>
-                                Message Inbox
-                            </h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-inbox-fill me-2"></i>
+                                    Message Inbox
+                                </h5>
+                                <!-- Minimize Button -->
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebar-toggle-btn" title="Minimize sidebar">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                            </div>
 
                             <!-- Compose button (future feature) -->
                             <div class="d-grid mb-3">
@@ -76,7 +82,7 @@
             </div>
 
             <!-- Main Content -->
-            <div class="col-lg-9 col-md-8">
+            <div id="inbox-main" class="col-lg-9 col-md-8">
                 <div class="inbox-main">
                     <!-- Toolbar -->
                     <div class="inbox-toolbar">
@@ -169,4 +175,19 @@
 
 {% block extra_js %}
 <script src="{% static 'assets/js/inbox.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('inbox-sidebar');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    let minimized = false;
+
+    toggleBtn.addEventListener('click', function() {
+        minimized = !minimized;
+        sidebar.classList.toggle('sidebar-minimized', minimized);
+        toggleBtn.innerHTML = minimized
+            ? '<i class="bi bi-chevron-right"></i>'
+            : '<i class="bi bi-chevron-left"></i>';
+    });
+});
+</script>
 {% endblock %}

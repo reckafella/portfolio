@@ -1,16 +1,16 @@
 // Enhanced theme-toggler.js with dramatic page-turning animation
 (() => {
     'use strict'
-  
+
     document.addEventListener('DOMContentLoaded', function() {
         // Get elements
         const themeSwitcher = document.getElementById('themeSwitcher');
         const themeIcon = themeSwitcher.querySelector('.theme-icon');
-        
+
         // Theme management functions
         const getStoredTheme = () => localStorage.getItem('theme') || 'dark';
         const setStoredTheme = theme => localStorage.setItem('theme', theme);
-        
+
         // Create and append transition overlay element if it doesn't exist
         let overlay = document.getElementById('theme-transition-overlay');
         if (!overlay) {
@@ -30,7 +30,7 @@
             `;
             document.body.appendChild(overlay);
         }
-        
+
         // Function to update theme with dramatic page-turning transition
         function updateTheme(theme, clickX = 0, clickY = 0) {
             // Set the opposite theme color for the overlay (what we're transitioning from)
@@ -45,17 +45,17 @@
 
             // Start with full coverage - like a page completely covering the screen
             overlay.style.clipPath = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
-            
+
             // Force reflow to ensure styles are applied
             overlay.offsetHeight;
-            
+
             // Apply the new theme (it will be revealed as the page "turns")
             document.documentElement.setAttribute('data-bs-theme', theme);
             setStoredTheme(theme);
-            
+
             // Create dramatic page-turning animation based on theme direction
             overlay.style.transition = 'clip-path 1.2s cubic-bezier(0.23, 1, 0.32, 1)';
-            
+
             // Animate the page being "turned" based on theme change direction
             setTimeout(() => {
                 if (theme === 'light') {
@@ -66,7 +66,7 @@
                     overlay.style.clipPath = 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)';
                 }
             }, 50);
-            
+
             // Update icon during the animation for better visual feedback
             setTimeout(() => {
                 themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
@@ -87,7 +87,7 @@
         document.documentElement.setAttribute('data-bs-theme', initialTheme);
         themeIcon.classList.remove('bi-sun-fill', 'bi-moon-fill');
         themeIcon.classList.add(initialTheme === 'light' ? 'bi-moon-fill' : 'bi-sun-fill');
-        
+
         // Theme switch event listener
         themeSwitcher.addEventListener('click', function(e) {
             const currentTheme = getStoredTheme();

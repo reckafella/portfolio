@@ -181,7 +181,7 @@
 /* Message Content Styles */
 .message-sender .sender-name {
     font-size: 0.95rem;
-    color: var(--heading-color);
+    color: var(--default-color);
 }
 
 .message-sender .sender-email {
@@ -266,7 +266,7 @@
 }
 
 .sender-info h6 {
-    color: var(--heading-color);
+    color: var(--default-color);
 }
 
 .sender-info a {
@@ -305,7 +305,7 @@
 }
 
 .empty-state h4 {
-    color: var(--heading-color);
+    color: var(--default-color);
     margin-bottom: 1rem;
 }
 
@@ -587,7 +587,7 @@
 /* Message Content Styles */
 .message-sender .sender-name {
     font-size: 0.95rem;
-    color: var(--heading-color);
+    color: var(--default-color);
 }
 
 .message-sender .sender-email {
@@ -672,7 +672,7 @@
 }
 
 .sender-info h6 {
-    color: var(--heading-color);
+    color: var(--default-color);
 }
 
 .sender-info a {
@@ -711,7 +711,7 @@
 }
 
 .empty-state h4 {
-    color: var(--heading-color);
+    color: var(--default-color);
     margin-bottom: 1rem;
 }
 

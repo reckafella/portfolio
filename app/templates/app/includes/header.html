@@ -1,4 +1,5 @@
 {% load static %}
+
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid d-flex justify-content-around align-items-center">
         <a href="{% url 'app:home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
@@ -16,14 +17,7 @@
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="{% url 'app:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span>Home</span></a></li>
-                    {% comment %}
-                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="{# url 'app:resume' #}" target="_blank"><span>My Resume (PDF)</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                        </ul>
-                    </li>
-                    {% endcomment %}
-                    <li><a href="{% url 'app:about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About Me</span></a></li>
+                    <li><a href="{% url 'app:about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><span>About</span></a></li>
                     <li><a href="{% url 'app:services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><span>Services</span></a></li>
                     <li><a href="{% url 'app:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><span>Contact</span></a></li>
                     {% if user.is_staff %}

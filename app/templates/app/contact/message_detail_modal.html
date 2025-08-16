@@ -48,7 +48,7 @@
 
     <!-- Message Content -->
     <div class="message-content">
-        <div class="card bg-light">
+        <div class="card">
             <div class="card-body">
                 {{ message.message|safe }}
             </div>
@@ -71,21 +71,21 @@
                 <div class="btn-group" role="group">
                     {% if not message.is_read %}
                     <button type="button" 
-                            class="btn btn-outline-success mark-read-btn"
+                            class="btn btn-success mark-read-btn"
                             data-message-id="{{ message.id }}">
                         <i class="bi bi-envelope-open me-1"></i>
                         Mark as Read
                     </button>
                     {% else %}
                     <button type="button" 
-                            class="btn btn-outline-warning mark-unread-btn"
+                            class="btn btn-warning mark-unread-btn"
                             data-message-id="{{ message.id }}">
                         <i class="bi bi-envelope me-1"></i>
                         Mark as Unread
                     </button>
                     {% endif %}
                     <button type="button" 
-                            class="btn btn-outline-danger delete-message-btn"
+                            class="btn btn-danger delete-message-btn"
                             data-message-id="{{ message.id }}"
                             data-bs-dismiss="modal">
                         <i class="bi bi-trash me-1"></i>

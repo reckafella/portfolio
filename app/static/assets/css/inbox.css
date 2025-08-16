@@ -27,15 +27,13 @@
     position: relative;
 }
 
-.inbox-folders .folder-link:hover {
-    background-color: var(--special-background-color);
-    color: var(--accent-color);
+.inbox-folders .folder-link:hover,
+.inbox-folders .folder-link.active {
+    background-color: var(--accent-color);
     text-decoration: none;
 }
 
 .inbox-folders .folder-link.active {
-    background-color: var(--accent-color);
-    color: var(--default-color);
     font-weight: 500;
 }
 

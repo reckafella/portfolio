@@ -6,7 +6,7 @@
 {% block keywords %}inbox, messages, contact, management, admin{% endblock %}
 
 {% block content %}
-<section class="section">
+<section class="section contact">
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -18,7 +18,7 @@
                                 <i class="bi bi-inbox-fill me-2"></i>
                                 Message Inbox
                             </h5>
-                            
+
                             <!-- Compose button (future feature) -->
                             <div class="d-grid mb-3">
                                 <button class="btn btn-primary" disabled>
@@ -32,21 +32,21 @@
                                 <ul class="list-unstyled">
                                     <li class="folder-item">
                                         <a href="?filter=all" class="folder-link {% if current_filter == 'all' %}active{% endif %}">
-                                            <i class="bi bi-inbox me-2"></i>
+                                            <i class="bi bi-inbox me-3"></i>
                                             All Messages
-                                            <span class="badge bg-secondary ms-auto">{{ total_messages }}</span>
+                                            <span class="badge bg-info ms-auto">{{ total_messages }}</span>
                                         </a>
                                     </li>
                                     <li class="folder-item">
                                         <a href="?filter=unread" class="folder-link {% if current_filter == 'unread' %}active{% endif %}">
-                                            <i class="bi bi-envelope me-2"></i>
+                                            <i class="bi bi-envelope me-3"></i>
                                             Unread
-                                            <span class="badge bg-warning ms-auto">{{ unread_count }}</span>
+                                            <span class="badge bg-info ms-auto">{{ unread_count }}</span>
                                         </a>
                                     </li>
                                     <li class="folder-item">
                                         <a href="?filter=read" class="folder-link {% if current_filter == 'read' %}active{% endif %}">
-                                            <i class="bi bi-envelope-open me-2"></i>
+                                            <i class="bi bi-envelope-open me-3"></i>
                                             Read
                                             <span class="badge bg-success ms-auto">{{ read_count }}</span>
                                         </a>
@@ -83,19 +83,16 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row align-items-center">
-                                    <div class="col-md-6">
+                                    <div class="col-md-5">
                                         <!-- Search -->
                                         <div class="search-container">
                                             <form method="get" id="search-form" class="d-flex">
                                                 <div class="input-group">
-                                                    <input type="text" 
-                                                           name="search" 
-                                                           class="form-control" 
-                                                           placeholder="Search messages..." 
-                                                           value="{{ search_query }}"
-                                                           id="search-input">
+                                                    <input type="text" name="search" class="form-control"
+                                                        placeholder="Search messages..."
+                                                        value="{{ search_query }}" id="search-input">
                                                     <input type="hidden" name="filter" value="{{ current_filter }}">
-                                                    <button class="btn btn-outline-secondary" type="submit">
+                                                    <button class="btn btn-secondary" type="submit">
                                                         <i class="bi bi-search"></i>
                                                     </button>
                                                 </div>
@@ -106,29 +103,29 @@
                                         <!-- Bulk Actions -->
                                         <div class="bulk-actions d-flex justify-content-end">
                                             <div class="btn-group" role="group">
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-outline-secondary" 
+                                                <button type="button"
+                                                        class="btn btn-sm btn-secondary"
                                                         id="select-all-btn">
                                                     <i class="bi bi-check-square"></i>
                                                     Select All
                                                 </button>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-outline-primary" 
-                                                        id="mark-read-btn" 
+                                                <button type="button"
+                                                        class="btn btn-sm btn-primary"
+                                                        id="mark-read-btn"
                                                         disabled>
                                                     <i class="bi bi-envelope-open"></i>
                                                     Mark Read
                                                 </button>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-outline-warning" 
-                                                        id="mark-unread-btn" 
+                                                <button type="button"
+                                                        class="btn btn-sm btn-warning"
+                                                        id="mark-unread-btn"
                                                         disabled>
                                                     <i class="bi bi-envelope"></i>
                                                     Mark Unread
                                                 </button>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-outline-danger" 
-                                                        id="delete-selected-btn" 
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger"
+                                                        id="delete-selected-btn"
                                                         disabled>
                                                     <i class="bi bi-trash"></i>
                                                     Delete

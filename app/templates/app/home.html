@@ -7,7 +7,8 @@
 {% block content %}
 <section id="hero" class="section hero py-5">
     <div class="hero-background" data-aos="fade-in">
-        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/image_2025-07-10_at_15.55.17_wwo7tj" alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
+        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/image_2025-07-10_at_15.55.17_wwo7tj"
+        alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
     </div>
     <div class="overlay"></div>
     <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
@@ -15,10 +16,13 @@
             <div class="col-lg-8">
                 <h2 class="stix-two-text-bold">{{ admin_profile.name|default:"Ethan Wanyoike" }}</h2>
                 <div>
+                    <p>A Software Engineer specializing in:</p>
                     <p>
                         <span class="text-decoration-underline typed source-serif-4-bold"
-                            data-typed-items="Software Engineer, DevOps Engineer, Backend Developer, Frontend Developer, Technical Writer"
-                            style="text-decoration-thickness: 5%;">
+                            data-typed-items="DevOps Engineering,
+                            Backend Development, Frontend Development,
+                            Technical Writing"
+                            style="text-decoration-thickness: 10%;">
                         </span>
                         <span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
                     </p>
@@ -27,7 +31,7 @@
                     <p>Let's bring your project to life!</p>
                     <p>
                         {% url 'app:contact' as contact_url %}
-                        <button type="button" class="btn btn-sm btn-success" onclick="location.href='{{ contact_url }}'">
+                        <button type="button" class="btn btn-lg btn-light-dark py-2 fw-bold" onclick="location.href='{{ contact_url }}'">
                             Get in Touch <i class="bi bi-arrow-right"></i>
                         </button>
                     </p>

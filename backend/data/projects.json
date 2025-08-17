@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "title": "Sample Project",
+        "description": "This is a sample project",
+        "technologies": ["Python", "FastAPI", "React"]
+    },
+    {
+        "id": 2,
+        "title": "Another Project",
+        "description": "This is another sample project",
+        "technologies": ["JavaScript", "Node.js", "Express"]
+    },
+    {
+        "id": 3,
+        "title": "Third Project",
+        "description": "This is a third sample project",
+        "technologies": ["Go", "Gin", "React"]
+    },
+    {
+        "id": 4,
+        "title": "Sample Project",
+        "description": "This is a sample project",
+        "technologies": ["Python", "FastAPI", "React"]
+    },
+    {
+        "id": 5,
+        "title": "Another Project",
+        "description": "This is another sample project",
+        "technologies": ["JavaScript", "Node.js", "Express"]
+    },
+    {
+        "id": 6,
+        "title": "Third Project",
+        "description": "This is a third sample project",
+        "technologies": ["Go", "Gin", "React"]
+    }
+]

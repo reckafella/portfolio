@@ -1,0 +1,375 @@
+/* Form Validation Styles */
+
+/* Input field states */
+
+  .form-control.char-warning {
+    border-color: #ff6b35 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+  }
+  
+  .form-control.char-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+  }
+  
+  .form-control.char-valid {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+  }
+  
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+.char-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.char-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+.char-warning {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+}
+
+/* Validation messages */
+.validation-message {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.validation-message.error {
+    color: #dc3545;
+}
+
+.validation-message.success {
+    color: #198754;
+}
+
+.validation-message.warning {
+    color: #ffc107;
+}
+
+/* Character counters */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Password toggle button */
+.password-toggle-container {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2;
+}
+
+.password-field-with-toggle {
+    padding-right: 40px;
+}
+
+/* Password strength indicator */
+.password-strength-indicator {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    height: 6px;
+    background-color: var(--default-color, #e9ecef);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.strength-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    width: 0%;
+    background-color: #dc3545;
+}
+
+.strength-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.strength-requirements {
+    font-size: 0.75rem;
+}
+
+.requirement {
+    margin-bottom: 0.25rem;
+    color: var(--default-color, #6c757d);
+}
+
+.requirement.met {
+    color: var(--accent-color, #198754);
+}
+
+.requirement.met .requirement-icon {
+    color: var(--accent-color, #198754);
+}
+
+.requirement-icon {
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+/* Image Upload and Preview Styles */
+.image-preview-container {
+    margin-top: 0.5rem;
+}
+
+.image-preview-container .card {
+    border: 1px solid var(--default-color, #dee2e6);
+    transition: transform 0.2s ease-in-out;
+}
+
+.image-preview-container .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--search-background-color, rgba(0, 0, 0, 0.1));
+}
+
+.image-preview-container img {
+    border-top-left-radius: calc(0.25rem - 1px);
+    border-top-right-radius: calc(0.25rem - 1px);
+}
+
+/* File input styling */
+input[type="file"] {
+    cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: var(--accent-color, #007bff);
+    color: var(--default-color);
+    border: none;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background: var(--accent-color, #0056b3);
+}
+
+/* Validation states for file inputs */
+input[type="file"].char-error {
+    border-color: #dc3545;
+}
+
+input[type="file"].char-valid {
+    border-color: #198754;
+}
+
+input[type="file"].char-warning {
+    border-color: #ffc107;
+}
+
+/* Enhanced Image Upload Styles */
+
+/* Drag and Drop Overlay */
+.drag-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--search-background-color, rgba(0, 123, 255, 0.1));
+    border: 2px dashed var(--default-color, #dee2e6);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.drag-content {
+    text-align: center;
+    color: var(--default-color, #6c757d);
+}
+
+.drag-content i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.drag-content p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Drag hover state */
+.drag-hover {
+    position: relative;
+}
+
+.drag-hover .form-control {
+    border-color: var(--accent-color, #007bff);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Image Preview Container */
+.image-preview-container {
+    background: var(--accordion-button-background-color, #f8f9fa);
+    border: 1px solid var(--default-color, #dee2e6);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.image-preview-container .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--default-color, #dee2e6);
+}
+
+.image-preview-container .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--search-background-color, rgba(0, 0, 0, 0.1));
+}
+
+/* Image preview card styles */
+.image-preview-container .card img {
+    transition: opacity 0.2s ease;
+}
+
+.image-preview-container .card img:hover {
+    opacity: 0.9;
+}
+
+/* Remove button styles */
+.remove-image-btn {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.remove-image-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Clear all button */
+.clear-all-btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Progress bar in image cards */
+.image-preview-container .progress {
+    border-radius: 2px;
+}
+
+/* File input enhancements */
+input[type="file"].form-control {
+    position: relative;
+    overflow: hidden;
+}
+
+input[type="file"].form-control:hover {
+    border-color: var(--accent-color, #007bff);
+}
+
+/* Image modal styles */
+#image-preview-modal .modal-body img {
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .image-preview-container .col-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .drag-content i {
+        font-size: 2rem;
+    }
+    
+    .drag-content p {
+        font-size: 0.9rem;
+    }
+}
+
+/* File upload states */
+.file-input-success {
+    border-color: #198754 !important;
+    background-color: rgba(25, 135, 84, 0.05);
+}
+
+.file-input-error {
+    border-color: #dc3545 !important;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Animation for image loading */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.image-preview-container .card {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* File type indicators */
+.file-type-indicator {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: var(--search-background-color, rgba(0, 0, 0, 0.7));
+    color: var(--default-color, white);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+/* Loading state for previews */
+.preview-loading {
+    background: var(--accordion-button-background-color, #f8f9fa);
+    border: 2px dashed var(--default-color, #dee2e6);
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color, #6c757d);
+}
+
+.preview-loading::after {
+    content: "Loading...";
+    font-size: 0.875rem;
+}

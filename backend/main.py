@@ -2,8 +2,18 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from pydantic import BaseModel, EmailStr
 import os
 from pathlib import Path
+
+
+# Pydantic models for request validation
+class ContactRequest(BaseModel):
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -23,11 +33,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # API Routes
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "message": "Portfolio API is running"}
+
 
 @app.get("/api/projects")
 async def get_projects():
@@ -40,23 +52,48 @@ async def get_projects():
                 "title": "Sample Project",
                 "description": "This is a sample project",
                 "technologies": ["Python", "FastAPI", "React"]
+            },
+            {
+                "id": 2,
+                "title": "Another Project",
+                "description": "This is another sample project",
+                "technologies": ["JavaScript", "Node.js", "Express"]
+            },
+            {
+                "id": 3,
+                "title": "Third Project",
+                "description": "This is a third sample project",
+                "technologies": ["Go", "Gin", "React"]
             }
         ]
     }
 
+
 @app.post("/api/contact")
-async def contact_form(name: str, email: str, message: str):
+async def contact_form(contact_data: ContactRequest):
     """Handle contact form submission"""
-    # TODO: Implement contact form logic
-    return {"status": "success", "message": "Message sent successfully"}
+    try:
+        # Here you would typically save to database or send email
+        # For now, just return success response
+        return {
+            "status": "success",
+            "message": f"Hi {contact_data.name}, your message has been sent successfully!",
+            "data": {
+                "name": contact_data.name,
+                "email": contact_data.email,
+                "subject": contact_data.subject
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to process contact form" + str(e))
 
 # Serve React static files in production
 frontend_build_dir = Path(__file__).parent.parent / "frontend" / "build"
 
 if frontend_build_dir.exists():
     # Mount static files
-    app.mount("/static", StaticFiles(directory=str(frontend_build_dir / "static")), name="static")
-    
+    app.mount("/static", StaticFiles(directory=str(frontend_build_dir / "assets")), name="assets")
+
     # Serve React app for all non-API routes
     @app.get("/{path:path}")
     async def serve_react_app(path: str = ""):
@@ -64,7 +101,7 @@ if frontend_build_dir.exists():
         # Check if it's an API route
         if path.startswith("api/"):
             raise HTTPException(status_code=404, detail="API endpoint not found")
-        
+
         # Serve index.html for all other routes (React Router)
         index_file = frontend_build_dir / "index.html"
         if index_file.exists():

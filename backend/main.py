@@ -2,18 +2,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, EmailStr
-import os
 from pathlib import Path
+import os
+import json
 
-
-# Pydantic models for request validation
-class ContactRequest(BaseModel):
-    name: str
-    email: EmailStr
-    subject: str
-    message: str
-
+from forms.projects import return_project_form_schema
+from forms.contact import (
+    ContactRequest, return_contact_form_schema, return_contact_form
+)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -41,51 +37,39 @@ async def health_check():
     return {"status": "healthy", "message": "Portfolio API is running"}
 
 
+@app.get("/api/forms/contact")
+async def get_contact_form_schema():
+    """Get contact form schema/configuration"""
+    return await return_contact_form_schema()
+
+
+@app.get("/api/forms/project")
+async def get_project_form_schema():
+    """Get project form schema/configuration"""
+    return await return_project_form_schema()
+
+
 @app.get("/api/projects")
 async def get_projects():
     """Get all projects"""
-    # TODO: Implement database queries
+    # Placeholder for actual project retrieval logic
+    project_path = os.path.join(os.path.dirname(__file__), "data", "projects.json")
+    try:
+        with open(project_path) as f:
+            projects = json.load(f)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to load projects data" + str(e))
+
     return {
-        "projects": [
-            {
-                "id": 1,
-                "title": "Sample Project",
-                "description": "This is a sample project",
-                "technologies": ["Python", "FastAPI", "React"]
-            },
-            {
-                "id": 2,
-                "title": "Another Project",
-                "description": "This is another sample project",
-                "technologies": ["JavaScript", "Node.js", "Express"]
-            },
-            {
-                "id": 3,
-                "title": "Third Project",
-                "description": "This is a third sample project",
-                "technologies": ["Go", "Gin", "React"]
-            }
-        ]
+        "projects": projects
     }
 
 
 @app.post("/api/contact")
 async def contact_form(contact_data: ContactRequest):
     """Handle contact form submission"""
-    try:
-        # Here you would typically save to database or send email
-        # For now, just return success response
-        return {
-            "status": "success",
-            "message": f"Hi {contact_data.name}, your message has been sent successfully!",
-            "data": {
-                "name": contact_data.name,
-                "email": contact_data.email,
-                "subject": contact_data.subject
-            }
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to process contact form" + str(e))
+    return await return_contact_form(contact_data)
+
 
 # Serve React static files in production
 frontend_build_dir = Path(__file__).parent.parent / "frontend" / "build"

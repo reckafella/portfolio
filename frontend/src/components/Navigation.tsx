@@ -11,6 +11,7 @@ const Navigation: React.FC = () => {
     { path: '/projects', label: 'Projects' },
     { path: '/blog', label: 'Blog' },
     { path: '/contact', label: 'Contact' },
+    { path: '/forms', label: 'Forms Demo' },
   ];
 
   const toggleMobileMenu = () => {

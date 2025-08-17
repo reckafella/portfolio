@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="450" height="450" viewBox="0 0 450 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="450" height="450" fill="#232583" />
+  <path id="lineAC" d="M 50 225 q 140 -260 300 0" stroke="none" stroke-width="2" fill="none"/>
+  
+  <!-- Icon: A combination of node structure and code brackets -->
+  <!-- We create a minimal icon by drawing two curly braces with connecting nodes -->
+  <!-- Bunny Icon: A minimal bunny symbol replacing the curly braces -->
+  <g transform="translate(50,50)">
+    <!-- Bunny Ears -->
+    <ellipse cx="90" cy="90" rx="9" ry="18" stroke="#F08C00" stroke-width="2.5" fill="none"/>
+    <ellipse cx="189" cy="90" rx="9" ry="18" stroke="#F08C00" stroke-width="2.5" fill="none"/>
+    
+    <!-- Bunny Head -->
+    <ellipse cx="140" cy="140" rx="55" ry="60" stroke="#F08C00" stroke-width="3" fill="none"/>
+    
+    <!-- Bunny Eyes -->
+    <ellipse cx="105" cy="132" rx="9" ry="5" stroke="#F08C00" fill="none" stroke-width="2" />
+    <ellipse cx="174" cy="132" rx="9" ry="5" stroke="#F08C00" fill="none" stroke-width="2" />
+
+    <!-- Bunny Eyeballs -->
+    <ellipse cx="105" cy="132" rx="1" ry="2" stroke="#F08C00" fill="none" stroke-width="2" />
+    <ellipse cx="174" cy="132" rx="1" ry="2" stroke="#F08C00" fill="none" stroke-width="2" />
+    
+    <!-- Bunny Nose -->
+    <ellipse cx="140" cy="150" rx="11" ry="19" fill="none" stroke="#d0fd00" stroke-width="2"/>
+  </g>
+  
+  <!-- Text: Name and Slogan -->
+  <g fill="white" font-family="., JetBrains Mono, sans-serif">
+    <!-- Developer Name -->
+    <text x="125" y="155" font-size="50" font-weight="900">
+    <textPath href="#lineAC" startOffset="20%" text-anchor="middle" fill="white">Reckafella</textPath>
+    </text>
+    
+    <!-- Slogan with monospaced style, uppercase -->
+    <text x="125" y="260" font-size="26" fill="#F08C00" font-family="JetBrains Mono, monospace">
+    <textPath href="#lineAC2" startOffset="17%" text-anchor="middle">Build, Baby, Build!</textPath>
+    </text>
+  </g>
+  <path id="lineAC2" d="M 45 220 q 180 130 270 0" stroke="none" stroke-width="2" fill="none"/>
+</svg>

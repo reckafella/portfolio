@@ -68,10 +68,10 @@ const Footer: React.FC = () => {
                 {/* Copyright */}
                 <div className="copyright text-center mt-4">
                     <p>
-                        <SVGLogoComponent />
                         <strong>
                             © {currentYear} — All Rights Reserved.
                         </strong>
+                        <SVGLogoComponent />
                     </p>
                 </div>
             </div>

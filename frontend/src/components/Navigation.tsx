@@ -4,7 +4,11 @@ import Search from './Search';
 import ThemeSwitch from './SwitchThemes';
 import SVGLogoComponent from './Logo';
 
-const Navigation: React.FC = () => {
+interface NavigationProps {
+  onToggleSearch: () => void;
+}
+
+const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -43,7 +47,7 @@ const Navigation: React.FC = () => {
                         <SVGLogoComponent />
                     </Link>
                     <div className='search-nav-wrapper d-flex justify-content-center align-items-center'>
-                        <Search />
+                        <Search onToggleSearch={onToggleSearch} />
                         <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">
                             <ul>

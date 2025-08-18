@@ -1,4 +1,4 @@
-/* import React from 'react' */
+import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import HomePage from './pages/HomePage'
@@ -10,6 +10,7 @@ import SearchResults from './pages/SearchResults'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
+import SearchOverlay from './components/SearchOverlay'
 import './App.css'
 
 const queryClient = new QueryClient({
@@ -22,11 +23,21 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+    const toggleSearch = () => {
+        setIsSearchOpen(!isSearchOpen);
+    };
+
+    const closeSearch = () => {
+        setIsSearchOpen(false);
+    };
+
     return (
         <Router>
             <QueryClientProvider client={queryClient}>
                 <div className="d-flex flex-column min-vh-100">
-                    <Navigation />
+                    <Navigation onToggleSearch={toggleSearch} />
                     <main className="flex-grow-1">
                         <Routes>
                             <Route path="/" element={<HomePage />} />
@@ -39,6 +50,7 @@ function App() {
                     </main>
                     <Footer />
                     <ScrollToTop />
+                    <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
                 </div>
             </QueryClientProvider>
         </Router>

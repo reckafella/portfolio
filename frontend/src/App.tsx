@@ -6,6 +6,7 @@ import ProjectsPage from './pages/ProjectsPage'
 import ContactPage from './pages/ContactPage'
 import ServicesPage from './pages/ServicesPage'
 import DynamicFormExample from './pages/DynamicFormExample'
+import SearchResults from './pages/SearchResults'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
@@ -33,6 +34,7 @@ function App() {
                             <Route path="/contact" element={<ContactPage />} />
                             <Route path="/services" element={<ServicesPage />} />
                             <Route path="/forms" element={<DynamicFormExample />} />
+                            <Route path="/search" element={<SearchResults />} />
                         </Routes>
                     </main>
                     <Footer />

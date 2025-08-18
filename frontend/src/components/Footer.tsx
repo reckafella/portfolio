@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
     return (
         <footer id="footer" className="footer">
             <div className="footer-top">
-                <SVGLogoComponent />
+                
                 <div className="container">
                     <div className="row row-cols-2 row-cols-md-4 row-cols-lg-4 g-3 justify-content-center gy-3">
                         {/* Social Links */}
@@ -68,8 +68,9 @@ const Footer: React.FC = () => {
                 {/* Copyright */}
                 <div className="copyright text-center mt-4">
                     <p>
+                        <SVGLogoComponent />
                         <strong>
-                            © {currentYear} — Ethan Wanyoike — All Rights Reserved.
+                            © {currentYear} — All Rights Reserved.
                         </strong>
                     </p>
                 </div>

@@ -8,6 +8,7 @@ import ServicesPage from './pages/ServicesPage'
 import DynamicFormExample from './pages/DynamicFormExample'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
+import ScrollToTop from './components/ScrollToTop'
 import './App.css'
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ function App() {
                         </Routes>
                     </main>
                     <Footer />
+                    <ScrollToTop />
                 </div>
             </QueryClientProvider>
         </Router>

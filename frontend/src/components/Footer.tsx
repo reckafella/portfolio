@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SVGLogoComponent from './Logo';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -7,22 +8,22 @@ const Footer: React.FC = () => {
     return (
         <footer id="footer" className="footer">
             <div className="footer-top">
+                <SVGLogoComponent />
                 <div className="container">
-                    <div className="row gy-3">
+                    <div className="row row-cols-2 row-cols-md-4 row-cols-lg-4 g-3 justify-content-center gy-3">
                         {/* Social Links */}
-                        <div className="col-lg-3 col-md-6">
+                        <div className="col footer-info h-100">
                             <h4>Social Links</h4>
                             <p>Connect with me on:</p>
-                            <div className="social-links d-flex">
-                            <Link to="https://www.linkedin.com/in/ethanmuthoni/" target='_blank' className="linkedin"><i className="bi bi-linkedin"></i></Link>
-                            <Link to="https://github.com/reckafella" target='_blank' className="github"><i className="bi bi-github"></i></Link>
-                            <Link to="https://twitter.com/frmundu" target='_blank' className="twitter"><i className="bi bi-twitter-x"></i></Link>
-                            <Link to="https://www.instagram.com/frmundu/" target='_blank' className="instagram"><i className="bi bi-instagram"></i></Link>
+                            <div className="social-links d-flex flex-wrap gap-2">
+                                <Link to="https://github.com/reckafella" target='_blank' className="github"><i className="bi bi-github"></i></Link>
+                                <Link to="https://www.linkedin.com/in/ethanmuthoni/" target='_blank' className="linkedin"><i className="bi bi-linkedin"></i></Link>
+                                <Link to="https://twitter.com/frmundu" target='_blank' className="twitter"><i className="bi bi-twitter-x"></i></Link>
                             </div>
                         </div>
 
                         {/* Contact Me */}
-                        <div className="col-lg-3 col-md-6 footer-links">
+                        <div className="col footer-links h-100">
                             <h4>Contact Me</h4>
                             <ul>
                             <li>
@@ -34,7 +35,7 @@ const Footer: React.FC = () => {
                         </div>
 
                         {/* Useful Links */}
-                        <div className="col-lg-3 col-md-6 footer-links">
+                        <div className="col footer-links h-100">
                             <h4>Useful Links</h4>
                             <ul>
                             <li><Link to="/">Home</Link></li>
@@ -51,7 +52,7 @@ const Footer: React.FC = () => {
                         </div>
 
                         {/* Services Offered */}
-                        <div className="col-lg-3 col-md-6 footer-links">
+                        <div className="col footer-links h-100">
                             <h4>Services Offered</h4>
                             <ul>
                             <li><Link to="#">Web Development</Link></li>

@@ -196,7 +196,8 @@ h6 {
 }
 
 .header .logo img,
-.header .logo svg {
+.header .logo svg,
+.copyright svg {
   height: auto;
   width: 100%;
   max-height: 60px;

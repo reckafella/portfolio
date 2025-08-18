@@ -195,7 +195,10 @@ h6 {
   line-height: 1;
 }
 
-.header .logo img {
+.header .logo img,
+.header .logo svg {
+  height: auto;
+  width: 100%;
   max-height: 60px;
   margin: auto;
   margin-right: 8px;

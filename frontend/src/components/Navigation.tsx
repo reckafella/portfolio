@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import Search from './Search';
+import ThemeSwitch from './SwitchThemes';
+import SVGLogoComponent from './Logo';
 
 const Navigation: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -27,26 +29,6 @@ const Navigation: React.FC = () => {
     document.body.classList.toggle('mobile-nav-active', !isMobileMenuOpen);
   };
 
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
-  };
-
-  const closeSearch = () => {
-    setIsSearchOpen(false);
-  };
-
-  // Handle escape key to close search
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isSearchOpen) {
-        closeSearch();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [isSearchOpen]);
-
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -56,27 +38,13 @@ const Navigation: React.FC = () => {
     return (
         <>
             <header id="header" className="header d-flex align-items-center sticky-top">
-                <div className="container-fluid d-flex justify-content-around align-items-center">
-                    <Link to="/" className="logo d-flex align-items-center me-auto me-xl-0">
-                        <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/portfolio-logo" 
-                             alt="Ethan" 
-                             className="logo-img image-fluid" 
-                             loading="lazy" />
+                <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
+                    <Link to="/" className="logo d-flex align-items-center">
+                        <SVGLogoComponent />
                     </Link>
-                    <div className="search-nav-wrapper d-flex justify-content-between align-items-center gap-1">
-                        <div className="d-block search-icon">
-                            <button 
-                                type="button" 
-                                role="button" 
-                                className="search-bar-toggle"
-                                onClick={toggleSearch}
-                            >
-                                <i className="bi bi-search"></i>
-                            </button>
-                        </div>
-                        <button type="button" className="btn bg-transparent border-0 p-0 m-0 theme-switcher" id="themeSwitcher">
-                            <i className="bi bi-sun-fill theme-icon"></i>
-                        </button>
+                    <div className='search-nav-wrapper d-flex justify-content-center align-items-center'>
+                        <Search />
+                        <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">
                             <ul>
                                 {navItems.map((item) => (
@@ -106,37 +74,12 @@ const Navigation: React.FC = () => {
                                 </li>
                             </ul>
                         </nav>
-                        <i
-                            className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'}`}
-                            onClick={toggleMobileMenu}
-                        ></i>
+                        <i className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'}`}
+                            onClick={toggleMobileMenu}></i>
                     </div>
                 </div>
             </header>
             <div className="nav-overlay"></div>
-            
-            <div id="full-page-search" className={isSearchOpen ? 'search-active' : ''}>
-                <button type="button" className="close" onClick={closeSearch}>
-                    <i className="bi bi-x-lg"></i>
-                </button>
-                <div className="search-container">
-                    <div className="search-header">
-                        <h2>Search</h2>
-                    </div>
-                    <form action="/search" className="d-flex flex-column align-items-center gap-3 gap-lg-5 w-100">
-                        <input 
-                            type="search" 
-                            name="q" 
-                            id="search-input" 
-                            className="typed-search"
-                            placeholder="Search projects, blog posts..." 
-                            required 
-                            autoFocus={isSearchOpen}
-                        />
-                        <button type="submit" className="btn btn-success fw-bold">Search</button>
-                    </form>
-                </div>
-            </div>
         </>
     );
 };

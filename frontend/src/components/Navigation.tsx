@@ -33,7 +33,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         } else {
             return [
                 { path: '/login', label: 'Login' },
-                { path: '/register', label: 'Register' }
+                { path: '/signup', label: 'Signup' }
             ];
         }
     };

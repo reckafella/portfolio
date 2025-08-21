@@ -14,7 +14,7 @@ const SignupForm: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { register } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ const SignupForm: React.FC = () => {
     }
 
     try {
-      await register(formData);
+      await signup(formData);
       console.log('Registration successful!');
       // Redirect to home page after successful registration
       navigate('/');

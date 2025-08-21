@@ -15,7 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+  signup: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
   testApi: () => Promise<void>;
 }
@@ -66,10 +66,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         }
     };
 
-    const register = async (userData: any) => {
+    const signup = async (userData: any) => {
         setIsLoading(true);
         try {
-        const response = await AuthService.register(userData);
+        const response = await AuthService.signup(userData);
         setUser(response.user);
         } catch (error) {
         console.error('Registration error:', error);
@@ -106,7 +106,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated: !!user,
         isLoading,
         login,
-        register,
+        signup,
         logout,
         testApi,
     };

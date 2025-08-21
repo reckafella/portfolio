@@ -1,5 +1,5 @@
 {
-    "python.defaultInterpreterPath": "/home/rohn/GitHub/portfolio/.env/bin/python",
+    "python.defaultInterpreterPath": ".env/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.analysis.autoImportCompletions": true,
@@ -8,4 +8,10 @@
         "*.py": "python"
     },
     "python-envs.pythonProjects": [],
+    "python.analysis.extraPaths": [
+        "./",
+        "./env/lib/python3.12/site-packages"
+    ],
+    "python.analysis.indexing": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

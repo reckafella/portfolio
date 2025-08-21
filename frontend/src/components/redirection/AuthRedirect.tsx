@@ -18,7 +18,7 @@ const AuthRedirect: React.FC<AuthRedirectProps> = ({ to, replace = true }) => {
 
 // Specific redirect components
 export const SigninRedirect: React.FC = () => <AuthRedirect to="/login" />;
-export const SignupRedirect: React.FC = () => <AuthRedirect to="/register" />;
+export const SignupRedirect: React.FC = () => <AuthRedirect to="/signup" />;
 export const SignoutRedirect: React.FC = () => <AuthRedirect to="/logout" />;
 
 export default AuthRedirect;

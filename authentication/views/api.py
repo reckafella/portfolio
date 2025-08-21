@@ -2,6 +2,7 @@ from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.views import APIView
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -14,6 +15,100 @@ from ..serializers import (
     ProfileUpdateSerializer
 )
 from ..models import Profile
+
+
+class LoginFormConfigView(APIView):
+    """API endpoint to return login form configuration"""
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        form_config = {
+            "fields": {
+                "username": {
+                    "label": "Username",
+                    "type": "TextInput",
+                    "required": True,
+                    "help_text": "Enter your username",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 150
+                },
+                "password": {
+                    "label": "Password",
+                    "type": "PasswordInput",
+                    "required": True,
+                    "help_text": "Enter your password",
+                    "disabled": False,
+                    "widget": "PasswordInput"
+                }
+            }
+        }
+        return Response(form_config)
+
+
+class RegisterFormConfigView(APIView):
+    """API endpoint to return registration form configuration"""
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        form_config = {
+            "fields": {
+                "first_name": {
+                    "label": "First Name",
+                    "type": "TextInput",
+                    "required": False,
+                    "help_text": "Your first name",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 30
+                },
+                "last_name": {
+                    "label": "Last Name",
+                    "type": "TextInput",
+                    "required": False,
+                    "help_text": "Your last name",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 30
+                },
+                "username": {
+                    "label": "Username",
+                    "type": "TextInput",
+                    "required": True,
+                    "help_text": "Choose a unique username",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 150
+                },
+                "email": {
+                    "label": "Email Address",
+                    "type": "EmailInput",
+                    "required": True,
+                    "help_text": "Enter a valid email address",
+                    "disabled": False,
+                    "widget": "EmailInput",
+                    "max_length": 254
+                },
+                "password": {
+                    "label": "Password",
+                    "type": "PasswordInput",
+                    "required": True,
+                    "help_text": "Password must be at least 8 characters",
+                    "disabled": False,
+                    "widget": "PasswordInput",
+                    "min_length": 8
+                },
+                "password_confirm": {
+                    "label": "Confirm Password",
+                    "type": "PasswordInput",
+                    "required": True,
+                    "help_text": "Enter your password again",
+                    "disabled": False,
+                    "widget": "PasswordInput"
+                }
+            }
+        }
+        return Response(form_config)
 
 
 @api_view(['POST'])

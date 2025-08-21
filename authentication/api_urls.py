@@ -12,7 +12,9 @@ from .views.api import (
     UserListView,
     UserDetailView,
     ProfileListView,
-    ProfileDetailView
+    ProfileDetailView,
+    LoginFormConfigView,
+    RegisterFormConfigView
 )
 
 
@@ -33,8 +35,12 @@ urlpatterns = [
     # Test endpoint
     path('test/', api_test, name='api_test'),
 
+    # Form configuration endpoints
+    path('login-form-config/', LoginFormConfigView.as_view(), name='login_form_config'),
+    path('signup-form-config/', RegisterFormConfigView.as_view(), name='register_form_config'),
+
     # Authentication endpoints
-    path('register/', register_user, name='register'),
+    path('signup/', register_user, name='signup'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
 

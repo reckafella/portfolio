@@ -19,7 +19,7 @@ export const withErrorHandler = <P extends object>(
     // Inject error handler into props
     const enhancedProps = {
       ...props,
-      onError: (error: Error | ApiError) => handleError(error, navigate),
+      onError: (_error: Error | ApiError) => handleError(_error, navigate),
     } as P;
 
     return <WrappedComponent {...enhancedProps} />;
@@ -34,8 +34,8 @@ export const withErrorHandler = <P extends object>(
  * Context for error handling
  */
 interface ErrorContextType {
-  handleError: (error: Error | ApiError) => void;
-  redirectToError: (statusCode: number) => void;
+  handleError: (_error: Error | ApiError) => void;
+  redirectToError: (_statusCode: number) => void;
 }
 
 const ErrorContext = React.createContext<ErrorContextType | undefined>(undefined);
@@ -96,8 +96,8 @@ export const useApiCall = () => {
   const apiCall = React.useCallback(
     async <T,>(
       apiFunction: () => Promise<T>,
-      onSuccess?: (data: T) => void,
-      onError?: (error: Error | ApiError) => void
+      onSuccess?: (_data: T) => void,
+      onError?: (_error: Error | ApiError) => void
     ): Promise<T | void> => {
       try {
         const result = await apiFunction();

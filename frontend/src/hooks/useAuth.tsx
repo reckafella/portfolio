@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import AuthService from '../services/authService';
+import AuthService, {AuthResponse, RegisterData} from '../services/authService';
 
 interface User {
     id: number;
@@ -11,13 +11,13 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  signup: (userData: any) => Promise<void>;
-  logout: () => Promise<void>;
-  testApi: () => Promise<void>;
+    user: User | null;
+    isAuthenticated: boolean;
+    login: (_username: string, _password: string) => Promise<AuthResponse>;
+    signup: (_userData: RegisterData) => Promise<AuthResponse>;
+    logout: () => Promise<void>;
+    isLoading: boolean;
+    testApi: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,27 +53,27 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         initAuth();
     }, []);
 
-    const login = async (username: string, password: string) => {
+    const login = async (username: string, password: string): Promise<AuthResponse> => {
         setIsLoading(true);
         try {
-        const response = await AuthService.login({ username, password });
-        setUser(response.user);
+            const response = await AuthService.login({ username, password });
+            setUser(response.user);
+            return response;
         } catch (error) {
-        console.error('Login error:', error);
-        throw error;
+            throw new Error(`Login error: ${error}`);
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
-    const signup = async (userData: any) => {
+    const signup = async (userData: RegisterData): Promise<AuthResponse> => {
         setIsLoading(true);
         try {
         const response = await AuthService.signup(userData);
         setUser(response.user);
+        return response;
         } catch (error) {
-        console.error('Registration error:', error);
-        throw error;
+        throw new Error(`Registration Failed: ${error}`);
         } finally {
         setIsLoading(false);
         }
@@ -85,7 +85,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         await AuthService.logout();
         setUser(null);
         } catch (error) {
-        console.error('Logout error:', error);
+        throw new Error(`Logout error: ${error}`);
         } finally {
         setIsLoading(false);
         }
@@ -94,10 +94,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const testApi = async () => {
         try {
             const response = await AuthService.testApi();
-            console.log('API Test:', response);
+            throw new Error(`API Test: ${response}`);
         } catch (error) {
-            console.error('API Test failed:', error);
-            throw error;
+            throw new Error(`API Test failed: ${error}`);
         }
     };
 

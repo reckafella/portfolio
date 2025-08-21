@@ -2,7 +2,7 @@ import React from 'react';
 import UnifiedForm from '../UnifiedForm';
 
 interface ContactFormProps {
-    onSubmit: (formData: Record<string, string>) => Promise<void>;
+    onSubmit: (_formData: Record<string, string>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
     success?: boolean;

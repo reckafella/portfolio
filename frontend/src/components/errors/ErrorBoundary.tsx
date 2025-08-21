@@ -1,5 +1,6 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+
 
 interface Props {
   children: ReactNode;
@@ -24,9 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console and potentially to error reporting service
-    console.error('Error Boundary caught an error:', error, errorInfo);
-    
+
     this.setState({
       error,
       errorInfo
@@ -67,8 +66,8 @@ class ErrorBoundary extends Component<Props, State> {
                     </p>
                   </div>
 
-                  {/* Error Details (Development Only) */}
-                  {process.env.NODE_ENV === 'development' && this.state.error && (
+                  {/* Error Details (Development Only)
+                  {import.meta.env.MODE === 'development' && this.state.error && (
                     <div className="error-details mb-4">
                       <div className="alert alert-danger text-start" role="alert">
                         <h6 className="alert-heading">
@@ -89,7 +88,7 @@ class ErrorBoundary extends Component<Props, State> {
                         )}
                       </div>
                     </div>
-                  )}
+                  )} */}
 
                   {/* Action Buttons */}
                   <div className="error-actions mb-4">

@@ -29,21 +29,27 @@ module.exports = [
       "@typescript-eslint": typescriptEslint,
     },
     rules: {
-      ...typescriptEslint.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
-      
-      // Custom rules
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
+      // TypeScript ESLint rules
       "@typescript-eslint/no-unused-vars": ["error", {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
       }],
-      
-      // Disable problematic rules for development
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/ban-ts-comment": "warn",
+      
+      // React rules
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/jsx-uses-react": "error",
+      "react/jsx-uses-vars": "error",
+      
+      // React Hooks rules
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      
+      // General rules
+      "no-console": "warn",
+      "no-debugger": "warn",
     },
     settings: {
       react: {
@@ -52,7 +58,6 @@ module.exports = [
     },
   },
   {
-    // Ignore patterns
     ignores: [
       "dist/**",
       "build/**", 
@@ -60,6 +65,7 @@ module.exports = [
       "public/**",
       "*.config.js",
       "*.config.cjs",
+      "*.config.ts",
     ],
   },
 ];

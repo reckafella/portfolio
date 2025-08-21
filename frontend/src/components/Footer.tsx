@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import SVGLogoComponent from './Logo';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -71,7 +70,6 @@ const Footer: React.FC = () => {
                         <strong>
                             © {currentYear} — All Rights Reserved.
                         </strong>
-                        <SVGLogoComponent />
                     </p>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ContactForm from '../components/forms/ContactForm';
+import ContactForm from '../../components/forms/contact/ContactForm';
 
 const ContactPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);

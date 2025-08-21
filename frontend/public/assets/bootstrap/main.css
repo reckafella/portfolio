@@ -34,6 +34,7 @@
   --contrast-color: var(--default-color);
   --search-bar-background-color: var(--special-background-color);
   --accent-color:#fe8c00;
+  --logo-color: var(--accent-color);
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
@@ -54,8 +55,8 @@
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --header-background-color: #fffff0; /* marble */
-  --blog-background-color: #f4f1f8; /* lavender */
+  --blog-background-color: #fffff0; /* marble */
+  --header-background-color: #f4f1f8; /* lavender */
   --projects-background-color: #fbf5df; /* parachment */
   --skills-background-color: #d1d1ca; /* pearl */
   --about-background-color: #fdfdfd; /* egg white */

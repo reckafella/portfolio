@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import HeroSection from './home/Hero';
-import AboutSection from './home/About';
-import SkillsSection from './home/Skills';
-import ServicesSection from './services/Services';
+import HeroSection from './Hero';
+import AboutSection from './About';
+import SkillsSection from './Skills';
+import ServicesSection from '../services/Services';
 
 
 // Add TypeScript declarations for global variables

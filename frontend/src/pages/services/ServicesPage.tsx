@@ -1,5 +1,5 @@
 import React from 'react';
-import ServicesSection from './services/Services';
+import ServicesSection from './Services';
 
 const ServicesPage: React.FC = () => {
   return (

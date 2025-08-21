@@ -20,7 +20,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         { path: '/projects', label: 'Projects' },
         { path: '/blog', label: 'Blog' },
         { path: '/contact', label: 'Contact' },
-        { path: '/forms', label: 'Forms Demo' },
     ];
 
     // Filter auth items based on authentication status

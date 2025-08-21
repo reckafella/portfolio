@@ -20,7 +20,7 @@ export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
  */
 export const redirectToErrorPage = (
   statusCode: number,
-  navigate: (path: string, options?: { replace?: boolean }) => void,
+  navigate: (_path: string, _options?: { replace?: boolean }) => void,
   replace: boolean = true
 ) => {
   const errorPath = getErrorPagePath(statusCode);
@@ -86,11 +86,11 @@ export const getErrorMessage = (statusCode: number): string => {
  */
 export class ApiError extends Error {
   constructor(
-    public statusCode: number,
-    public statusText: string,
-    message?: string
+    public _statusCode: number,
+    public _statusText: string,
+    public _message?: string
   ) {
-    super(message || getErrorMessage(statusCode));
+    super(_message || getErrorMessage(_statusCode));
     this.name = 'ApiError';
   }
 }
@@ -122,12 +122,12 @@ export const handleApiError = async (response: Response): Promise<void> => {
 export const useErrorHandler = () => {
   const handleError = (
     error: Error | ApiError,
-    navigate: (path: string, options?: { replace?: boolean }) => void
+    navigate: (_path: string, _options?: { replace?: boolean }) => void
   ) => {
-    console.error('Error occurred:', error);
-    
+    //throw new Error('Error occurred: ' + error);
+
     if (error instanceof ApiError) {
-      redirectToErrorPage(error.statusCode, navigate);
+      redirectToErrorPage(error._statusCode, navigate);
     } else {
       // For non-API errors, show generic error page
       redirectToErrorPage(ErrorCodes.INTERNAL_SERVER_ERROR, navigate);

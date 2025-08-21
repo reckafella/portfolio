@@ -50,6 +50,11 @@ module.exports = [
       // General rules
       "no-console": "warn",
       "no-debugger": "warn",
+      "no-unused-vars": ["error", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+      }],
+      "no-undef": "off", // TypeScript handles this
     },
     settings: {
       react: {

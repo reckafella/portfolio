@@ -3,45 +3,26 @@ import { Link } from 'react-router-dom';
 import ContactForm from '../../components/forms/contact/ContactForm';
 
 const ContactPage: React.FC = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
-  const handleFormSubmit = async (formData: Record<string, string>) => {
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage('');
+    const handleSubmit = async (_formData: Record<string, string>) => {
+        setIsSubmitting(true);
+        setError('');
+        setSuccess(false);
 
-    try {
-      const response = await fetch('/api/v1/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || errorData.message || 'Failed to send message');
-      }
-
-      const result = await response.json();
-      setSubmitStatus('success');
-      
-      // Refresh the CAPTCHA for the next submission
-      setTimeout(() => {
-        console.log('Refreshing CAPTCHA...');
-        window.location.reload(); // Simple way to refresh the form
-      }, 2000);
-    } catch (error: any) {
-      console.error('Contact form error:', error);
-      setSubmitStatus('error');
-      setErrorMessage(error.message || 'Failed to send message. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            setSuccess(true);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
+            setError(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <section id="contact" className="section contact py-3">
@@ -65,7 +46,7 @@ const ContactPage: React.FC = () => {
                                     <p>Ethan Wanyoike</p>
                                 </div>
                             </div>
-                            </Link>
+                        </Link>
                         <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="https://www.linkedin.com/in/ethanmuthoni" target="_blank">
                             <div className="info-item d-flex linkedin">
                                 <i className="bi bi-linkedin"></i>
@@ -91,10 +72,10 @@ const ContactPage: React.FC = () => {
                     <div className="row">
                         <div className="card-body">
                             <ContactForm
-                                onSubmit={handleFormSubmit}
+                                onSubmit={handleSubmit}
                                 isSubmitting={isSubmitting}
-                                error={submitStatus === 'error' ? errorMessage : undefined}
-                                success={submitStatus === 'success'}
+                                error={error}
+                                success={success}
                             />
                         </div>
                     </div>

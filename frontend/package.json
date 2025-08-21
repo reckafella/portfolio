@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "portfolio-frontend",
   "version": "1.0.0",
   "description": "React frontend for personal portfolio",

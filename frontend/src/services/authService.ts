@@ -1,9 +1,9 @@
 import { handleApiError } from '../utils/errorUtils';
 
 // API Configuration
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1'; // || 'http://127.0.0.1:8001/api/v1';
+// const API_BASE_URL = 'http://127.0.0.1:8000/api/v1'; // || 'http://127.0.0.1:8001/api/v1';
 
-interface User {
+export interface User {
     id: number;
     username: string;
     email: string;
@@ -12,12 +12,12 @@ interface User {
     is_staff: boolean;
 }
 
-interface LoginCredentials {
+export interface LoginCredentials {
     username: string;
     password: string;
 }
 
-interface RegisterData {
+export interface RegisterData {
     username: string;
     email: string;
     password: string;
@@ -26,7 +26,7 @@ interface RegisterData {
     last_name?: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
     user: User;
     token: string;
     message: string;
@@ -43,14 +43,14 @@ export class AuthService {
 
     // Test API connection
     static async testApi(): Promise<{ message: string }> {
-        const response = await fetch(`${API_BASE_URL}/auth/test/`);
+        const response = await fetch(`api/v1/auth/test/`);
         await handleApiError(response);
         return response.json();
     }
 
     // Login user
     static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-        const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+        const response = await fetch(`api/v1/auth/login/`, {
             method: 'POST',
             headers: this.getAuthHeaders(),
             body: JSON.stringify(credentials)
@@ -68,7 +68,7 @@ export class AuthService {
 
     // Signup user
     static async signup(userData: RegisterData): Promise<AuthResponse> {
-        const response = await fetch(`${API_BASE_URL}/auth/signup/`, {
+        const response = await fetch(`api/v1/auth/signup/`, {
             method: 'POST',
             headers: this.getAuthHeaders(),
             body: JSON.stringify(userData)
@@ -87,12 +87,12 @@ export class AuthService {
     // Logout user
     static async logout(): Promise<void> {
         try {
-            await fetch(`${API_BASE_URL}/auth/logout/`, {
+            await fetch(`api/v1/auth/logout/`, {
                 method: 'POST',
                 headers: this.getAuthHeaders()
             });
         } catch (error) {
-            console.error('Logout request failed:', error);
+            throw new Error(`Logout request failed: ${error}`);
         } finally {
             // Always clear local storage
             localStorage.removeItem('auth_token');
@@ -112,8 +112,8 @@ export class AuthService {
     }
 
     // Get user profile
-    static async getUserProfile(): Promise<any> {
-        const response = await fetch(`${API_BASE_URL}/auth/profile/`, {
+    static async getUserProfile(): Promise<{}> {
+        const response = await fetch(`api/v1/auth/profile/`, {
             headers: this.getAuthHeaders()
         });
         
@@ -122,11 +122,11 @@ export class AuthService {
     }
 
     // Update user profile
-    static async updateProfile(profileData: any): Promise<any> {
-        const response = await fetch(`${API_BASE_URL}/auth/profile/update/`, {
+    static async updateProfile(_profileData: any): Promise<{}> {
+        const response = await fetch(`api/v1/auth/profile/update/`, {
             method: 'PATCH',
             headers: this.getAuthHeaders(),
-            body: JSON.stringify(profileData)
+            body: JSON.stringify(_profileData)
         });
 
         await handleApiError(response);

@@ -1,38 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-interface ContactForm {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+import ContactForm from '../components/forms/ContactForm';
 
 const ContactPage: React.FC = () => {
-  const [formData, setFormData] = useState<ContactForm>({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFormSubmit = async (formData: Record<string, string>) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
-      const response = await fetch('/api/v1/contact/', {
+      const response = await fetch('/api/v1/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,19 +23,21 @@ const ContactPage: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to send message');
+        throw new Error(errorData.detail || errorData.message || 'Failed to send message');
       }
 
       const result = await response.json();
-      if (response.ok) {
-        setSubmitStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      } else {
-        throw new Error(result.message || 'Failed to send message');
-      }
-    } catch (error) {
+      setSubmitStatus('success');
+      
+      // Refresh the CAPTCHA for the next submission
+      setTimeout(() => {
+        console.log('Refreshing CAPTCHA...');
+        window.location.reload(); // Simple way to refresh the form
+      }, 2000);
+    } catch (error: any) {
       console.error('Contact form error:', error);
       setSubmitStatus('error');
+      setErrorMessage(error.message || 'Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -107,85 +90,12 @@ const ContactPage: React.FC = () => {
                 <div className="card col-12 col-md-11 col-lg-10 mx-auto mt-4 p-4">
                     <div className="row">
                         <div className="card-body">
-                            {/* Contact Form */}
-                            <div className="rounded-3 shadow p-4">
-                                <h2 className="h3 fw-bold mb-4">
-                                    Send a Message
-                                </h2>
-
-                                {submitStatus === 'success' && (
-                                <div className="alert alert-success d-flex align-items-center mb-4" role="alert">
-                                    Message sent successfully! I'll get back to you soon.
-                                </div>
-                                )}
-
-                                {submitStatus === 'error' && (
-                                <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
-                                    Failed to send message. Please try again.
-                                </div>
-                                )}
-
-                                <form onSubmit={handleSubmit} method='POST'>
-                                    <div className="row g-3 mb-3">
-                                        <div className="col-md-6">
-                                            <label htmlFor="name" className="form-label fw-medium">
-                                                Name *
-                                            </label>
-                                            <input
-                                                type="text" id="name" name="name" value={formData.name}
-                                                onChange={handleInputChange} required className="form-control"
-                                                placeholder="Your full name"
-                                            />
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <label htmlFor="email" className="form-label fw-medium">
-                                                Email *
-                                            </label>
-                                            <input type="email" id="email" name="email" value={formData.email}
-                                                onChange={handleInputChange} required className="form-control"
-                                                placeholder="your.email@example.com"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="subject" className="form-label fw-medium">
-                                            Subject *
-                                        </label>
-                                        <input
-                                            type="text" id="subject" name="subject" value={formData.subject}
-                                            onChange={handleInputChange} required className="form-control"
-                                            placeholder="What's this about?"
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label htmlFor="message" className="form-label fw-medium">
-                                            Message *
-                                        </label>
-                                        <textarea
-                                            id="message" name="message" value={formData.message}
-                                            onChange={handleInputChange} required rows={5}
-                                            className="form-control"
-                                            placeholder="Tell me about your project or just say hello..."
-                                        />
-                                    </div>
-                                    <div className="col-12 text-center mt-4">
-                                        <button type="submit" disabled={isSubmitting}
-                                        className={`btn btn-sm btn-lg justify-content-center w-50 py-2 ${isSubmitting ? 'btn-secondary' : 'btn-primary'}`}>
-                                        {isSubmitting ? (
-                                            <div className="d-flex align-items-center justify-content-center">
-                                                <div className="spinner-border spinner-border-sm me-2" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
-                                                </div>
-                                                Sending...
-                                            </div>
-                                        ) : (
-                                            'Send Message'
-                                        )}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            <ContactForm
+                                onSubmit={handleFormSubmit}
+                                isSubmitting={isSubmitting}
+                                error={submitStatus === 'error' ? errorMessage : undefined}
+                                success={submitStatus === 'success'}
+                            />
                         </div>
                     </div>
                 </div>

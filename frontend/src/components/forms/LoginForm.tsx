@@ -92,7 +92,7 @@ const LoginForm: React.FC = () => {
                         <div className="text-center">
                             <p className="text-muted mb-0">
                             Don't have an account?{' '}
-                            <Link to="/register" className="text-decoration-none">
+                            <Link to="/signup" className="text-decoration-none">
                                 Create one here
                             </Link>
                             </p>

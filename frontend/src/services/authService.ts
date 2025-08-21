@@ -1,3 +1,5 @@
+import { handleApiError } from '../utils/errorUtils';
+
 // API Configuration
 const API_BASE_URL = 'http://127.0.0.1:8000/api/v1'; // || 'http://127.0.0.1:8001/api/v1';
 
@@ -42,9 +44,7 @@ export class AuthService {
     // Test API connection
     static async testApi(): Promise<{ message: string }> {
         const response = await fetch(`${API_BASE_URL}/auth/test/`);
-        if (!response.ok) {
-            throw new Error('API connection failed');
-        }
+        await handleApiError(response);
         return response.json();
     }
 
@@ -55,10 +55,8 @@ export class AuthService {
             headers: this.getAuthHeaders(),
             body: JSON.stringify(credentials)
         });
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Login failed');
-        }
+        
+        await handleApiError(response);
 
         const data: AuthResponse = await response.json();
         // Store token in localStorage
@@ -68,18 +66,16 @@ export class AuthService {
         return data;
     }
 
-    // Register user
-    static async register(userData: RegisterData): Promise<AuthResponse> {
-        const response = await fetch(`${API_BASE_URL}/auth/register/`, {
+    // Signup user
+    static async signup(userData: RegisterData): Promise<AuthResponse> {
+        const response = await fetch(`${API_BASE_URL}/auth/signup/`, {
             method: 'POST',
             headers: this.getAuthHeaders(),
             body: JSON.stringify(userData)
         });
         
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Registration failed');
-        }
+        await handleApiError(response);
+        
         const data: AuthResponse = await response.json();
         // Store token in localStorage
         localStorage.setItem('auth_token', data.token);
@@ -121,9 +117,7 @@ export class AuthService {
             headers: this.getAuthHeaders()
         });
         
-        if (!response.ok) {
-            throw new Error('Failed to fetch profile');
-        }
+        await handleApiError(response);
         return response.json();
     }
 
@@ -135,10 +129,7 @@ export class AuthService {
             body: JSON.stringify(profileData)
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Profile update failed');
-        }
+        await handleApiError(response);
         return response.json();
     }
 }

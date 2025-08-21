@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from .views import search
 from .views.messages import ContactSuccessView as CSV
 from .views.messages import ContactView
+from .views.messages import ContactFormConfigView
 from .views.messages import MarkMessageReadView as MarkAsRead
 from .views.messages import MessageDetailView as MessageDetail
 from .views.messages import DeleteMessageView as DeleteMessage
@@ -39,6 +40,7 @@ urlpatterns = [
     path("resume", crv.as_view(redirect_to="/about"), name="resume"),
     path("resume-pdf", ResumePDFView.as_view(), name="resume_pdf"),
     path("contact", ContactView.as_view(), name="contact"),
+    path("contact/form-config", ContactFormConfigView.as_view(), name="contact_form_config"),
     path("contact/success", CSV.as_view(), name="contact_success"),
     path("messages/inbox", MessagesView.as_view(), name="messages"),
     path("messages/<int:message_id>/", MessageDetail.as_view(), name="message_detail"),

@@ -586,3 +586,11 @@ OUR_SERVICES = [
         "icon": "bi bi-tools"
     }
 ]
+
+# Error handlers for custom error pages
+if not DEBUG:
+    # Only use custom error handlers in production
+    handler400 = 'app.views.error_views.custom_400'
+    handler403 = 'app.views.error_views.custom_403'
+    handler404 = 'app.views.error_views.custom_404'
+    handler500 = 'app.views.error_views.custom_500'

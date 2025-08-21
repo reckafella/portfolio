@@ -127,7 +127,7 @@ urlpatterns = [
 
     # Simple authentication endpoints
     path('login/', simple_login, name='simple_login'),
-    path('register/', simple_register, name='simple_register'),
+    path('signup/', simple_register, name='simple_register'),
     path('logout/', simple_logout, name='simple_logout'),
 
     # Include router URLs

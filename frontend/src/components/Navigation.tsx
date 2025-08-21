@@ -4,6 +4,7 @@ import Search from './search/Search';
 import ThemeSwitch from './utils/SwitchThemes';
 import SVGLogoComponent from './Logo';
 import { useAuth } from '../hooks/useAuth';
+import { useStaffPermissions } from '../hooks/useStaffPermissions';
 
 interface NavigationProps {
   onToggleSearch: () => void;
@@ -13,6 +14,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
+  const { isStaff, canCreateProjects } = useStaffPermissions();
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -71,6 +73,31 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         </Link>
                                     </li>
                                 ))}
+                                
+                                {/* Staff-only dropdown */}
+                                {isStaff && (
+                                    <li className="dropdown">
+                                        <a role="button" className="">
+                                            <span>Staff Tools</span>
+                                            <i className="bi bi-chevron-down toggle-dropdown"></i>
+                                        </a>
+                                        <ul>
+                                            {canCreateProjects && (
+                                                <li>
+                                                    <Link to="/projects/add">
+                                                        <span>Add Project</span>
+                                                    </Link>
+                                                </li>
+                                            )}
+                                            <li>
+                                                <Link to="/admin">
+                                                    <span>Admin Panel</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                )}
+                                
                                 <li className="dropdown">
                                     <a role="button" className="">
                                         <span>Account</span>

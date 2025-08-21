@@ -70,7 +70,7 @@ if ENVIRONMENT == 'production':
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
     ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
-    INSTALLED_APPS = ['daphne']
+    INSTALLED_APPS = []  # Remove daphne for local development
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]

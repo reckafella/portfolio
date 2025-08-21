@@ -9,8 +9,13 @@ import DynamicFormExample from './pages/DynamicFormExample'
 import SearchResults from './pages/SearchResults'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
-import ScrollToTop from './components/ScrollToTop'
-import SearchOverlay from './components/SearchOverlay'
+import ScrollToTop from './components/utils/ScrollToTop'
+import SearchOverlay from './components/search/SearchOverlay'
+import LoginForm from './components/forms/LoginForm'
+import SignupForm from './components/forms/SignupForm'
+import LogoutPage from './pages/auth/LogoutPage'
+import { SigninRedirect, SignupRedirect, SignoutRedirect } from './components/redirection/AuthRedirect'
+import AuthProvider from './hooks/useAuth'
 import './App.css'
 
 const queryClient = new QueryClient({
@@ -36,22 +41,32 @@ function App() {
     return (
         <Router>
             <QueryClientProvider client={queryClient}>
-                <div className="d-flex flex-column min-vh-100">
-                    <Navigation onToggleSearch={toggleSearch} />
-                    <main className="flex-grow-1">
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/projects" element={<ProjectsPage />} />
-                            <Route path="/contact" element={<ContactPage />} />
-                            <Route path="/services" element={<ServicesPage />} />
-                            <Route path="/forms" element={<DynamicFormExample />} />
-                            <Route path="/search" element={<SearchResults />} />
-                        </Routes>
-                    </main>
-                    <Footer />
-                    <ScrollToTop />
-                    <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
-                </div>
+                <AuthProvider>
+                    <div className="d-flex flex-column min-vh-100">
+                        <Navigation onToggleSearch={toggleSearch} />
+                        <main className="flex-grow-1">
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/projects" element={<ProjectsPage />} />
+                                <Route path="/contact" element={<ContactPage />} />
+                                <Route path="/services" element={<ServicesPage />} />
+                                <Route path="/forms" element={<DynamicFormExample />} />
+                                <Route path="/search" element={<SearchResults />} />
+
+                                {/* Authentication routes */}
+                                <Route path="/signin" element={<SigninRedirect />} />
+                                <Route path="/login" element={<LoginForm />} />
+                                <Route path="/signup" element={<SignupRedirect />} />
+                                <Route path="/register" element={<SignupForm />} />
+                                <Route path="/signout" element={<SignoutRedirect />} />
+                                <Route path="/logout" element={<LogoutPage />} />
+                            </Routes>
+                        </main>
+                        <Footer />
+                        <ScrollToTop />
+                        <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+                    </div>
+                </AuthProvider>
             </QueryClientProvider>
         </Router>
     )

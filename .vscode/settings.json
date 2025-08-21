@@ -1,4 +1,11 @@
 {
-    "python.analysis.typeCheckingMode": "off",
-    "python.analysis.autoImportCompletions": true
+    "python.defaultInterpreterPath": "/home/rohn/GitHub/portfolio/.env/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "standard",
+    "files.associations": {
+        "*.py": "python"
+    },
+    "python-envs.pythonProjects": [],
 }

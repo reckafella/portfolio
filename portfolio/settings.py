@@ -83,8 +83,8 @@ else:
 
 
 INSTALLED_APPS += [
-    "django.contrib.admin", "django.contrib.auth",
-    "django.contrib.contenttypes", 'django.contrib.sites',
+    "django.contrib.admin", "django.contrib.auth", "rest_framework",
+    "rest_framework.authtoken", "django.contrib.contenttypes", 'django.contrib.sites',
     "django.contrib.sessions", "django.contrib.messages",
     "django.contrib.staticfiles", "django.contrib.sitemaps",
     "corsheaders", "app", "authentication", "blog",
@@ -98,6 +98,30 @@ INSTALLED_APPS += [
     'wagtail.images', 'wagtail.search', 'wagtail.admin',
     'modelcluster', 'taggit', 'wagtail.documents',
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/hour",
+        "user": "1000/hour",
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -427,6 +451,27 @@ CATEGORY_CHOICES = [('Web Development', 'Web Development'),
                     ]
 
 SITE_ID = 1
+
+# ============================
+# CORS CONFIGURATION
+# ============================
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",  # Vite default port
+    "http://127.0.0.1:5173",
+]
+
+if ENVIRONMENT == 'production':
+    CORS_ALLOWED_ORIGINS += [
+        "https://ethanmuthoni.me",
+        "https://www.ethanmuthoni.me",
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
 
 # ============================
 # RATE LIMITING CONFIGURATION

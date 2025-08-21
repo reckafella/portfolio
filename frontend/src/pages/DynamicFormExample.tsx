@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DynamicForm from '../components/DynamicForm';
+import DynamicForm from '../components/forms/DynamicForm';
 
 const DynamicFormExample: React.FC = () => {
   const [selectedForm, setSelectedForm] = useState<string>('contact');

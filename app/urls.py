@@ -1,24 +1,24 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from app.views import search
-from app.views.messages import ContactSuccessView as CSV
-from app.views.messages import ContactView
-from app.views.messages import MarkMessageReadView as MarkAsRead
-from app.views.messages import MessageDetailView as MessageDetail
-from app.views.messages import DeleteMessageView as DeleteMessage
-from app.views.messages import BulkMessageActionsView as BulkActions
-from app.views.messages import MessagesView
-from app.views.projects.create import CreateProjectView as CPV
-from app.views.projects.delete import DeleteProjectView as DPV
-from app.views.projects.details import ProjectDetailView as PDV
-from app.views.projects.list import ProjectListView as PLV
-from app.views.projects.update import UpdateProjectView as UPV
-from app.views.views import AboutView
-from app.views.views import AppHealthCheckView as app_is_running
-from app.views.views import CustomRedirectView as crv
-from app.views.views import (HomeView, ResumePDFView, ServicesView,
-                             SitemapView, render_favicon)
+from .views import search
+from .views.messages import ContactSuccessView as CSV
+from .views.messages import ContactView
+from .views.messages import MarkMessageReadView as MarkAsRead
+from .views.messages import MessageDetailView as MessageDetail
+from .views.messages import DeleteMessageView as DeleteMessage
+from .views.messages import BulkMessageActionsView as BulkActions
+from .views.messages import MessagesView
+from .views.projects.create import CreateProjectView as CPV
+from .views.projects.delete import DeleteProjectView as DPV
+from .views.projects.details import ProjectDetailView as PDV
+from .views.projects.list import ProjectListView as PLV
+from .views.projects.update import UpdateProjectView as UPV
+from .views.views import AboutView
+from .views.views import AppHealthCheckView as app_is_running
+from .views.views import CustomRedirectView as crv
+from .views.views import (HomeView, ResumePDFView, ServicesView,
+                          SitemapView, render_favicon)
 
 app_name = "app"
 

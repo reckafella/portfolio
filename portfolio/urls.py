@@ -47,6 +47,13 @@ urlpatterns = [
     path("robots.txt", include('robots.urls')),
     re_path("wagtail/admin/", include(wagtailadmin_urls)),
     re_path("wagtail/", include(wagtail_urls)),
+    
+    # API endpoints
+    path("api/v1/auth/", include("authentication.api_urls")),
+    path("api/v1/", include("app.api_urls")),
+    # path("api/v1/", include("app.api_urls")),  # We'll create this next
+    
+    # Regular app URLs
     path("", include("blog.urls"), name="blog"),
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),

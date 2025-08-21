@@ -32,7 +32,7 @@ const ContactPage: React.FC = () => {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/api/v1/contact/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const ContactPage: React.FC = () => {
       }
 
       const result = await response.json();
-      if (result.status === 'success') {
+      if (response.ok) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {

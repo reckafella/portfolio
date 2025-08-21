@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Search from './Search';
-import ThemeSwitch from './SwitchThemes';
+import Search from './search/Search';
+import ThemeSwitch from './utils/SwitchThemes';
 import SVGLogoComponent from './Logo';
+import { useAuth } from '../hooks/useAuth';
 
 interface NavigationProps {
   onToggleSearch: () => void;
@@ -11,6 +12,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -21,11 +23,20 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         { path: '/forms', label: 'Forms Demo' },
     ];
 
-    const authPaths = [
-        { path: '/login', label: 'Login' },
-        { path: '/register', label: 'Register' },
-        { path: '/logout', label: 'Logout' }
-    ];
+    // Filter auth items based on authentication status
+    const getAuthItems = () => {
+        if (isAuthenticated) {
+            return [
+                { path: '/profile', label: `Welcome, ${user?.first_name || user?.username || 'User'}` },
+                { path: '/logout', label: 'Logout' }
+            ];
+        } else {
+            return [
+                { path: '/login', label: 'Login' },
+                { path: '/register', label: 'Register' }
+            ];
+        }
+    };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -67,7 +78,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         <i className="bi bi-chevron-down toggle-dropdown"></i>
                                     </a>
                                     <ul>
-                                        {authPaths.map((item) => (
+                                        {getAuthItems().map((item) => (
                                             <li key={item.path}>
                                                 <Link to={item.path}>
                                                     <span>{item.label}</span>

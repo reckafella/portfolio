@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 from django.conf import settings
 
 from ..models import Projects, Image, Video
-from ..forms.projects import ProjectsForm
 from ..serializers import ProjectSerializer, ProjectCreateSerializer, ImageSerializer, VideoSerializer
 from ..permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
@@ -126,43 +125,6 @@ class ProjectDeleteAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Projects.objects.all()
-
-
-class ProjectFormConfig(generics.GenericAPIView):
-    """
-    API endpoint for project form configuration
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, request, *args, **kwargs):
-        form = ProjectsForm()
-        fields = {}
-
-        for name, field in form.fields.items():
-            fields[name] = {
-                "name": name,
-                "label": field.label,
-                "type": field.widget.__class__.__name__,
-                "required": field.required,
-                "help_text": field.help_text,
-                "disabled": field.disabled,
-            }
-
-            if getattr(field, "max_length", None):
-                fields[name]["max_length"] = field.max_length
-            if getattr(field, "min_length", None):
-                fields[name]["min_length"] = field.min_length
-
-            # choices for select fields
-            if field.widget.__class__.__name__ == "Select":
-                fields[name]["choices"] = field.choices
-
-        return Response({
-            "form_title": "Add New Project",
-            "form_description": "Create a new project to showcase in your portfolio",
-            "submit_text": "Create Project",
-            "fields": fields
-        })
 
 
 @api_view(['GET'])

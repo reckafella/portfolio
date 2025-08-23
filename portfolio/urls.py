@@ -29,6 +29,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView
 from authentication.views.auth.captcha import CaptchaRefreshView
+from app.views.base_api import FrontendAPIView
 
 # Error handling
 handler404 = "app.views.error_views.custom_404"
@@ -45,8 +46,8 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include(django_auth_urls)),
     path("robots.txt", include('robots.urls')),
-    re_path("wagtail/admin/", include(wagtailadmin_urls)),
-    re_path("wagtail/", include(wagtail_urls)),
+    path("wagtail/admin/", include(wagtailadmin_urls)),
+    path("wagtail/", include(wagtail_urls)),
     
     # API endpoints
     path("api/v1/auth", include("rest_framework.urls")),
@@ -56,11 +57,12 @@ urlpatterns = [
     # path("api/v1/", include("app.api_urls")),  # We'll create this next
     
     # Regular app URLs
-    path("", include("blog.urls"), name="blog"),
+    path("app/", include("blog.urls"), name="blog"),
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
-    path("", include("app.urls"), name="app"),
-    path("", include("authentication.urls"), name="auth"),
+    path("app/", include("app.urls"), name="app"),
+    path("app/", include("authentication.urls"), name="auth"),
+    re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")
 ]
 
 # Add error test routes for development

@@ -118,7 +118,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
           <div className="col-md-6">
             <div className="input-group">
               <span className="input-group-text">
-                <i className="fas fa-search"></i>
+                <i className="bi bi-search"></i>
               </span>
               <input
                 type="text"
@@ -148,7 +148,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               onClick={() => setShowFilters(!showFilters)}
               type="button"
             >
-              <i className={`fas fa-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
+              <i className={`bi bi-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
               Filters
               {hasActiveFilters && (
                 <span className="badge bg-primary ms-1">
@@ -163,7 +163,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                 type="button"
                 title="Clear all filters"
               >
-                <i className="fas fa-times"></i>
+                <i className="bi bi-times"></i>
               </button>
             )}
           </div>
@@ -175,7 +175,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
           <div className="row g-3">
             <div className="col-md-4">
               <label htmlFor="categoryFilter" className="form-label">
-                <i className="fas fa-tags me-1"></i>
+                <i className="bi bi-tags me-1"></i>
                 Category
               </label>
               <select
@@ -195,7 +195,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
 
             <div className="col-md-4">
               <label htmlFor="typeFilter" className="form-label">
-                <i className="fas fa-code me-1"></i>
+                <i className="bi bi-code me-1"></i>
                 Project Type
               </label>
               <select
@@ -215,7 +215,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
 
             <div className="col-md-4">
               <label htmlFor="clientFilter" className="form-label">
-                <i className="fas fa-user me-1"></i>
+                <i className="bi bi-user me-1"></i>
                 Client
               </label>
               <select
@@ -239,7 +239,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
       <div className="card-footer">
         <div className="d-flex justify-content-between align-items-center">
           <small className="text-muted">
-            <i className="fas fa-info-circle me-1"></i>
+            <i className="bi bi-info-circle me-1"></i>
             Showing {totalCount} project{totalCount !== 1 ? 's' : ''}
             {hasActiveFilters && ' (filtered)'}
           </small>

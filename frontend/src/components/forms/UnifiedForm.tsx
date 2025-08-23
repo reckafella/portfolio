@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 interface FieldConfig {
-    label?: string;
-    type?: string;
-    required?: boolean;
-    help_text?: string;
-    disabled?: boolean;
-    widget?: string;
-    choices?: [string, string][];
+    label: string;
+    type: string;
+    required: boolean;
+    help_text: string;
+    disabled: boolean;
+    widget: string;
     max_length?: number;
     min_length?: number;
     captcha_key?: string;
@@ -19,7 +18,7 @@ interface FormConfig {
 }
 
 interface UnifiedFormProps {
-    formType: 'contact' | 'login' | 'signup' | 'add_update_project';
+    formType: 'contact' | 'login' | 'signup' | 'add_project';
     onSubmit: (_formData: Record<string, string>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
@@ -32,11 +31,11 @@ interface UnifiedFormProps {
     cardClassName?: string;
 }
 
-const UnifiedForm: React.FC<UnifiedFormProps> = ({
+const UnifiedForm: React.FC<UnifiedFormProps> = ({ 
     formType,
-    onSubmit,
-    isSubmitting,
-    error,
+    onSubmit, 
+    isSubmitting, 
+    error, 
     success,
     title,
     submitButtonText,
@@ -59,7 +58,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 return '/api/v1/auth/login-form-config';
             case 'signup':
                 return '/api/v1/auth/signup-form-config';
-            case 'add_update_project':
+            case 'add_project':
                 return '/api/v1/projects/form-config/';
             default:
                 return '/api/v1/contact';
@@ -201,7 +200,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 if (response.ok) {
                     const config = await response.json();
                     setFormConfig(config);
-
+                    
                     // Extract CAPTCHA data if present (for contact form)
                     const captchaField = config.fields?.captcha;
                     if (captchaField && captchaField.captcha_key && captchaField.captcha_image) {
@@ -210,7 +209,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             image: captchaField.captcha_image
                         });
                     }
-
+                    
                     // Initialize form data with empty values
                     const initialData: Record<string, string> = {};
                     Object.keys(config.fields).forEach(fieldName => {
@@ -225,7 +224,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     // Use fallback config if endpoint doesn't exist
                     const fallbackConfig = getFallbackConfig();
                     setFormConfig(fallbackConfig);
-
+                    
                     const initialData: Record<string, string> = {};
                     Object.keys(fallbackConfig.fields).forEach(fieldName => {
                         initialData[fieldName] = '';
@@ -238,7 +237,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 // Use fallback config on error
                 const fallbackConfig = getFallbackConfig();
                 setFormConfig(fallbackConfig);
-
+                
                 const initialData: Record<string, string> = {};
                 Object.keys(fallbackConfig.fields).forEach(fieldName => {
                     initialData[fieldName] = '';
@@ -269,8 +268,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 }));
             }
         } catch (error) {
-            const noob = () => { }
-            if (error instanceof Error) { noob(); } // do nothing
+            console.error('Failed to refresh CAPTCHA:', error);
         }
     };
 
@@ -286,28 +284,26 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
 
         // Prepare form data for submission
         const submitData = { ...formData };
-
+        
         // Handle CAPTCHA field specially for contact forms
         if (formType === 'contact' && captchaData && formData.captcha) {
             submitData.captcha_0 = captchaData.key;
             submitData.captcha_1 = formData.captcha;
             delete submitData.captcha; // Remove the original captcha field
         }
-
+        
         await onSubmit(submitData);
     };
 
     const renderField = (fieldName: string, fieldConfig: FieldConfig) => {
-        const { required, help_text, choices, disabled, type, max_length, min_length } = fieldConfig;
+        const { required, help_text, disabled, widget, max_length, min_length } = fieldConfig;
         const value = formData[fieldName] || '';
 
         const baseProps = {
             id: fieldName,
             name: fieldName,
             value,
-            onChange: (e: React.ChangeEvent<
-                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-            >) =>
+            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => 
                 handleInputChange(fieldName, e.target.value),
             required,
             disabled: disabled || isSubmitting,
@@ -317,47 +313,15 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             minLength: min_length
         };
 
-        switch (type) {
+        switch (widget) {
             case 'TextInput':
-                /* if field name is images, type should be file */
                 return (
                     <input
-                        type={(fieldName === 'images' ||
-                            fieldName === 'video' || fieldName === 'image' ||
-                            fieldName === 'cover_image') ? 'file' : 'text'}
+                        type="text"
                         {...baseProps}
                     />
                 );
-
-            case 'URLInput':
-                return (
-                    <input
-                        type="url"
-                        {...baseProps}
-                    />
-                );
-
-            case 'CheckboxInput':
-                return (
-                    <input
-                        type="checkbox"
-                        {...baseProps}
-                    />
-                );
-
-            case 'Select':
-                return (
-                    <select
-                        {...baseProps}
-                    >
-                        {choices?.map((option: [string, string]) => (
-                            <option key={option[0]} value={option[0]}>
-                                {option[1]}
-                            </option>
-                        ))}
-                    </select>
-                );
-
+            
             case 'EmailInput':
                 return (
                     <input
@@ -373,7 +337,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         {...baseProps}
                     />
                 );
-
+            
             case 'Textarea':
                 return (
                     <textarea
@@ -382,16 +346,16 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         style={{ resize: 'vertical' }}
                     />
                 );
-
+            
             case 'CaptchaTextInput':
                 return (
                     <div>
                         {captchaData ? (
                             <div className="captcha-container mb-3">
                                 <div className="d-flex align-items-center gap-2 mb-2">
-                                    <img
-                                        src={captchaData.image}
-                                        alt="CAPTCHA"
+                                    <img 
+                                        src={captchaData.image} 
+                                        alt="CAPTCHA" 
                                         className="border rounded"
                                         style={{ height: '50px' }}
                                         onError={(_e) => {
@@ -413,10 +377,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             <div className="alert alert-warning mb-3">
                                 <small>
                                     <i className="bi bi-exclamation-triangle me-1"></i>
-                                    CAPTCHA failed to load.
-                                    <button
-                                        type="button"
-                                        className="btn btn-link btn-sm p-0 ms-1"
+                                    CAPTCHA failed to load. 
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-link btn-sm p-0 ms-1" 
                                         onClick={refreshCaptcha}
                                     >
                                         Try again
@@ -432,7 +396,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         />
                     </div>
                 );
-
+            
             default:
                 return (
                     <input
@@ -448,14 +412,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         if (fieldName === 'message' || fieldName === 'captcha') {
             return 'col-12 mb-3';
         }
-
+        
         // For auth forms, stack most fields
         if (formType === 'login') {
             return 'col-12 mb-3';
         }
 
         // For signup, name fields side by side
-        if ((formType === 'signup') &&
+        if ((formType === 'signup') && 
             (fieldName === 'first_name' || fieldName === 'last_name')) {
             return 'col-md-6 mb-3';
         }
@@ -464,7 +428,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         if (formType === 'contact' && (fieldName === 'name' || fieldName === 'email')) {
             return 'col-md-6 mb-3';
         }
-
+        
         // Default to full width
         return 'col-12 mb-3';
     };
@@ -513,7 +477,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
 
             {additionalContent}
 
-            <form onSubmit={handleSubmit} encType="multipart/form-data" method="POST">
+            <form onSubmit={handleSubmit} method="POST">
                 <div className="row g-3">
                     {Object.entries(formConfig.fields).map(([fieldName, fieldConfig]) => (
                         <div key={fieldName} className={getFieldLayoutClass(fieldName)}>
@@ -525,10 +489,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         </div>
                     ))}
                 </div>
-
+                
                 <div className="col-12 text-center mt-4">
-                    <button
-                        type="submit"
+                    <button 
+                        type="submit" 
                         disabled={isSubmitting}
                         className={`btn btn-lg w-50 py-2 ${isSubmitting ? 'btn-secondary' : 'btn-primary'}`}
                     >

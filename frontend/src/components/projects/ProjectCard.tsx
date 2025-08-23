@@ -86,7 +86,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         {!project.live && (
           <div className="position-absolute top-0 end-0 m-2">
             <span className="badge bg-warning text-dark">
-              <i className="fas fa-eye-slash me-1"></i>
+              <i className="bi bi-eye-slash me-1"></i>
               Draft
             </span>
           </div>
@@ -119,7 +119,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         {/* Client */}
         {project.client && (
           <p className="text-muted small mb-2">
-            <i className="fas fa-user me-1"></i>
+            <i className="bi bi-user me-1"></i>
             {project.client}
           </p>
         )}
@@ -133,7 +133,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <div className="mt-auto">
           <div className="d-flex justify-content-between align-items-center">
             <small className="text-muted">
-              <i className="fas fa-calendar me-1"></i>
+              <i className="bi bi-calendar me-1"></i>
               {formatDate(project.created_at)}
             </small>
             
@@ -143,7 +143,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 className="btn btn-sm btn-outline-primary"
                 title="View Project"
               >
-                <i className="fas fa-eye"></i>
+                <i className="bi bi-eye"></i>
               </Link>
               
               {project.project_url && (
@@ -154,7 +154,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   className="btn btn-sm btn-outline-success"
                   title="Visit Live Site"
                 >
-                  <i className="fas fa-external-link-alt"></i>
+                  <i className="bi bi-external-link-alt"></i>
                 </a>
               )}
               
@@ -164,7 +164,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   className="btn btn-sm btn-outline-secondary"
                   title="Edit Project"
                 >
-                  <i className="fas fa-edit"></i>
+                  <i className="bi bi-edit"></i>
                 </Link>
               )}
             </div>

@@ -71,6 +71,11 @@ else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
     ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
     INSTALLED_APPS = []  # Remove daphne for local development
+    try:
+        import daphne
+        INSTALLED_APPS.insert(0, 'daphne')
+    except Exception:
+        pass
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
@@ -276,11 +281,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend/build/static')
+]
+
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 

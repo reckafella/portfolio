@@ -151,7 +151,7 @@ export const ProjectDetailPage: React.FC = () => {
                 </span>
                 {!project.live && (
                   <span className="badge bg-warning text-dark">
-                    <i className="fas fa-eye-slash me-1"></i>
+                    <i className="bi bi-eye-slash me-1"></i>
                     Draft
                   </span>
                 )}
@@ -166,7 +166,7 @@ export const ProjectDetailPage: React.FC = () => {
                   rel="noopener noreferrer"
                   className="btn btn-success"
                 >
-                  <i className="fas fa-external-link-alt me-2"></i>
+                  <i className="bi bi-external-link-alt me-2"></i>
                   View Live
                 </a>
               )}
@@ -174,7 +174,7 @@ export const ProjectDetailPage: React.FC = () => {
                 to={`/projects/${project.id}/edit`}
                 className="btn btn-outline-secondary"
               >
-                <i className="fas fa-edit me-2"></i>
+                <i className="bi bi-edit me-2"></i>
                 Edit
               </Link>
             </div>
@@ -183,16 +183,16 @@ export const ProjectDetailPage: React.FC = () => {
           {/* Project Meta */}
           <div className="row text-muted small mb-4">
             <div className="col-md-6">
-              <i className="fas fa-calendar me-1"></i>
+              <i className="bi bi-calendar me-1"></i>
               Created: {formatDate(project.created_at)}
             </div>
             <div className="col-md-6">
-              <i className="fas fa-clock me-1"></i>
+              <i className="bi bi-clock me-1"></i>
               Updated: {formatDate(project.updated_at)}
             </div>
             {project.client && project.client !== 'Personal' && (
               <div className="col-md-6 mt-1">
-                <i className="fas fa-user me-1"></i>
+                <i className="bi bi-user me-1"></i>
                 Client: {project.client}
               </div>
             )}
@@ -205,7 +205,7 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="row mb-5">
           <div className="col-12">
             <h3 className="h4 mb-3">
-              <i className="fas fa-images me-2"></i>
+              <i className="bi bi-images me-2"></i>
               Project Images
             </h3>
             <div className="row g-3">
@@ -232,7 +232,7 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="row mb-5">
           <div className="col-12">
             <h3 className="h4 mb-3">
-              <i className="fas fa-video me-2"></i>
+              <i className="bi bi-video me-2"></i>
               Project Videos
             </h3>
             <div className="row g-3">
@@ -262,7 +262,7 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="row mb-5">
         <div className="col-12">
           <h3 className="h4 mb-3">
-            <i className="fas fa-info-circle me-2"></i>
+            <i className="bi bi-info-circle me-2"></i>
             About This Project
           </h3>
           <div className="card">
@@ -280,7 +280,7 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="row">
         <div className="col-12 text-center">
           <Link to="/projects" className="btn btn-outline-primary me-3">
-            <i className="fas fa-arrow-left me-2"></i>
+            <i className="bi bi-arrow-left me-2"></i>
             Back to Projects
           </Link>
           {project.project_url && (
@@ -290,7 +290,7 @@ export const ProjectDetailPage: React.FC = () => {
               rel="noopener noreferrer"
               className="btn btn-primary"
             >
-              <i className="fas fa-external-link-alt me-2"></i>
+              <i className="bi bi-external-link-alt me-2"></i>
               Visit Project
             </a>
           )}

@@ -14,7 +14,8 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
-  const { isStaff, canCreateProjects } = useStaffPermissions();
+    const { isStaff, canCreateProjects } = useStaffPermissions();
+    const [isToggleDropdownOpen, setIsToggleDropdownOpen] = useState(false);
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -39,17 +40,17 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         }
     };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Toggle body class for mobile menu
-    document.body.classList.toggle('mobile-nav-active', !isMobileMenuOpen);
-  };
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+        // Toggle body class for mobile menu
+        document.body.classList.toggle('mobile-nav-active', !isMobileMenuOpen);
+    };
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-    document.body.classList.remove('mobile-nav-active');
-  }, [location]);
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+        document.body.classList.remove('mobile-nav-active');
+    }, [location]);
 
     return (
         <>
@@ -101,7 +102,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                 <li className="dropdown">
                                     <a role="button" className="">
                                         <span>Account</span>
-                                        <i className="bi bi-chevron-down toggle-dropdown"></i>
+                                        <i className="bi bi-chevron-down toggle-dropdown" onClick={() => setIsToggleDropdownOpen(!isToggleDropdownOpen)}></i>
                                     </a>
                                     <ul>
                                         {getAuthItems().map((item) => (

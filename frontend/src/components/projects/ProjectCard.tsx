@@ -33,7 +33,7 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const { canEditProjects } = useStaffPermissions();
-  
+
   const truncateText = (text: string, maxLength: number = 120) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
@@ -100,7 +100,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             {project.project_type}
           </span>
           {project.category && (
-            <span className="badge bg-light text-dark">
+            <span className="badge">
               {project.category}
             </span>
           )}
@@ -108,8 +108,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
         {/* Project Title */}
         <h5 className="card-title">
-          <Link 
-            to={`/projects/${project.slug}`} 
+          <Link
+            to={`/projects/${project.slug}`}
             className="text-decoration-none text-inherit"
           >
             {project.title}
@@ -136,7 +136,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
               <i className="bi bi-calendar me-1"></i>
               {formatDate(project.created_at)}
             </small>
-            
+
             <div className="btn-group" role="group">
               <Link
                 to={`/projects/${project.slug}`}
@@ -145,7 +145,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
               >
                 <i className="bi bi-eye"></i>
               </Link>
-              
+
               {project.project_url && (
                 <a
                   href={project.project_url}
@@ -154,10 +154,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   className="btn btn-sm btn-outline-success"
                   title="Visit Live Site"
                 >
-                  <i className="bi bi-external-link-alt"></i>
+                  <i className="bi bi-link-alt"></i>
                 </a>
               )}
-              
+
               {canEditProjects && (
                 <Link
                   to={`/projects/${project.id}/edit`}

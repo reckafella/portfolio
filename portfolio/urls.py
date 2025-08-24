@@ -30,6 +30,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 from app.views.views import CustomRedirectView
 from authentication.views.auth.captcha import CaptchaRefreshView
 from app.views.base_api import FrontendAPIView
+from app.views.views import AppHealthCheckView as app_is_running
 
 # Error handling
 handler404 = "app.views.error_views.custom_404"
@@ -47,14 +48,11 @@ urlpatterns = [
     path("accounts/", include(django_auth_urls)),
     path("robots.txt", include('robots.urls')),
     path("wagtail/admin/", include(wagtailadmin_urls)),
+    path("app-running", app_is_running.as_view(), name="app_is_running"),
     path("wagtail/", include(wagtail_urls)),
     
     # API endpoints
-    path("api/v1/auth", include("rest_framework.urls")),
-    path("api/v1/auth/", include("authentication.api_urls")),
-    # path("api/v1/blog/", include("blog.api_urls")),
     path("api/v1/", include("app.api_urls")),
-    # path("api/v1/", include("app.api_urls")),  # We'll create this next
     
     # Regular app URLs
     path("app/", include("blog.urls"), name="blog"),

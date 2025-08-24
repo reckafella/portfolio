@@ -3,8 +3,10 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 export interface ApiState<T> {
   data: T | null;
   loading: boolean;
-  error: string | null;
+  isOnlineError: string | null;
+  isServerOnlineError: string | null;
   isOnline: boolean;
+  isServerOnline: Promise<boolean>;
   retryCount: number;
 }
 
@@ -15,6 +17,13 @@ export interface UseApiOptions {
   enableRefresh?: boolean;
 }
 
+/** Checks if the server is online */
+export async function checkServerOnline() {
+  const response = await fetch("http://127.0.0.1:8000/app-running");
+  if (!response.ok) return false;
+  return true;
+}
+
 /**
  * Enhanced API hook with error handling, retry logic, and offline detection
  */
@@ -23,7 +32,7 @@ export function useApi<T>(
   options: UseApiOptions = {}
 ) {
   const {
-    retryAttempts = 3,
+    retryAttempts = 2,
     retryDelay = 1000,
     timeout = 10000,
     enableRefresh = true
@@ -32,38 +41,68 @@ export function useApi<T>(
   const [state, setState] = useState<ApiState<T>>({
     data: null,
     loading: true,
-    error: null,
-    isOnline: navigator.onLine,
+    isOnlineError: null,
+    isServerOnlineError: null,
+    isOnline: false,
+    isServerOnline: checkServerOnline(),
     retryCount: 0
   });
 
-  // Check if we're online
-  const updateOnlineStatus = useCallback(() => {
+  // Check if server online
+  const updateServerOnlineStatus = useCallback(() => {
+    setState(prev => ({ ...prev, isServerOnline: checkServerOnline() }));
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('online', updateServerOnlineStatus);
+    window.addEventListener('offline', updateServerOnlineStatus);
+    return () => {
+      window.removeEventListener('online', updateServerOnlineStatus);
+      window.removeEventListener('offline', updateServerOnlineStatus);
+    };
+  }, [updateServerOnlineStatus]);
+
+  // Check if server online
+  const updateUserOnlineStatus = useCallback(() => {
     setState(prev => ({ ...prev, isOnline: navigator.onLine }));
   }, []);
 
   useEffect(() => {
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('online', updateUserOnlineStatus);
+    window.addEventListener('offline', updateUserOnlineStatus);
     return () => {
-      window.removeEventListener('online', updateOnlineStatus);
-      window.removeEventListener('offline', updateOnlineStatus);
+      window.removeEventListener('online', updateUserOnlineStatus);
+      window.removeEventListener('offline', updateUserOnlineStatus);
     };
-  }, [updateOnlineStatus]);
+  }, [updateUserOnlineStatus]);
 
   // Fetch data with timeout and retry logic
   const fetchData = useCallback(async (retryCount = 0): Promise<void> => {
+    if (!checkServerOnline()) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        isServerOnlineError: 'No Server connection.',
+        isServerOnline: checkServerOnline()
+      }));
+      return;
+    }
     if (!navigator.onLine) {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: 'No internet connection. Please check your network and try again.',
+        isOnlineError: 'No internet connection.',
         isOnline: false
       }));
       return;
     }
 
-    setState(prev => ({ ...prev, loading: true, error: null, retryCount }));
+    setState(prev => ({
+      ...prev, loading: true,
+      isOnlineError: null,
+      isServerOnlineError: null,
+      retryCount
+    }));
 
     try {
       // Create timeout promise
@@ -96,8 +135,10 @@ export function useApi<T>(
         ...prev,
         data,
         loading: false,
-        error: null,
-        isOnline: true,
+        isOnlineError: null,
+        isServerOnlineError: null,
+        isServerOnline: checkServerOnline(),
+        isOnline: navigator.onLine,
         retryCount: 0
       }));
 
@@ -117,14 +158,14 @@ export function useApi<T>(
         setState(prev => ({
           ...prev,
           loading: true,
-          error: `Retrying... (${retryCount + 1}/${retryAttempts})`,
+          isServerOnlineError: `Retrying... (${retryCount + 1}/${retryAttempts})`,
           retryCount: retryCount + 1
         }));
       } else {
         setState(prev => ({
           ...prev,
           loading: false,
-          error: errorMessage,
+          isServerOnlineError: errorMessage,
           retryCount
         }));
       }

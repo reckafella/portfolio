@@ -13,12 +13,13 @@ export const ProjectAddPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Use the enhanced hook with fallback handling
-  const { 
-    data: formConfig, 
-    loading, 
+  const {
+    data: formConfig,
+    loading,
     error: configError,
     isOnline,
-    refresh 
+    isServerOnline,
+    refresh
   } = useProjectFormConfig();
 
   const handleSubmit = async (data: Record<string, string>) => {
@@ -40,7 +41,7 @@ export const ProjectAddPage: React.FC = () => {
       }
 
       setSuccess('Project created successfully!');
-      
+
       // Navigate to project list after a delay
       setTimeout(() => {
         navigate('/projects');
@@ -66,34 +67,10 @@ export const ProjectAddPage: React.FC = () => {
   }
 
   return (
-    <div className="container py-5">
+    <section className="section project container py-5">
       <div className="row justify-content-center">
+
         <div className="col-md-8">
-          {/* Offline/Error Banner */}
-          {!isOnline && (
-            <div className="mb-4">
-              <AlertMessage 
-                type="warning" 
-                message="You're currently offline. Form submission may not be available." 
-              />
-            </div>
-          )}
-
-          {configError && (
-            <div className="mb-4">
-              <AlertMessage 
-                type="warning" 
-                message={`Unable to load form configuration: ${configError}`} 
-              />
-              {refresh && (
-                <button className="btn btn-sm btn-outline-primary mt-2" onClick={refresh}>
-                  <i className="bi bi-sync-alt me-2"></i>
-                  Try Again
-                </button>
-              )}
-            </div>
-          )}
-
           {/* Header */}
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -108,6 +85,33 @@ export const ProjectAddPage: React.FC = () => {
               Back to Projects
             </button>
           </div>
+
+          {/* Offline/Error Banner */}
+          {!isOnline && (
+            <div className="mb-4">
+              <AlertMessage
+                type="warning"
+                message="You're currently offline. Form submission with file upload may not be available."
+              />
+            </div>
+          )}
+
+          {!isServerOnline && (
+            <div className="mb-4">
+              {configError && (
+              <AlertMessage
+                type="warning"
+                message={`Unable to load form configuration: ${configError}`}
+              />
+              )}
+              {refresh && (
+                <button className="btn btn-sm btn-outline-primary mt-2" onClick={refresh}>
+                  <i className="bi bi-sync-alt me-2"></i>
+                  Try Again
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Success Message */}
           {success && (
@@ -143,11 +147,12 @@ export const ProjectAddPage: React.FC = () => {
             <div className="card shadow-sm">
               <div className="card-body text-center py-5">
                 <div className="text-muted">
-                  <i className="bi bi-exclamation-triangle fa-3x mb-3"></i>
+                  <i className="bi bi-exclamation-triangle mb-3"></i>
                   <h3>Form Configuration Unavailable</h3>
                   <p>
-                    Unable to load the project form configuration.
-                    {!isOnline 
+                      Unable to load the project form configuration.
+                    {!isServerOnline ? 'Server is offline': ''}
+                    {!isOnline
                       ? ' Please check your internet connection and try again.'
                       : ' Please try refreshing the page.'
                     }
@@ -158,7 +163,7 @@ export const ProjectAddPage: React.FC = () => {
                       Try Again
                     </button>
                   )}
-                  <button 
+                  <button
                     className="btn btn-outline-secondary"
                     onClick={() => navigate('/projects')}
                   >
@@ -170,6 +175,6 @@ export const ProjectAddPage: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

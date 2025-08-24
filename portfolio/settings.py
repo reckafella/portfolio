@@ -488,7 +488,7 @@ CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
 # ============================
 
 # General rate limit value from environment variable, default == 1000
-RATELIMIT = os.environ.get("RATELIMIT", default=1000)
+RATELIMIT = os.environ.get("RATELIMIT", default=10000)
 LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
                                  default="googlebot,bravebot").split(",")
 SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
@@ -530,7 +530,7 @@ RATE_LIMITING = {
 
     # API rate limiting (if you have APIs)
     'API': {
-        'REQUESTS': 100,  # max 100 API calls per hour per IP
+        'REQUESTS': RATELIMIT,  # max 100 API calls per hour per IP
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'api_rate_limit',
     },

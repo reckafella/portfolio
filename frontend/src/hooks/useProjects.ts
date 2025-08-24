@@ -118,7 +118,7 @@ export function useProjectFormConfig(defer = false) {
  */
 export function useProjectsWithFallback(filters: ProjectFilters = {}) {
   const result = useProjects(filters);
-  
+
   // Memoized fallback data for when API is unavailable
   const fallbackData = useMemo((): ProjectsResponse => ({
     count: 0,
@@ -128,13 +128,22 @@ export function useProjectsWithFallback(filters: ProjectFilters = {}) {
   }), []);
 
   return useMemo(() => {
-    if (!result.isOnline || result.error) {
+    if (!result.isServerOnline || result.isServerOnlineError) {
       return {
         ...result,
         data: result.data || fallbackData,
         isOfflineMode: true
       };
     }
+
+    if (!result.isOnline || result.isOnlineError) {
+      return {
+        ...result,
+        data: result.data || fallbackData,
+        isOfflineMode: true
+      };
+    }
+
     return {
       ...result,
       isOfflineMode: false

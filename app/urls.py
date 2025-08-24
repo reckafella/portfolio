@@ -16,7 +16,6 @@ from .views.projects.details import ProjectDetailView as PDV
 from .views.projects.list import ProjectListView as PLV
 from .views.projects.update import UpdateProjectView as UPV
 from .views.views import AboutView
-from .views.views import AppHealthCheckView as app_is_running
 from .views.views import CustomRedirectView as crv
 from .views.views import (HomeView, ResumePDFView, ServicesView,
                           SitemapView, render_favicon)
@@ -47,7 +46,6 @@ urlpatterns = [
     path("messages/<int:message_id>/mark-read/", MarkAsRead.as_view(), name="mark_as_read"),
     path("messages/<int:message_id>/delete/", DeleteMessage.as_view(), name="delete_message"),
     path("messages/bulk-actions/", BulkActions.as_view(), name="bulk_message_actions"),
-    path("app-running", app_is_running.as_view(), name="app_is_running"),
     path("session-test", TemplateView.as_view(template_name="app/session_test.html"), name="session_test"),
     path("favicon.ico", render_favicon, name="favicon"),
     path("search/<path:invalid_path>", crv.as_view(redirect_to="/search")),

@@ -47,7 +47,7 @@ export const ProjectDetailPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/v1/projects/${projectSlug}/`);
+      const response = await fetch(`/api/v1/projects/${projectSlug}`);
       
       if (!response.ok) {
         if (response.status === 404) {

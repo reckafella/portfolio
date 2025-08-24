@@ -115,7 +115,7 @@ export const projectApi = {
    * Create a new project
    */
   create: async (projectData: Record<string, string | number | boolean>): Promise<Response> => {
-    return apiRequest('/api/v1/projects/create/', {
+    return apiRequest('/api/v1/projects/create', {
       method: 'POST',
       body: JSON.stringify(projectData),
     });
@@ -125,7 +125,7 @@ export const projectApi = {
    * Update an existing project
    */
   update: async (id: number, projectData: Record<string, string | number | boolean>): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}/update/`, {
+    return apiRequest(`/api/v1/projects/${id}/update`, {
       method: 'PUT',
       body: JSON.stringify(projectData),
     });
@@ -135,7 +135,7 @@ export const projectApi = {
    * Delete a project
    */
   delete: async (id: number): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}/delete/`, {
+    return apiRequest(`/api/v1/projects/${id}/delete`, {
       method: 'DELETE',
     });
   },
@@ -144,7 +144,7 @@ export const projectApi = {
    * Get project form configuration
    */
   getFormConfig: async (): Promise<Response> => {
-    return apiRequest('/api/v1/projects/form-config/');
+    return apiRequest('/api/v1/projects/form-config');
   },
 
   /**
@@ -152,7 +152,7 @@ export const projectApi = {
    */
   list: async (params: Record<string, string> = {}): Promise<Response> => {
     const queryString = new URLSearchParams(params).toString();
-    const url = `/api/v1/projects/list/${queryString ? `?${queryString}` : ''}`;
+    const url = `/api/v1/projects/list${queryString ? `?${queryString}` : ''}`;
     return apiRequest(url);
   },
 
@@ -160,6 +160,6 @@ export const projectApi = {
    * Get project details
    */
   get: async (id: number): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}/`);
+    return apiRequest(`/api/v1/projects/${id}`);
   },
 };

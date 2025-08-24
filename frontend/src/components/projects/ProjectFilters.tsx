@@ -50,6 +50,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     clients: []
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [expandAccordion, setExpandAccordion] = useState(false);
 
   useEffect(() => {
     fetchFilterOptions();
@@ -57,14 +58,14 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
 
   const fetchFilterOptions = async () => {
     try {
-      const response = await fetch('/api/v1/projects/form-config/');
+      const response = await fetch('/api/v1/projects/form-config');
       if (response.ok) {
         const config: FormConfig = await response.json();
-        
+
         // Extract options from form config
         const categories: string[] = [];
         const projectTypes: string[] = [];
-        
+
         config.fields.forEach((field: FormField) => {
           if (field.name === 'category' && field.choices) {
             categories.push(...field.choices.map((choice: [string, string]) => choice[0]));
@@ -73,16 +74,16 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
             projectTypes.push(...field.choices.map((choice: [string, string]) => choice[0]));
           }
         });
-        
+
         // Fetch unique clients from projects (you might want to create a separate endpoint for this)
-        const clientsResponse = await fetch('/api/v1/projects/list/?page_size=50');
+        const clientsResponse = await fetch('/api/v1/projects/list?page_size=50');
         const clientsData: ProjectsResponse = await clientsResponse.json();
         const uniqueClients = [...new Set(
           clientsData.results
             ?.map((project: Project) => project.client)
             ?.filter((client: string | undefined): client is string => Boolean(client?.trim()))
         )] as string[];
-        
+
         setFilterOptions({
           categories,
           project_types: projectTypes,
@@ -93,6 +94,15 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
       // Handle error silently or with a toast notification in production
     }
   };
+
+  const collapsedH2 = document.getElementById('filtersHeading');
+  //const collapsedBtn = document.querySelector('collapsed');
+
+  const toggleAccordion = () => {
+    setExpandAccordion(!expandAccordion);
+    document?.body?.classList?.toggle('collapse', !expandAccordion);
+    collapsedH2?.classList.toggle('collapsed', !expandAccordion);
+    }
 
   const handleInputChange = (name: keyof ProjectFiltersState, value: string) => {
     onFilterChange({ [name]: value });
@@ -105,172 +115,195 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
   const orderingOptions = [
     { value: '-created_at', label: 'Newest First' },
     { value: 'created_at', label: 'Oldest First' },
-    { value: 'title', label: 'Title A-Z' },
-    { value: '-title', label: 'Title Z-A' },
-    { value: 'project_type', label: 'Type A-Z' },
-    { value: 'category', label: 'Category A-Z' }
+    { value: 'client', label: 'Client Name ASC' },
+    { value: '-client', label: 'Client Name DESC' },
+    { value: 'title', label: 'Title ASC' },
+    { value: '-title', label: 'Title DESC' },
+    { value: 'project_type', label: 'Type ASC' },
+    { value: '-project_type', label: 'Type DESC' },
+    { value: 'category', label: 'Category ASC' },
+    { value: '-category', label: 'Category DESC' }
   ];
 
   return (
-    <div className="card shadow-sm">
-      <div className="card-header">
-        <div className="row align-items-center">
-          <div className="col-md-6">
-            <div className="input-group">
-              <span className="input-group-text">
-                <i className="bi bi-search"></i>
-              </span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search projects..."
-                value={filters.search}
-                onChange={(e) => handleInputChange('search', e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="col-md-3">
-            <select
-              className="form-select"
-              value={filters.ordering}
-              onChange={(e) => handleInputChange('ordering', e.target.value)}
-            >
-              {orderingOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-3 text-end">
-            <button
-              className="btn btn-outline-secondary me-2"
-              onClick={() => setShowFilters(!showFilters)}
+      <div className="accordion accordion-flush" id="projectFiltersAccordion">
+        <div className="accordion-item">
+          <h2 className="accordion-header" id="filtersHeading">
+            <button className="accordion-button collapsed"
               type="button"
-            >
-              <i className={`bi bi-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
-              Filters
-              {hasActiveFilters && (
-                <span className="badge bg-primary ms-1">
-                  {Object.values(filters).filter(v => v && v !== '-created_at').length}
-                </span>
-              )}
+              aria-controls='filtersCollapse' aria-expanded='false'
+              onClick={toggleAccordion}>
+              <i className="bi bi-funnel me-2"></i> Filter & Sort Projects
             </button>
-            {hasActiveFilters && (
-              <button
-                className="btn btn-outline-warning"
-                onClick={onClearFilters}
-                type="button"
-                title="Clear all filters"
-              >
-                <i className="bi bi-times"></i>
-              </button>
-            )}
+          </h2>
+          {expandAccordion && (
+          <div id="filtersCollapse" className="accordion-collapse collapse"
+            aria-labelledby="filtersHeading" data-bs-parent="#projectFiltersAccordion">
+            <div className="accordion-body">
+              <form method="get" className="row g-3" id="project-filters-form">
+                <div className="row form-group">
+                  <div className="col-md-5">
+                    <label htmlFor="search" className='form-label'>Search Project</label>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <i className="bi bi-search"></i>
+                      </span>
+                      <input type="text" className="form-control"
+                        placeholder='Search Project...'
+                        value={filters.search}
+                        onChange={(e) => handleInputChange('search', e.target.value)}
+                        name="search" id="search" />
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label" htmlFor="sort_by">Sort By</label>
+                    <select
+                      className="form-select"
+                      id='sort_by'
+                      value={filters.ordering}
+                      onChange={(e) => handleInputChange('ordering', e.target.value)}
+                    >
+                      {orderingOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-3 text-end">
+                    <button
+                      className="btn btn-outline-secondary me-2"
+                      onClick={() => setShowFilters(!showFilters)}
+                      type="button"
+                    >
+                      <i className={`bi bi-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
+                      Filters
+                      {hasActiveFilters && (
+                        <span className="badge bg-primary ms-1">
+                          {Object.values(filters).filter(v => v && v !== '-created_at').length}
+                        </span>
+                      )}
+                    </button>
+                    {hasActiveFilters && (
+                      <button
+                        className="btn btn-outline-warning"
+                        onClick={onClearFilters}
+                        type="button"
+                        title="Clear all filters"
+                      > Clear
+                        <i className="bi bi-x"></i>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="row justify-content-center align-center">
+                  {showFilters && (
+                  <div className="card-body">
+                    <div className="row g-3">
+                      <div className="col-md-4">
+                        <label htmlFor="categoryFilter" className="form-label">
+                          <i className="bi bi-tags me-1"></i>
+                          Category
+                        </label>
+                        <select
+                          id="categoryFilter"
+                          className="form-select"
+                          value={filters.category}
+                          onChange={(e) => handleInputChange('category', e.target.value)}
+                        >
+                          <option value="">All Categories</option>
+                          {filterOptions.categories.map(category => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="col-md-4">
+                        <label htmlFor="typeFilter" className="form-label">
+                          <i className="bi bi-code me-1"></i>
+                          Project Type
+                        </label>
+                        <select
+                          id="typeFilter"
+                          className="form-select"
+                          value={filters.project_type}
+                          onChange={(e) => handleInputChange('project_type', e.target.value)}
+                        >
+                          <option value="">All Types</option>
+                          {filterOptions.project_types.map(type => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="col-md-4">
+                        <label htmlFor="clientFilter" className="form-label">
+                          <i className="bi bi-user me-1"></i>
+                          Client
+                        </label>
+                        <select
+                          id="clientFilter"
+                          className="form-select"
+                          value={filters.client}
+                          onChange={(e) => handleInputChange('client', e.target.value)}
+                        >
+                          <option value="">All Clients</option>
+                          {filterOptions.clients.map(client => (
+                            <option key={client} value={client}>
+                              {client}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  )}
+
+                  <div className="card-footer">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <small className="text-muted">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Showing {totalCount} project{totalCount !== 1 ? 's' : ''}
+                        {hasActiveFilters && ' (filtered)'}
+                      </small>
+
+                      {hasActiveFilters && (
+                        <div className="text-end">
+                          <small className="text-muted me-2">Active filters:</small>
+                          {filters.search && (
+                            <span className="badge bg-info me-1">
+                              Search: "{filters.search}"
+                            </span>
+                          )}
+                          {filters.category && (
+                            <span className="badge bg-success me-1">
+                              {filters.category}
+                            </span>
+                          )}
+                          {filters.project_type && (
+                            <span className="badge bg-primary me-1">
+                              {filters.project_type}
+                            </span>
+                          )}
+                          {filters.client && (
+                            <span className="badge bg-warning me-1">
+                              {filters.client}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {showFilters && (
-        <div className="card-body">
-          <div className="row g-3">
-            <div className="col-md-4">
-              <label htmlFor="categoryFilter" className="form-label">
-                <i className="bi bi-tags me-1"></i>
-                Category
-              </label>
-              <select
-                id="categoryFilter"
-                className="form-select"
-                value={filters.category}
-                onChange={(e) => handleInputChange('category', e.target.value)}
-              >
-                <option value="">All Categories</option>
-                {filterOptions.categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="typeFilter" className="form-label">
-                <i className="bi bi-code me-1"></i>
-                Project Type
-              </label>
-              <select
-                id="typeFilter"
-                className="form-select"
-                value={filters.project_type}
-                onChange={(e) => handleInputChange('project_type', e.target.value)}
-              >
-                <option value="">All Types</option>
-                {filterOptions.project_types.map(type => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="clientFilter" className="form-label">
-                <i className="bi bi-user me-1"></i>
-                Client
-              </label>
-              <select
-                id="clientFilter"
-                className="form-select"
-                value={filters.client}
-                onChange={(e) => handleInputChange('client', e.target.value)}
-              >
-                <option value="">All Clients</option>
-                {filterOptions.clients.map(client => (
-                  <option key={client} value={client}>
-                    {client}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="card-footer">
-        <div className="d-flex justify-content-between align-items-center">
-          <small className="text-muted">
-            <i className="bi bi-info-circle me-1"></i>
-            Showing {totalCount} project{totalCount !== 1 ? 's' : ''}
-            {hasActiveFilters && ' (filtered)'}
-          </small>
-          
-          {hasActiveFilters && (
-            <div className="text-end">
-              <small className="text-muted me-2">Active filters:</small>
-              {filters.search && (
-                <span className="badge bg-info me-1">
-                  Search: "{filters.search}"
-                </span>
-              )}
-              {filters.category && (
-                <span className="badge bg-success me-1">
-                  {filters.category}
-                </span>
-              )}
-              {filters.project_type && (
-                <span className="badge bg-primary me-1">
-                  {filters.project_type}
-                </span>
-              )}
-              {filters.client && (
-                <span className="badge bg-warning me-1">
-                  {filters.client}
-                </span>
-              )}
-            </div>
           )}
         </div>
       </div>
-    </div>
   );
 };

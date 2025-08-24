@@ -59,7 +59,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             case 'signup':
                 return '/api/v1/auth/signup-form-config';
             case 'add_project':
-                return '/api/v1/projects/form-config/';
+                return '/api/v1/projects/form-config';
             default:
                 return '/api/v1/contact';
         }
@@ -268,7 +268,8 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 }));
             }
         } catch (error) {
-            console.error('Failed to refresh CAPTCHA:', error);
+            const noob = () => { };
+            if (error instanceof Error) noob();
         }
     };
 

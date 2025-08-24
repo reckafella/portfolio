@@ -5,7 +5,37 @@ import { ProjectFilters } from '../../components/projects/ProjectFilters';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { AlertMessage } from '../../components/common/AlertMessage';
 import { useStaffPermissions } from '../../hooks/useStaffPermissions';
-import { useProjectsWithFallback, Project } from '../../hooks/useProjects';
+import { useProjects } from '../../hooks/queries/projectQueries';
+
+export interface Project {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  featured_image?: string;
+  image?: string;
+  github_url?: string;
+  demo_url?: string;
+  category: string;
+  project_type: string;
+  client?: string;
+  created_at: string;
+  updated_at: string;
+  technologies: string[];
+  status: string;
+  live: boolean;
+  first_image?: {
+    id: number;
+    cloudinary_image_url: string;
+    optimized_image_url: string;
+  };
+  images: Array<{
+    id: number;
+    cloudinary_image_url: string;
+    optimized_image_url: string;
+    live: boolean;
+  }>;
+}
 
 interface ProjectFiltersState {
   search: string;
@@ -29,19 +59,17 @@ export const ProjectListPage: React.FC = () => {
   // Convert filters to API format
   const apiFilters = useMemo(() => ({
     ...filters,
-    page: currentPage,
-    page_size: 12
+    page: currentPage.toString(),
+    page_size: '12'
   }), [filters, currentPage]);
 
-  // Use the enhanced hook with fallback handling
+  // Use TanStack Query for projects
   const { 
     data, 
-    loading, 
-    error, 
-    isOfflineMode, 
-    isOnline, 
-    refresh 
-  } = useProjectsWithFallback(apiFilters);
+    isLoading: loading, 
+    error,
+    refetch
+  } = useProjects(apiFilters);
 
   const projects = data?.results || [];
   const totalCount = data?.count || 0;
@@ -82,35 +110,6 @@ export const ProjectListPage: React.FC = () => {
 
   return (
     <div className="container py-5">
-      {/* Offline/Error Banner */}
-      {!isOnline && (
-        <div className="row mb-4">
-          <div className="col-12">
-            <AlertMessage 
-              type="warning" 
-              message="You're currently offline. Some features may not be available." 
-            />
-          </div>
-        </div>
-      )}
-
-      {isOfflineMode && error && (
-        <div className="row mb-4">
-          <div className="col-12">
-            <AlertMessage 
-              type="warning" 
-              message={`Server temporarily unavailable: ${error}. Showing cached data.`} 
-            />
-            {refresh && (
-              <button className="btn btn-sm btn-outline-primary mt-2" onClick={refresh}>
-                <i className="fas fa-sync-alt me-2"></i>
-                Try Again
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="row mb-4">
         <div className="col-12">
@@ -119,7 +118,6 @@ export const ProjectListPage: React.FC = () => {
               <h1 className="display-4 fw-bold">Projects</h1>
               <p className="lead text-muted">
                 Browse through our portfolio of {totalCount} project{totalCount !== 1 ? 's' : ''}
-                {isOfflineMode && ' (offline mode)'}
               </p>
             </div>
             {canCreateProjects && (
@@ -144,17 +142,15 @@ export const ProjectListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Error Message (for non-offline errors) */}
-      {error && !isOfflineMode && (
+      {/* Error Message */}
+      {error && (
         <div className="row mb-4">
           <div className="col-12">
-            <AlertMessage type="danger" message={error} />
-            {refresh && (
-              <button className="btn btn-outline-primary mt-2" onClick={refresh}>
-                <i className="fas fa-sync-alt me-2"></i>
-                Retry
-              </button>
-            )}
+            <AlertMessage type="danger" message={error.message} />
+            <button className="btn btn-outline-primary mt-2" onClick={() => refetch()}>
+              <i className="fas fa-sync-alt me-2"></i>
+              Retry
+            </button>
           </div>
         </div>
       )}
@@ -163,7 +159,7 @@ export const ProjectListPage: React.FC = () => {
       {loading ? (
         <div className="row">
           <div className="col-12 text-center">
-            <LoadingSpinner text="Loading more projects..." />
+            <LoadingSpinner text="Loading projects..." />
           </div>
         </div>
       ) : projects.length > 0 ? (
@@ -226,9 +222,7 @@ export const ProjectListPage: React.FC = () => {
                   ? 'Try adjusting your search filters.'
                   : canCreateProjects 
                     ? 'Start by adding your first project.'
-                    : isOfflineMode 
-                      ? 'No projects available offline.'
-                      : 'No projects available at the moment.'
+                    : 'No projects available at the moment.'
                 }
               </p>
               {Object.values(filters).some(Boolean) && (
@@ -236,7 +230,7 @@ export const ProjectListPage: React.FC = () => {
                   Clear Filters
                 </button>
               )}
-              {canCreateProjects && !isOfflineMode && (
+              {canCreateProjects && (
                 <Link to="/projects/add" className="btn btn-primary">
                   Add Project
                 </Link>

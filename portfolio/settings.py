@@ -284,7 +284,12 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend/build/static')
+    # React build assets
+    os.path.join(BASE_DIR, 'frontend/build/assets'),
+    # Legacy static files from build/static if they exist
+    os.path.join(BASE_DIR, 'frontend/build/static'),
+    # App static files
+    os.path.join(BASE_DIR, 'app/static'),
 ]
 
 STATICFILES_FINDERS = [

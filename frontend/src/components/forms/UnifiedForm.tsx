@@ -11,6 +11,10 @@ interface FieldConfig {
     min_length?: number;
     captcha_key?: string;
     captcha_image?: string;
+    choices?: Array<[string, string]>; // For select fields
+    accept?: string; // For file inputs
+    multiple?: boolean; // For file inputs
+    max_size?: number; // For file inputs (in bytes)
 }
 
 interface FormConfig {
@@ -19,7 +23,7 @@ interface FormConfig {
 
 interface UnifiedFormProps {
     formType: 'contact' | 'login' | 'signup' | 'add_project';
-    onSubmit: (_formData: Record<string, string>) => Promise<void>;
+    onSubmit: (_formData: Record<string, string | File | File[]>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
     success?: boolean;
@@ -44,7 +48,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     containerClassName: _containerClassName = '',
     cardClassName: _cardClassName = ''
 }) => {
-    const [formData, setFormData] = useState<Record<string, string>>({});
+    const [formData, setFormData] = useState<Record<string, string | File | File[]>>({});
     const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [captchaData, setCaptchaData] = useState<{key: string, image: string} | null>(null);
@@ -211,9 +215,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     }
                     
                     // Initialize form data with empty values
-                    const initialData: Record<string, string> = {};
+                    const initialData: Record<string, string | File | File[]> = {};
                     Object.keys(config.fields).forEach(fieldName => {
-                        initialData[fieldName] = '';
+                        const fieldConfig = config.fields[fieldName];
+                        if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
+                            initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                        } else {
+                            initialData[fieldName] = '';
+                        }
                         // Pre-fill captcha key
                         if (fieldName === 'captcha' && captchaField?.captcha_key) {
                             initialData['captcha_0'] = captchaField.captcha_key;
@@ -225,9 +234,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     const fallbackConfig = getFallbackConfig();
                     setFormConfig(fallbackConfig);
                     
-                    const initialData: Record<string, string> = {};
+                    const initialData: Record<string, string | File | File[]> = {};
                     Object.keys(fallbackConfig.fields).forEach(fieldName => {
-                        initialData[fieldName] = '';
+                        const fieldConfig = fallbackConfig.fields[fieldName];
+                        if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
+                            initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                        } else {
+                            initialData[fieldName] = '';
+                        }
                     });
                     setFormData(initialData);
                 }
@@ -238,9 +252,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const fallbackConfig = getFallbackConfig();
                 setFormConfig(fallbackConfig);
                 
-                const initialData: Record<string, string> = {};
+                const initialData: Record<string, string | File | File[]> = {};
                 Object.keys(fallbackConfig.fields).forEach(fieldName => {
-                    initialData[fieldName] = '';
+                    const fieldConfig = fallbackConfig.fields[fieldName];
+                    if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
+                        initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                    } else {
+                        initialData[fieldName] = '';
+                    }
                 });
                 setFormData(initialData);
             } finally {
@@ -273,11 +292,33 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         }
     };
 
-    const handleInputChange = (fieldName: string, value: string) => {
+    const handleInputChange = (fieldName: string, value: string | File | File[]) => {
         setFormData(prev => ({
             ...prev,
             [fieldName]: value
         }));
+    };
+
+    const handleFileChange = (fieldName: string, files: FileList | null, multiple: boolean = false) => {
+        if (!files) {
+            setFormData(prev => ({
+                ...prev,
+                [fieldName]: multiple ? [] : ''
+            }));
+            return;
+        }
+
+        if (multiple) {
+            setFormData(prev => ({
+                ...prev,
+                [fieldName]: Array.from(files)
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [fieldName]: files[0]
+            }));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -297,14 +338,15 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     };
 
     const renderField = (fieldName: string, fieldConfig: FieldConfig) => {
-        const { required, help_text, disabled, widget, max_length, min_length } = fieldConfig;
-        const value = formData[fieldName] || '';
+        const { required, help_text, disabled, widget, max_length, min_length, choices, accept, multiple, max_size } = fieldConfig;
+        const value = formData[fieldName];
 
-        const baseProps = {
+        // Common props for text-based inputs
+        const textBaseProps = {
             id: fieldName,
             name: fieldName,
-            value,
-            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => 
+            value: typeof value === 'string' ? value : '',
+            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => 
                 handleInputChange(fieldName, e.target.value),
             required,
             disabled: disabled || isSubmitting,
@@ -314,12 +356,33 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             minLength: min_length
         };
 
+        // Common props for file inputs
+        const fileBaseProps = {
+            id: fieldName,
+            name: fieldName,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+                handleFileChange(fieldName, e.target.files, multiple),
+            required,
+            disabled: disabled || isSubmitting,
+            className: "form-control",
+            accept: accept,
+            multiple: multiple
+        };
+
+        const formatFileSize = (bytes: number): string => {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+
         switch (widget) {
             case 'TextInput':
                 return (
                     <input
                         type="text"
-                        {...baseProps}
+                        {...textBaseProps}
                     />
                 );
             
@@ -327,7 +390,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 return (
                     <input
                         type="email"
-                        {...baseProps}
+                        {...textBaseProps}
                     />
                 );
 
@@ -335,18 +398,120 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 return (
                     <input
                         type="password"
-                        {...baseProps}
+                        {...textBaseProps}
+                    />
+                );
+
+            case 'NumberInput':
+                return (
+                    <input
+                        type="number"
+                        {...textBaseProps}
+                    />
+                );
+
+            case 'URLInput':
+                return (
+                    <input
+                        type="url"
+                        {...textBaseProps}
                     />
                 );
             
             case 'Textarea':
                 return (
                     <textarea
-                        {...baseProps}
+                        {...textBaseProps}
                         rows={5}
                         style={{ resize: 'vertical' }}
                     />
                 );
+
+            case 'Select':
+                return (
+                    <select {...textBaseProps}>
+                        <option value="">Choose...</option>
+                        {choices?.map(([value, label]) => (
+                            <option key={value} value={value}>
+                                {label}
+                            </option>
+                        ))}
+                    </select>
+                );
+
+            case 'FileInput': {
+                const fileValue = value as File | File[] | string;
+                const selectedFiles = Array.isArray(fileValue) ? fileValue : (fileValue instanceof File ? [fileValue] : []);
+                
+                return (
+                    <div>
+                        <input
+                            type="file"
+                            {...fileBaseProps}
+                        />
+                        {max_size && (
+                            <div className="form-text">
+                                Maximum file size: {formatFileSize(max_size)}
+                            </div>
+                        )}
+                        {selectedFiles.length > 0 && (
+                            <div className="mt-2">
+                                <small className="text-muted">Selected files:</small>
+                                <ul className="list-unstyled mt-1">
+                                    {selectedFiles.map((file, index) => (
+                                        <li key={index} className="small">
+                                            <i className="bi bi-file-earmark me-1"></i>
+                                            {file.name} ({formatFileSize(file.size)})
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            case 'ImageInput': {
+                const imageValue = value as File | File[] | string;
+                const selectedImages = Array.isArray(imageValue) ? imageValue : (imageValue instanceof File ? [imageValue] : []);
+                
+                return (
+                    <div>
+                        <input
+                            type="file"
+                            {...fileBaseProps}
+                            accept={accept || "image/*"}
+                        />
+                        {max_size && (
+                            <div className="form-text">
+                                Maximum file size: {formatFileSize(max_size)}
+                            </div>
+                        )}
+                        {selectedImages.length > 0 && (
+                            <div className="mt-2">
+                                <small className="text-muted">Selected images:</small>
+                                <div className="row g-2 mt-1">
+                                    {selectedImages.map((file, index) => (
+                                        <div key={index} className="col-6 col-md-4">
+                                            <div className="card">
+                                                <img
+                                                    src={URL.createObjectURL(file)}
+                                                    alt={`Preview ${index + 1}`}
+                                                    className="card-img-top"
+                                                    style={{ height: '100px', objectFit: 'cover' }}
+                                                />
+                                                <div className="card-body p-2">
+                                                    <small className="text-muted">{file.name}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
             
             case 'CaptchaTextInput':
                 return (
@@ -391,7 +556,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         )}
                         <input
                             type="text"
-                            {...baseProps}
+                            {...textBaseProps}
                             placeholder="Enter the characters shown above"
                             autoComplete="off"
                         />
@@ -402,7 +567,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 return (
                     <input
                         type="text"
-                        {...baseProps}
+                        {...textBaseProps}
                     />
                 );
         }

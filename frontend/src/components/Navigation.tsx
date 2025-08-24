@@ -16,6 +16,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const { isAuthenticated, user } = useAuth();
     const { isStaff, canCreateProjects } = useStaffPermissions();
     const [isToggleDropdownOpen, setIsToggleDropdownOpen] = useState(false);
+    const [isStaffDropdownOpen, setIsStaffDropdownOpen] = useState(false);
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -46,9 +47,19 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         document.body.classList.toggle('mobile-nav-active', !isMobileMenuOpen);
     };
 
+    const toggleAccountDropdown = () => {
+        setIsToggleDropdownOpen(!isToggleDropdownOpen);
+    };
+
+    const toggleStaffDropdown = () => {
+        setIsStaffDropdownOpen(!isStaffDropdownOpen);
+    };
+
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
+        setIsToggleDropdownOpen(false);
+        setIsStaffDropdownOpen(false);
         document.body.classList.remove('mobile-nav-active');
     }, [location]);
 
@@ -74,15 +85,20 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         </Link>
                                     </li>
                                 ))}
-                                
+
                                 {/* Staff-only dropdown */}
                                 {isStaff && (
-                                    <li className="dropdown">
-                                        <a role="button" className="">
+                                    <li className={`dropdown ${isStaffDropdownOpen ? 'active' : ''}`}>
+                                        <a
+                                            role="button"
+                                            className="dropdown-toggle"
+                                            onClick={toggleStaffDropdown}
+                                            aria-expanded={isStaffDropdownOpen}
+                                        >
                                             <span>Staff Tools</span>
-                                            <i className="bi bi-chevron-down toggle-dropdown"></i>
+                                            <i className={`bi ${isStaffDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'} toggle-dropdown`}></i>
                                         </a>
-                                        <ul>
+                                        <ul className={isStaffDropdownOpen ? 'dropdown-active' : ''}>
                                             {canCreateProjects && (
                                                 <li>
                                                     <Link to="/projects/add">
@@ -98,13 +114,17 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         </ul>
                                     </li>
                                 )}
-                                
-                                <li className="dropdown">
-                                    <a role="button" className="">
+
+                                <li className={`dropdown ${isToggleDropdownOpen ? 'active' : ''}`}>
+                                    <a role="button"
+                                        className="dropdown-toggle"
+                                        onClick={toggleAccountDropdown}
+                                        aria-expanded={isToggleDropdownOpen}
+                                    >
                                         <span>Account</span>
-                                        <i className="bi bi-chevron-down toggle-dropdown" onClick={() => setIsToggleDropdownOpen(!isToggleDropdownOpen)}></i>
+                                        <i className={`bi ${isToggleDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                                     </a>
-                                    <ul>
+                                    <ul className={isToggleDropdownOpen ? 'dropdown-active' : ''}>
                                         {getAuthItems().map((item) => (
                                             <li key={item.path}>
                                                 <Link to={item.path}>

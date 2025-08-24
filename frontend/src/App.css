@@ -4,4 +4,49 @@
   text-align: center;
 }
 
+/* Dropdown functionality for navigation
+.navmenu .dropdown ul {
+  display: none;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 180px;
+}
+.navmenu .dropdown.active ul,
+.navmenu .dropdown ul.dropdown-active {
+  display: block;
+}
+
+.navmenu .dropdown a.dropdown-toggle {
+  cursor: pointer;
+}
+
+.navmenu .dropdown .toggle-dropdown {
+  transition: transform 0.3s ease;
+}
+
+.navmenu .dropdown.active .toggle-dropdown {
+  transform: rotate(180deg);
+}
+ */
+
+/* Mobile responsive dropdown styles
+@media (max-width: 1200px) {
+  .navmenu .dropdown ul {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid #007bff;
+    margin-left: 20px;
+    background: transparent;
+  }
+  
+  .navmenu .dropdown ul li {
+    padding-left: 10px;
+  }
+} */
+
 /* Add any custom global styles here */

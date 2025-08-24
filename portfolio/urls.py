@@ -60,6 +60,12 @@ urlpatterns = [
     path("captcha/", include("captcha.urls")),
     path("app/", include("app.urls"), name="app"),
     path("app/", include("authentication.urls"), name="auth"),
+    
+    # React frontend assets (catch specific asset paths first)
+    re_path(r"^assets/(?P<path>.*)$", FrontendAPIView.as_view(), name="react_assets"),
+    re_path(r"^favicon\.(svg|ico)$", FrontendAPIView.as_view(), name="react_favicon"),
+    
+    # React frontend (catch-all for React Router)
     re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")
 ]
 

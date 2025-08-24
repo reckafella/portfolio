@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import HomePage from './pages/home/HomePage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
@@ -70,7 +71,7 @@ function App() {
                                             </ProtectedRoute>
                                         } 
                                     />
-                                    <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                                    <Route path="/projects/:slug" element={<ProjectDetailPage />} />
                                     
                                     <Route path="/contact" element={<ContactPage />} />
                                     <Route path="/services" element={<ServicesPage />} />
@@ -99,6 +100,7 @@ function App() {
                             <Footer />
                             <ScrollToTop />
                             <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+                            <ReactQueryDevtools initialIsOpen={false} />
                         </div>
                     </AuthProvider>
                 </QueryClientProvider>

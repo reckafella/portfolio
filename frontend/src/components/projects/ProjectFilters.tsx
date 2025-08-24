@@ -95,14 +95,9 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     }
   };
 
-  const collapsedH2 = document.getElementById('filtersHeading');
-  //const collapsedBtn = document.querySelector('collapsed');
-
   const toggleAccordion = () => {
     setExpandAccordion(!expandAccordion);
-    document?.body?.classList?.toggle('collapse', !expandAccordion);
-    collapsedH2?.classList.toggle('collapsed', !expandAccordion);
-    }
+  }
 
   const handleInputChange = (name: keyof ProjectFiltersState, value: string) => {
     onFilterChange({ [name]: value });
@@ -129,16 +124,22 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
       <div className="accordion accordion-flush" id="projectFiltersAccordion">
         <div className="accordion-item">
           <h2 className="accordion-header" id="filtersHeading">
-            <button className="accordion-button collapsed"
+            <button 
+              className={`accordion-button ${!expandAccordion ? 'collapsed' : ''}`}
               type="button"
-              aria-controls='filtersCollapse' aria-expanded='false'
-              onClick={toggleAccordion}>
+              aria-controls='filtersCollapse' 
+              aria-expanded={expandAccordion}
+              onClick={toggleAccordion}
+            >
               <i className="bi bi-funnel me-2"></i> Filter & Sort Projects
             </button>
           </h2>
-          {expandAccordion && (
-          <div id="filtersCollapse" className="accordion-collapse collapse"
-            aria-labelledby="filtersHeading" data-bs-parent="#projectFiltersAccordion">
+          <div 
+            id="filtersCollapse" 
+            className={`accordion-collapse collapse ${expandAccordion ? 'show' : ''}`}
+            aria-labelledby="filtersHeading" 
+            data-bs-parent="#projectFiltersAccordion"
+          >
             <div className="accordion-body">
               <form method="get" className="row g-3" id="project-filters-form">
                 <div className="row form-group">
@@ -302,7 +303,6 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               </form>
             </div>
           </div>
-          )}
         </div>
       </div>
   );

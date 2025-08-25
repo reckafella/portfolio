@@ -34,8 +34,9 @@
     transparent 50%,
     transparent 100%);
   background-size: 200% 100%;
-  animation: loading-bar 1s ease-in-out infinite;
   z-index: 9998;
+  animation: loading-bar 0.8s ease-in-out, fade-in-out 0.8s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
 @keyframes loading-bar {
@@ -44,6 +45,21 @@
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

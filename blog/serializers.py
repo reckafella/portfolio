@@ -48,14 +48,14 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
     featured_image_url = serializers.SerializerMethodField()
     tags_list = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
-    date = serializers.DateTimeField(source='first_published_at', read_only=True)
-    body = serializers.CharField(source='content', read_only=True)
+    first_published_at = serializers.DateTimeField()
+    content = serializers.CharField()
     intro = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPostPage
         fields = [
-            'id', 'title', 'slug', 'intro', 'body', 'date', 'featured_image_url',
+            'id', 'title', 'slug', 'intro', 'content', 'featured_image_url',
             'tags_list', 'excerpt', 'reading_time', 'view_count', 'images',
             'comments', 'comments_count', 'first_published_at', 'last_published_at',
             'author', 'published'

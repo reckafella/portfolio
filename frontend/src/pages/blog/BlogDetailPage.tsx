@@ -102,22 +102,11 @@ export function BlogDetailPage() {
     <div className="container my-5">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          {/* Navigation */}
-          <nav aria-label="breadcrumb" className="mb-4">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to="/blog">Blog</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">
-                {post.title}
-              </li>
-            </ol>
-          </nav>
 
           {/* Post Header */}
-          <div className="mb-4">
-            <h1 className="display-4 fw-bold mb-3">{post.title}</h1>
-            
+            <div className="mb-1 mb-md-3">
+                <h2 className="fw-bold">{post.title}</h2>
+
             <div className="d-flex align-items-center text-muted mb-3">
               <span className="me-3">
                 <i className="bi bi-person me-1"></i>
@@ -125,7 +114,7 @@ export function BlogDetailPage() {
               </span>
               <span className="me-3">
                 <i className="bi bi-calendar me-1"></i>
-                {formatDate(post.date)}
+                {formatDate(post.first_published_at)}
               </span>
               <span className="me-3">
                 <i className="bi bi-clock me-1"></i>
@@ -152,26 +141,12 @@ export function BlogDetailPage() {
                 <i className="bi bi-eye me-1"></i>
                 {post.view_count} views
               </span>
-              {post.comment_count && (
+              {post.comments_count && (
               <span>
                 <i className="bi bi-comments me-1"></i>
-                {post.comment_count || 0} comments
+                {post.comments_count | 0} comments
               </span>)}
 
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="mb-3">
-                {post.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    to={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="badge bg-secondary text-decoration-none me-2"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            )}
 
             {/* Edit/Delete Buttons */}
             {canEdit && (
@@ -198,10 +173,25 @@ export function BlogDetailPage() {
 
           {/* Post Content */}
           <div 
-            className="mb-5"
+            className="mb-3"
             dangerouslySetInnerHTML={{ __html: post.content }}
             style={{ lineHeight: '1.8' }}
           />
+
+            {/* Tags */}
+            {post.tags_list && post.tags_list.length > 0 && (
+              <div className="mb-3">
+                {post.tags_list.map((tag) => (
+                  <Link
+                    key={tag}
+                    to={`/blog?tag=${encodeURIComponent(tag)}`}
+                    className="badge bg-secondary text-decoration-none me-2"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            )}
 
           {/* Share Buttons */}
           <div className="border-top border-bottom py-4 mb-5">
@@ -247,7 +237,7 @@ export function BlogDetailPage() {
           {/* Comments Section */}
           <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h4>Comments ({post.comment_count | 0})</h4>
+              <h4>Comments ({post.comments_count || 0})</h4>
               {!showCommentForm && (
                 <button
                   className="btn btn-primary"

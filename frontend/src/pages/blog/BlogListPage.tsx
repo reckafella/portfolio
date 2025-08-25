@@ -263,7 +263,7 @@ export function BlogListPage() {
                           {post.title}
                         </Link>
                         <div className="small text-muted">
-                          {new Date(post.date).toLocaleDateString()}
+                          {new Date(post.first_published_at).toLocaleDateString()}
                         </div>
                       </div>
                     </div>

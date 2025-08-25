@@ -602,8 +602,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
-                <div className="spinner-border text-primary" role="status">
+                <div className="spinner-grow spinner-grow-sm text-danger" role="status">
                     <span className="visually-hidden">Loading form...</span>
+                </div>
+                <div className="spinner-grow text-info">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+                <div className="spinner-grow spinner-grow-lg text-success">
+                    <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
         );
@@ -664,7 +670,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     >
                         {isSubmitting ? (
                             <div className="d-flex align-items-center justify-content-center">
-                                <div className="spinner-border spinner-border-sm me-2" role="status">
+                                <div className="spinner-grow spinner-grow-sm text-danger" role="status">
+                                    <span className="visually-hidden">Loading form...</span>
+                                </div>
+                                <div className="spinner-grow text-info">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                                <div className="spinner-grow spinner-grow-lg text-success">
                                     <span className="visually-hidden">Loading...</span>
                                 </div>
                                 {loadingText || 'Processing...'}

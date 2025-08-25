@@ -174,3 +174,5 @@ cloudinary.json
 redis.json
 copilot-instructions.md
 media/
+node_modules/
+build/

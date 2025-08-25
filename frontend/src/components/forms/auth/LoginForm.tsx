@@ -1,28 +1,33 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import UnifiedForm from '../UnifiedForm';
 import { useLogin } from '../../../hooks/queries/authQueries';
 import { usePreloader } from '../../../hooks/usePreloader';
+import { getSafeNextUrl } from '../../../utils/authUtils';
 
 const LoginForm: React.FC = () => {
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const loginMutation = useLogin();
   const { showLoader, hideLoader } = usePreloader();
 
-  const handleSubmit = async (formData: Record<string, string>) => {
+  const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
     showLoader(); // Show global preloader during authentication
 
     try {
       await loginMutation.mutateAsync({
-        username: formData.username,
-        password: formData.password,
+        username: formData.username as string,
+        password: formData.password as string,
       });
 
       // Keep loader visible briefly to show success state
       setTimeout(() => {
         hideLoader();
-        // Redirect to home page after successful login
-        navigate('/');
+        
+        // Get the next parameter or default to home page, ensuring it's safe
+        const nextUrl = getSafeNextUrl(searchParams.get('next'));
+        
+        // Force a full page reload to ensure all authentication state is properly updated
+        window.location.href = nextUrl;
       }, 500);
     } catch (error) {
       hideLoader(); // Hide loader on error
@@ -49,7 +54,10 @@ const LoginForm: React.FC = () => {
                     <div className="text-center">
                       <p className="text-muted mb-0">
                         Don't have an account?{' '}
-                        <Link to="/signup" className="text-decoration-none">
+                        <Link 
+                          to={`/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          className="text-decoration-none"
+                        >
                           Create one here
                         </Link>
                       </p>

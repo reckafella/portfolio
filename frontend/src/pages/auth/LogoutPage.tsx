@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const LogoutPage: React.FC = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(true);
   const [error, setError] = useState('');
   const { logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleLogout = async () => {
@@ -14,25 +12,27 @@ const LogoutPage: React.FC = () => {
         try {
           await logout();
           setTimeout(() => {
-            navigate('/', { replace: true });
+            // Force a full page reload to ensure all authentication state is cleared
+            window.location.href = '/';
           }, 2000);
-        } catch (err: any) {
-          setError(err.message || 'Logout failed');
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Logout failed';
+          setError(errorMessage);
           setIsLoggingOut(false);
         }
       } else {
         // User is already logged out
         setTimeout(() => {
-          navigate('/', { replace: true });
+          window.location.href = '/';
         }, 1000);
       }
     };
 
     handleLogout();
-  }, [logout, isAuthenticated, navigate]);
+  }, [logout, isAuthenticated]);
 
   const handleManualRedirect = () => {
-    navigate('/', { replace: true });
+    window.location.href = '/';
   };
 
   if (error) {

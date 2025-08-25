@@ -1,7 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { getLoginUrlWithNext } from '../../utils/authUtils';
 
 const ForbiddenPage: React.FC = () => {
+    const location = useLocation();
+    const currentPath = location.pathname + location.search;
+
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
             <div className="container">
@@ -51,7 +55,7 @@ const ForbiddenPage: React.FC = () => {
                             </div>
                             {/* Action Buttons */}
                             <div className="error-actions">
-                                <Link to="/login" className="btn btn-warning btn-lg px-4 me-3">
+                                <Link to={getLoginUrlWithNext(currentPath)} className="btn btn-warning btn-lg px-4 me-3">
                                     <i className="bi bi-person-circle me-2"></i> Sign In
                                 </Link>
                                 <Link to="/" className="btn btn-outline-secondary btn-lg px-4">

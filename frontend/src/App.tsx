@@ -22,6 +22,9 @@ import { SigninRedirect, SignupRedirect, SignoutRedirect } from './components/re
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import AuthProvider from './hooks/useAuth'
 import ErrorBoundary from './components/errors/ErrorBoundary'
+import { LoadingProvider } from './hooks/useLoading'
+import Preloader from './components/common/Preloader'
+import RouteTransition from './components/transitions/RouteTransition'
 import { 
     NotFoundPage, 
     BadRequestPage, 
@@ -55,82 +58,87 @@ function App() {
         <ErrorBoundary>
             <Router>
                 <QueryClientProvider client={queryClient}>
-                    <AuthProvider>
-                        <div className="d-flex flex-column min-vh-100">
-                            <Navigation onToggleSearch={toggleSearch} />
-                            <main className="flex-grow-1">
-                                <Routes>
-                                    <Route path="/" element={<HomePage />} />
-                                    
-                                    {/* Project routes */}
-                                    <Route path="/projects" element={<ProjectListPage />} />
-                                    <Route 
-                                        path="/projects/add" 
-                                        element={
-                                            <ProtectedRoute requireStaff={true}>
-                                                <ProjectAddPage />
-                                            </ProtectedRoute>
-                                        } 
-                                    />
-                                    <Route 
-                                        path="/projects/edit/:id" 
-                                        element={
-                                            <ProtectedRoute requireStaff={true}>
-                                                <ProjectEditPage />
-                                            </ProtectedRoute>
-                                        } 
-                                    />
-                                    <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-                                    
-                                    {/* Blog routes */}
-                                    <Route path="/blog" element={<BlogListPage />} />
-                                    <Route 
-                                        path="/blog/add" 
-                                        element={
-                                            <ProtectedRoute requireStaff={true}>
-                                                <BlogAddPage />
-                                            </ProtectedRoute>
-                                        } 
-                                    />
-                                    <Route 
-                                        path="/blog/edit/:slug" 
-                                        element={
-                                            <ProtectedRoute requireStaff={true}>
-                                                <BlogEditPage />
-                                            </ProtectedRoute>
-                                        } 
-                                    />
-                                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                                    
-                                    <Route path="/contact" element={<ContactPage />} />
-                                    <Route path="/services" element={<ServicesPage />} />
-                                    <Route path="/search" element={<SearchResults />} />
+                    <LoadingProvider>
+                        <AuthProvider>
+                            <Preloader showInitial={true} showOnRouteChange={false} />
+                            <div className="d-flex flex-column min-vh-100">
+                                <Navigation onToggleSearch={toggleSearch} />
+                                <main className="flex-grow-1">
+                                    <RouteTransition>
+                                        <Routes>
+                                            <Route path="/" element={<HomePage />} />
+                                            
+                                            {/* Project routes */}
+                                            <Route path="/projects" element={<ProjectListPage />} />
+                                            <Route 
+                                                path="/projects/add" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <ProjectAddPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route 
+                                                path="/projects/edit/:id" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <ProjectEditPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+                                            
+                                            {/* Blog routes */}
+                                            <Route path="/blog" element={<BlogListPage />} />
+                                            <Route 
+                                                path="/blog/add" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <BlogAddPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route 
+                                                path="/blog/edit/:slug" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <BlogEditPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                                            
+                                            <Route path="/contact" element={<ContactPage />} />
+                                            <Route path="/services" element={<ServicesPage />} />
+                                            <Route path="/search" element={<SearchResults />} />
 
-                                    {/* Authentication routes */}
-                                    <Route path="/signin" element={<SigninRedirect />} />
-                                    <Route path="/login" element={<LoginForm />} />
-                                    <Route path="/register" element={<SignupRedirect />} />
-                                    <Route path="/signup" element={<SignupForm />} />
-                                    <Route path="/signout" element={<SignoutRedirect />} />
-                                    <Route path="/logout" element={<LogoutPage />} />
+                                            {/* Authentication routes */}
+                                            <Route path="/signin" element={<SigninRedirect />} />
+                                            <Route path="/login" element={<LoginForm />} />
+                                            <Route path="/register" element={<SignupRedirect />} />
+                                            <Route path="/signup" element={<SignupForm />} />
+                                            <Route path="/signout" element={<SignoutRedirect />} />
+                                            <Route path="/logout" element={<LogoutPage />} />
 
-                                    {/* Error routes */}
-                                    <Route path="/error/400" element={<BadRequestPage />} />
-                                    <Route path="/error/401" element={<UnauthorizedPage />} />
-                                    <Route path="/error/403" element={<ForbiddenPage />} />
-                                    <Route path="/error/404" element={<NotFoundPage />} />
-                                    <Route path="/error/500" element={<ServerErrorPage />} />
+                                            {/* Error routes */}
+                                            <Route path="/error/400" element={<BadRequestPage />} />
+                                            <Route path="/error/401" element={<UnauthorizedPage />} />
+                                            <Route path="/error/403" element={<ForbiddenPage />} />
+                                            <Route path="/error/404" element={<NotFoundPage />} />
+                                            <Route path="/error/500" element={<ServerErrorPage />} />
 
-                                    {/* Catch-all route for 404 */}
-                                    <Route path="*" element={<NotFoundPage />} />
-                                </Routes>
-                            </main>
-                            <Footer />
-                            <ScrollToTop />
-                            <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
-                            <ReactQueryDevtools initialIsOpen={false} />
-                        </div>
-                    </AuthProvider>
+                                            {/* Catch-all route for 404 */}
+                                            <Route path="*" element={<NotFoundPage />} />
+                                        </Routes>
+                                    </RouteTransition>
+                                </main>
+                                <Footer />
+                                <ScrollToTop />
+                                <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+                                <ReactQueryDevtools initialIsOpen={false} />
+                            </div>
+                        </AuthProvider>
+                    </LoadingProvider>
                 </QueryClientProvider>
             </Router>
         </ErrorBoundary>

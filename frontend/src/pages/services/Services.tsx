@@ -1,14 +1,57 @@
 import React from 'react';
+import { usePreloader } from '../../hooks/usePreloader';
 // import { Link } from 'react-router-dom';
 
 
 const ServicesSection: React.FC = () => {
+    const { showLoader, hideLoader, showRouteLoader, hideRouteLoader } = usePreloader();
+
+    const demoFullLoader = () => {
+      showLoader();
+      setTimeout(() => {
+        hideLoader();
+      }, 2000);
+    };
+
+    const demoRouteLoader = () => {
+      showRouteLoader();
+      setTimeout(() => {
+        hideRouteLoader();
+      }, 1000);
+    };
+
     return (
         <section id="services" className="section services py-5">
         <div className="container">
           <div className="section-title text-center mb-5">
             <h2>Services</h2>
             <p className="">What I Can Do For You</p>
+          </div>
+
+          {/* Preloader Demo Section */}
+          <div className="row mb-5">
+            <div className="col-12">
+              <div className="card bg-light">
+                <div className="card-body text-center">
+                  <h5 className="card-title">Loading Demo</h5>
+                  <p className="card-text text-muted">Test the new preloader system</p>
+                  <div className="d-flex gap-3 justify-content-center">
+                    <button 
+                      onClick={demoFullLoader}
+                      className="btn btn-primary"
+                    >
+                      Demo Full Preloader (2s)
+                    </button>
+                    <button 
+                      onClick={demoRouteLoader}
+                      className="btn btn-secondary"
+                    >
+                      Demo Route Loading (1s)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">

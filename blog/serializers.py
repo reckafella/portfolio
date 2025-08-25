@@ -47,7 +47,7 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
     excerpt = serializers.SerializerMethodField()
     featured_image_url = serializers.SerializerMethodField()
     tags_list = serializers.SerializerMethodField()
-    author_name = serializers.CharField(source='author.username', read_only=True)
+    author = serializers.SerializerMethodField()
     date = serializers.DateTimeField(source='first_published_at', read_only=True)
     body = serializers.CharField(source='content', read_only=True)
     intro = serializers.SerializerMethodField()
@@ -58,9 +58,18 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'intro', 'body', 'date', 'featured_image_url',
             'tags_list', 'excerpt', 'reading_time', 'view_count', 'images',
             'comments', 'comments_count', 'first_published_at', 'last_published_at',
-            'author_name', 'published'
+            'author', 'published'
         ]
         read_only_fields = ['id', 'slug', 'view_count', 'first_published_at', 'last_published_at']
+
+    def get_author(self, obj):
+        """Get the full name if available, otherwise username"""
+        if obj.author:
+            full_name = f"{obj.author.first_name} {obj.author.last_name}".strip()
+            if full_name:
+                return full_name
+            return obj.author.username
+        return "Anonymous"
 
     def get_comments_count(self, obj):
         return obj.comments.count()

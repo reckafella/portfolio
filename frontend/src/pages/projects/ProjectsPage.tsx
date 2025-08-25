@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 interface Project {
   id: number;
+  slug: string;
   title: string;
   description: string;
   technologies: string[];
@@ -92,7 +93,7 @@ const ProjectsPage: React.FC = () => {
           ) : (
             <div className="row g-4">
               {projects.map((project) => (
-                <div key={project.id} className="col-md-6 col-lg-4">
+                <div key={project.slug} className="col-md-6 col-lg-4">
                   <div className="card h-100 shadow-sm border-0 hover-shadow">
                     {project.image_url && (
                       <div className="card-img-top" style={{ height: '200px' }}>

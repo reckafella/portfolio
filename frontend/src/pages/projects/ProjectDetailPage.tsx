@@ -54,25 +54,35 @@ export const ProjectDetailPage: React.FC = () => {
 
   if (!slug) {
     return (
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-12">
-            <AlertMessage type="danger" message="No project slug provided" />
-            <Link to="/projects" className="btn btn-primary">
-              <i className="bi bi-arrow-left me-2"></i>
-              Back to Projects
-            </Link>
+      <section className="section project">
+        <div className="container py-5">
+          <div className="row">
+            <div className="col-12">
+              <div className="section-title">
+                <h2 className="fw-bold">Project Not Found</h2>
+              </div>
+              <AlertMessage type="danger" message="No project slug provided" />
+              <Link to="/projects" className="btn btn-primary">
+                <i className="bi bi-arrow-left me-2"></i>
+                Back to Projects
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   if (loading) {
     return (
-      <div className="container py-5">
-        <LoadingSpinner text="Loading project..." />
-      </div>
+      <section className="section project">
+        <div className="section-title">
+          <h2 className="fw-bold">Project Details</h2>
+        </div>
+        <div className="container py-5">
+          <LoadingSpinner text="Loading project..." />
+        </div>
+      </section>
     );
   }
 
@@ -81,6 +91,9 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="container py-5">
         <div className="row">
           <div className="col-12">
+            <div className="section-title">
+              <h2 className="fw-bold">Project Not Found</h2>
+            </div>
             <AlertMessage type="danger" message={error.message} />
             <div className="mt-3">
               <button className="btn btn-outline-primary me-2" onClick={() => refetch()}>
@@ -103,6 +116,9 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="container py-5">
         <div className="row">
           <div className="col-12">
+            <div className="section-title">
+              <h2 className="fw-bold">Project Not Found</h2>
+            </div>
             <AlertMessage type="warning" message="Project not found" />
             <Link to="/projects" className="btn btn-primary">
               <i className="bi bi-arrow-left me-2"></i>
@@ -115,8 +131,12 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="container py-5">
-      {/* Navigation */}
+    <section className="section project">
+      <div className="container py-5">
+      <div className="section-title">
+        <h2 className="fw-bold">{project.title}</h2>
+      </div>
+      {/* Navigation
       <div className="row mb-4">
         <div className="col-12">
           <Link to="/projects" className="btn btn-outline-secondary">
@@ -124,14 +144,13 @@ export const ProjectDetailPage: React.FC = () => {
             Back to Projects
           </Link>
         </div>
-      </div>
+      </div> */}
 
       {/* Project Header */}
       <div className="row mb-5">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <h1 className="display-4 fw-bold">{project.title}</h1>
               <div className="d-flex flex-wrap gap-2 mt-2">
                 <span className={`badge bg-${getBadgeColor(project.project_type)} fs-6`}>
                   {project.project_type}
@@ -149,9 +168,9 @@ export const ProjectDetailPage: React.FC = () => {
                 {canEditProjects && (
                   <button
                     className="btn btn-outline-primary btn-sm"
-                    onClick={() => navigate(`/projects/edit/${project.id}`)}
+                    onClick={() => navigate(`/projects/edit/${project.slug}`)}
                   >
-                    <i className="bi bi-edit me-1"></i>
+                    <i className="bi bi-pencil me-1"></i>
                     Edit
                   </button>
                 )}
@@ -184,7 +203,7 @@ export const ProjectDetailPage: React.FC = () => {
             Created: {formatDate(project.created_at)}
             {project.updated_at !== project.created_at && (
               <span className="ms-3">
-                <i className="bi bi-edit me-2"></i>
+                <i className="bi bi-pencil me-2"></i>
                 Updated: {formatDate(project.updated_at)}
               </span>
             )}
@@ -336,6 +355,7 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
       )}
       {showDeleteModal && <div className="modal-backdrop show"></div>}
-    </div>
+      </div>
+    </section>
   );
 };

@@ -79,7 +79,7 @@ function App() {
                                                 } 
                                             />
                                             <Route 
-                                                path="/projects/edit/:id" 
+                                                path="/projects/edit/:slug"projec 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
                                                         <ProjectEditPage />

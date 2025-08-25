@@ -110,12 +110,14 @@ export const ProjectListPage: React.FC = () => {
 
   return (
     <div className="container py-5">
+      <div className="section-title">
+        <h2 className="fw-bold">Projects</h2>
+      </div>
       {/* Header */}
-      <div className="row mb-4">
+      <div className="row">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              <h1 className="display-4 fw-bold">Projects</h1>
               <p className="lead text-muted">
                 Browse through our portfolio of {totalCount} project{totalCount !== 1 ? 's' : ''}
               </p>
@@ -166,7 +168,7 @@ export const ProjectListPage: React.FC = () => {
         <>
           <div className="row g-4">
             {projects.map((project: Project) => (
-              <div key={project.id} className="col-lg-4 col-md-6">
+              <div key={project.slug} className="col-lg-4 col-md-6">
                 <ProjectCard project={project} />
               </div>
             ))}

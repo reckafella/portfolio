@@ -11,7 +11,7 @@ export interface BlogPost {
   date: string;
   featured_image_url?: string;
   tags: string[];
-  reading_time: number;
+  reading_time: string;
   view_count: number;
   comment_count: number;
   first_published_at: string;

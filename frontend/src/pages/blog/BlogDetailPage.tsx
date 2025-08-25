@@ -102,10 +102,6 @@ export function BlogDetailPage() {
     });
   };
 
-  const formatReadingTime = (minutes: number) => {
-    return `${minutes} min read`;
-  };
-
   return (
     <div className="container my-5">
       <div className="row justify-content-center">
@@ -137,7 +133,7 @@ export function BlogDetailPage() {
               </span>
               <span className="me-3">
                 <i className="bi bi-clock me-1"></i>
-                {formatReadingTime(post.reading_time)}
+                {post.reading_time}
               </span>
               <span className="me-3">
                 <i className="bi bi-eye me-1"></i>

@@ -49,7 +49,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             <div className="d-flex align-items-center text-muted">
               <small className="me-3">
                 <i className="bi bi-person me-1"></i>
-                {post.author || 'Ethan Wanyoike'}
+                By {post.author}
               </small>
               <small className="me-3">
                 <i className="bi bi-calendar me-1"></i>
@@ -57,7 +57,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
               </small>
               <small>
                 <i className="bi bi-clock me-1"></i>
-                {post.reading_time} min read
+                {post.reading_time}
               </small>
             </div>
           </div>
@@ -66,7 +66,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             <div className="d-flex gap-2">
               <Link
                 to={`/blog/${post.slug}`}
-                className="btn btn-outline-primary btn-sm"
+                className="btn btn-primary btn-sm"
               >
                 Read More
               </Link>
@@ -74,7 +74,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
               {canEditBlog && (
                 <Link
                   to={`/blog/${post.slug}/edit`}
-                  className="btn btn-outline-secondary btn-sm"
+                  className="btn btn-secondary btn-sm"
                 >
                   Edit
                 </Link>

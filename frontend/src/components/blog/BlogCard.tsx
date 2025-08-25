@@ -49,7 +49,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             <div className="d-flex align-items-center text-muted">
               <small className="me-3">
                 <i className="bi bi-person me-1"></i>
-                By {post.author}
+                {post.author}
               </small>
               <small className="me-3">
                 <i className="bi bi-calendar me-1"></i>

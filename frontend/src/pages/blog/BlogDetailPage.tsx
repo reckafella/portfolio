@@ -95,11 +95,7 @@ export function BlogDetailPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return new Date(dateString).toLocaleDateString('en-GB');
   };
 
   return (
@@ -125,7 +121,7 @@ export function BlogDetailPage() {
             <div className="d-flex align-items-center text-muted mb-3">
               <span className="me-3">
                 <i className="bi bi-person me-1"></i>
-                By <strong>{post.author}</strong>
+                <strong>{post.author}</strong>
               </span>
               <span className="me-3">
                 <i className="bi bi-calendar me-1"></i>
@@ -135,15 +131,32 @@ export function BlogDetailPage() {
                 <i className="bi bi-clock me-1"></i>
                 {post.reading_time}
               </span>
+            </div>
+
+          </div>
+
+          {/* Featured Image */}
+          {post.featured_image_url && (
+            <div className="mb-4">
+              <img
+                src={post.featured_image_url}
+                alt={post.title}
+                className="img-fluid rounded shadow-sm"
+                style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+              />
+            </div>
+          )}
+          <div className="d-flex align-items-center text-muted mb-3">
+
               <span className="me-3">
                 <i className="bi bi-eye me-1"></i>
                 {post.view_count} views
               </span>
+              {post.comment_count && (
               <span>
                 <i className="bi bi-comments me-1"></i>
-                {post.comment_count} comments
-              </span>
-            </div>
+                {post.comment_count || 0} comments
+              </span>)}
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
@@ -181,19 +194,7 @@ export function BlogDetailPage() {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Featured Image */}
-          {post.featured_image_url && (
-            <div className="mb-4">
-              <img
-                src={post.featured_image_url}
-                alt={post.title}
-                className="img-fluid rounded shadow-sm"
-                style={{ width: '100%', height: '400px', objectFit: 'cover' }}
-              />
             </div>
-          )}
 
           {/* Post Content */}
           <div 

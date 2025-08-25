@@ -12,11 +12,30 @@ const contactApiFunctions = {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to send message');
+      // Check if response has content before trying to parse JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        } catch {
+          // If JSON parsing fails, throw a generic error
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+      } else {
+        // If not JSON response, throw generic error
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     }
 
-    return response.json();
+    // Check if response has content before trying to parse JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      // If the response is not JSON (like a 204 No Content), return empty object
+      return {};
+    }
   },
 };
 

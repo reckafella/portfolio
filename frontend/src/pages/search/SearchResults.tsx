@@ -41,7 +41,8 @@ const SearchResults: React.FC = () => {
 
       setResults(mockResults);
     } catch (error) {
-      console.error('Search error:', error);
+      const noot = () => { }
+      if (error instanceof Error) noot();
       setResults([]);
     } finally {
       setLoading(false);
@@ -49,7 +50,7 @@ const SearchResults: React.FC = () => {
   };
 
   return (
-    <div className="min-vh-100 bg-light">
+    <div className="min-vh-100">
       <section className="py-5">
         <div className="container">
           <div className="row">

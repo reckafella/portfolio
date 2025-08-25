@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const UnauthorizedPage: React.FC = () => {
   return (
-    <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-6 col-md-8 text-center">
@@ -16,7 +16,7 @@ const UnauthorizedPage: React.FC = () => {
 
               {/* Error Message */}
               <div className="error-message mb-4">
-                <h2 className="h3 fw-bold text-dark mb-3">Authentication Required</h2>
+                <h2 className="h3 fw-bold mb-3">Authentication Required</h2>
                 <p className="text-muted fs-5 mb-4">
                   You need to sign in to access this content. Please log in with your credentials.
                 </p>

@@ -48,7 +48,7 @@ class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div className="min-vh-100 d-flex align-items-center justify-content-center">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-8 col-md-10 text-center">
@@ -60,35 +60,11 @@ class ErrorBoundary extends Component<Props, State> {
 
                   {/* Error Message */}
                   <div className="error-message mb-4">
-                    <h1 className="h2 fw-bold text-dark mb-3">Something went wrong</h1>
+                    <h1 className="h2 fw-bold mb-3">Something went wrong</h1>
                     <p className="text-muted fs-5 mb-4">
                       An unexpected error occurred. Don't worry, it's not your fault!
                     </p>
                   </div>
-
-                  {/* Error Details (Development Only)
-                  {import.meta.env.MODE === 'development' && this.state.error && (
-                    <div className="error-details mb-4">
-                      <div className="alert alert-danger text-start" role="alert">
-                        <h6 className="alert-heading">
-                          <i className="bi bi-bug me-2"></i>
-                          Development Error Details:
-                        </h6>
-                        <hr />
-                        <p className="mb-2">
-                          <strong>Error:</strong> {this.state.error.message}
-                        </p>
-                        {this.state.errorInfo && (
-                          <details className="mt-2">
-                            <summary className="fw-semibold">Component Stack</summary>
-                            <pre className="mt-2 text-dark" style={{ fontSize: '0.8rem', whiteSpace: 'pre-wrap' }}>
-                              {this.state.errorInfo.componentStack}
-                            </pre>
-                          </details>
-                        )}
-                      </div>
-                    </div>
-                  )} */}
 
                   {/* Action Buttons */}
                   <div className="error-actions mb-4">
@@ -117,7 +93,7 @@ class ErrorBoundary extends Component<Props, State> {
 
                   {/* Help Section */}
                   <div className="error-help">
-                    <div className="card border-0 bg-light">
+                    <div className="card border-0">
                       <div className="card-body py-3">
                         <h6 className="card-title mb-2">
                           <i className="bi bi-info-circle me-2"></i>
@@ -142,7 +118,7 @@ class ErrorBoundary extends Component<Props, State> {
                             <small className="text-muted">
                               <i className="bi bi-envelope me-1"></i>
                               <strong>Report</strong><br />
-                              <Link to="/contact" className="bg-light-dark bg-dark-light text-decoration-none">
+                              <Link to="/contact" className="text-decoration-none">
                                 Contact support
                               </Link>
                             </small>

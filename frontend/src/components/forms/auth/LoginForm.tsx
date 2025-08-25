@@ -2,19 +2,32 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import UnifiedForm from '../UnifiedForm';
 import { useLogin } from '../../../hooks/queries/authQueries';
+import { usePreloader } from '../../../hooks/usePreloader';
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const { showLoader, hideLoader } = usePreloader();
 
   const handleSubmit = async (formData: Record<string, string>) => {
-    await loginMutation.mutateAsync({
-      username: formData.username,
-      password: formData.password,
-    });
+    showLoader(); // Show global preloader during authentication
     
-    // Redirect to home page after successful login
-    navigate('/');
+    try {
+      await loginMutation.mutateAsync({
+        username: formData.username,
+        password: formData.password,
+      });
+      
+      // Keep loader visible briefly to show success state
+      setTimeout(() => {
+        hideLoader();
+        // Redirect to home page after successful login
+        navigate('/');
+      }, 500);
+    } catch (error) {
+      hideLoader(); // Hide loader on error
+      throw error; // Re-throw to let UnifiedForm handle the error display
+    }
   };
 
   return (

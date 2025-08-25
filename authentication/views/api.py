@@ -1,11 +1,15 @@
 from rest_framework import status, generics, permissions
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+from ..authentication import CsrfExemptSessionAuthentication, APITokenAuthentication
 
 from ..serializers import (
     UserSerializer,
@@ -17,9 +21,11 @@ from ..serializers import (
 from ..models import Profile
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginFormConfigView(APIView):
     """API endpoint to return login form configuration"""
     permission_classes = [permissions.AllowAny]
+    authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
     
     def get(self, request):
         form_config = {
@@ -46,9 +52,11 @@ class LoginFormConfigView(APIView):
         return Response(form_config)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegisterFormConfigView(APIView):
     """API endpoint to return registration form configuration"""
     permission_classes = [permissions.AllowAny]
+    authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
     
     def get(self, request):
         form_config = {
@@ -113,6 +121,8 @@ class RegisterFormConfigView(APIView):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@authentication_classes([CsrfExemptSessionAuthentication, APITokenAuthentication])
+@csrf_exempt
 def register_user(request):
     """Register a new user"""
     serializer = UserRegistrationSerializer(data=request.data)
@@ -129,6 +139,8 @@ def register_user(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@authentication_classes([CsrfExemptSessionAuthentication, APITokenAuthentication])
+@csrf_exempt
 def login_user(request):
     """Login user"""
     serializer = UserLoginSerializer(data=request.data)

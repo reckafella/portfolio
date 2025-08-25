@@ -26,7 +26,7 @@ class ProjectListAPIView(generics.ListAPIView):
         category = self.request.query_params.get('category', None)
         project_type = self.request.query_params.get('project_type', None)
         client = self.request.query_params.get('client', None)
-        search = self.request.query_params.get('q', None)
+        search = self.request.query_params.get('search', None) or self.request.query_params.get('q', None)
 
         if category and category != 'all':
             queryset = queryset.filter(category=category)
@@ -45,8 +45,12 @@ class ProjectListAPIView(generics.ListAPIView):
             )
 
         # Sorting
-        sort_by = self.request.query_params.get('sort_by', '-created_at')
-        if sort_by in ['-created_at', 'created_at', 'title', '-title', 'category', '-category']:
+        sort_by = self.request.query_params.get('sort_by', '-created_at') or self.request.query_params.get('ordering', '-created_at')
+        allowed_sort_fields = [
+            '-created_at', 'created_at', 'title', '-title', 'category', '-category',
+            'client', '-client', 'project_type', '-project_type'
+        ]
+        if sort_by in allowed_sort_fields:
             queryset = queryset.order_by(sort_by)
 
         return queryset
@@ -64,6 +68,9 @@ class ProjectListAPIView(generics.ListAPIView):
 
         return Response({
             'results': serializer.data,
+            'count': paginator.count,
+            'next': f"?page={page_obj.next_page_number()}" if page_obj.has_next() else None,
+            'previous': f"?page={page_obj.previous_page_number()}" if page_obj.has_previous() else None,
             'pagination': {
                 'count': paginator.count,
                 'num_pages': paginator.num_pages,

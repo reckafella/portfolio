@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LoadingSpinner } from '../common/LoadingSpinner';
+import { getLoginUrlWithNext } from '../../utils/authUtils';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,7 +27,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!isAuthenticated) {
-    // Redirect to login with current location as state
+    // Generate login URL with current path as next parameter
+    const currentPath = location.pathname + location.search;
+    if (redirectTo === '/login') {
+      const loginUrl = getLoginUrlWithNext(currentPath);
+      return <Navigate to={loginUrl} replace />;
+    }
+    // For other redirect destinations, use the original redirect
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 

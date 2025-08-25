@@ -1,7 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { getLoginUrlWithNext, getSignupUrlWithNext } from '../../utils/authUtils';
 
 const UnauthorizedPage: React.FC = () => {
+  const location = useLocation();
+  const currentPath = location.pathname + location.search;
+
   return (
     <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
       <div className="container">
@@ -56,14 +60,14 @@ const UnauthorizedPage: React.FC = () => {
               {/* Action Buttons */}
               <div className="error-actions">
                 <Link
-                  to="/login"
+                  to={getLoginUrlWithNext(currentPath)}
                   className="btn btn-info btn-lg px-4 me-3"
                 >
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Sign In
                 </Link>
                 <Link
-                  to="/register"
+                  to={getSignupUrlWithNext(currentPath)}
                   className="btn btn-outline-info btn-lg px-4"
                 >
                   <i className="bi bi-person-plus me-2"></i>
@@ -75,7 +79,7 @@ const UnauthorizedPage: React.FC = () => {
               <div className="error-help mt-5 pt-4 border-top">
                 <p className="text-muted small mb-2">
                   Forgot your password?
-                  <Link to="/login" className="text-decoration-none ms-1">
+                  <Link to={getLoginUrlWithNext(currentPath)} className="text-decoration-none ms-1">
                     Reset it here
                   </Link>
                 </p>

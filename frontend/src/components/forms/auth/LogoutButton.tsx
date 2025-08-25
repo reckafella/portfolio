@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 interface LogoutButtonProps {
   className?: string;
@@ -13,17 +12,18 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
 }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { logout } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      // Redirect to home page after logout
-      navigate('/');
-    } catch (err: any) {
-      localStorage.removeItem('token');
-      navigate('/');
+      // Force a full page reload to ensure all authentication state is cleared
+      window.location.href = '/';
+    } catch {
+      // Clear local storage and reload on error as well
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
     } finally {
       setIsLoggingOut(false);
     }

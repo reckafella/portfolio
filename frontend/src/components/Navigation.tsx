@@ -5,6 +5,7 @@ import ThemeSwitch from './utils/SwitchThemes';
 import SVGLogoComponent from './Logo';
 import { useAuth } from '../hooks/useAuth';
 import { useStaffPermissions } from '../hooks/useStaffPermissions';
+import { getLoginUrlWithNext, getSignupUrlWithNext } from '../utils/authUtils';
 
 interface NavigationProps {
   onToggleSearch: () => void;
@@ -34,9 +35,11 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                 { path: '/logout', label: 'Logout' }
             ];
         } else {
+            // Include current page as next parameter for login/signup
+            const currentPath = location.pathname + location.search;
             return [
-                { path: '/login', label: 'Login' },
-                { path: '/signup', label: 'Signup' }
+                { path: getLoginUrlWithNext(currentPath), label: 'Login' },
+                { path: getSignupUrlWithNext(currentPath), label: 'Signup' }
             ];
         }
     };

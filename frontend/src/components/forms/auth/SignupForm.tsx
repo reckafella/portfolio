@@ -1,32 +1,37 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import UnifiedForm from '../UnifiedForm';
 import { useSignup } from '../../../hooks/queries/authQueries';
 import { usePreloader } from '../../../hooks/usePreloader';
+import { getSafeNextUrl } from '../../../utils/authUtils';
 
 const SignupForm: React.FC = () => {
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const signupMutation = useSignup();
   const { showLoader, hideLoader } = usePreloader();
 
-  const handleSubmit = async (formData: Record<string, string>) => {
+  const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
     showLoader(); // Show global preloader during registration
 
     try {
       await signupMutation.mutateAsync({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        password_confirm: formData.password_confirm,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        username: formData.username as string,
+        email: formData.email as string,
+        password: formData.password as string,
+        password_confirm: formData.password_confirm as string,
+        first_name: formData.first_name as string,
+        last_name: formData.last_name as string,
       });
 
       // Keep loader visible briefly to show success state
       setTimeout(() => {
         hideLoader();
-        // Redirect to home page after successful registration
-        navigate('/');
+        
+        // Get the next parameter or default to home page, ensuring it's safe
+        const nextUrl = getSafeNextUrl(searchParams.get('next'));
+        
+        // Force a full page reload to ensure all authentication state is properly updated
+        window.location.href = nextUrl;
       }, 500);
     } catch (error) {
       hideLoader(); // Hide loader on error
@@ -53,7 +58,10 @@ const SignupForm: React.FC = () => {
                     <div className="text-center">
                       <p className="text-muted">
                         Already have an account?{' '}
-                        <Link to="/login" className="text-decoration-none">
+                        <Link 
+                          to={`/login${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          className="text-decoration-none"
+                        >
                           Sign In
                         </Link>
                       </p>

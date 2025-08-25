@@ -92,70 +92,72 @@ export const ProjectEditPage: React.FC = () => {
     );
   }
 
-  return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          {/* Header */}
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h1 className="display-4 fw-bold">Edit Project</h1>
-              <p className="lead text-muted">
-                Editing: <strong>{project.title}</strong>
-              </p>
+    return (
+        <section className="project section">
+            <div className="container py-5">
+                <div className="row justify-content-center">
+                    <div className="col-md-8">
+                        <div className="section">
+                            <h2 className="fw-bold">Edit Project</h2>
+                        </div>
+                        {/* Header */}
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <p className="lead text-muted">
+                                    Editing: <strong>{project.title}</strong>
+                                </p>
+                            </div>
+                            <div className="btn-group">
+                                <button
+                                    className="btn btn-outline-secondary"
+                                    onClick={() => navigate('/projects')}
+                                >
+                                    Back to Projects
+                                </button>
+                                <button
+                                    className="btn btn-outline-primary"
+                                    onClick={() => navigate(`/projects/${project.slug || slug}`)}
+                                >
+                                    View Project
+                                </button>
+                            </div>
+                        </div>
+                        {/* Error Display */}
+                        {updateProjectMutation.isError && (
+                            <AlertMessage
+                                type="danger"
+                                message="Failed to update project. Please check your input and try again."
+                                className="mb-4"
+                            />
+                        )}
+                        {/* Form */}
+                        {formConfig && dataLoaded && (
+                            <div className="card shadow-sm">
+                                <div className="card-body">
+                                    <UnifiedForm
+                                        config={formConfig}
+                                        onSubmit={handleSubmit}
+                                        submitButtonText="Update Project"
+                                        loadingText="Updating..."
+                                        isLoading={updateProjectMutation.isPending}
+                                        initialData={initialData}
+                                        showProgressBar={true}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Loading State for Form */}
+                        {updateProjectMutation.isPending && (
+                            <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-opacity-50" style={{ zIndex: 1050 }}>
+                                <div className="bg-white p-4 rounded shadow">
+                                    <LoadingSpinner text="Updating project..." />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-            <div className="btn-group">
-              <button
-                className="btn btn-outline-secondary"
-                onClick={() => navigate('/projects')}
-              >
-                Back to Projects
-              </button>
-              <button
-                className="btn btn-outline-primary"
-                onClick={() => navigate(`/projects/${project.slug || slug}`)}
-              >
-                View Project
-              </button>
-            </div>
-          </div>
-
-          {/* Error Display */}
-          {updateProjectMutation.isError && (
-            <AlertMessage
-              type="danger"
-              message="Failed to update project. Please check your input and try again."
-              className="mb-4"
-            />
-          )}
-
-          {/* Form */}
-          {formConfig && dataLoaded && (
-            <div className="card shadow-sm">
-              <div className="card-body">
-                <UnifiedForm
-                  config={formConfig}
-                  onSubmit={handleSubmit}
-                  submitButtonText="Update Project"
-                  loadingText="Updating..."
-                  isLoading={updateProjectMutation.isPending}
-                  initialData={initialData}
-                  showProgressBar={true}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Loading State for Form */}
-          {updateProjectMutation.isPending && (
-            <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-opacity-50" style={{ zIndex: 1050 }}>
-              <div className="bg-white p-4 rounded shadow">
-                <LoadingSpinner text="Updating project..." />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+        </section>
+    );
 };

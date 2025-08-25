@@ -77,19 +77,16 @@ export function BlogListPage() {
     );
   }
 
-  return (
-    <div className="container my-5">
-      <div className="row">
+    return (
+        <section className="section blog">
+        <div className="container my-5">
+            <div className="row">
+                <div className="text-center section-title mb-3 mb-lg-4">
+                  <h2>Blog</h2>
+              </div>
         <div className="col-lg-8">
           {/* Header */}
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h1>Blog</h1>
-              <p className="text-muted mb-0">
-                {totalCount > 0 && `${totalCount} post${totalCount !== 1 ? 's' : ''} found`}
-              </p>
-            </div>
-            
             {canCreateBlog && (
               <Link to="/blog/add" className="btn btn-primary">
                 <i className="bi bi-plus me-2"></i>
@@ -103,6 +100,7 @@ export function BlogListPage() {
             filters={filters}
             onFiltersChange={handleFiltersChange}
             tags={popularTags}
+            totalCount={totalCount}
           />
 
           {/* Loading State */}
@@ -190,10 +188,10 @@ export function BlogListPage() {
 
         {/* Sidebar */}
         <div className="col-lg-4">
-          <div className="sticky-top" style={{ top: '2rem' }}>
-            {/* Blog Stats */}
+          <div className="" style={{ top: '2rem' }}>
+            {/* Blog Stats - hidden for now */}
             {!statsLoading && statsData && (
-              <div className="card mb-4">
+              <div className="d-none card mb-4">
                 <div className="card-header">
                   <h6 className="mb-0">Blog Statistics</h6>
                 </div>
@@ -276,6 +274,6 @@ export function BlogListPage() {
           </div>
         </div>
       </div>
-    </div>
+    </div></section>
   );
 }

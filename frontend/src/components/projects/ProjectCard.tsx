@@ -57,7 +57,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     return '/static/assets/images/placeholder-project.jpg';
   };
 
-  const getBadgeColor = (type: string) => {
+  /* const getBadgeColor = (type: string) => {
     const colors: Record<string, string> = {
       'web': 'primary',
       'mobile': 'success',
@@ -66,7 +66,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       'other': 'secondary'
     };
     return colors[type.toLowerCase()] || 'secondary';
-  };
+  }; */
 
   return (
     <div className="card h-100 shadow-sm project-card">
@@ -96,11 +96,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       <div className="card-body d-flex flex-column">
         {/* Project Type & Category */}
         <div className="mb-2">
-          <span className={`badge bg-${getBadgeColor(project.project_type)} me-2`}>
+          <span className={`badge bg-secondary me-2`}>
             {project.project_type}
           </span>
           {project.category && (
-            <span className="badge">
+            <span className="badge bg-info">
               {project.category}
             </span>
           )}
@@ -154,17 +154,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   className="btn btn-sm btn-outline-success"
                   title="Visit Live Site"
                 >
-                  <i className="bi bi-link-alt"></i>
+                  <i className="bi bi-link"></i>
                 </a>
               )}
 
               {canEditProjects && (
                 <Link
-                  to={`/projects/${project.id}/edit`}
+                  to={`/projects/${project.slug}/edit`}
                   className="btn btn-sm btn-outline-secondary"
                   title="Edit Project"
                 >
-                  <i className="bi bi-edit"></i>
+                  <i className="bi bi-pencil"></i>
                 </Link>
               )}
             </div>

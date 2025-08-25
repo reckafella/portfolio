@@ -23,7 +23,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
       
       <div className="card-body d-flex flex-column">
         <div className="mb-2">
-          {post.tags_list.map((tag, index) => (
+          {post.tags?.map((tag, index) => (
             <Link
               key={index}
               to={`/blog?tag=${encodeURIComponent(tag)}`}
@@ -73,8 +73,8 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             
             <div className="text-muted small">
               <span>{post.view_count} views</span>
-              {post.comments_count > 0 && (
-                <span className="ms-2">{post.comments_count} comments</span>
+              {post?.comment_count > 0 && (
+                <span className="ms-2">{post?.comment_count} comments</span>
               )}
             </div>
           </div>

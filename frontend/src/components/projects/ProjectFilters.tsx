@@ -121,189 +121,189 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
   ];
 
   return (
-      <div className="accordion accordion-flush" id="projectFiltersAccordion">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="filtersHeading">
-            <button 
-              className={`accordion-button ${!expandAccordion ? 'collapsed' : ''}`}
-              type="button"
-              aria-controls='filtersCollapse' 
-              aria-expanded={expandAccordion}
-              onClick={toggleAccordion}
-            >
-              <i className="bi bi-funnel me-2"></i> Filter & Sort Projects
-            </button>
-          </h2>
-          <div 
-            id="filtersCollapse" 
-            className={`accordion-collapse collapse ${expandAccordion ? 'show' : ''}`}
-            aria-labelledby="filtersHeading" 
-            data-bs-parent="#projectFiltersAccordion"
+    <div className="accordion accordion-flush" id="projectFiltersAccordion">
+      <div className="accordion-item">
+        <h2 className="accordion-header" id="filtersHeading">
+          <button 
+            className={`accordion-button ${!expandAccordion ? 'collapsed' : ''}`}
+            type="button"
+            aria-controls='filtersCollapse' 
+            aria-expanded={expandAccordion}
+            onClick={toggleAccordion}
           >
-            <div className="accordion-body">
-              <form method="get" className="row g-3" id="project-filters-form">
-                <div className="row form-group">
-                  <div className="col-md-5">
-                    <label htmlFor="search" className='form-label'>Search Project</label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <i className="bi bi-search"></i>
+            <i className="bi bi-funnel me-2"></i> Filter & Sort Projects
+          </button>
+        </h2>
+        <div 
+          id="filtersCollapse" 
+          className={`accordion-collapse collapse ${expandAccordion ? 'show' : ''}`}
+          aria-labelledby="filtersHeading" 
+          data-bs-parent="#projectFiltersAccordion"
+        >
+          <div className="accordion-body">
+            <form method="get" className="card g-3 form-control">
+              <div className="card-body row form-group">
+                <div className="col-md-5">
+                  <label htmlFor="search" className='form-label'>Search Project</label>
+                  <div className="input-group">
+                    <span className="input-group-text">
+                      <i className="bi bi-search"></i>
+                    </span>
+                    <input type="text" className="form-control"
+                      placeholder='Search Project...'
+                      value={filters.search}
+                      onChange={(e) => handleInputChange('search', e.target.value)}
+                      name="search" id="search" />
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <label className="form-label" htmlFor="sort_by">Sort By</label>
+                  <select
+                    className="form-select"
+                    id='sort_by'
+                    value={filters.ordering}
+                    onChange={(e) => handleInputChange('ordering', e.target.value)}
+                  >
+                    {orderingOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-md-3 text-end">
+                  <button
+                    className="btn btn-outline-secondary me-2"
+                    onClick={() => setShowFilters(!showFilters)}
+                    type="button"
+                  >
+                    <i className={`bi bi-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
+                    Filters
+                    {hasActiveFilters && (
+                      <span className="badge bg-primary ms-1">
+                        {Object.values(filters).filter(v => v && v !== '-created_at').length}
                       </span>
-                      <input type="text" className="form-control"
-                        placeholder='Search Project...'
-                        value={filters.search}
-                        onChange={(e) => handleInputChange('search', e.target.value)}
-                        name="search" id="search" />
+                    )}
+                  </button>
+                  {hasActiveFilters && (
+                    <button
+                      className="btn btn-outline-warning"
+                      onClick={onClearFilters}
+                      type="button"
+                      title="Clear all filters"
+                    > Clear
+                      <i className="bi bi-x"></i>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="card-footer row justify-content-center align-center">
+                {showFilters && (
+                <div className="">
+                  <div className="row g-3">
+                    <div className="col-md-4">
+                      <label htmlFor="categoryFilter" className="form-label">
+                        <i className="bi bi-tags me-1"></i>
+                        Category
+                      </label>
+                      <select
+                        id="categoryFilter"
+                        className="form-select"
+                        value={filters.category}
+                        onChange={(e) => handleInputChange('category', e.target.value)}
+                      >
+                        <option value="">All Categories</option>
+                        {filterOptions.categories.map(category => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="col-md-4">
+                      <label htmlFor="typeFilter" className="form-label">
+                        <i className="bi bi-code me-1"></i>
+                        Project Type
+                      </label>
+                      <select
+                        id="typeFilter"
+                        className="form-select"
+                        value={filters.project_type}
+                        onChange={(e) => handleInputChange('project_type', e.target.value)}
+                      >
+                        <option value="">All Types</option>
+                        {filterOptions.project_types.map(type => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="col-md-4">
+                      <label htmlFor="clientFilter" className="form-label">
+                        <i className="bi bi-user me-1"></i>
+                        Client
+                      </label>
+                      <select
+                        id="clientFilter"
+                        className="form-select"
+                        value={filters.client}
+                        onChange={(e) => handleInputChange('client', e.target.value)}
+                      >
+                        <option value="">All Clients</option>
+                        {filterOptions.clients.map(client => (
+                          <option key={client} value={client}>
+                            {client}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <label className="form-label" htmlFor="sort_by">Sort By</label>
-                    <select
-                      className="form-select"
-                      id='sort_by'
-                      value={filters.ordering}
-                      onChange={(e) => handleInputChange('ordering', e.target.value)}
-                    >
-                      {orderingOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-3 text-end">
-                    <button
-                      className="btn btn-outline-secondary me-2"
-                      onClick={() => setShowFilters(!showFilters)}
-                      type="button"
-                    >
-                      <i className={`bi bi-filter me-1 ${showFilters ? 'text-primary' : ''}`}></i>
-                      Filters
-                      {hasActiveFilters && (
-                        <span className="badge bg-primary ms-1">
-                          {Object.values(filters).filter(v => v && v !== '-created_at').length}
-                        </span>
-                      )}
-                    </button>
+                </div>
+                )}
+
+                <div className="">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <small className="text-muted">
+                      <i className="bi bi-info-circle me-1"></i>
+                      Showing {totalCount} project{totalCount !== 1 ? 's' : ''}
+                      {hasActiveFilters && ' (filtered)'}
+                    </small>
+
                     {hasActiveFilters && (
-                      <button
-                        className="btn btn-outline-warning"
-                        onClick={onClearFilters}
-                        type="button"
-                        title="Clear all filters"
-                      > Clear
-                        <i className="bi bi-x"></i>
-                      </button>
+                      <div className="text-end">
+                        <small className="text-muted me-2">Active filters:</small>
+                        {filters.search && (
+                          <span className="badge bg-info me-1">
+                            Search: "{filters.search}"
+                          </span>
+                        )}
+                        {filters.category && (
+                          <span className="badge bg-success me-1">
+                            {filters.category}
+                          </span>
+                        )}
+                        {filters.project_type && (
+                          <span className="badge bg-primary me-1">
+                            {filters.project_type}
+                          </span>
+                        )}
+                        {filters.client && (
+                          <span className="badge bg-warning me-1">
+                            {filters.client}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="row justify-content-center align-center">
-                  {showFilters && (
-                  <div className="card-body">
-                    <div className="row g-3">
-                      <div className="col-md-4">
-                        <label htmlFor="categoryFilter" className="form-label">
-                          <i className="bi bi-tags me-1"></i>
-                          Category
-                        </label>
-                        <select
-                          id="categoryFilter"
-                          className="form-select"
-                          value={filters.category}
-                          onChange={(e) => handleInputChange('category', e.target.value)}
-                        >
-                          <option value="">All Categories</option>
-                          {filterOptions.categories.map(category => (
-                            <option key={category} value={category}>
-                              {category}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="col-md-4">
-                        <label htmlFor="typeFilter" className="form-label">
-                          <i className="bi bi-code me-1"></i>
-                          Project Type
-                        </label>
-                        <select
-                          id="typeFilter"
-                          className="form-select"
-                          value={filters.project_type}
-                          onChange={(e) => handleInputChange('project_type', e.target.value)}
-                        >
-                          <option value="">All Types</option>
-                          {filterOptions.project_types.map(type => (
-                            <option key={type} value={type}>
-                              {type}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="col-md-4">
-                        <label htmlFor="clientFilter" className="form-label">
-                          <i className="bi bi-user me-1"></i>
-                          Client
-                        </label>
-                        <select
-                          id="clientFilter"
-                          className="form-select"
-                          value={filters.client}
-                          onChange={(e) => handleInputChange('client', e.target.value)}
-                        >
-                          <option value="">All Clients</option>
-                          {filterOptions.clients.map(client => (
-                            <option key={client} value={client}>
-                              {client}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  )}
-
-                  <div className="card-footer">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <small className="text-muted">
-                        <i className="bi bi-info-circle me-1"></i>
-                        Showing {totalCount} project{totalCount !== 1 ? 's' : ''}
-                        {hasActiveFilters && ' (filtered)'}
-                      </small>
-
-                      {hasActiveFilters && (
-                        <div className="text-end">
-                          <small className="text-muted me-2">Active filters:</small>
-                          {filters.search && (
-                            <span className="badge bg-info me-1">
-                              Search: "{filters.search}"
-                            </span>
-                          )}
-                          {filters.category && (
-                            <span className="badge bg-success me-1">
-                              {filters.category}
-                            </span>
-                          )}
-                          {filters.project_type && (
-                            <span className="badge bg-primary me-1">
-                              {filters.project_type}
-                            </span>
-                          )}
-                          {filters.client && (
-                            <span className="badge bg-warning me-1">
-                              {filters.client}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
+    </div>
   );
 };

@@ -168,7 +168,7 @@ export function BlogDetailPage() {
                     className="btn btn-outline-primary btn-sm"
                     onClick={() => navigate(`/blog/edit/${post.slug}`)}
                   >
-                    <i className="bi bi-edit me-1"></i>
+                    <i className="bi bi-pencil me-1"></i>
                     Edit Post
                   </button>
                   <button

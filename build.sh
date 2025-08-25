@@ -18,10 +18,13 @@ cd frontend/
 npm install
 npm audit fix --force
 
-# Build the frontend
-npm run build
+# Build the frontend with production settings
+NODE_ENV=production npm run build
 
 cd ..
+
+# Ensure proper permissions for the build directory
+chmod -R 755 frontend/build/
 
 # Collect static files
 python3 manage.py collectstatic --no-input --clear

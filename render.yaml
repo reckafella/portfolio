@@ -5,3 +5,12 @@ services:
     runtime: python
     buildCommand: "./build.sh"
     startCommand: "python -m gunicorn portfolio.asgi:app -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,ethanmuthoni.me,www.ethanmuthoni.me"
+      - key: NODE_VERSION
+        value: 22.x

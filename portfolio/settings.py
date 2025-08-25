@@ -128,6 +128,18 @@ REST_FRAMEWORK = {
     },
 }
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://ethanmuthoni.me",
+    "https://rohn.live",
+    "https://portfolio-ot66.onrender.com",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:4173",
+]
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -284,10 +296,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    # React build assets
-    os.path.join(BASE_DIR, 'frontend/build/assets'),
-    # Legacy static files from build/static if they exist
-    os.path.join(BASE_DIR, 'frontend/build/static'),
+    # React build directory
+    os.path.join(BASE_DIR, 'frontend/build'),
     # App static files
     os.path.join(BASE_DIR, 'app/static'),
 ]
@@ -482,6 +492,8 @@ if ENVIRONMENT == 'production':
     CORS_ALLOWED_ORIGINS += [
         "https://ethanmuthoni.me",
         "https://www.ethanmuthoni.me",
+        "https://portfolio-ot66.onrender.com",
+        "https://rohn.live"
     ]
 
 CORS_ALLOW_CREDENTIALS = True

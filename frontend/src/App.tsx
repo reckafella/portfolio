@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import HomePage from './pages/home/HomePage'
@@ -18,7 +18,6 @@ import SearchOverlay from './components/search/SearchOverlay'
 import LoginForm from './components/forms/auth/LoginForm'
 import SignupForm from './components/forms/auth/SignupForm'
 import LogoutPage from './pages/auth/LogoutPage'
-import { SigninRedirect, SignupRedirect, SignoutRedirect } from './components/redirection/AuthRedirect'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import AuthProvider from './hooks/useAuth'
 import ErrorBoundary from './components/errors/ErrorBoundary'
@@ -79,7 +78,7 @@ function App() {
                                                 } 
                                             />
                                             <Route 
-                                                path="/projects/edit/:slug"projec 
+                                                path="/projects/edit/:slug" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
                                                         <ProjectEditPage />
@@ -112,13 +111,18 @@ function App() {
                                             <Route path="/services" element={<ServicesPage />} />
                                             <Route path="/search" element={<SearchResults />} />
 
-                                            {/* Authentication routes */}
-                                            <Route path="/signin" element={<SigninRedirect />} />
-                                            <Route path="/login" element={<LoginForm />} />
-                                            <Route path="/register" element={<SignupRedirect />} />
-                                            <Route path="/signup" element={<SignupForm />} />
-                                            <Route path="/signout" element={<SignoutRedirect />} />
-                                            <Route path="/logout" element={<LogoutPage />} />
+                                            {/* Authentication routes - organized under /auth for consistency */}
+                                            <Route path="/auth/login" element={<LoginForm />} />
+                                            <Route path="/auth/signup" element={<SignupForm />} />
+                                            <Route path="/auth/logout" element={<LogoutPage />} />
+                                            
+                                            {/* Legacy authentication route redirects for backward compatibility */}
+                                            <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+                                            <Route path="/signin" element={<Navigate to="/auth/login" replace />} />
+                                            <Route path="/signup" element={<Navigate to="/auth/signup" replace />} />
+                                            <Route path="/register" element={<Navigate to="/auth/signup" replace />} />
+                                            <Route path="/logout" element={<Navigate to="/auth/logout" replace />} />
+                                            <Route path="/signout" element={<Navigate to="/auth/logout" replace />} />
 
                                             {/* Error routes */}
                                             <Route path="/error/400" element={<BadRequestPage />} />

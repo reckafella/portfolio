@@ -46,10 +46,20 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
         
         <div className="mt-auto">
           <div className="d-flex justify-content-between align-items-center mb-2">
-            <small className="text-muted">
-              {new Date(post.date).toLocaleDateString()}
-            </small>
-            <small className="text-muted">{post.reading_time}</small>
+            <div className="d-flex align-items-center text-muted">
+              <small className="me-3">
+                <i className="bi bi-person me-1"></i>
+                By {post.author}
+              </small>
+              <small className="me-3">
+                <i className="bi bi-calendar me-1"></i>
+                {new Date(post.date).toLocaleDateString()}
+              </small>
+              <small>
+                <i className="bi bi-clock me-1"></i>
+                {post.reading_time} min read
+              </small>
+            </div>
           </div>
           
           <div className="d-flex justify-content-between align-items-center">

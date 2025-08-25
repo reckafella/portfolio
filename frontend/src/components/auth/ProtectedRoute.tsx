@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireStaff = false,
-  redirectTo = '/login'
+  redirectTo = '/auth/login'
 }) => {
   const { user, isLoading, isAuthenticated } = useAuth();
   const location = useLocation();
@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (!isAuthenticated) {
     // Generate login URL with current path as next parameter
     const currentPath = location.pathname + location.search;
-    if (redirectTo === '/login') {
+    if (redirectTo === '/auth/login') {
       const loginUrl = getLoginUrlWithNext(currentPath);
       return <Navigate to={loginUrl} replace />;
     }

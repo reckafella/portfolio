@@ -1,64 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useLoading } from '../../hooks/useLoading';
 
 interface PreloaderProps {
   showInitial?: boolean;
-  showOnRouteChange?: boolean;
 }
 
 const Preloader: React.FC<PreloaderProps> = ({ 
-  showInitial = true, 
-  showOnRouteChange = true 
+  showInitial = true
 }) => {
   const [isVisible, setIsVisible] = useState(showInitial);
-  const [isRouteChanging, setIsRouteChanging] = useState(false);
-  const location = useLocation();
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const { isLoading, isRouteLoading } = useLoading();
 
   // Handle initial app load
   useEffect(() => {
-    if (showInitial) {
+    if (showInitial && !initialLoadComplete) {
       // Hide preloader after initial load
       const timer = setTimeout(() => {
         setIsVisible(false);
+        setInitialLoadComplete(true);
       }, 800); // Show for 800ms to ensure smooth transition
 
       return () => clearTimeout(timer);
     }
-  }, [showInitial]);
+  }, [showInitial, initialLoadComplete]);
 
-  // Handle route changes
-  useEffect(() => {
-    if (showOnRouteChange && !showInitial) {
-      setIsRouteChanging(true);
-      
-      // Show briefly for route transitions
-      const timer = setTimeout(() => {
-        setIsRouteChanging(false);
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [location.pathname, showOnRouteChange, showInitial]);
-
-  // Show if any loading state is active
-  const shouldShow = isVisible || isRouteChanging || isLoading || isRouteLoading;
-
-  // Don't render if not visible
-  if (!shouldShow) {
-    return null;
-  }
+  // Show if any loading state is active, but only after initial load is complete
+  const shouldShowFullPreloader = (!initialLoadComplete && isVisible) || (initialLoadComplete && isLoading);
+  const shouldShowRouteLoader = initialLoadComplete && isRouteLoading && !isLoading;
 
   return (
     <>
       {/* Full page preloader for initial load and manual loading states */}
-      {(isVisible || isLoading) && (
+      {shouldShowFullPreloader && (
         <div 
           id="preloader" 
-          className={`gap-2 d-flex align-items-center justify-content-center ${
-            (!isVisible && !isLoading) ? 'fade-out' : ''
-          }`}
+          className="gap-2 d-flex align-items-center justify-content-center"
           style={{
             position: 'fixed',
             inset: 0,
@@ -112,7 +89,7 @@ const Preloader: React.FC<PreloaderProps> = ({
       )}
 
       {/* Minimal loading bar for route transitions */}
-      {(isRouteChanging || isRouteLoading) && !isVisible && !isLoading && (
+      {shouldShowRouteLoader && (
         <div className="route-loading"></div>
       )}
     </>

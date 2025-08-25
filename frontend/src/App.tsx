@@ -60,7 +60,7 @@ function App() {
                 <QueryClientProvider client={queryClient}>
                     <LoadingProvider>
                         <AuthProvider>
-                            <Preloader showInitial={true} showOnRouteChange={false} />
+                            <Preloader showInitial={true} />
                             <div className="d-flex flex-column min-vh-100">
                                 <Navigation onToggleSearch={toggleSearch} />
                                 <main className="flex-grow-1">

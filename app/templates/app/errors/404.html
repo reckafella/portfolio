@@ -1,0 +1,69 @@
+{% extends 'app/base.html' %}
+
+{% block title %}404 - Page Not Found{% endblock %}
+
+{% block content %}
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8 text-center">
+            <div class="error-content">
+                <!-- Error Code -->
+                <div class="error-code mb-4">
+                    <h1 class="display-1 fw-bold text-primary mb-0">404</h1>
+                    <div class="error-divider mx-auto my-3" style="width: 100px; height: 4px; background-color: var(--bs-primary);"></div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message mb-4">
+                    <h2 class="h3 fw-bold text-dark mb-3">Page Not Found</h2>
+                    <p class="text-muted fs-5 mb-4">
+                        The page you're looking for doesn't exist or has been moved to a different location.
+                    </p>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="error-suggestions mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="suggestion-card p-3 border rounded bg-white h-100">
+                                <i class="bi bi-house-door fs-2 text-primary mb-2"></i>
+                                <h5 class="fw-semibold">Go Home</h5>
+                                <p class="text-muted small mb-0">Return to the main page</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="suggestion-card p-3 border rounded bg-white h-100">
+                                <i class="bi bi-search fs-2 text-primary mb-2"></i>
+                                <h5 class="fw-semibold">Search</h5>
+                                <p class="text-muted small mb-0">Find what you're looking for</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="error-actions">
+                    <a href="{% url 'app:home' %}" class="btn btn-primary btn-lg px-4 me-3">
+                        <i class="bi bi-house-door me-2"></i>
+                        Go Home
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Go Back
+                    </button>
+                </div>
+
+                <!-- Additional Help -->
+                <div class="error-help mt-5 pt-4 border-top">
+                    <p class="text-muted small mb-2">
+                        Still need help? 
+                        <a href="{% url 'app:contact' %}" class="text-decoration-none ms-1">
+                            Contact me
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

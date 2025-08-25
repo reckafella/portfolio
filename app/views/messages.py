@@ -13,9 +13,64 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 
-from app.forms.contact import ContactForm
-from app.models import Message
-from app.views.helpers.helpers import is_ajax
+from ..forms.contact import ContactForm
+from ..models import Message
+from ..views.helpers.helpers import is_ajax
+
+
+class ContactFormConfigView(View):
+    """API endpoint to return contact form configuration"""
+
+    def get(self, request, *args, **kwargs):
+        form_config = {
+            "fields": {
+                "name": {
+                    "label": "Name",
+                    "type": "TextInput",
+                    "required": True,
+                    "help_text": "Your full name",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 50
+                },
+                "email": {
+                    "label": "Email",
+                    "type": "EmailInput",
+                    "required": True,
+                    "help_text": "Enter a valid email address",
+                    "disabled": False,
+                    "widget": "EmailInput",
+                    "max_length": 70
+                },
+                "subject": {
+                    "label": "Subject",
+                    "type": "TextInput",
+                    "required": True,
+                    "help_text": "What's this about?",
+                    "disabled": False,
+                    "widget": "TextInput",
+                    "max_length": 150
+                },
+                "message": {
+                    "label": "Message",
+                    "type": "Textarea",
+                    "required": True,
+                    "help_text": "Tell me about your project or just say hello...",
+                    "disabled": False,
+                    "widget": "Textarea",
+                    "max_length": 1000
+                },
+                "captcha": {
+                    "label": "Captcha",
+                    "type": "CaptchaTextInput",
+                    "required": True,
+                    "help_text": "Enter the characters shown in the image",
+                    "disabled": False,
+                    "widget": "CaptchaTextInput"
+                }
+            }
+        }
+        return JsonResponse(form_config)
 
 
 class ContactView(FormView):

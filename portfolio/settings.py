@@ -70,7 +70,12 @@ if ENVIRONMENT == 'production':
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
     ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
-    INSTALLED_APPS = ['daphne']
+    INSTALLED_APPS = []  # Remove daphne for local development
+    try:
+        import daphne
+        INSTALLED_APPS.insert(0, 'daphne')
+    except Exception:
+        pass
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
@@ -83,8 +88,8 @@ else:
 
 
 INSTALLED_APPS += [
-    "django.contrib.admin", "django.contrib.auth",
-    "django.contrib.contenttypes", 'django.contrib.sites',
+    "django.contrib.admin", "django.contrib.auth", "rest_framework",
+    "rest_framework.authtoken", "django.contrib.contenttypes", 'django.contrib.sites',
     "django.contrib.sessions", "django.contrib.messages",
     "django.contrib.staticfiles", "django.contrib.sitemaps",
     "corsheaders", "app", "authentication", "blog",
@@ -98,6 +103,30 @@ INSTALLED_APPS += [
     'wagtail.images', 'wagtail.search', 'wagtail.admin',
     'modelcluster', 'taggit', 'wagtail.documents',
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/hour",
+        "user": "1000/hour",
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -252,11 +281,21 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    # React build assets
+    os.path.join(BASE_DIR, 'frontend/build/assets'),
+    # Legacy static files from build/static if they exist
+    os.path.join(BASE_DIR, 'frontend/build/static'),
+    # App static files
+    os.path.join(BASE_DIR, 'app/static'),
+]
+
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
@@ -429,11 +468,32 @@ CATEGORY_CHOICES = [('Web Development', 'Web Development'),
 SITE_ID = 1
 
 # ============================
+# CORS CONFIGURATION
+# ============================
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",  # Vite default port
+    "http://127.0.0.1:5173",
+]
+
+if ENVIRONMENT == 'production':
+    CORS_ALLOWED_ORIGINS += [
+        "https://ethanmuthoni.me",
+        "https://www.ethanmuthoni.me",
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
+
+# ============================
 # RATE LIMITING CONFIGURATION
 # ============================
 
 # General rate limit value from environment variable, default == 1000
-RATELIMIT = os.environ.get("RATELIMIT", default=1000)
+RATELIMIT = os.environ.get("RATELIMIT", default=10000)
 LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
                                  default="googlebot,bravebot").split(",")
 SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
@@ -475,7 +535,7 @@ RATE_LIMITING = {
 
     # API rate limiting (if you have APIs)
     'API': {
-        'REQUESTS': 100,  # max 100 API calls per hour per IP
+        'REQUESTS': RATELIMIT,  # max 100 API calls per hour per IP
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'api_rate_limit',
     },
@@ -541,3 +601,11 @@ OUR_SERVICES = [
         "icon": "bi bi-tools"
     }
 ]
+
+# Error handlers for custom error pages
+if not DEBUG:
+    # Only use custom error handlers in production
+    handler400 = 'app.views.error_views.custom_400'
+    handler403 = 'app.views.error_views.custom_403'
+    handler404 = 'app.views.error_views.custom_404'
+    handler500 = 'app.views.error_views.custom_500'

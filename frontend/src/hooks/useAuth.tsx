@@ -1,0 +1,162 @@
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import AuthService, {AuthResponse, RegisterData} from '../services/authService';
+
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    is_staff: boolean;
+}
+
+interface AuthContextType {
+    user: User | null;
+    isAuthenticated: boolean;
+    login: (_username: string, _password: string) => Promise<AuthResponse>;
+    signup: (_userData: RegisterData) => Promise<AuthResponse>;
+    logout: () => Promise<void>;
+    isLoading: boolean;
+    testApi: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Export the hook separately for better Fast Refresh compatibility
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+// Make this the default export to fix Fast Refresh
+export default function AuthProvider({ children }: AuthProviderProps) {
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Initialize authentication state
+    useEffect(() => {
+        const initAuth = () => {
+            // Check for Django authentication first (from hidden div)
+            const userLoggedInDiv = document.getElementById('user-logged-in');
+            if (userLoggedInDiv) {
+                // User is authenticated in Django, get user info from localStorage or API
+                const currentUser = AuthService.getCurrentUser();
+                if (currentUser && AuthService.isAuthenticated()) {
+                    setUser(currentUser);
+                } else {
+                    // If no localStorage data, fetch from Django session
+                    fetchUserFromSession();
+                }
+            } else {
+                // Check localStorage anyway in case of client-side auth
+                const currentUser = AuthService.getCurrentUser();
+                if (currentUser && AuthService.isAuthenticated()) {
+                    setUser(currentUser);
+                }
+            }
+            setIsLoading(false);
+        };
+
+        initAuth();
+    }, []);
+
+    // Fetch user data from Django session
+    const fetchUserFromSession = async () => {
+        try {
+            const response = await fetch('/api/auth/user/', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+                // Store in localStorage for consistency
+                localStorage.setItem('user', JSON.stringify(userData));
+            }
+        } catch (error) {
+            const noob = () => {}
+            if (error instanceof Error) noob();
+        }
+    };
+
+    const login = async (username: string, password: string): Promise<AuthResponse> => {
+        setIsLoading(true);
+        try {
+            const response = await AuthService.login({ username, password });
+            setUser(response.user);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
+            return response;
+        } catch (error) {
+            throw new Error(`Login error: ${error}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const signup = async (userData: RegisterData): Promise<AuthResponse> => {
+        setIsLoading(true);
+        try {
+            const response = await AuthService.signup(userData);
+            setUser(response.user);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
+            return response;
+        } catch (error) {
+            throw new Error(`Registration Failed: ${error}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const logout = async () => {
+        setIsLoading(true);
+        try {
+            await AuthService.logout();
+            setUser(null);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
+        } catch (error) {
+            throw new Error(`Logout error: ${error}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const testApi = async () => {
+        try {
+            const response = await AuthService.testApi();
+            throw new Error(`API Test: ${response}`);
+        } catch (error) {
+            throw new Error(`API Test failed: ${error}`);
+        }
+    };
+
+    const value: AuthContextType = {
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        login,
+        signup,
+        logout,
+        testApi,
+    };
+
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
+}

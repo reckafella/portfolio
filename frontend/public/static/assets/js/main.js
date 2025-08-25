@@ -1,0 +1,620 @@
+(function() {
+    "use strict";
+
+    /**
+     * Easy selector helper function
+    */
+    const select = (el, all = false) => {
+      el = el.trim()
+      if (all) {
+        return [...document.querySelectorAll(el)]
+      } else {
+        return document.querySelector(el)
+      }
+    }
+
+    /**
+     * Easy event listener function
+    */
+    const on = (type, el, listener, all = false) => {
+      let selectEl = select(el, all)
+      if (selectEl) {
+        if (all) {
+          selectEl.forEach(e => e.addEventListener(type, listener))
+        } else {
+          selectEl.addEventListener(type, listener)
+        }
+      }
+    }
+
+    /**
+     * Easy on scroll event listener
+    */
+    const onscroll = (el, listener) => {
+      el.addEventListener('scroll', listener)
+    }
+
+    /**
+     * Apply .scrolled class to the body as the page is scrolled down
+     */
+    function toggleScrolled() {
+      const selectBody = document.querySelector('body');
+      const selectHeader = document.querySelector('#header');
+      if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
+      window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
+    }
+
+    document.addEventListener('scroll', toggleScrolled);
+    window.addEventListener('load', toggleScrolled);
+
+    /**
+     * Mobile nav toggle with overlay support
+     */
+    const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
+    const navOverlay = document.querySelector('.nav-overlay');
+
+    function mobileNavToogle() {
+      document.querySelector('body').classList.toggle('mobile-nav-active');
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+    }
+    
+    // Toggle on button click
+    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+    
+    // Close on overlay click
+    if (navOverlay) {
+      navOverlay.addEventListener('click', () => {
+        if (document.querySelector('.mobile-nav-active')) {
+          mobileNavToogle();
+        }
+      });
+    }
+
+    /**
+     * Hide mobile nav on same-page/hash links
+     */
+    document.querySelectorAll('#navmenu a').forEach(navmenu => {
+      navmenu.addEventListener('click', () => {
+        if (document.querySelector('.mobile-nav-active')) {
+          mobileNavToogle();
+        }
+      });
+
+    });
+
+    /**
+     * Toggle mobile nav dropdowns
+     */
+    document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
+      navmenu.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.parentNode.classList.toggle('active');
+        this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
+        e.stopImmediatePropagation();
+      });
+    });
+    /**
+     * Search bar toggle show/hide
+     * Use ESC key to hide the search bar
+     * Use Ctrl/Cmd + K to show the search bar
+     * Use the search icon to show/hide the search bar
+     * Click outside the search bar to hide it
+     */
+    if (select('.search-bar-toggle')) {
+      on('click', '.search-bar-toggle', function(e) {
+        select('.search-bar')?.classList.toggle('search-bar-show')
+      });
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && select('.search-bar')?.classList.contains('search-bar-show')) {
+        select('.search-bar')?.classList.remove('search-bar-show');
+      }
+
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        select('.search-bar')?.classList.add('search-bar-show');
+      }
+    });
+    /* click outside to hide search bar */
+    document.addEventListener('click', function (e) {
+      if (select('.search-bar')?.classList.contains('search-bar-show') &&
+        !e.target.closest('.search-bar') &&
+        !e.target.closest('.search-bar-toggle')) {
+        select('.search-bar')?.classList.remove('search-bar-show');
+      }
+    });
+
+    /**
+     * Preloader
+     */
+    const preloader = document.querySelector('#preloader');
+    if (preloader) {
+      window.addEventListener('load', () => {
+        preloader.remove();
+      });
+    }
+
+    /**
+     * Scroll top button
+     */
+    let scrollTop = document.querySelector('.scroll-top');
+
+    function toggleScrollTop() {
+      if (scrollTop) {
+        window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
+      }
+    }
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    window.addEventListener('load', toggleScrollTop);
+    document.addEventListener('scroll', toggleScrollTop);
+
+    /**
+     * Animation on scroll function and init
+     */
+    function aosInit() {
+      AOS.init({
+        duration: 600,
+        easing: 'ease-in-out',
+        once: false,
+        mirror: true
+      });
+    }
+    window.addEventListener('load', aosInit);
+
+    /**
+     * Init typed.js
+     */
+    const selectTyped = document.querySelector('.typed');
+    if (selectTyped) {
+      let typed_strings = selectTyped.getAttribute('data-typed-items');
+      typed_strings = typed_strings.split(',');
+      new Typed('.typed', {
+        strings: typed_strings,
+        loop: true,
+        typeSpeed: 100,
+        backSpeed: 50,
+        backDelay: 2000
+      });
+    }
+    const selectTypedSearch = document.querySelector('.typed-search');
+    if (selectTypedSearch) {
+      let typed_strings = selectTypedSearch.getAttribute('data-typed-search-items');
+      typed_strings = typed_strings.split(',');
+      const searchInput = document.querySelector('input[type="search"]');
+
+      if (searchInput) {
+        // Create a hidden element for typed.js to work with
+        const hiddenTypedElement = document.createElement('span');
+        hiddenTypedElement.className = 'typed-2';
+        hiddenTypedElement.style.position = 'absolute';
+        hiddenTypedElement.style.left = '-9999px';
+        hiddenTypedElement.style.visibility = 'hidden';
+        document.body.appendChild(hiddenTypedElement);
+
+        new Typed('.typed-2', {
+          strings: typed_strings,
+          loop: true,
+          typeSpeed: 100,
+          backSpeed: 50,
+          backDelay: 2000,
+          showCursor: false,
+          onStringTyped: function(arrayPos, self) {
+          },
+          preStringTyped: function(arrayPos, self) {
+            searchInput.placeholder = '';
+          },
+          onTypingPaused: function(arrayPos, self) {
+            const currentText = hiddenTypedElement.textContent;
+            searchInput.placeholder = `Search for ${currentText}`;
+          }
+        });
+
+        // Override the typewrite method to capture real-time changes
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+              const currentText = hiddenTypedElement.textContent;
+              if (currentText) {
+                searchInput.placeholder = `Search for ${currentText}`;
+              } else {
+                searchInput.placeholder = `Search for `;
+              }
+            }
+          });
+        });
+
+        observer.observe(hiddenTypedElement, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      }
+    }
+
+    /**
+     * Animate the skills items on reveal
+     */
+    let skillsAnimation = document.querySelectorAll('.skills-animation');
+    skillsAnimation.forEach((item) => {
+      new Waypoint({
+        element: item,
+        offset: '80%',
+        handler: function(direction) {
+          let progress = item.querySelectorAll('.progress .progress-bar');
+          progress.forEach(el => {
+            el.style.width = el.getAttribute('aria-valuenow') + '%';
+          });
+        }
+      });
+    });
+
+  /**
+   * Init isotope layout and filters
+   */
+  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+
+    let initIsotope;
+    imagesLoaded(isotopeItem.querySelector('.project-container'), function() {
+      initIsotope = new Isotope(isotopeItem.querySelector('.project-container'), {
+        itemSelector: '.project-item',
+        layoutMode: layout,
+        filter: filter,
+        sortBy: sort
+      });
+    });
+
+    isotopeItem.querySelectorAll('.project-filters li').forEach(function(filters) {
+      filters.addEventListener('click', function() {
+        isotopeItem.querySelector('.project-filters .filter-active').classList.remove('filter-active');
+        this.classList.add('filter-active');
+        initIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+        if (typeof aosInit === 'function') {
+          aosInit();
+        }
+      }, false);
+    });
+
+  });
+
+    /**
+     * Initiate Pure Counter
+     */
+    new PureCounter();
+
+    /**
+    * Project Isotope and filter
+    */
+  window.addEventListener('load', () => {
+    let projectContainer = select('.project-container');
+    if (projectContainer) {
+      let projectIsotope = new Isotope(projectContainer, {
+        itemSelector: '.project-item',
+        layoutMode: 'fitRows'
+      }); // fitRows
+
+      let projectFilters = select('#project-filters li', true);
+
+      on('click', '#project-filters li', function(e) {
+        e.preventDefault();
+        projectFilters.forEach(function(el) {
+          el.classList.remove('filter-active');
+        });
+        this.classList.add('filter-active');
+
+        projectIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+      }, true);
+    }
+  });
+
+    /**
+     *  Initiate project lightbox
+     */
+    const projectLightbox = GLightbox({
+      selector: '.project-lightbox'
+    });
+    projectLightbox.on('slide_before_load', (data) => {
+      if (data.slideIndex === 0) {
+        const video = data.slide.querySelector('video');
+        if (video) {
+          video.play();
+        }
+      }
+    });
+
+    /**
+     * Initiate glightbox
+     */
+    const glightbox = GLightbox({
+      selector: '.glightbox'
+    });
+    glightbox.on('slide_before_load', (data) => {
+      if (data.slideIndex === 0) {
+        const video = data.slide.querySelector('video');
+        if (video) {
+          video.play();
+        }
+      }
+    });
+
+    /**
+     * Init isotope layout and filters
+     */
+    document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+      let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+      let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+      let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+
+      let initIsotope;
+      imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+        initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
+          itemSelector: '.isotope-item',
+          layoutMode: layout,
+          filter: filter,
+          sortBy: sort
+        });
+      });
+
+      isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
+        filters.addEventListener('click', function() {
+          isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+          this.classList.add('filter-active');
+          initIsotope.arrange({
+            filter: this.getAttribute('data-filter')
+          });
+          if (typeof aosInit === 'function') {
+            aosInit();
+          }
+        }, false);
+      });
+
+    });
+
+    /**
+     * Frequently Asked Questions Toggle
+     */
+    document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
+      faqItem.addEventListener('click', () => {
+        faqItem.parentNode.classList.toggle('faq-active');
+      });
+    });
+
+    /**
+     * Init swiper sliders
+     */
+    function initSwiper() {
+      document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+        let config = JSON.parse(
+          swiperElement.querySelector(".swiper-config").innerHTML.trim()
+        );
+
+        if (swiperElement.classList.contains("swiper-tab")) {
+          initSwiperWithCustomPagination(swiperElement, config);
+        } else {
+          new Swiper(swiperElement, config);
+        }
+      });
+    }
+
+    window.addEventListener("load", initSwiper);
+
+  /**
+   * Portfolio details slider
+   */
+  new Swiper('.project-details-slider', {
+    speed: 400,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: true
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
+
+
+    /**
+     * Correct scrolling position upon page load for URLs containing hash links.
+     */
+    window.addEventListener('load', function(e) {
+      if (window.location.hash) {
+        if (document.querySelector(window.location.hash)) {
+          setTimeout(() => {
+            let section = document.querySelector(window.location.hash);
+            let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
+            window.scrollTo({
+              top: section.offsetTop - parseInt(scrollMarginTop),
+              behavior: 'smooth'
+            });
+          }, 100);
+        }
+      }
+    });
+
+    /**
+     * Navmenu Scrollspy
+     */
+    let navmenulinks = document.querySelectorAll('.navmenu a');
+
+    function navmenuScrollspy() {
+      navmenulinks.forEach(navmenulink => {
+        if (!navmenulink.hash) return;
+        let section = document.querySelector(navmenulink.hash);
+        if (!section) return;
+        let position = window.scrollY + 200;
+        if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
+          document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
+          navmenulink.classList.add('active');
+        } else {
+          navmenulink.classList.remove('active');
+        }
+      })
+    }
+    window.addEventListener('load', navmenuScrollspy);
+    document.addEventListener('scroll', navmenuScrollspy);
+
+  /**
+   * Initiate Datatables
+   */
+  const datatables = select('.datatable', true)
+  datatables.forEach(datatable => {
+    new simpleDatatables.DataTable(datatable, {
+      perPageSelect: [5, 10, 15, ["All", -1]],
+      columns: [{
+        select: 2,
+        sortSequence: ["desc", "asc"]
+      },
+        {
+          select: 3,
+          sortSequence: ["desc"]
+        },
+        {
+          select: 4,
+          cellClass: "green",
+          headerClass: "red"
+        }
+      ]
+    });
+  })
+
+  // Lazy loading for images
+  document.addEventListener('DOMContentLoaded', function () {
+    const lazyImages = document.querySelectorAll('img.lazy');
+
+    const lazyLoad = (image) => {
+        if (image.dataset.src) {
+          image.src = image.dataset.src;
+          image.classList.remove('lazy');
+          image.removeAttribute('data-src');
+        }
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          lazyLoad(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    lazyImages.forEach(image => {
+      observer.observe(image);
+    });
+  });
+
+  // manage focus in modals
+  document.addEventListener('DOMContentLoaded', function () {
+    const modals = document.querySelectorAll('.modal');
+
+    modals.forEach(modal => {
+      // the element that triggered the modal
+      let previousActiveElement;
+
+      // before the modal is shown
+      modal.addEventListener('show.bs.modal', function () {
+        previousActiveElement = document.activeElement;
+      });
+
+      // when the modal is fully shown
+      modal.addEventListener('shown.bs.modal', function () {
+        // Focus the first form element or the close button
+        const firstInput = modal.querySelector('select, input:not([type="hidden"]), button:not([data-bs-dismiss="modal"])');
+        if (firstInput) {
+          firstInput.focus();
+        } else {
+          modal.querySelector('.btn-close').focus();
+        }
+      });
+
+      // Before the modal is hidden
+      modal.addEventListener('hide.bs.modal', function () {
+        // Remove focus from any element inside the modal
+        if (modal.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+      });
+
+      // When the modal is fully hidden
+      modal.addEventListener('hidden.bs.modal', function() {
+        // Restore focus to the element that had it before the modal was shown
+        if (previousActiveElement) {
+          previousActiveElement.focus();
+        }
+      });
+    })
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+      passwordToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+          const inputField = document.querySelector(this.getAttribute('toggle'));
+          if (inputField.type === 'password') {
+            inputField.type = 'text';
+              this.querySelector('i').classList.remove('bi-eye');
+              this.querySelector('i').classList.add('bi-eye-slash');
+            } else {
+              inputField.type = 'password';
+              this.querySelector('i').classList.remove('bi-eye-slash');
+              this.querySelector('i').classList.add('bi-eye');
+            }
+        });
+      });
+  });
+  // Full Page Search Activation
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchTrigger = document.querySelector('.search-bar-toggle');
+    const searchOverlay = document.getElementById('full-page-search');
+    const searchInput = searchOverlay.querySelector('form input[type="search"]');
+    const closeButton = searchOverlay.querySelector('button.close');
+    const closeButtonI = closeButton.querySelector('i');
+
+    // Open search overlay and focus input
+    if (searchTrigger) {
+      searchTrigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        searchOverlay.classList.add('open');
+        searchInput.focus();
+      });
+    }
+
+    // Close on overlay click, close button click, or Escape key
+    function closeOverlay(event) {
+      if (
+        event.target === searchOverlay ||
+        event.target === closeButton ||
+        event.target === closeButtonI ||
+        event.key === 'Escape' || event.keyCode === 27
+      ) {
+        searchOverlay.classList.remove('open');
+      }
+    }
+
+    // Listen for click and keyup on overlay and close button
+    [searchOverlay, closeButton].forEach(el => {
+      if (el) {
+        el.addEventListener('click', closeOverlay);
+        el.addEventListener('keyup', closeOverlay);
+      }
+    });
+  });
+})();

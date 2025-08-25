@@ -2,10 +2,30 @@
 set -o errexit
 
 # Update pip && install dependencies
+python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
+
+# Install Node.js and npm if not present
+if ! command -v npm &> /dev/null; then
+    echo "npm not found, installing Node.js..."
+    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+fi
+
+cd frontend/
+
+# Install frontend dependencies
+npm install
+npm audit fix --force
+
+# Build the frontend
+npm run build
+
+cd ..
 
 # Collect static files
 python3 manage.py collectstatic --no-input --clear
+
 
 # Apply database migrations
 python3 manage.py makemigrations

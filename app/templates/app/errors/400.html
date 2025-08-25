@@ -1,0 +1,80 @@
+{% extends 'app/base.html' %}
+
+{% block title %}400 - Bad Request{% endblock %}
+
+{% block content %}
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8 text-center">
+            <div class="error-content">
+                <!-- Error Code -->
+                <div class="error-code mb-4">
+                    <h1 class="display-1 fw-bold text-danger mb-0">400</h1>
+                    <div class="error-divider mx-auto my-3" style="width: 100px; height: 4px; background-color: #dc3545;"></div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message mb-4">
+                    <h2 class="h3 fw-bold text-dark mb-3">Bad Request</h2>
+                    <p class="text-muted fs-5 mb-4">
+                        The request could not be understood by the server. This might be due to malformed syntax or invalid parameters.
+                    </p>
+                </div>
+
+                <!-- Error Info -->
+                <div class="error-info mb-4">
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-triangle fs-4 me-3"></i>
+                        <div class="text-start">
+                            <strong>Request Error:</strong><br />
+                            <small>The server cannot process this request due to invalid data or format.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="error-suggestions mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="suggestion-card p-3 border rounded bg-white h-100">
+                                <i class="bi bi-arrow-clockwise fs-2 text-danger mb-2"></i>
+                                <h5 class="fw-semibold">Try Again</h5>
+                                <p class="text-muted small mb-0">Reload and retry your request</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="suggestion-card p-3 border rounded bg-white h-100">
+                                <i class="bi bi-arrow-left fs-2 text-danger mb-2"></i>
+                                <h5 class="fw-semibold">Go Back</h5>
+                                <p class="text-muted small mb-0">Return to the previous page</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="error-actions">
+                    <button onclick="location.reload()" class="btn btn-danger btn-lg px-4 me-3">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        Try Again
+                    </button>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Go Back
+                    </button>
+                </div>
+
+                <!-- Additional Help -->
+                <div class="error-help mt-5 pt-4 border-top">
+                    <p class="text-muted small mb-2">
+                        Issue persists? 
+                        <a href="{% url 'app:contact' %}" class="text-decoration-none ms-1">
+                            Report this problem
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

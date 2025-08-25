@@ -29,12 +29,14 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView
 from authentication.views.auth.captcha import CaptchaRefreshView
+from app.views.base_api import FrontendAPIView
+from app.views.views import AppHealthCheckView as app_is_running
 
 # Error handling
-handler404 = "authentication.views.auth.errors.handler_404"
-handler500 = "authentication.views.auth.errors.handler_500"
-handler403 = "authentication.views.auth.errors.handler_403"
-handler400 = "authentication.views.auth.errors.handler_400"
+handler404 = "app.views.error_views.custom_404"
+handler500 = "app.views.error_views.custom_500"
+handler403 = "app.views.error_views.custom_403"
+handler400 = "app.views.error_views.custom_400"
 
 
 urlpatterns = [
@@ -45,11 +47,36 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("accounts/", include(django_auth_urls)),
     path("robots.txt", include('robots.urls')),
-    re_path("wagtail/admin/", include(wagtailadmin_urls)),
-    re_path("wagtail/", include(wagtail_urls)),
-    path("", include("blog.urls"), name="blog"),
+    path("wagtail/admin/", include(wagtailadmin_urls)),
+    path("app-running", app_is_running.as_view(), name="app_is_running"),
+    path("wagtail/", include(wagtail_urls)),
+    
+    # API endpoints
+    path("api/v1/", include("app.api_urls")),
+    
+    # Regular app URLs
+    path("app/", include("blog.urls"), name="blog"),
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
-    path("", include("app.urls"), name="app"),
-    path("", include("authentication.urls"), name="auth"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("app/", include("app.urls"), name="app"),
+    path("app/", include("authentication.urls"), name="auth"),
+    
+    # React frontend assets (catch specific asset paths first)
+    re_path(r"^assets/(?P<path>.*)$", FrontendAPIView.as_view(), name="react_assets"),
+    re_path(r"^favicon\.(svg|ico)$", FrontendAPIView.as_view(), name="react_favicon"),
+    
+    # React frontend (catch-all for React Router)
+    re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")
+]
+
+# Add error test routes for development
+if settings.DEBUG:
+    from app.views.error_views import custom_400, custom_403, custom_404, custom_500
+    urlpatterns += [
+        path('test/400/', lambda request: custom_400(request), name='test_400'),
+        path('test/403/', lambda request: custom_403(request), name='test_403'),
+        path('test/404/', lambda request: custom_404(request), name='test_404'),
+        path('test/500/', lambda request: custom_500(request), name='test_500'),
+    ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

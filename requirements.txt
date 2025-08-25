@@ -22,3 +22,4 @@ django-redis~=6.0.0
 django-taggit~=6.1.0
 django-countries~=7.6.1
 django-cities-light~=3.10.1
+djangorestframework~=3.16.1

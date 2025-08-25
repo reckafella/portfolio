@@ -1,0 +1,125 @@
+/* App.css - Global application styles */
+
+.App {
+  text-align: center;
+}
+
+/* Preloader Styles */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background-color: var(--preloader-background-color, #fff);
+  transition: all 0.6s ease-out;
+  width: 100%;
+  height: 100vh;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Route transition loading */
+.route-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: rgba(0, 123, 255, 0.1);
+  z-index: 9998;
+  overflow: hidden;
+}
+
+.route-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--accent-color, #007bff);
+  transform: translateX(-100%);
+  animation: slide-right 0.8s ease-out forwards;
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* Page transition fade */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+/* Dropdown functionality for navigation
+.navmenu .dropdown ul {
+  display: none;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 180px;
+}
+.navmenu .dropdown.active ul,
+.navmenu .dropdown ul.dropdown-active {
+  display: block;
+}
+
+.navmenu .dropdown a.dropdown-toggle {
+  cursor: pointer;
+}
+
+.navmenu .dropdown .toggle-dropdown {
+  transition: transform 0.3s ease;
+}
+
+.navmenu .dropdown.active .toggle-dropdown {
+  transform: rotate(180deg);
+}
+ */
+
+/* Mobile responsive dropdown styles
+@media (max-width: 1200px) {
+  .navmenu .dropdown ul {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid #007bff;
+    margin-left: 20px;
+    background: transparent;
+  }
+  
+  .navmenu .dropdown ul li {
+    padding-left: 10px;
+  }
+} */
+
+/* Add any custom global styles here */

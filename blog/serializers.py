@@ -166,7 +166,6 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Create a temporary user or use anonymous user approach
-        from django.contrib.auth.models import User
 
         # For now, we'll use the request user or create anonymous comments
         # In a real application, you might want to handle this differently

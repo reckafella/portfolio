@@ -669,13 +669,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     >
                         {isSubmitting ? (
                             <div className="d-flex align-items-center justify-content-center">
-                                <div className="spinner-grow spinner-grow-sm text-danger" role="status">
-                                    <span className="visually-hidden">Loading form...</span>
-                                </div>
                                 <div className="spinner-grow text-info">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                                <div className="spinner-grow spinner-grow-lg text-success">
                                     <span className="visually-hidden">Loading...</span>
                                 </div>
                                 {loadingText || 'Processing...'}

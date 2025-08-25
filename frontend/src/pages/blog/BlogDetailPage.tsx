@@ -216,7 +216,7 @@ export function BlogDetailPage() {
                 rel="noopener noreferrer"
                 className="btn btn-outline-primary btn-sm"
               >
-                <i className="fab fa-twitter me-1"></i>
+                <i className="bi bi-twitter-x me-1"></i>
                 Twitter
               </a>
               <a
@@ -225,7 +225,7 @@ export function BlogDetailPage() {
                 rel="noopener noreferrer"
                 className="btn btn-outline-primary btn-sm"
               >
-                <i className="fab fa-facebook me-1"></i>
+                <i className="bi bi-facebook me-1"></i>
                 Facebook
               </a>
               <a
@@ -234,7 +234,7 @@ export function BlogDetailPage() {
                 rel="noopener noreferrer"
                 className="btn btn-outline-primary btn-sm"
               >
-                <i className="fab fa-linkedin me-1"></i>
+                <i className="bi bi-linkedin me-1"></i>
                 LinkedIn
               </a>
               <button
@@ -250,10 +250,11 @@ export function BlogDetailPage() {
           {/* Comments Section */}
           <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h4>Comments ({post.comment_count})</h4>
+              <h4>Comments ({post.comment_count | 0})</h4>
               {!showCommentForm && (
                 <button
                   className="btn btn-primary"
+                  disabled={true} /* {createCommentMutation.isPending} */
                   onClick={() => setShowCommentForm(true)}
                 >
                   <i className="bi bi-comment me-1"></i>
@@ -261,6 +262,7 @@ export function BlogDetailPage() {
                 </button>
               )}
             </div>
+          </div>
 
             {/* Comment Form */}
             {showCommentForm && (
@@ -374,7 +376,6 @@ export function BlogDetailPage() {
             )}
           </div>
         </div>
-      </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

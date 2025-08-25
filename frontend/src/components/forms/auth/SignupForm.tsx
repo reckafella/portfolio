@@ -35,35 +35,37 @@ const SignupForm: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-body">
-              <UnifiedForm
-                formType="signup"
-                onSubmit={handleSubmit}
-                isSubmitting={signupMutation.isPending}
-                error={signupMutation.error?.message}
-                title="Sign Up"
-                submitButtonText="Sign Up"
-                loadingText="Creating Account..."
-                additionalContent={
-                  <div className="text-center">
-                    <p className="text-muted">
-                      Already have an account?{' '}
-                      <Link to="/login" className="text-decoration-none">
-                        Sign In
-                      </Link>
-                    </p>
-                  </div>
-                }
-              />
+    <section className='section'>
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <div className="card">
+              <div className="card-body">
+                <UnifiedForm
+                  formType="signup"
+                  onSubmit={handleSubmit}
+                  isSubmitting={signupMutation.isPending}
+                  error={signupMutation.error?.message}
+                  title="Sign Up"
+                  submitButtonText="Sign Up"
+                  loadingText="Creating Account..."
+                  additionalContent={
+                    <div className="text-center">
+                      <p className="text-muted">
+                        Already have an account?{' '}
+                        <Link to="/login" className="text-decoration-none">
+                          Sign In
+                        </Link>
+                      </p>
+                    </div>
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+  </section>
   );
 };
 

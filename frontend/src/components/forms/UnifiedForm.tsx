@@ -57,15 +57,15 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     const getApiEndpoint = () => {
         switch (formType) {
             case 'contact':
-                return '/api/v1/contact';
+                return '/api/v1/contact/';
             case 'login':
-                return '/api/v1/auth/login-form-config';
+                return '/api/v1/auth/login-form-config/';
             case 'signup':
-                return '/api/v1/auth/signup-form-config';
+                return '/api/v1/auth/signup-form-config/';
             case 'add_project':
                 return '/api/v1/projects/form-config';
             default:
-                return '/api/v1/contact';
+                return '/api/v1/contact/';
         }
     };
 
@@ -625,11 +625,12 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
 
     return (
         <div className="rounded-3 shadow p-4">
+            <div className="section-title  mb-0">
             {title && (
-                <h2 className="h3 fw-bold mb-4">
+                <h2 className="fw-bold">
                     {title}
                 </h2>
-            )}
+            )}</div>
 
             {success && (
                 <div className="alert alert-success d-flex align-items-center mb-4" role="alert">
@@ -646,8 +647,6 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     {error}
                 </div>
             )}
-
-            {additionalContent}
 
             <form onSubmit={handleSubmit} method="POST">
                 <div className="row g-3">
@@ -685,6 +684,9 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             submitButtonText || 'Submit'
                         )}
                     </button>
+                </div>
+                <div className="text-center mt-3">
+                    {additionalContent}
                 </div>
             </form>
         </div>

@@ -24,15 +24,6 @@ const ContactPage: React.FC = () => {
                         </p>
                     </div>
                     <div className="row justify-content-around d-flex gy-3">
-                        <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="https://x.com/frmundu" target="_blank">
-                            <div className="info-item d-flex phone">
-                                <i className="bi bi-telephone"></i>
-                                <div className="d-none d-md-block">
-                                    <h3>Twitter</h3>
-                                    <p>Ethan Wanyoike</p>
-                                </div>
-                            </div>
-                        </Link>
                         <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="https://www.linkedin.com/in/ethanmuthoni" target="_blank">
                             <div className="info-item d-flex linkedin">
                                 <i className="bi bi-linkedin"></i>
@@ -56,13 +47,13 @@ const ContactPage: React.FC = () => {
                                 <i className="bi bi-envelope"></i>
                                 <div className="d-none d-md-block">
                                     <h3>Email</h3>
-                                    <p>ethanwanyoike@gmail.com</p>
+                                    <p>ethanwanyoike</p>
                                 </div>
                             </div>
                         </Link>
                     </div>
                     <hr className="my-5" />
-                    <div className="row">
+                    <div className="card-body">
                         <div className="col-12 col-md-10 mx-auto">
                             <ContactForm 
                                 onSubmit={handleSubmit}

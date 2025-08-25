@@ -74,6 +74,7 @@ class ContactFormAPIView(APIView):
         return Response({"fields": fields}, status=status.HTTP_200_OK)
 
     def post(self, request):
+        print(f"Contact form POST data: {request.data}")  # Debug line
         serializer = ContactFormSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -83,4 +84,5 @@ class ContactFormAPIView(APIView):
                 'id': message.id
             }, status=status.HTTP_201_CREATED)
 
+        print(f"Contact form validation errors: {serializer.errors}")  # Debug line
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

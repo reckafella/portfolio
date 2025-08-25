@@ -17,7 +17,7 @@ router.register(r'projects', ProjectViewSet, basename='project')
 
 urlpatterns = [
     # Contact API
-    path('contact', ContactFormAPIView.as_view(), name='contact_api'),
+    path('contact/', ContactFormAPIView.as_view(), name='contact_api'),
     path("auth", include("rest_framework.urls")),
     path("auth/", include("authentication.api_urls")),
 

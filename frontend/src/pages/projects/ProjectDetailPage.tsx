@@ -263,7 +263,7 @@ export const ProjectDetailPage: React.FC = () => {
                           rel="noopener noreferrer"
                           className="btn btn-danger btn-lg rounded-circle"
                         >
-                          <i className="fab fa-youtube"></i>
+                          <i className="bi bi-youtube"></i>
                         </a>
                       </div>
                     </div>

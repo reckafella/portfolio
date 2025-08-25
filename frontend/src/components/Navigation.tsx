@@ -86,7 +86,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
 
                                 {/* Staff-only dropdown */}
                                 {isStaff && (
-                                    <li className={`dropdown ${isStaffDropdownOpen ? 'active' : ''}`}>
+                                    <li className={`dropdown ${isStaffDropdownOpen ? 'dropdown-active' : ''}`}>
                                         <a
                                             role="button"
                                             className="toggle-dropdown"
@@ -122,7 +122,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         <span>Account</span>
                                         <i className={`bi ${isToggleDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                                     </a>
-                                    <ul className={isToggleDropdownOpen ? 'active' : ''}>
+                                    <ul className={isToggleDropdownOpen ? 'dropdown-active' : ''}>
                                         {getAuthItems().map((item) => (
                                             <li key={item.path}>
                                                 <Link to={item.path}>

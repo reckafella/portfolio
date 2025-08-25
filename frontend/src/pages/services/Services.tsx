@@ -36,13 +36,13 @@ const ServicesSection: React.FC = () => {
                   <h5 className="card-title">Loading Demo</h5>
                   <p className="card-text text-muted">Test the new preloader system</p>
                   <div className="d-flex gap-3 justify-content-center">
-                    <button 
+                    <button
                       onClick={demoFullLoader}
                       className="btn btn-primary"
                     >
                       Demo Full Preloader (2s)
                     </button>
-                    <button 
+                    <button
                       onClick={demoRouteLoader}
                       className="btn btn-secondary"
                     >

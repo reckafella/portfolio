@@ -11,7 +11,7 @@ const SignupForm: React.FC = () => {
 
   const handleSubmit = async (formData: Record<string, string>) => {
     showLoader(); // Show global preloader during registration
-    
+
     try {
       await signupMutation.mutateAsync({
         username: formData.username,
@@ -21,7 +21,7 @@ const SignupForm: React.FC = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
       });
-      
+
       // Keep loader visible briefly to show success state
       setTimeout(() => {
         hideLoader();

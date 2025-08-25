@@ -11,13 +11,13 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (formData: Record<string, string>) => {
     showLoader(); // Show global preloader during authentication
-    
+
     try {
       await loginMutation.mutateAsync({
         username: formData.username,
         password: formData.password,
       });
-      
+
       // Keep loader visible briefly to show success state
       setTimeout(() => {
         hideLoader();

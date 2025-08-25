@@ -37,7 +37,17 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
     >
       {isLoggingOut ? (
         <>
-          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <div className="d-flex justify-content-center align-items-center me-2">
+            <div className="spinner-grow spinner-grow-sm text-danger" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <div className="spinner-grow text-info">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <div className="spinner-grow spinner-grow-lg text-success">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
           Logging out...
         </>
       ) : (

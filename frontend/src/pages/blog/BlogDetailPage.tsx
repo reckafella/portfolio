@@ -315,7 +315,7 @@ export function BlogDetailPage() {
                       >
                         {createCommentMutation.isPending ? (
                           <>
-                            <span className="spinner-border spinner-border-sm me-1" />
+                            <span className="spinner-grow spinner-grow-sm me-1" />
                             Posting...
                           </>
                         ) : (

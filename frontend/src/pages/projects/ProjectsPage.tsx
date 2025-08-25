@@ -37,13 +37,19 @@ const ProjectsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-vh-100  d-flex align-items-center justify-content-center">
-        <div className="text-center">
-          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
+      <div className="text-center min-vh-100 row">
+        <div className="d-flex align-items-center justify-content-center">
+          <div className="spinner-grow spinner-grow-sm text-danger" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-3 ">Loading projects...</p>
+          <div className="spinner-grow text-info">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <div className="spinner-grow spinner-grow-lg text-success">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
+          <p className="mt-3 ">Loading projects...</p>
       </div>
     );
   }

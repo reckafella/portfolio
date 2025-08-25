@@ -4,9 +4,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from .views.api import (
-    register_user,
-    login_user,
-    logout_user,
+    RegisterUserView,
+    LoginUserView,
+    LogoutUserView,
     user_profile,
     update_profile,
     UserListView,
@@ -44,9 +44,9 @@ urlpatterns = [
     path('signup-form-config/', RegisterFormConfigView.as_view(), name='register_form_config'),
 
     # Authentication endpoints
-    path('signup/', register_user, name='signup'),
-    path('login/', login_user, name='login'),
-    path('logout/', logout_user, name='logout'),
+    path('signup/', RegisterUserView.as_view(), name='signup'),
+    path('login/', LoginUserView.as_view(), name='login'),
+    path('logout/', LogoutUserView.as_view(), name='logout'),
 
     # User profile endpoints
     path('profile/', user_profile, name='user_profile'),

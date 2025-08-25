@@ -65,8 +65,14 @@ const SearchResults: React.FC = () => {
 
               {loading ? (
                 <div className="d-flex justify-content-center py-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Searching...</span>
+                  <div className="spinner-grow spinner-grow-sm text-danger" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <div className="spinner-grow text-info">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <div className="spinner-grow spinner-grow-lg text-success">
+                    <span className="visually-hidden">Loading...</span>
                   </div>
                 </div>
               ) : results.length > 0 ? (

@@ -55,7 +55,7 @@ const LoginForm: React.FC = () => {
                       <p className="text-muted mb-0">
                         Don't have an account?{' '}
                         <Link 
-                          to={`/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          to={`/auth/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
                           className="text-decoration-none"
                         >
                           Create one here

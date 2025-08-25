@@ -59,7 +59,7 @@ const SignupForm: React.FC = () => {
                       <p className="text-muted">
                         Already have an account?{' '}
                         <Link 
-                          to={`/login${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          to={`/auth/login${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
                           className="text-decoration-none"
                         >
                           Sign In

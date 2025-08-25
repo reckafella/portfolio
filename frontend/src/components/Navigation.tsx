@@ -6,6 +6,7 @@ import SVGLogoComponent from './Logo';
 import { useAuth } from '../hooks/useAuth';
 import { useStaffPermissions } from '../hooks/useStaffPermissions';
 import { getLoginUrlWithNext, getSignupUrlWithNext } from '../utils/authUtils';
+import { NAV_ITEMS, ROUTES } from '../constants/routes';
 
 interface NavigationProps {
   onToggleSearch: () => void;
@@ -19,20 +20,14 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
     const [isToggleDropdownOpen, setIsToggleDropdownOpen] = useState(false);
     const [isStaffDropdownOpen, setIsStaffDropdownOpen] = useState(false);
 
-    const navItems = [
-        { path: '/', label: 'Home' },
-        { path: '/services', label: 'Services' },
-        { path: '/projects', label: 'Projects' },
-        { path: '/blog', label: 'Blog' },
-        { path: '/contact', label: 'Contact' },
-    ];
+    const navItems = NAV_ITEMS;
 
     // Filter auth items based on authentication status
     const getAuthItems = () => {
         if (isAuthenticated) {
             return [
-                { path: '/profile', label: `Welcome, ${user?.first_name || user?.username || 'User'}` },
-                { path: '/logout', label: 'Logout' }
+                { path: ROUTES.AUTH.PROFILE, label: `Welcome, ${user?.first_name || user?.username || 'User'}` },
+                { path: ROUTES.AUTH.LOGOUT, label: 'Logout' }
             ];
         } else {
             // Include current page as next parameter for login/signup
@@ -104,7 +99,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         <ul className={isStaffDropdownOpen ? 'dropdown-active' : ''}>
                                             {canCreateProjects && (
                                                 <li>
-                                                    <Link to="/projects/add">
+                                                    <Link to={ROUTES.PROJECTS.ADD}>
                                                         <span>Add Project</span>
                                                     </Link>
                                                 </li>

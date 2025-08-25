@@ -128,6 +128,10 @@ export function BlogDetailPage() {
             
             <div className="d-flex align-items-center text-muted mb-3">
               <span className="me-3">
+                <i className="bi bi-person me-1"></i>
+                By <strong>{post.author}</strong>
+              </span>
+              <span className="me-3">
                 <i className="bi bi-calendar me-1"></i>
                 {formatDate(post.date)}
               </span>

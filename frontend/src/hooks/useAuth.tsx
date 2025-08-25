@@ -86,7 +86,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                 localStorage.setItem('user', JSON.stringify(userData));
             }
         } catch (error) {
-            console.error('Failed to fetch user from session:', error);
+            const noob = () => {}
+            if (error instanceof Error) noob();
         }
     };
 

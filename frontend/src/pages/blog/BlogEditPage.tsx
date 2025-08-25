@@ -38,7 +38,7 @@ export function BlogEditPage() {
       setFormData({
         title: post.title || '',
         content: post.content || '',
-        tags: post.tags?.join(', ') || '',
+        tags: post.tags_list?.join(', ') || '',
         published: post.published || false
       });
       setInitialDataLoaded(true);

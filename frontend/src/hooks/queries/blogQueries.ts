@@ -10,10 +10,10 @@ export interface BlogPost {
   excerpt: string;
   date: string;
   featured_image_url?: string;
-  tags: string[];
+  tags_list: string[];
   reading_time: string;
   view_count: number;
-  comment_count: number;
+  comments_count: number;
   first_published_at: string;
   last_published_at: string;
   author: string;

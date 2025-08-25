@@ -23,7 +23,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
       
       <div className="card-body d-flex flex-column">
         <div className="mb-2">
-          {post.tags?.map((tag, index) => (
+          {post.tags_list?.map((tag, index) => (
             <Link
               key={index}
               to={`/blog?tag=${encodeURIComponent(tag)}`}
@@ -39,9 +39,12 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             {post.title}
           </Link>
         </h5>
-        
         {showExcerpt && post.excerpt && (
-          <p className="card-text flex-grow-1">{post.excerpt}</p>
+                  <div
+                      className="card-text flex-grow-1"
+                      dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                      style={{ lineHeight: '1.8' }}
+                  />
         )}
         
         <div className="mt-auto">
@@ -53,7 +56,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
               </small>
               <small className="me-3">
                 <i className="bi bi-calendar me-1"></i>
-                {new Date(post.date).toLocaleDateString()}
+                {new Date(post.first_published_at).toLocaleDateString()}
               </small>
               <small>
                 <i className="bi bi-clock me-1"></i>
@@ -83,8 +86,8 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
             
             <div className="text-muted small">
               <span>{post.view_count} views</span>
-              {post?.comment_count > 0 && (
-                <span className="ms-2">{post?.comment_count} comments</span>
+              {post?.comments_count > 0 && (
+                <span className="ms-2">{post?.comments_count} comments</span>
               )}
             </div>
           </div>

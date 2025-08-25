@@ -15,9 +15,10 @@ const ContactPage: React.FC = () => {
             <div className="container">
                 <div className="info-wrap card col-12 col-md-11 col-lg-10 mx-auto">
                     <div className="text-center">
-                        <h1 className="display-4 fw-bold mb-4">
-                            Get In Touch
-                        </h1>
+                        <div className="section-title">
+                            <h2 className="h4">Contact Me</h2>
+                        </div>
+
                         <p className="lead mx-auto" style={{ maxWidth: '42rem' }}>
                             Have a project in mind or just want to say hello? I'd love to hear from you.
                             Let's discuss how we can work together.

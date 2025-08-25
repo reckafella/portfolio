@@ -21,6 +21,9 @@ urlpatterns = [
     path("auth", include("rest_framework.urls")),
     path("auth/", include("authentication.api_urls")),
 
+    # Blog API
+    path('blog/', include('blog.api_urls')),
+
     # Project APIs (function-based)
     path('projects/list', ProjectListAPIView.as_view(), name='project_list_api'),
     path('projects/create', ProjectCreateAPIView.as_view(), name='project_create_api'),

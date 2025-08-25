@@ -68,10 +68,10 @@ export function useProjects(filters: ProjectFilters = {}) {
 /**
  * Hook for fetching a single project
  */
-export function useProject(id: number, defer = false) {
+export function useProject(slug: string, defer = false) {
   const apiFunction = useCallback(() => {
-    return projectApi.get(id);
-  }, [id]);
+    return projectApi.get(slug);
+  }, [slug]);
 
   return useDeferredApi<Project>(apiFunction, {
     defer,

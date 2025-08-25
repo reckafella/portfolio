@@ -5,10 +5,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import HomePage from './pages/home/HomePage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
+import { ProjectEditPage } from './pages/projects/ProjectEditPage'
 import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
+import { BlogListPage, BlogDetailPage, BlogAddPage, BlogEditPage } from './pages/blog'
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
-import DynamicFormExample from './pages/DynamicFormExample'
 import SearchResults from './pages/search/SearchResults'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
@@ -71,11 +72,38 @@ function App() {
                                             </ProtectedRoute>
                                         } 
                                     />
+                                    <Route 
+                                        path="/projects/edit/:id" 
+                                        element={
+                                            <ProtectedRoute requireStaff={true}>
+                                                <ProjectEditPage />
+                                            </ProtectedRoute>
+                                        } 
+                                    />
                                     <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+                                    
+                                    {/* Blog routes */}
+                                    <Route path="/blog" element={<BlogListPage />} />
+                                    <Route 
+                                        path="/blog/add" 
+                                        element={
+                                            <ProtectedRoute requireStaff={true}>
+                                                <BlogAddPage />
+                                            </ProtectedRoute>
+                                        } 
+                                    />
+                                    <Route 
+                                        path="/blog/edit/:slug" 
+                                        element={
+                                            <ProtectedRoute requireStaff={true}>
+                                                <BlogEditPage />
+                                            </ProtectedRoute>
+                                        } 
+                                    />
+                                    <Route path="/blog/:slug" element={<BlogDetailPage />} />
                                     
                                     <Route path="/contact" element={<ContactPage />} />
                                     <Route path="/services" element={<ServicesPage />} />
-                                    <Route path="/forms" element={<DynamicFormExample />} />
                                     <Route path="/search" element={<SearchResults />} />
 
                                     {/* Authentication routes */}

@@ -50,7 +50,7 @@ export const ProjectAddPage: React.FC = () => {
               className="btn btn-outline-secondary"
               onClick={() => navigate('/projects')}
             >
-              <i className="fas fa-arrow-left me-2"></i>
+              <i className="bi bi-arrow-left me-2"></i>
               Back to Projects
             </button>
           </div>
@@ -63,7 +63,7 @@ export const ProjectAddPage: React.FC = () => {
                 message={`Unable to load form configuration: ${configError.message}`} 
               />
               <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => refetch()}>
-                <i className="fas fa-sync-alt me-2"></i>
+                <i className="bi bi-sync-alt me-2"></i>
                 Try Again
               </button>
             </div>
@@ -89,14 +89,14 @@ export const ProjectAddPage: React.FC = () => {
             <div className="card shadow-sm">
               <div className="card-body text-center py-5">
                 <div className="text-muted">
-                  <i className="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                  <i className="bi bi-exclamation-triangle fa-3x mb-3"></i>
                   <h3>Form Configuration Unavailable</h3>
                   <p>
                     Unable to load the project form configuration.
                     Please try refreshing the page.
                   </p>
                   <button className="btn btn-primary me-2" onClick={() => refetch()}>
-                    <i className="fas fa-sync-alt me-2"></i>
+                    <i className="bi bi-sync-alt me-2"></i>
                     Try Again
                   </button>
                   <button 

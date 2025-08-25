@@ -9,13 +9,16 @@ interface RequestOptions extends RequestInit {
 /**
  * Get authentication headers for API requests
  */
-export const getAuthHeaders = (): Record<string, string> => {
+export const getAuthHeaders = (isFormData = false): Record<string, string> => {
   const token = localStorage.getItem('auth_token');
   const csrfToken = getCsrfToken();
   
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  const headers: Record<string, string> = {};
+
+  // Don't set Content-Type for FormData - browser will set it with boundary
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (token) {
     headers['Authorization'] = `Token ${token}`;
@@ -51,10 +54,12 @@ export const getCsrfToken = (): string => {
  * Make an authenticated API request
  */
 export const apiRequest = async (url: string, options: RequestOptions = {}): Promise<Response> => {
+  const isFormData = options.body instanceof FormData;
+  
   const defaultOptions: RequestOptions = {
     credentials: 'include',
     headers: {
-      ...getAuthHeaders(),
+      ...getAuthHeaders(isFormData),
       ...options.headers,
     },
   };
@@ -107,8 +112,8 @@ export const projectApi = {
     /**
      * Get field parameters for update
      */
-    getUpdateFieldParams: async (id: number): Promise<Response> => {
-      return apiRequest(`/api/v1/projects/${id}/update`);
+    getUpdateFieldParams: async (slug: string): Promise<Response> => {
+      return apiRequest(`/api/v1/projects/${slug}/update`);
     },
 
   /**
@@ -124,8 +129,8 @@ export const projectApi = {
   /**
    * Update an existing project
    */
-  update: async (id: number, projectData: Record<string, string | number | boolean>): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}/update`, {
+  update: async (slug: string, projectData: Record<string, string | number | boolean>): Promise<Response> => {
+    return apiRequest(`/api/v1/projects/${slug}/update`, {
       method: 'PUT',
       body: JSON.stringify(projectData),
     });
@@ -134,8 +139,8 @@ export const projectApi = {
   /**
    * Delete a project
    */
-  delete: async (id: number): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}/delete`, {
+  delete: async (slug: string): Promise<Response> => {
+    return apiRequest(`/api/v1/projects/${slug}/delete`, {
       method: 'DELETE',
     });
   },
@@ -159,7 +164,7 @@ export const projectApi = {
   /**
    * Get project details
    */
-  get: async (id: number): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${id}`);
+  get: async (slug: string): Promise<Response> => {
+    return apiRequest(`/api/v1/projects/${slug}`);
   },
 };

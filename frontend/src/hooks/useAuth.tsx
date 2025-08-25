@@ -43,21 +43,60 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     // Initialize authentication state
     useEffect(() => {
         const initAuth = () => {
-        const currentUser = AuthService.getCurrentUser();
-        if (currentUser && AuthService.isAuthenticated()) {
-            setUser(currentUser);
-        }
-        setIsLoading(false);
+            // Check for Django authentication first (from hidden div)
+            const userLoggedInDiv = document.getElementById('user-logged-in');
+            if (userLoggedInDiv) {
+                // User is authenticated in Django, get user info from localStorage or API
+                const currentUser = AuthService.getCurrentUser();
+                if (currentUser && AuthService.isAuthenticated()) {
+                    setUser(currentUser);
+                } else {
+                    // If no localStorage data, fetch from Django session
+                    fetchUserFromSession();
+                }
+            } else {
+                // Check localStorage anyway in case of client-side auth
+                const currentUser = AuthService.getCurrentUser();
+                if (currentUser && AuthService.isAuthenticated()) {
+                    setUser(currentUser);
+                }
+            }
+            setIsLoading(false);
         };
 
         initAuth();
     }, []);
+
+    // Fetch user data from Django session
+    const fetchUserFromSession = async () => {
+        try {
+            const response = await fetch('/api/auth/user/', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+                // Store in localStorage for consistency
+                localStorage.setItem('user', JSON.stringify(userData));
+            }
+        } catch (error) {
+            console.error('Failed to fetch user from session:', error);
+        }
+    };
 
     const login = async (username: string, password: string): Promise<AuthResponse> => {
         setIsLoading(true);
         try {
             const response = await AuthService.login({ username, password });
             setUser(response.user);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
             return response;
         } catch (error) {
             throw new Error(`Login error: ${error}`);
@@ -69,25 +108,29 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const signup = async (userData: RegisterData): Promise<AuthResponse> => {
         setIsLoading(true);
         try {
-        const response = await AuthService.signup(userData);
-        setUser(response.user);
-        return response;
+            const response = await AuthService.signup(userData);
+            setUser(response.user);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
+            return response;
         } catch (error) {
-        throw new Error(`Registration Failed: ${error}`);
+            throw new Error(`Registration Failed: ${error}`);
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
     const logout = async () => {
         setIsLoading(true);
         try {
-        await AuthService.logout();
-        setUser(null);
+            await AuthService.logout();
+            setUser(null);
+            // Trigger a page reload to update Django template context
+            window.location.reload();
         } catch (error) {
-        throw new Error(`Logout error: ${error}`);
+            throw new Error(`Logout error: ${error}`);
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 

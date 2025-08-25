@@ -23,20 +23,22 @@
                     {% if user.is_staff %}
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'projects' %}active{% endif %}"><span>Projects</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'app:projects' %}"><span>Projects</span></a></li>
-                            <li><a href="{% url 'app:add_project' %}"><span>Create Project</span></a></li>
+                            <li><a href="{% url 'app:projects' %}">View Projects</a></li>
+                            <li><a href="{% url 'app:add_project' %}">Create Project</a></li>
                         </ul>
                     </li>
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.app_name == 'blog' %}active{% endif %}"><span>Blog</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            <li><a href="{% url 'blog:list_articles' %}"><span>Blog</span></a></li>
-                            <li><a href="{% url 'blog:create_article' %}"><span>Create Blog Post</span></a></li>
-                            <li>
-                                <a href="/wagtail/admin/" target="_blank">
-                                    <span>Wagtail Pages</span>
-                                    <i class="bi bi-box-arrow-up-right ms-2"></i>
-                                </a>
-                            </li>
+                            <li><a href="{% url 'blog:list_articles' %}">View Blog</a></li>
+                            <li><a href="{% url 'blog:create_article' %}">Create Post</a></li>
+                            <li><a href="/wagtail/admin/" target="_blank">Wagtail Admin <i class="bi bi-box-arrow-up-right ms-1"></i></a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Staff Tools</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{% url 'authentication:user_profile' request.user %}"><i class="bi bi-person-fill me-2"></i>Profile</a></li>
+                            <li><a href="{% url 'app:messages' %}"><i class="bi bi-chat-square-text-fill me-2"></i>Messages</a></li>
+                            <li><a href="{% url 'admin:index' %}" target="_blank"><i class="bi bi-gear-fill me-2"></i>Django Admin <i class="bi bi-box-arrow-up-right ms-1"></i></a></li>
                         </ul>
                     </li>
                     {% else %}
@@ -45,31 +47,12 @@
                     {% endif %}
                     <li class="dropdown"><a role="button" class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'signup' %}active{% endif %}"><span>Account</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
-                            {% if user.is_staff %}
-                            <li><a href="{% url 'authentication:user_profile' request.user %}"><span>Profile</span><i class="bi bi-person-fill"></i></a></li>
-                            <li><a href="{% url 'app:messages' %}"><span>Messages</span><i class="bi bi-chat-square-text-fill"></i></a></li>
-                            <li><a href="{% url 'admin:index' %}" target="_blank"><span>Django Admin</span><i class="bi bi-box-arrow-up-right ms-2"></i></a></li>
-                            {% endif %}
                             {% if user.is_authenticated %}
-                            <li>
-                                <a href="{% url 'authentication:logout' %}?next={{ request.GET.next|default:request.path|urlencode }}">
-                                    <span>Logout</span>
-                                    <i class="bi bi-box-arrow-left"></i>
-                                </a>
-                            </li>
+                            <li><a href="{% url 'authentication:logout' %}?next={{ request.GET.next|default:request.path|urlencode }}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
                             {% else %}
-                            <li>
-                                <a href="{% url 'authentication:login' %}?next={{ request.GET.next|default:request.path|urlencode }}">
-                                    <i class="bi bi-box-arrow-in-right"></i>
-                                    <span>Login</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'authentication:signup' %}?next={{ request.GET.next|default:request.path|urlencode }}">
-                                    <i class="bi bi-person"></i>
-                                    <span>Register</span>
-                                </a>
-                            </li>{% endif %}
+                            <li><a href="{% url 'authentication:login' %}?next={{ request.GET.next|default:request.path|urlencode }}"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                            <li><a href="{% url 'authentication:signup' %}?next={{ request.GET.next|default:request.path|urlencode }}"><i class="bi bi-person me-2"></i>Register</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>

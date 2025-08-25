@@ -122,7 +122,7 @@ export const ProjectListPage: React.FC = () => {
             </div>
             {canCreateProjects && (
               <Link to="/projects/add" className="btn btn-primary btn-lg">
-                <i className="fas fa-plus me-2"></i>
+                <i className="bi bi-plus me-2"></i>
                 Add Project
               </Link>
             )}
@@ -148,7 +148,7 @@ export const ProjectListPage: React.FC = () => {
           <div className="col-12">
             <AlertMessage type="danger" message={error.message} />
             <button className="btn btn-outline-primary mt-2" onClick={() => refetch()}>
-              <i className="fas fa-sync-alt me-2"></i>
+              <i className="bi bi-sync-alt me-2"></i>
               Retry
             </button>
           </div>
@@ -184,7 +184,7 @@ export const ProjectListPage: React.FC = () => {
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={!hasPrevious}
                       >
-                        <i className="fas fa-chevron-left me-1"></i>
+                        <i className="bi bi-chevron-left me-1"></i>
                         Previous
                       </button>
                     </li>
@@ -202,7 +202,7 @@ export const ProjectListPage: React.FC = () => {
                         disabled={!hasNext}
                       >
                         Next
-                        <i className="fas fa-chevron-right ms-1"></i>
+                        <i className="bi bi-chevron-right ms-1"></i>
                       </button>
                     </li>
                   </ul>
@@ -215,7 +215,7 @@ export const ProjectListPage: React.FC = () => {
         <div className="row">
           <div className="col-12 text-center py-5">
             <div className="text-muted">
-              <i className="fas fa-folder-open fa-3x mb-3"></i>
+              <i className="bi bi-folder-open fa-3x mb-3"></i>
               <h3>No projects found</h3>
               <p>
                 {Object.values(filters).some(Boolean) 

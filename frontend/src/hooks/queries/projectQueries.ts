@@ -7,7 +7,7 @@ export const projectKeys = {
   lists: () => [...projectKeys.all, 'list'] as const,
   list: (filters: Record<string, unknown>) => [...projectKeys.lists(), { filters }] as const,
   details: () => [...projectKeys.all, 'detail'] as const,
-  detail: (id: number) => [...projectKeys.details(), id] as const,
+  detail: (slug: string) => [...projectKeys.details(), slug] as const,
   detailBySlug: (slug: string) => [...projectKeys.details(), 'slug', slug] as const,
   formConfig: () => [...projectKeys.all, 'formConfig'] as const,
 };
@@ -22,8 +22,8 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async getProject(id: number) {
-    const response = await projectApi.get(id);
+  async getProject(slug: string) {
+    const response = await projectApi.get(slug);
     if (!response.ok) {
       throw new Error('Failed to fetch project');
     }
@@ -63,8 +63,8 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async updateProject(id: number, data: Record<string, string | number | boolean>) {
-    const response = await projectApi.update(id, data);
+  async updateProject(slug: string, data: Record<string, string | number | boolean>) {
+    const response = await projectApi.update(slug, data);
     if (!response.ok) {
       const errorData = await response.json();
       if (response.status === 400 && errorData.errors) {
@@ -77,8 +77,8 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async deleteProject(id: number) {
-    const response = await projectApi.delete(id);
+  async deleteProject(slug: string) {
+    const response = await projectApi.delete(slug);
     if (!response.ok) {
       throw new Error('Failed to delete project');
     }
@@ -95,12 +95,12 @@ export const useProjects = (filters: Record<string, string> = {}) => {
   });
 };
 
-export const useProject = (id: number) => {
+export const useProject = (slug: string) => {
   return useQuery({
-    queryKey: projectKeys.detail(id),
-    queryFn: () => projectApiFunctions.getProject(id),
+    queryKey: projectKeys.detail(slug),
+    queryFn: () => projectApiFunctions.getProject(slug),
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!id, // Only run query if id is provided
+    enabled: !!slug, // Only run query if slug is provided
   });
 };
 
@@ -138,11 +138,11 @@ export const useUpdateProject = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Record<string, string | number | boolean> }) =>
-      projectApiFunctions.updateProject(id, data),
+    mutationFn: ({ slug, data }: { slug: string; data: Record<string, string | number | boolean> }) =>
+      projectApiFunctions.updateProject(slug, data),
     onSuccess: (_data, variables) => {
       // Invalidate specific project and projects list
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.slug) });
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
     },
   });

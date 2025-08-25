@@ -1,37 +1,16 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { AlertMessage } from '../../components/common/AlertMessage';
-import { useProjectBySlug } from '../../hooks/queries/projectQueries';
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  project_type: string;
-  category: string;
-  client?: string;
-  project_url?: string;
-  created_at: string;
-  updated_at: string;
-  slug: string;
-  live: boolean;
-  images: Array<{
-    id: number;
-    cloudinary_image_url: string;
-    optimized_image_url: string;
-    live: boolean;
-  }>;
-  videos: Array<{
-    id: number;
-    youtube_url: string;
-    thumbnail_url: string;
-    live: boolean;
-  }>;
-}
+import { useProjectBySlug, useDeleteProject } from '../../hooks/queries/projectQueries';
+import { useStaffPermissions } from '../../hooks/useStaffPermissions';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const { canEditProjects, canDeleteProjects } = useStaffPermissions();
+  
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Use TanStack Query to fetch project data
   const { 
@@ -40,6 +19,19 @@ export const ProjectDetailPage: React.FC = () => {
     error,
     refetch
   } = useProjectBySlug(slug || '');
+
+  const deleteProjectMutation = useDeleteProject();
+
+  const handleDelete = async () => {
+    if (!project) return;
+    
+    try {
+      await deleteProjectMutation.mutateAsync(project.id);
+      navigate('/projects');
+    } catch {
+      // Error is handled by the mutation's error state
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -67,7 +59,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="col-12">
             <AlertMessage type="danger" message="No project slug provided" />
             <Link to="/projects" className="btn btn-primary">
-              <i className="fas fa-arrow-left me-2"></i>
+              <i className="bi bi-arrow-left me-2"></i>
               Back to Projects
             </Link>
           </div>
@@ -92,11 +84,11 @@ export const ProjectDetailPage: React.FC = () => {
             <AlertMessage type="danger" message={error.message} />
             <div className="mt-3">
               <button className="btn btn-outline-primary me-2" onClick={() => refetch()}>
-                <i className="fas fa-sync-alt me-2"></i>
+                <i className="bi bi-sync-alt me-2"></i>
                 Try Again
               </button>
               <Link to="/projects" className="btn btn-primary">
-                <i className="fas fa-arrow-left me-2"></i>
+                <i className="bi bi-arrow-left me-2"></i>
                 Back to Projects
               </Link>
             </div>
@@ -113,7 +105,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="col-12">
             <AlertMessage type="warning" message="Project not found" />
             <Link to="/projects" className="btn btn-primary">
-              <i className="fas fa-arrow-left me-2"></i>
+              <i className="bi bi-arrow-left me-2"></i>
               Back to Projects
             </Link>
           </div>
@@ -128,7 +120,7 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="row mb-4">
         <div className="col-12">
           <Link to="/projects" className="btn btn-outline-secondary">
-            <i className="fas fa-arrow-left me-2"></i>
+            <i className="bi bi-arrow-left me-2"></i>
             Back to Projects
           </Link>
         </div>
@@ -150,6 +142,30 @@ export const ProjectDetailPage: React.FC = () => {
                 )}
               </div>
             </div>
+            
+            {/* Edit/Delete Buttons */}
+            {(canEditProjects || canDeleteProjects) && (
+              <div className="btn-group" role="group">
+                {canEditProjects && (
+                  <button
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => navigate(`/projects/edit/${project.id}`)}
+                  >
+                    <i className="bi bi-edit me-1"></i>
+                    Edit
+                  </button>
+                )}
+                {canDeleteProjects && (
+                  <button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    <i className="bi bi-trash me-1"></i>
+                    Delete
+                  </button>
+                )}
+              </div>
+            )}
             {project.project_url && (
               <a 
                 href={project.project_url} 
@@ -157,18 +173,18 @@ export const ProjectDetailPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="btn btn-primary"
               >
-                <i className="fas fa-external-link-alt me-2"></i>
+                <i className="bi bi-external-link-alt me-2"></i>
                 View Live
               </a>
             )}
           </div>
           <p className="lead text-muted">{project.description}</p>
           <div className="text-muted small">
-            <i className="fas fa-calendar me-2"></i>
+            <i className="bi bi-calendar me-2"></i>
             Created: {formatDate(project.created_at)}
             {project.updated_at !== project.created_at && (
               <span className="ms-3">
-                <i className="fas fa-edit me-2"></i>
+                <i className="bi bi-edit me-2"></i>
                 Updated: {formatDate(project.updated_at)}
               </span>
             )}
@@ -182,7 +198,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="col-12">
             <h2 className="h3 mb-4">Project Gallery</h2>
             <div className="row g-3">
-              {project.images.map((image, index) => (
+              {project.images.map((image: { id: number; cloudinary_image_url: string; optimized_image_url: string; live: boolean }, index: number) => (
                 <div key={image.id} className="col-md-6 col-lg-4">
                   <div className="card h-100">
                     <img 
@@ -211,7 +227,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="col-12">
             <h2 className="h3 mb-4">Project Videos</h2>
             <div className="row g-3">
-              {project.videos.map((video, index) => (
+              {project.videos.map((video: { id: number; youtube_url: string; thumbnail_url: string; live: boolean }, index: number) => (
                 <div key={video.id} className="col-md-6 col-lg-4">
                   <div className="card h-100">
                     <div className="position-relative">
@@ -251,7 +267,7 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="col-12">
           <div className="d-flex gap-3 justify-content-center">
             <Link to="/projects" className="btn btn-outline-primary">
-              <i className="fas fa-arrow-left me-2"></i>
+              <i className="bi bi-arrow-left me-2"></i>
               Back to Projects
             </Link>
             {project.project_url && (
@@ -261,13 +277,65 @@ export const ProjectDetailPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="btn btn-primary"
               >
-                <i className="fas fa-external-link-alt me-2"></i>
+                <i className="bi bi-external-link-alt me-2"></i>
                 View Live Project
               </a>
             )}
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Delete</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowDeleteModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to delete this project?</p>
+                <p className="text-muted">
+                  <strong>"{project?.title}"</strong>
+                </p>
+                <p className="text-danger">
+                  <small>This action cannot be undone.</small>
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                  disabled={deleteProjectMutation.isPending}
+                >
+                  {deleteProjectMutation.isPending ? (
+                    <>
+                      <LoadingSpinner size="sm" className="me-2" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete Project'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showDeleteModal && <div className="modal-backdrop show"></div>}
     </div>
   );
 };

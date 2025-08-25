@@ -90,7 +90,7 @@ const Preloader: React.FC<PreloaderProps> = ({
 
       {/* Minimal loading bar for route transitions */}
       {shouldShowRouteLoader && (
-        <div className="route-loading"></div>
+        <div key={Date.now()} className="route-loading"></div>
       )}
     </>
   );

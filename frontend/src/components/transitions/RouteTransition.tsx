@@ -10,27 +10,39 @@ const RouteTransition: React.FC<RouteTransitionProps> = ({ children }) => {
   const location = useLocation();
   const { setRouteLoading } = useLoading();
   const previousPathRef = useRef<string>('');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const currentPath = location.pathname;
     
-    // Only trigger loading if the path actually changed
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
+    // Only trigger loading if the path actually changed and it's not the initial load
     if (previousPathRef.current !== '' && previousPathRef.current !== currentPath) {
       // Show loading when route changes
       setRouteLoading(true);
       
-      // Hide loading after a brief delay to allow the component to mount
-      const timer = setTimeout(() => {
+      // Hide loading after animation completes (800ms to match CSS animation)
+      timeoutRef.current = setTimeout(() => {
         setRouteLoading(false);
-      }, 150);
-
-      return () => {
-        clearTimeout(timer);
-      };
+        timeoutRef.current = null;
+      }, 800);
     }
     
     // Update the previous path reference
     previousPathRef.current = currentPath;
+
+    // Cleanup function
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [location.pathname, setRouteLoading]);
 
   return <>{children}</>;

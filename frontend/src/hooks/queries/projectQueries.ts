@@ -15,7 +15,14 @@ export const projectKeys = {
 // Project API functions
 const projectApiFunctions = {
   async getProjects(params: Record<string, string> = {}) {
-    const response = await projectApi.list(params);
+    // Convert frontend parameter names to backend parameter names
+    const backendParams = { ...params };
+    if (backendParams.ordering) {
+      backendParams.sort_by = backendParams.ordering;
+      delete backendParams.ordering;
+    }
+    
+    const response = await projectApi.list(backendParams);
     if (!response.ok) {
       throw new Error('Failed to fetch projects');
     }

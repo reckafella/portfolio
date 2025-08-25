@@ -41,18 +41,57 @@ export class AuthService {
         };
     }
 
+    // Get CSRF token
+    static async getCSRFToken(): Promise<string> {
+        try {
+            const response = await fetch('/api/v1/auth/csrf-token/', {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                return data.csrfToken;
+            }
+        } catch {
+            // Silently fail - we'll continue without CSRF token
+        }
+        return '';
+    }
+
+    // Get headers with CSRF token
+    private static async getAuthHeadersWithCSRF() {
+        const token = localStorage.getItem('auth_token');
+        const csrfToken = await this.getCSRFToken();
+        
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json'
+        };
+
+        if (token) {
+            headers['Authorization'] = `Token ${token}`;
+        }
+
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+
+        return headers;
+    }
+
     // Test API connection
     static async testApi(): Promise<{ message: string }> {
-        const response = await fetch(`api/v1/auth/test/`);
+        const response = await fetch(`/api/v1/auth/test/`);
         await handleApiError(response);
         return response.json();
     }
 
     // Login user
     static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-        const response = await fetch(`api/v1/auth/login/`, {
+        const headers = await this.getAuthHeadersWithCSRF();
+        const response = await fetch(`/api/v1/auth/login/`, {
             method: 'POST',
-            headers: this.getAuthHeaders(),
+            headers,
+            credentials: 'include',
             body: JSON.stringify(credentials)
         });
         
@@ -68,9 +107,11 @@ export class AuthService {
 
     // Signup user
     static async signup(userData: RegisterData): Promise<AuthResponse> {
-        const response = await fetch(`api/v1/auth/signup/`, {
+        const headers = await this.getAuthHeadersWithCSRF();
+        const response = await fetch(`/api/v1/auth/signup/`, {
             method: 'POST',
-            headers: this.getAuthHeaders(),
+            headers,
+            credentials: 'include',
             body: JSON.stringify(userData)
         });
         
@@ -87,7 +128,7 @@ export class AuthService {
     // Logout user
     static async logout(): Promise<void> {
         try {
-            await fetch(`api/v1/auth/logout/`, {
+            await fetch(`/api/v1/auth/logout/`, {
                 method: 'POST',
                 headers: this.getAuthHeaders()
             });
@@ -113,7 +154,7 @@ export class AuthService {
 
     // Get user profile
     static async getUserProfile(): Promise<{}> {
-        const response = await fetch(`api/v1/auth/profile/`, {
+        const response = await fetch(`/api/v1/auth/profile/`, {
             headers: this.getAuthHeaders()
         });
         
@@ -122,11 +163,11 @@ export class AuthService {
     }
 
     // Update user profile
-    static async updateProfile(_profileData: any): Promise<{}> {
-        const response = await fetch(`api/v1/auth/profile/update/`, {
+    static async updateProfile(profileData: Record<string, unknown>): Promise<{}> {
+        const response = await fetch(`/api/v1/auth/profile/update/`, {
             method: 'PATCH',
             headers: this.getAuthHeaders(),
-            body: JSON.stringify(_profileData)
+            body: JSON.stringify(profileData)
         });
 
         await handleApiError(response);

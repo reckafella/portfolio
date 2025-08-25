@@ -16,6 +16,7 @@ from .views.api import (
     LoginFormConfigView,
     RegisterFormConfigView
 )
+from .views.csrf import CSRFTokenView, get_csrf_token
 
 
 @api_view(['GET'])
@@ -34,6 +35,9 @@ router = DefaultRouter()
 urlpatterns = [
     # Test endpoint
     path('test/', api_test, name='api_test'),
+
+    # CSRF token endpoint
+    path('csrf-token/', CSRFTokenView.as_view(), name='csrf_token'),
 
     # Form configuration endpoints
     path('login-form-config/', LoginFormConfigView.as_view(), name='login_form_config'),

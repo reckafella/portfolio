@@ -19,7 +19,7 @@ def get_csrf_token(request):
 class CSRFTokenView(APIView):
     """API endpoint to get CSRF token"""
     permission_classes = [permissions.AllowAny]
-    
+
     def get(self, request):
         """Return CSRF token"""
         return Response({'csrfToken': get_token(request)})

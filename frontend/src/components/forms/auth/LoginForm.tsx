@@ -53,17 +53,15 @@ const LoginForm: React.FC = () => {
                   submitButtonText="Sign In"
                   loadingText="Signing in..."
                   additionalContent={
-                    <div className="text-center">
-                      <p className="text-muted mb-0">
-                        Don't have an account?{' '}
-                        <Link 
-                          to={`/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
-                          className="text-decoration-none"
-                        >
-                          Create one here
-                        </Link>
-                      </p>
-                    </div>
+                    <p className="text-muted mb-0">
+                      Don't have an account?{' '}
+                      <Link 
+                        to={`/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                        className="text-decoration-none"
+                      >
+                        Create one here
+                      </Link>
+                    </p>
                   }
                 />
               </div>

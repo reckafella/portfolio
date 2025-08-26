@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import BlogPostPage, BlogPostComment, BlogPostImage
+from .forms import BlogPostForm
 from .serializers import (
     BlogPostPageSerializer, BlogPostCreateSerializer,
     BlogPostCommentSerializer, BlogCommentCreateSerializer,
@@ -82,6 +83,39 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
     serializer_class = BlogPostCreateSerializer
     permission_classes = [IsAuthenticatedStaff]
 
+    def get(self, request):
+        """ Handle GET request for creating a blog post """
+        form = BlogPostForm()
+        return Response({"fields": self.get_form_fields(form)}, status=status.HTTP_200_OK)
+
+    def get_form_fields(self, form):
+        """ Get the form fields for the blog post creation """
+        fields = {}
+        for field_name, field in form.fields.items():
+            if field_name == 'editor_type':
+                continue
+            fields[field_name] = {
+                "name": field_name,
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None
+            }
+            if field_name == 'content':
+                fields[field_name]["widget"] = "Textarea"
+                fields[field_name]["type"] = "TextArea"
+            if field_name == 'cover_image':
+                fields[field_name]["widget"] = "FileInput"
+                fields[field_name]["type"] = "FileField"
+            if field_name == 'publish':
+                fields[field_name]['type'] = 'BooleanField'
+                fields[field_name]['widget'] = 'CheckboxInput'
+        return fields
+
     def perform_create(self, serializer):
         serializer.save()
 
@@ -131,7 +165,7 @@ def blog_stats_api(request):
     """API endpoint for blog statistics"""
     from django.db.models import Count
     from collections import Counter
-    
+
     posts = BlogPostPage.objects.live().public()
     total_posts = posts.count()
     total_views = sum(posts.values_list('view_count', flat=True))

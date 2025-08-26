@@ -301,7 +301,7 @@ export function BlogDetailPage() {
                 {!showCommentForm && (
                   <button
                     className="btn btn-primary"
-                    disabled={true} /* {createCommentMutation.isPending} */
+                    disabled={createCommentMutation.isPending}
                     onClick={() => setShowCommentForm(true)}
                   >
                     Add Comment 

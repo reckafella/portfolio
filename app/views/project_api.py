@@ -9,7 +9,10 @@ from django.conf import settings
 
 from ..models import Projects, Image, Video
 from ..forms.projects import ProjectsForm
-from ..serializers import ProjectSerializer, ProjectCreateSerializer, ImageSerializer, VideoSerializer
+from ..serializers import (
+    ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
+    ImageSerializer, VideoSerializer
+)
 from ..permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
 
@@ -170,9 +173,14 @@ class ProjectDeleteAPIView(generics.DestroyAPIView):
     """
     permission_classes = [IsAuthenticatedStaff]
     lookup_field = 'slug'
+    serializer_class = ProjectDeleteSerializer
 
     def get_queryset(self):
         return Projects.objects.all()
+
+    def perform_destroy(self, instance):
+        serializer = self.get_serializer(instance)
+        return serializer.delete(instance)
 
 
 @api_view(['GET'])

@@ -8,6 +8,7 @@ export interface BlogPost {
   slug: string;
   content: string;
   excerpt: string;
+  intro?: string;
   date: string;
   featured_image_url?: string;
   tags_list: string[];
@@ -149,18 +150,40 @@ export function useCreateBlogComment() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: { post_id: number; author_name: string; author_email: string; content: string }) => {
-      const response = await apiRequest(`/api/blog/article/${data.post_id}/comments/`, {
+    mutationFn: async (data: { 
+      post: BlogPost; 
+      name: string; 
+      email: string; 
+      website?: string; 
+      comment: string 
+    }) => {
+      const response = await apiRequest(`/api/v1/blog/article/${data.post.slug}/comments/`, {
         method: 'POST',
-        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          website: data.website,
+          comment: data.comment
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || errorData.message || 'Failed to create comment'
+        );
+      }
+
       return response.json();
     },
     onSuccess: (_, data) => {
       // Invalidate comments for this blog post
-      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post_id.toString()) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post.slug) });
       // Invalidate the blog post to update comment count
-      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post_id.toString()) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post.slug) });
     },
   });
 }

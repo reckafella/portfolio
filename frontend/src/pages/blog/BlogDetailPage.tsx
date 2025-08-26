@@ -13,6 +13,14 @@ interface CommentFormData {
   content: string;
 }
 
+/* interface CommentSubmitData {
+  name: string;
+  email: string;
+  comment: string;
+  website?: string;
+  post: BlogPost;
+}
+ */
 export function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -97,8 +105,10 @@ export function BlogDetailPage() {
 
     try {
       await createCommentMutation.mutateAsync({
-        ...commentForm,
-        post: post.slug,
+        name: commentForm.author_name,
+        email: commentForm.author_email,
+        comment: commentForm.content,
+        post: post,  // Pass the entire post object
       });
 
       setCommentForm({ author_name: '', author_email: '', content: '' });

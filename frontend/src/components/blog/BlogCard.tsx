@@ -35,7 +35,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
         </div>
         
         <h5 className="card-title">
-          <Link to={`/blog/${post.slug}`} className="text-decoration-none">
+          <Link to={`/blog/article/${post.slug}`} className="text-decoration-none">
             {post.title}
           </Link>
         </h5>
@@ -68,7 +68,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex gap-2">
               <Link
-                to={`/blog/${post.slug}`}
+                to={`/blog/article/${post.slug}`}
                 className="btn btn-primary btn-sm"
               >
                 Read More

@@ -214,6 +214,8 @@ export function BlogDetailPage() {
               )} */}
 
 
+
+
               {/* Edit/Delete Buttons */}
               {canEdit && (
                 <div className="mb-2 entry-meta">
@@ -236,6 +238,46 @@ export function BlogDetailPage() {
                 </div>
               )}
               </div>
+            {/* Share Buttons */}
+            <div className="border-top border-bottom py-4 mb-5">
+              <h6 className="mb-3">Share this post</h6>
+              <div className="d-flex gap-2">
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline-primary btn-sm"
+                >
+                  <i className="bi bi-twitter-x me-1"></i>
+                  Twitter
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline-primary btn-sm"
+                >
+                  <i className="bi bi-facebook me-1"></i>
+                  Facebook
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline-primary btn-sm"
+                >
+                  <i className="bi bi-linkedin me-1"></i>
+                  LinkedIn
+                </a>
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={handleCopyLink}
+                >
+                  <i className="bi bi-link me-1"></i>
+                  Copy Link
+                </button>
+              </div>
+            </div>
 
             {/* Post Content */}
             <div 

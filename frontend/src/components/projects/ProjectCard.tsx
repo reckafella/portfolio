@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
 interface Project {
   id: number;

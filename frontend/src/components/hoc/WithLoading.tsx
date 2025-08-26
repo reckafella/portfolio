@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLoading } from '../../hooks/useLoading';
+import { useLoading } from '@/hooks/useLoading';
 
 interface WithLoadingProps {
   isLoading?: boolean;

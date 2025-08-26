@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import UnifiedForm from '../../components/forms/UnifiedForm';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useProjectFormConfig, useUpdateProject, useProjectBySlug } from '../../hooks/queries/projectQueries';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import UnifiedForm from '@/components/forms/UnifiedForm';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useProjectFormConfig, useUpdateProject, useProjectBySlug } from '@/hooks/queries/projectQueries';
 
 export const ProjectEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
-  
+
+
   // Use TanStack Query hooks
   const { 
     data: formConfig, 
@@ -21,6 +23,8 @@ export const ProjectEditPage: React.FC = () => {
     isLoading: projectLoading,
     error: projectError,
   } = useProjectBySlug(String(slug));
+
+  usePageTitle(`Edit Project ${project?.title || 'Edit Project'}`);
 
   const updateProjectMutation = useUpdateProject();
   const [initialData, setInitialData] = useState<Record<string, string>>({});

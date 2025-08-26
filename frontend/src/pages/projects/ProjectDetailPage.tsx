@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useProjectBySlug, useDeleteProject } from '../../hooks/queries/projectQueries';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useProjectBySlug, useDeleteProject } from '@/hooks/queries/projectQueries';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -21,6 +22,7 @@ export const ProjectDetailPage: React.FC = () => {
   } = useProjectBySlug(slug || '');
 
   const deleteProjectMutation = useDeleteProject();
+  usePageTitle(project?.title || 'Project Details');
 
   const handleDelete = async () => {
     if (!project) return;

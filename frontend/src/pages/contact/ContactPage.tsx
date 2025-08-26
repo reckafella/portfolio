@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ContactForm from '../../components/forms/contact/ContactForm';
-import { useSendMessage } from '../../hooks/queries/contactQueries';
+import ContactForm from '@/components/forms/contact/ContactForm';
+import { useSendMessage } from '@/hooks/queries/contactQueries';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const ContactPage: React.FC = () => {
+    usePageTitle('Contact');
+
     const sendMessageMutation = useSendMessage();
 
     const handleSubmit = async (formData: Record<string, string>) => {

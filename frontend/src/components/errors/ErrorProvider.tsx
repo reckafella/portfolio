@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ApiError, redirectToErrorPage, useErrorHandler } from '../../utils/errorUtils';
+import { ApiError, redirectToErrorPage, useErrorHandler } from '@/utils/errorUtils';
 
 interface ApiErrorHandlerProps {
   children: React.ReactNode;

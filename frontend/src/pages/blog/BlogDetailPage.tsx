@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useBlogPost, useCreateBlogComment, useDeleteBlogPost } from '../../hooks/queries/blogQueries';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { useBlogPost, useCreateBlogComment, useDeleteBlogPost } from '@/hooks/queries/blogQueries';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface CommentFormData {
   author_name: string;
@@ -29,6 +30,7 @@ export function BlogDetailPage() {
     isLoading,
     error,
   } = useBlogPost(slug!);
+  usePageTitle(`Blog - ${post?.title || 'Loading...'}`);
 
   const createCommentMutation = useCreateBlogComment();
   const deleteBlogPostMutation = useDeleteBlogPost();

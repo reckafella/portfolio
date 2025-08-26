@@ -1,8 +1,8 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { LoadingSpinner } from '../common/LoadingSpinner';
-import { getLoginUrlWithNext } from '../../utils/authUtils';
+import { useAuth } from '@/hooks/useAuth';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { getLoginUrlWithNext } from '@/utils/authUtils';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireStaff = false,
-  redirectTo = '/auth/login'
+  redirectTo = '/login'
 }) => {
   const { user, isLoading, isAuthenticated } = useAuth();
   const location = useLocation();
@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (!isAuthenticated) {
     // Generate login URL with current path as next parameter
     const currentPath = location.pathname + location.search;
-    if (redirectTo === '/auth/login') {
+    if (redirectTo === '/login') {
       const loginUrl = getLoginUrlWithNext(currentPath);
       return <Navigate to={loginUrl} replace />;
     }

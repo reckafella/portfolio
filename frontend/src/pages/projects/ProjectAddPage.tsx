@@ -1,13 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import UnifiedForm from '../../components/forms/UnifiedForm';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useProjectFormConfig, useCreateProject } from '../../hooks/queries/projectQueries';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import UnifiedForm from '@/components/forms/UnifiedForm';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useProjectFormConfig, useCreateProject } from '@/hooks/queries/projectQueries';
 
 export const ProjectAddPage: React.FC = () => {
   const navigate = useNavigate();
-  
+  usePageTitle('Add Project');
+
   // Use TanStack Query hooks
   const { 
     data: formConfig, 

@@ -3,7 +3,7 @@
 {% block title %}{{ project.title }}{% endblock %}
 {% block description %}{{ project.description|default:"" }}{% endblock %}
 {% block keywords %}projects, portfolio, software development, web development, {{ project.title }}{% endblock %}
-{% block author %}{{ project.author.get_full_name|default:project.author.username }}{% endblock %}
+{% block author %}{{ object.author.get_full_name|default:"Ethan1 Wanyoike" }}{% endblock %}
 
 {% block content %}
 <div class="page-title">

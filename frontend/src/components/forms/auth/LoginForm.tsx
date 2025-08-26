@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import UnifiedForm from '../UnifiedForm';
-import { useLogin } from '../../../hooks/queries/authQueries';
-import { usePreloader } from '../../../hooks/usePreloader';
-import { getSafeNextUrl } from '../../../utils/authUtils';
+import UnifiedForm from '@/components/forms/UnifiedForm';
+import { useLogin } from '@/hooks/queries/authQueries';
+import { usePreloader } from '@/hooks/usePreloader';
+import { getSafeNextUrl } from '@/utils/authUtils';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const LoginForm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const loginMutation = useLogin();
   const { showLoader, hideLoader } = usePreloader();
+  usePageTitle('Login');
 
   const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
     showLoader(); // Show global preloader during authentication
@@ -55,7 +57,7 @@ const LoginForm: React.FC = () => {
                       <p className="text-muted mb-0">
                         Don't have an account?{' '}
                         <Link 
-                          to={`/auth/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          to={`/signup${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
                           className="text-decoration-none"
                         >
                           Create one here

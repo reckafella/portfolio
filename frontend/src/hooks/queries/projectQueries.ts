@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { projectApi } from '../../utils/api';
+import { projectApi } from '@/utils/api';
 
 // Project-related query keys
 export const projectKeys = {

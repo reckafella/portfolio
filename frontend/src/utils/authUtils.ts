@@ -10,7 +10,7 @@
 export const getLoginUrlWithNext = (currentPath?: string): string => {
   const nextPath = currentPath || window.location.pathname + window.location.search;
   const encodedNext = encodeURIComponent(nextPath);
-  return `/auth/login?next=${encodedNext}`;
+  return `/login?next=${encodedNext}`;
 };
 
 /**
@@ -21,7 +21,7 @@ export const getLoginUrlWithNext = (currentPath?: string): string => {
 export const getSignupUrlWithNext = (currentPath?: string): string => {
   const nextPath = currentPath || window.location.pathname + window.location.search;
   const encodedNext = encodeURIComponent(nextPath);
-  return `/auth/signup?next=${encodedNext}`;
+  return `/signup?next=${encodedNext}`;
 };
 
 /**

@@ -193,7 +193,7 @@ export function useCreateBlogPost() {
   
   return useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await apiRequest('/api/blog/article/create/', {
+      const response = await apiRequest('/api/v1/blog/article/create/', {
         method: 'POST',
         body: data,
         headers: {
@@ -216,7 +216,7 @@ export function useUpdateBlogPost() {
   
   return useMutation({
     mutationFn: async ({ slug, data }: { slug: string; data: FormData }) => {
-      const response = await apiRequest(`/api/blog/article/${slug}/`, {
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
         method: 'PUT',
         body: data,
         headers: {
@@ -239,7 +239,7 @@ export function useDeleteBlogPost() {
   
   return useMutation({
     mutationFn: async (slug: string) => {
-      const response = await apiRequest(`/api/blog/article/${slug}/`, {
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
         method: 'DELETE',
       });
       return response.ok;

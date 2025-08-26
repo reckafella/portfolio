@@ -260,7 +260,7 @@ export const BlogListPage: React.FC = () => {
                       )}
                       <div className="flex-grow-1">
                         <Link
-                          to={`/blog/${post.slug}`}
+                          to={`/blog/article/${post.slug}`}
                           className="text-decoration-none fw-medium"
                         >
                           {post.title}

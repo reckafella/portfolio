@@ -118,7 +118,7 @@ export function BlogEditPage() {
       });
       
       // Navigate to the updated post
-      navigate(`/blog/${updatedPost.slug}`);
+      navigate(`/blog/article/${updatedPost.slug}`);
     } catch (error: unknown) {
       const errorData = error as { status?: number; data?: Record<string, string[]> };
       if (errorData.status === 400 && errorData.data) {
@@ -305,7 +305,7 @@ export function BlogEditPage() {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
+                    onClick={() => navigate(`/blog/article/${post.slug}`)}
                     disabled={isSubmitting}
                   >
                     Cancel
@@ -314,7 +314,7 @@ export function BlogEditPage() {
                   <button
                     type="button"
                     className="btn btn-outline-primary"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
+                    onClick={() => navigate(`/blog/article/${post.slug}`)}
                     disabled={isSubmitting}
                   >
                     View Post

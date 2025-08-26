@@ -13,7 +13,7 @@ export const ROUTES = {
   // Blog routes
   BLOG: {
     LIST: '/blog',
-    DETAIL: (slug: string) => `/blog/${slug}`,
+    DETAIL: (slug: string) => `/blog/article/${slug}`,
     ADD: '/blog/new',
     EDIT: (slug: string) => `/blog/edit/${slug}`,
     TAG: (tag: string) => `/blog?tag=${encodeURIComponent(tag)}`,

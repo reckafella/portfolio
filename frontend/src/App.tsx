@@ -105,7 +105,7 @@ function App() {
                                                     </ProtectedRoute>
                                                 } 
                                             />
-                                            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                                            <Route path="/blog/article/:slug" element={<BlogDetailPage />} />
                                             
                                             <Route path="/contact" element={<ContactPage />} />
                                             <Route path="/services" element={<ServicesPage />} />

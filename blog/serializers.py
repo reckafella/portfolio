@@ -110,23 +110,34 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
 class BlogPostCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating blog posts"""
     tags_input = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags")
+    cover_image = serializers.FileField(
+        write_only=True,
+        required=False,
+        help_text="Cover image for the blog post"
+    )
 
     class Meta:
         model = BlogPostPage
-        fields = ['title', 'content', 'published', 'tags_input']
+        fields = ['title', 'content', 'published', 'tags_input', 'cover_image']
 
     def create(self, validated_data):
         from blog.models import BlogIndexPage
         from django.utils.text import slugify
         from titlecase import titlecase
         from django.db import transaction
+        from app.views.helpers.cloudinary import CloudinaryImageHandler
 
+        # Extract data from validated_data
         tags_input = validated_data.pop('tags_input', '')
+        cover_image = validated_data.pop('cover_image', None)
 
         # Get the blog index page (parent)
         blog_index = BlogIndexPage.objects.first()
         if not blog_index:
             raise serializers.ValidationError("Blog index page not found")
+
+        # Initialize Cloudinary uploader
+        uploader = CloudinaryImageHandler()
 
         # Create the blog post page
         with transaction.atomic():
@@ -144,14 +155,33 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
             blog_index.add_child(instance=post)
             post.save()
 
+            # Handle cover image
+            if cover_image:
+                try:
+                    response = uploader.upload_image(
+                        cover_image,
+                        folder=f"portfolio/blog/{post.slug}"
+                    )
+                    post.cloudinary_image_id = response.get('cloudinary_image_id')
+                    post.cloudinary_image_url = response.get('cloudinary_image_url')
+                    post.optimized_image_url = response.get('optimized_image_url')
+                    post.save()
+                except Exception as e:
+                    raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
+
             # Handle tags
             if tags_input:
                 tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
                 post.tags.set(*tag_names)
 
+            # Create a revision
+            revision = post.save_revision(
+                user=self.context['request'].user,
+                approved_go_live_at=None
+            )
+
             # Publish if requested
             if validated_data.get('published', False):
-                revision = post.save_revision()
                 revision.publish()
 
         return post
@@ -174,28 +204,158 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
         return value.strip()
 
     def create(self, validated_data):
-        # Create a temporary user or use anonymous user approach
+        # Extract the post from validated_data
+        post = validated_data.get('post')
+        if not post:
+            raise serializers.ValidationError("Post is required")
 
-        # For now, we'll use the request user or create anonymous comments
-        # In a real application, you might want to handle this differently
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            author = request.user
-        else:
-            # Create or get anonymous user for comments
-            author, created = User.objects.get_or_create(
-                username='anonymous_commenter',
-                defaults={
-                    'email': validated_data['email'],
-                    'first_name': validated_data['name'],
-                    'is_active': False
-                }
-            )
+        # Generate a unique anonymous username based on name and timestamp
+        from django.utils import timezone
+        import hashlib
 
+        name = validated_data.get('name', '').strip()
+        email = validated_data.get('email', '').strip().lower()
+        timestamp = timezone.now().timestamp()
+        unique_string = f"{name}_{email}_{timestamp}"
+        hashed = hashlib.md5(unique_string.encode()).hexdigest()[:10]
+        username = f"anonymous_{hashed}"
+
+        # Create a new user for this comment
+        author = User.objects.create_user(
+            username=username,
+            email=email,
+            password=None,
+            first_name=name,
+            is_active=False
+        )
+
+        # Create the comment
         comment = BlogPostComment.objects.create(
-            post=validated_data['post'],
+            post=post,
             author=author,
-            content=validated_data['comment']
+            content=validated_data.get('comment', '').strip()
         )
 
         return comment
+
+    def to_representation(self, instance):
+        """
+        Convert the comment instance to a JSON-serializable format
+        """
+        return {
+            'id': instance.id,
+            'author_name': instance.author.first_name or instance.author.username,
+            'content': instance.content,
+            'created_at': instance.created_at.isoformat(),
+            'created_at_formatted': instance.created_at.strftime('%B %d, %Y at %I:%M %p')
+        }
+
+
+class BlogPostDeleteSerializer(serializers.ModelSerializer):
+    """Serializer for deleting blog posts with proper cleanup"""
+
+    class Meta:
+        model = BlogPostPage
+        fields = []  # No fields needed for deletion
+
+    def validate(self, attrs):
+        # Check if user has permission to delete
+        request = self.context.get('request')
+        if not request or not (request.user.is_staff or self.instance.author == request.user):
+            raise serializers.ValidationError("You do not have permission to delete this post.")
+        return attrs
+
+    def delete_images(self, post):
+        """Delete all post images from Cloudinary and database"""
+        from app.views.helpers.cloudinary import CloudinaryImageHandler
+        uploader = CloudinaryImageHandler()
+
+        success_messages = []
+        error_messages = []
+
+        # Delete cover image if exists
+        if post.cloudinary_image_id:
+            try:
+                uploader.delete_image(post.cloudinary_image_id)
+                success_messages.append("Successfully deleted cover image.")
+            except Exception as e:
+                error_messages.append(f"Failed to delete cover image: {str(e)}")
+
+        # Delete all blog post images
+        images = list(post.images.all())
+        for image in images:
+            try:
+                if image.cloudinary_image_id:
+                    uploader.delete_image(image.cloudinary_image_id)
+                image.delete()
+                success_messages.append("Successfully deleted post image.")
+            except Exception as e:
+                error_messages.append(f"Failed to delete post image: {str(e)}")
+
+        if error_messages:
+            raise serializers.ValidationError(error_messages)
+
+        return success_messages
+
+    def delete_comments(self, post):
+        """Delete all comments and their associated anonymous users"""
+        success_messages = []
+        error_messages = []
+
+        comments = list(post.comments.all())
+        for comment in comments:
+            try:
+                # Delete the anonymous user if they have no other comments
+                author = comment.author
+                comment.delete()
+                if author and author.is_active is False:  # Anonymous user
+                    if not author.blog_post_comments.exists():
+                        author.delete()
+                success_messages.append("Successfully deleted comment.")
+            except Exception as e:
+                error_messages.append(f"Failed to delete comment: {str(e)}")
+
+        if error_messages:
+            raise serializers.ValidationError(error_messages)
+
+        return success_messages
+
+    def delete_post(self, post):
+        """Delete the blog post after cleaning up related objects"""
+        try:
+            post_title = post.title
+
+            # Delete all revisions
+            post.revisions.all().delete()
+
+            # Delete the page
+            post.delete()
+
+            return [f"Blog post '{post_title}' deleted successfully!"]
+        except Exception as e:
+            raise serializers.ValidationError(f"Blog post deletion failed: {str(e)}")
+
+    def delete(self, instance):
+        """Handle the complete deletion process with rollback on failure"""
+        from django.db import transaction
+
+        success_messages = []
+
+        try:
+            with transaction.atomic():
+                # Delete in order: images, comments, then the post
+                success_messages.extend(self.delete_images(instance))
+                success_messages.extend(self.delete_comments(instance))
+                success_messages.extend(self.delete_post(instance))
+
+                return {
+                    "success": True,
+                    "messages": success_messages,
+                    "errors": []
+                }
+
+        except serializers.ValidationError as e:
+            # Re-raise validation errors
+            raise serializers.ValidationError(str(e))
+        except Exception as e:
+            raise Exception(str(e))

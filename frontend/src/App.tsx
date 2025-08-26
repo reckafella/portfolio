@@ -70,7 +70,7 @@ function App() {
                                             {/* Project routes */}
                                             <Route path="/projects" element={<ProjectListPage />} />
                                             <Route 
-                                                path="/projects/add" 
+                                                path="/projects/new" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
                                                         <ProjectAddPage />
@@ -90,7 +90,7 @@ function App() {
                                             {/* Blog routes */}
                                             <Route path="/blog" element={<BlogListPage />} />
                                             <Route 
-                                                path="/blog/add" 
+                                                path="/blog/new" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
                                                         <BlogAddPage />
@@ -112,17 +112,17 @@ function App() {
                                             <Route path="/search" element={<SearchResults />} />
 
                                             {/* Authentication routes - organized under /auth for consistency */}
-                                            <Route path="/auth/login" element={<LoginForm />} />
-                                            <Route path="/auth/signup" element={<SignupForm />} />
-                                            <Route path="/auth/logout" element={<LogoutPage />} />
+                                            <Route path="/login" element={<LoginForm />} />
+                                            <Route path="/signup" element={<SignupForm />} />
+                                            <Route path="/logout" element={<LogoutPage />} />
                                             
                                             {/* Legacy authentication route redirects for backward compatibility */}
-                                            <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-                                            <Route path="/signin" element={<Navigate to="/auth/login" replace />} />
-                                            <Route path="/signup" element={<Navigate to="/auth/signup" replace />} />
-                                            <Route path="/register" element={<Navigate to="/auth/signup" replace />} />
-                                            <Route path="/logout" element={<Navigate to="/auth/logout" replace />} />
-                                            <Route path="/signout" element={<Navigate to="/auth/logout" replace />} />
+                                            <Route path="/login" element={<Navigate to="/login" replace />} />
+                                            <Route path="/signin" element={<Navigate to="/login" replace />} />
+                                            <Route path="/signup" element={<Navigate to="/signup" replace />} />
+                                            <Route path="/register" element={<Navigate to="/signup" replace />} />
+                                            <Route path="/logout" element={<Navigate to="/logout" replace />} />
+                                            <Route path="/signout" element={<Navigate to="/logout" replace />} />
 
                                             {/* Error routes */}
                                             <Route path="/error/400" element={<BadRequestPage />} />

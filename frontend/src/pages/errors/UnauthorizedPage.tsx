@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { getLoginUrlWithNext, getSignupUrlWithNext } from '../../utils/authUtils';
+import { getLoginUrlWithNext, getSignupUrlWithNext } from '@/utils/authUtils';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const UnauthorizedPage: React.FC = () => {
   const location = useLocation();
   const currentPath = location.pathname + location.search;
+  usePageTitle('401 - Unauthorized');
 
   return (
     <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">

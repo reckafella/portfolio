@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const LogoutPage: React.FC = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(true);
   const [error, setError] = useState('');
   const { logout, isAuthenticated } = useAuth();
+
+  usePageTitle('Logout');
 
   useEffect(() => {
     const handleLogout = async () => {

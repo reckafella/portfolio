@@ -1,0 +1,19 @@
+/* Toast animation styles */
+.toast {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Optional: Add a slide-in effect */
+.toast {
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.toast.show {
+  transform: translateX(0);
+}

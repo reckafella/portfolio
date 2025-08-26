@@ -8,7 +8,11 @@ from django.core.paginator import Paginator
 from django.conf import settings
 
 from ..models import Projects, Image, Video
-from ..serializers import ProjectSerializer, ProjectCreateSerializer, ImageSerializer, VideoSerializer
+from ..forms.projects import ProjectsForm
+from ..serializers import (
+    ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
+    ImageSerializer, VideoSerializer
+)
 from ..permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
 
@@ -107,6 +111,26 @@ class ProjectCreateAPIView(generics.CreateAPIView):
     serializer_class = ProjectCreateSerializer
     permission_classes = [IsAuthenticatedStaff]
 
+    def get(self, request, *args, **kwargs):
+        """ Returns the form fields for creating a project """
+        form = ProjectsForm()
+        return Response({"fields": self.get_form_fields(form)}, status=status.HTTP_200_OK)
+
+    def get_form_fields(self, form):
+        fields = {}
+        for name, field in form.fields.items():
+            fields[name] = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+        return fields
+
     def perform_create(self, serializer):
         serializer.save()
 
@@ -119,6 +143,26 @@ class ProjectUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticatedStaff]
     lookup_field = 'slug'
 
+    def get(self, request, *args, **kwargs):
+        """ Returns the form fields for updating a project """
+        form = ProjectsForm(instance=self.get_object())
+        return Response({"fields": self.get_form_fields(form)}, status=status.HTTP_200_OK)
+
+    def get_form_fields(self, form):
+        fields = {}
+        for name, field in form.fields.items():
+            fields[name] = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+        return fields
+
     def get_queryset(self):
         return Projects.objects.all()
 
@@ -129,9 +173,14 @@ class ProjectDeleteAPIView(generics.DestroyAPIView):
     """
     permission_classes = [IsAuthenticatedStaff]
     lookup_field = 'slug'
+    serializer_class = ProjectDeleteSerializer
 
     def get_queryset(self):
         return Projects.objects.all()
+
+    def perform_destroy(self, instance):
+        serializer = self.get_serializer(instance)
+        return serializer.delete(instance)
 
 
 @api_view(['GET'])

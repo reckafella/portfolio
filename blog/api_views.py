@@ -1,4 +1,5 @@
 from rest_framework import generics, status, permissions, filters
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -9,11 +10,13 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import BlogPostPage, BlogPostComment, BlogPostImage
+from .forms import BlogPostForm
 from .serializers import (
-    BlogPostPageSerializer, BlogPostCreateSerializer,
+    BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer,
     BlogPostCommentSerializer, BlogCommentCreateSerializer,
     BlogPostImageSerializer
 )
+from rest_framework.permissions import IsAuthenticated
 from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
 
@@ -73,14 +76,109 @@ class BlogPostDetailAPIView(generics.RetrieveAPIView):
         if not any(bot in user_agent.lower() for bot in ['bot', 'crawler', 'spider']):
             instance.increment_view_count(request)
 
+        # Get the base post data
         serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        response_data = serializer.data
+
+        # Add comment form configuration
+        response_data['comment_form'] = {
+            "fields": {
+                "name": {
+                    "label": "Name",
+                    "type": "text",
+                    "required": True,
+                    "maxLength": 100,
+                    "minLength": 2,
+                    "placeholder": "Your name"
+                },
+                "email": {
+                    "label": "Email",
+                    "type": "email",
+                    "required": True,
+                    "maxLength": 254,
+                    "placeholder": "your.email@example.com"
+                },
+                "website": {
+                    "label": "Website",
+                    "type": "url",
+                    "required": False,
+                    "maxLength": 200,
+                    "placeholder": "https://your-website.com"
+                },
+                "comment": {
+                    "label": "Comment",
+                    "type": "textarea",
+                    "required": True,
+                    "minLength": 10,
+                    "maxLength": 1000,
+                    "placeholder": "Share your thoughts..."
+                }
+            }
+        }
+
+        return Response(response_data)
 
 
 class BlogPostCreateAPIView(generics.CreateAPIView):
     """API view for creating blog posts (staff only)"""
     serializer_class = BlogPostCreateSerializer
     permission_classes = [IsAuthenticatedStaff]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        """ Handle GET request for creating a blog post """
+        return Response({
+            "fields": {
+                "title": {
+                    "label": "Title",
+                    "type": "text",
+                    "required": True,
+                    "help_text": "Post title",
+                    "max_length": 255
+                },
+                "content": {
+                    "label": "Content",
+                    "type": "textarea",
+                    "required": True,
+                    "help_text": "Post content in markdown format"
+                },
+                "cover_image": {
+                    "label": "Cover Image",
+                    "type": "file",
+                    "required": False,
+                    "help_text": "Cover image for the blog post",
+                    "accept": "image/*"
+                },
+                "tags_input": {
+                    "label": "Tags",
+                    "type": "text",
+                    "required": False,
+                    "help_text": "Comma-separated tags (e.g., python, django, react)"
+                },
+                "published": {
+                    "label": "Publish Now",
+                    "type": "checkbox",
+                    "required": False,
+                    "help_text": "Make the post public immediately"
+                }
+            }
+        }, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        # Handle file uploads
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            post = serializer.save()
+            return Response({
+                'message': 'Blog post created successfully',
+                'post': BlogPostPageSerializer(post).data
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -97,22 +195,28 @@ class BlogPostUpdateAPIView(generics.UpdateAPIView):
 
 
 class BlogPostDeleteAPIView(generics.DestroyAPIView):
-    """API view for deleting blog posts (staff only)"""
+    """API view for deleting blog posts (staff or author only)"""
     lookup_field = 'slug'
-    permission_classes = [IsAuthenticatedStaff]
+    serializer_class = BlogPostDeleteSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return BlogPostPage.objects.all()
+
+    def perform_destroy(self, instance):
+        serializer = self.get_serializer(instance)
+        return serializer.delete(instance)
 
 
 class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
     """API view for listing and creating blog comments"""
     permission_classes = [permissions.AllowAny]
+    pagination_class = BlogPostPagination
 
     def get_queryset(self):
         blog_slug = self.kwargs.get('blog_slug')
         blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
-        return BlogPostComment.objects.filter(post=blog_post).order_by('-created_at')
+        return BlogPostComment.objects.filter(post=blog_post).select_related('author').order_by('-created_at')
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -122,7 +226,16 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         blog_slug = self.kwargs.get('blog_slug')
         blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
-        serializer.save(post=blog_post)
+
+        # Create the comment
+        return serializer.save(post=blog_post)
+
+    def create(self, request, *args, **kwargs):
+        """Override create to handle comment creation"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response = self.perform_create(serializer)
+        return response
 
 
 @api_view(['GET'])
@@ -131,7 +244,7 @@ def blog_stats_api(request):
     """API endpoint for blog statistics"""
     from django.db.models import Count
     from collections import Counter
-    
+
     posts = BlogPostPage.objects.live().public()
     total_posts = posts.count()
     total_views = sum(posts.values_list('view_count', flat=True))

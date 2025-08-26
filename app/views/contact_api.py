@@ -59,10 +59,9 @@ class ContactFormAPIView(APIView):
                 "help_text": getattr(field, "help_text", ""),
                 "disabled": getattr(field, "disabled", False),
                 "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
             }
-
-            if getattr(field, "max_length", None):
-                field_data["max_length"] = field.max_length
 
             # Add CAPTCHA specific data
             if name == 'captcha':

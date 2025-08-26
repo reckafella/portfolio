@@ -3,10 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import Search from './search/Search';
 import ThemeSwitch from './utils/SwitchThemes';
 import SVGLogoComponent from './Logo';
-import { useAuth } from '../hooks/useAuth';
-import { useStaffPermissions } from '../hooks/useStaffPermissions';
-import { getLoginUrlWithNext, getSignupUrlWithNext } from '../utils/authUtils';
-import { NAV_ITEMS, ROUTES } from '../constants/routes';
+import { useAuth } from '@/hooks/useAuth';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { getLoginUrlWithNext, getSignupUrlWithNext } from '@/utils/authUtils';
+import { NAV_ITEMS, ROUTES } from '@/constants/routes';
 
 interface NavigationProps {
   onToggleSearch: () => void;

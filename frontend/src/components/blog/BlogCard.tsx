@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { BlogPost } from '../../hooks/queries/blogQueries';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { BlogPost } from '@/hooks/queries/blogQueries';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -76,7 +76,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
               
               {canEditBlog && (
                 <Link
-                  to={`/blog/${post.slug}/edit`}
+                  to={`/blog/edit/${post.slug}`}
                   className="btn btn-secondary btn-sm"
                 >
                   Edit

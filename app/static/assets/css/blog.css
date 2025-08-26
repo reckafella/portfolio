@@ -170,16 +170,22 @@
   display: inline-block;
 }
 
-.blog .entry .entry-footer .tags li+li::before {
-  padding-right: 6px;
-  color: var(--accent-color);
+.blog .entry .entry-footer .tags li:not(:last-child)::after {
   content: ",";
+  padding-right: 5px;
+  padding-left: 1px;
+  color: var(--default-color);
+}
+
+.blog .entry .entry-footer .tags li:last-child::after {
+  content: "";
+  padding: 0;
 }
 
 .blog .entry .entry-footer .tags li:hover a{
   color: var(--background-color);
   background-color: var(--contrast-color);
-  padding: 2px 3px;
+  /* padding: 2px 3px; */
 }
 
 .blog .entry .entry-footer .tags li:hover a  {

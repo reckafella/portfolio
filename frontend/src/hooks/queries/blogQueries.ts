@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '../../utils/api';
+import { apiRequest } from '@/utils/api';
 
 // Types
 export interface BlogPost {
@@ -8,6 +8,7 @@ export interface BlogPost {
   slug: string;
   content: string;
   excerpt: string;
+  intro?: string;
   date: string;
   featured_image_url?: string;
   tags_list: string[];
@@ -88,7 +89,7 @@ export function useBlogPost(slug: string) {
   return useQuery({
     queryKey: blogKeys.post(slug),
     queryFn: async () => {
-      const response = await apiRequest(`/api/v1/blog/posts/${slug}/`);
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/`);
       return response.json() as Promise<BlogPost>;
     },
     enabled: !!slug,
@@ -100,7 +101,7 @@ export function useBlogComments(blogSlug: string) {
   return useQuery({
     queryKey: blogKeys.comments(blogSlug),
     queryFn: async () => {
-      const response = await apiRequest(`/api/v1/blog/posts/${blogSlug}/comments/`);
+      const response = await apiRequest(`/api/v1/blog/article/${blogSlug}/comments/`);
       return response.json() as Promise<BlogComment[]>;
     },
     enabled: !!blogSlug,
@@ -124,7 +125,7 @@ export function useBlogFormConfig() {
   return useQuery({
     queryKey: blogKeys.formConfig(),
     queryFn: async () => {
-      const response = await apiRequest('/api/v1/blog/form-config/');
+      const response = await apiRequest('/api/v1/blog/comments/form-config/');
       return response.json();
     },
     staleTime: 60 * 60 * 1000, // 1 hour
@@ -149,18 +150,40 @@ export function useCreateBlogComment() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: { post_id: number; author_name: string; author_email: string; content: string }) => {
-      const response = await apiRequest(`/api/blog/posts/${data.post_id}/comments/`, {
+    mutationFn: async (data: { 
+      post: BlogPost; 
+      name: string; 
+      email: string; 
+      website?: string; 
+      comment: string 
+    }) => {
+      const response = await apiRequest(`/api/v1/blog/article/${data.post.slug}/comments/`, {
         method: 'POST',
-        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          website: data.website || '',
+          comment: data.comment
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || errorData.message || 'Failed to create comment'
+        );
+      }
+
       return response.json();
     },
     onSuccess: (_, data) => {
       // Invalidate comments for this blog post
-      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post_id.toString()) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post.slug) });
       // Invalidate the blog post to update comment count
-      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post_id.toString()) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post.slug) });
     },
   });
 }
@@ -170,7 +193,7 @@ export function useCreateBlogPost() {
   
   return useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await apiRequest('/api/blog/posts/', {
+      const response = await apiRequest('/api/blog/article/create/', {
         method: 'POST',
         body: data,
         headers: {
@@ -193,7 +216,7 @@ export function useUpdateBlogPost() {
   
   return useMutation({
     mutationFn: async ({ slug, data }: { slug: string; data: FormData }) => {
-      const response = await apiRequest(`/api/blog/posts/${slug}/`, {
+      const response = await apiRequest(`/api/blog/article/${slug}/`, {
         method: 'PUT',
         body: data,
         headers: {
@@ -216,7 +239,7 @@ export function useDeleteBlogPost() {
   
   return useMutation({
     mutationFn: async (slug: string) => {
-      const response = await apiRequest(`/api/blog/posts/${slug}/`, {
+      const response = await apiRequest(`/api/blog/article/${slug}/`, {
         method: 'DELETE',
       });
       return response.ok;

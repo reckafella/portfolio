@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BlogFilters } from '../../hooks/queries/blogQueries';
+import { BlogFilters } from '@/hooks/queries/blogQueries';
 
 interface BlogFiltersProps {
     filters: BlogFilters;

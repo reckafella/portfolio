@@ -22,12 +22,13 @@ interface FormConfig {
 }
 
 interface UnifiedFormProps {
-    formType: 'contact' | 'login' | 'signup' | 'add_project';
+    formType: 'contact' | 'login' | 'signup' | 'add_project' | 'update_project' | 'create_blog_post' | 'update_blog_post';
     onSubmit: (_formData: Record<string, string | File | File[]>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
     success?: boolean;
     title?: string;
+    slug?: string;
     submitButtonText?: string;
     loadingText?: string;
     additionalContent?: React.ReactNode;
@@ -42,6 +43,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     error, 
     success,
     title,
+    slug,
     submitButtonText,
     loadingText,
     additionalContent,
@@ -54,16 +56,22 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     const [captchaData, setCaptchaData] = useState<{key: string, image: string} | null>(null);
 
     // Determine API endpoint based on form type
-    const getApiEndpoint = () => {
+    const getApiEndpoint = (slug?: string) => {
         switch (formType) {
             case 'contact':
                 return '/api/v1/contact/';
             case 'login':
-                return '/api/v1/auth/login-form-config/';
+                return '/api/v1/auth/login/';
             case 'signup':
-                return '/api/v1/auth/signup-form-config/';
+                return '/api/v1/auth/signup/';
             case 'add_project':
-                return '/api/v1/projects/form-config';
+                return '/api/v1/projects/create/';
+            case 'update_project':
+                return `/api/v1/projects/${slug}/update/`;
+            case 'create_blog_post':
+                return '/api/v1/blog/article/create/';
+            case 'update_blog_post':
+                return `/api/v1/blog/article/${slug}/update/`;
             default:
                 return '/api/v1/contact/';
         }
@@ -200,7 +208,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     useEffect(() => {
         const fetchFormConfig = async () => {
             try {
-                const response = await fetch(getApiEndpoint());
+                const response = await fetch(getApiEndpoint(slug));
                 if (response.ok) {
                     const config = await response.json();
                     setFormConfig(config);
@@ -292,7 +300,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         }
     };
 
-    const handleInputChange = (fieldName: string, value: string | File | File[]) => {
+    const handleInputChange = (fieldName: string, value: string | boolean | File | File[]) => {
         setFormData(prev => ({
             ...prev,
             [fieldName]: value
@@ -354,6 +362,17 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             placeholder: help_text,
             maxLength: max_length,
             minLength: min_length
+        };
+
+        const booleanBaseProps = {
+            id: fieldName,
+            name: fieldName,
+            checked: Boolean(value),
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+                handleInputChange(fieldName, e.target.checked),
+            required,
+            disabled: disabled || isSubmitting,
+            className: "form-check-input"
         };
 
         // Common props for file inputs
@@ -563,6 +582,18 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     </div>
                 );
             
+            case 'CheckboxInput':
+                return (
+                    <div className="input-group form-check">
+                        <input
+                            type="checkbox"
+                            role='switch'
+                            {...booleanBaseProps}
+                        />
+                        
+                    </div>
+                );
+
             default:
                 return (
                     <input
@@ -605,10 +636,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 <div className="spinner-grow spinner-grow-sm text-danger" role="status">
                     <span className="visually-hidden">Loading form...</span>
                 </div>
-                <div className="spinner-grow text-info">
+                <div className="spinner-grow text-info" role="status" style={{ height: '2rem', width: '2rem' }}>
                     <span className="visually-hidden">Loading...</span>
                 </div>
-                <div className="spinner-grow spinner-grow-lg text-success">
+                <div className="spinner-grow spinner-grow-lg text-success" role="status" style={{ height: '3rem', width: '3rem' }}>
                     <span className="visually-hidden">Loading...</span>
                 </div>
             </div>

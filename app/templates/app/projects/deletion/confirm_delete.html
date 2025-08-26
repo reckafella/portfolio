@@ -1,6 +1,7 @@
 {% extends "app/base.html" %}
 {% load static %}
 {% block title %}{{ page_title }}{% endblock %}
+{% block author %}{{ object.author.get_full_name|default:"Ethan Wanyoike" }}{% endblock %}
 
 {% block content %}
 <section class="mt-5 mb-5 section bg-body-secondary">

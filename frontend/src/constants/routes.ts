@@ -14,7 +14,7 @@ export const ROUTES = {
   BLOG: {
     LIST: '/blog',
     DETAIL: (slug: string) => `/blog/${slug}`,
-    ADD: '/blog/add',
+    ADD: '/blog/new',
     EDIT: (slug: string) => `/blog/edit/${slug}`,
     TAG: (tag: string) => `/blog?tag=${encodeURIComponent(tag)}`,
   },
@@ -23,15 +23,15 @@ export const ROUTES = {
   PROJECTS: {
     LIST: '/projects',
     DETAIL: (slug: string) => `/projects/${slug}`,
-    ADD: '/projects/add',
+    ADD: '/projects/new',
     EDIT: (slug: string) => `/projects/edit/${slug}`,
   },
 
   // Authentication routes
   AUTH: {
-    LOGIN: '/auth/login',
-    SIGNUP: '/auth/signup',
-    LOGOUT: '/auth/logout',
+    LOGIN: '/login',
+    SIGNUP: '/signup',
+    LOGOUT: '/logout',
     PROFILE: '/profile',
   },
 

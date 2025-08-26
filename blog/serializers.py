@@ -224,9 +224,9 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
         author = User.objects.create_user(
             username=username,
             email=email,
-            password=None,  # No password needed for anonymous comments
+            password=None,
             first_name=name,
-            is_active=False  # Keep inactive as these are anonymous comment users
+            is_active=False
         )
 
         # Create the comment

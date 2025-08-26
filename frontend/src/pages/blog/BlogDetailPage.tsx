@@ -97,10 +97,10 @@ export function BlogDetailPage() {
 
     try {
       await createCommentMutation.mutateAsync({
-        post_id: post.id,
         ...commentForm,
+        post: post.slug,
       });
-      
+
       setCommentForm({ author_name: '', author_email: '', content: '' });
       setShowCommentForm(false);
     } catch {
@@ -301,7 +301,7 @@ export function BlogDetailPage() {
                 {!showCommentForm && (
                   <button
                     className="btn btn-primary"
-                    disabled={createCommentMutation.isPending}
+                    disabled={true}/* {createCommentMutation.isPending} */
                     onClick={() => setShowCommentForm(true)}
                   >
                     Add Comment 

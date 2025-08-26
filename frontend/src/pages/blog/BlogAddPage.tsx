@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCreateBlogPost } from '../../hooks/queries/blogQueries';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { useCreateBlogPost } from '@/hooks/queries/blogQueries';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface BlogPostFormData {
   title: string;
@@ -17,7 +18,8 @@ export function BlogAddPage() {
   const navigate = useNavigate();
   const { canCreateProjects: canCreateBlog } = useStaffPermissions();
   const createBlogPostMutation = useCreateBlogPost();
-  
+  usePageTitle('Create Blog Post');
+
   const [formData, setFormData] = useState<BlogPostFormData>({
     title: '',
     content: '',

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { BlogPost } from '../../hooks/queries/blogQueries';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { BlogPost } from '@/hooks/queries/blogQueries';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
 interface BlogCardProps {
   post: BlogPost;

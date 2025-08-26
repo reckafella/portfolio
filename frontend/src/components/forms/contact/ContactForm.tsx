@@ -1,5 +1,5 @@
 import React from 'react';
-import UnifiedForm from '../UnifiedForm';
+import UnifiedForm from '@/components/forms/UnifiedForm';
 
 interface ContactFormProps {
     onSubmit: (_formData: Record<string, string>) => Promise<void>;

@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { useApi, useDeferredApi } from './useApi';
-import { projectApi } from '../utils/api';
+import { projectApi } from '@/utils/api';
 
 export interface Project {
   id: number;

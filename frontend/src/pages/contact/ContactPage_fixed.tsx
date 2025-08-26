@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ContactForm from '../../components/forms/contact/ContactForm';
-import { useSendMessage } from '../../hooks/queries/contactQueries';
+import ContactForm from '@/components/forms/contact/ContactForm';
+import { useSendMessage } from '@/hooks/queries/contactQueries';
 
 const ContactPage: React.FC = () => {
     const sendMessageMutation = useSendMessage();

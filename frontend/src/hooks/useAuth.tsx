@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import AuthService, {AuthResponse, RegisterData} from '../services/authService';
+import AuthService, {AuthResponse, RegisterData} from '@/services/authService';
 
 interface User {
     id: number;

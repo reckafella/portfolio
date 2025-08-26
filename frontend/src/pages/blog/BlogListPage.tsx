@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useBlogPosts, useBlogStats, BlogFilters } from '../../hooks/queries/blogQueries';
-import { BlogCard } from '../../components/blog/BlogCard';
-import { BlogFiltersComponent } from '../../components/blog/BlogFilters';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useBlogPosts, useBlogStats, BlogFilters } from '@/hooks/queries/blogQueries';
+import { BlogCard } from '@/components/blog/BlogCard';
+import { BlogFiltersComponent } from '@/components/blog/BlogFilters';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
-export function BlogListPage() {
+export const BlogListPage: React.FC = () => {
+  usePageTitle('Blog');
   const { canCreateProjects: canCreateBlog } = useStaffPermissions();
   const [filters, setFilters] = useState<BlogFilters>({ page: 1, page_size: 6 });
   
@@ -88,7 +91,7 @@ export function BlogListPage() {
           {/* Header */}
           <div className="d-flex justify-content-between align-items-center mb-4">
             {canCreateBlog && (
-              <Link to="/blog/add" className="btn btn-primary">
+              <Link to="/blog/new" className="btn btn-primary">
                 <i className="bi bi-plus me-2"></i>
                 New Post
               </Link>
@@ -178,7 +181,7 @@ export function BlogListPage() {
               </p>
               
               {canCreateBlog && (
-                <Link to="/blog/add" className="btn btn-primary">
+                <Link to="/blog/new" className="btn btn-primary">
                   Create First Post
                 </Link>
               )}

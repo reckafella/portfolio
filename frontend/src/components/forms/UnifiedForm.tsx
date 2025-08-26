@@ -59,9 +59,9 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             case 'contact':
                 return '/api/v1/contact/';
             case 'login':
-                return '/api/v1/auth/login-form-config/';
+                return '/api/v1/login-form-config/';
             case 'signup':
-                return '/api/v1/auth/signup-form-config/';
+                return '/api/v1/signup-form-config/';
             case 'add_project':
                 return '/api/v1/projects/form-config';
             default:

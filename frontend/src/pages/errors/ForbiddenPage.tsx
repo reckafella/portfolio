@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { getLoginUrlWithNext } from '../../utils/authUtils';
+import { getLoginUrlWithNext } from '@/utils/authUtils';
+import { usePageTitle } from '@/hooks/usePageTitle';
+
 
 const ForbiddenPage: React.FC = () => {
     const location = useLocation();
     const currentPath = location.pathname + location.search;
+    usePageTitle('403 - Forbidden');
 
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">

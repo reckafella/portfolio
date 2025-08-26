@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import UnifiedForm from '../UnifiedForm';
-import { useSignup } from '../../../hooks/queries/authQueries';
-import { usePreloader } from '../../../hooks/usePreloader';
-import { getSafeNextUrl } from '../../../utils/authUtils';
+import UnifiedForm from '@/components/forms/UnifiedForm';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useSignup } from '@/hooks/queries/authQueries';
+import { usePreloader } from '@/hooks/usePreloader';
+import { getSafeNextUrl } from '@/utils/authUtils';
 
 const SignupForm: React.FC = () => {
   const [searchParams] = useSearchParams();
+  usePageTitle('Sign Up');
   const signupMutation = useSignup();
   const { showLoader, hideLoader } = usePreloader();
 
@@ -59,7 +61,7 @@ const SignupForm: React.FC = () => {
                       <p className="text-muted">
                         Already have an account?{' '}
                         <Link 
-                          to={`/auth/login${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
+                          to={`/login${searchParams.get('next') ? `?next=${encodeURIComponent(searchParams.get('next')!)}` : ''}`} 
                           className="text-decoration-none"
                         >
                           Sign In

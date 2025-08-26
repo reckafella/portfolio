@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBlogPost, useUpdateBlogPost } from '../../hooks/queries/blogQueries';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
+import { useBlogPost, useUpdateBlogPost } from '@/hooks/queries/blogQueries';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface BlogPostFormData {
   title: string;
@@ -20,6 +21,7 @@ export function BlogEditPage() {
   
   const { data: post, isLoading: isLoadingPost, error: postError } = useBlogPost(slug!);
   const updateBlogPostMutation = useUpdateBlogPost();
+  usePageTitle(`Edit Blog Post ${post?.title || 'Edit Blog Post'}`);
   
   const [formData, setFormData] = useState<BlogPostFormData>({
     title: '',

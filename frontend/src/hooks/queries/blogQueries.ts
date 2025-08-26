@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '../../utils/api';
+import { apiRequest } from '@/utils/api';
 
 // Types
 export interface BlogPost {

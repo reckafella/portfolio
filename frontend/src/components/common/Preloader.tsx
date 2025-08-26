@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLoading } from '../../hooks/useLoading';
+import { useLoading } from '@/hooks/useLoading';
 
 interface PreloaderProps {
   showInitial?: boolean;

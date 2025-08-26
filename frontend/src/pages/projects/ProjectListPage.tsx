@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ProjectCard } from '../../components/projects/ProjectCard';
-import { ProjectFilters } from '../../components/projects/ProjectFilters';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { AlertMessage } from '../../components/common/AlertMessage';
-import { useStaffPermissions } from '../../hooks/useStaffPermissions';
-import { useProjects } from '../../hooks/queries/projectQueries';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { ProjectCard } from '@/components/projects/ProjectCard';
+import { ProjectFilters } from '@/components/projects/ProjectFilters';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AlertMessage } from '@/components/common/AlertMessage';
+import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { useProjects } from '@/hooks/queries/projectQueries';
 
 export interface Project {
   id: number;
@@ -46,6 +47,7 @@ interface ProjectFiltersState {
 }
 
 export const ProjectListPage: React.FC = () => {
+  usePageTitle('Projects');
   const { canCreateProjects } = useStaffPermissions();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<ProjectFiltersState>({
@@ -123,7 +125,7 @@ export const ProjectListPage: React.FC = () => {
               </p>
             </div>
             {canCreateProjects && (
-              <Link to="/projects/add" className="btn btn-primary btn-lg">
+              <Link to="/projects/new" className="btn btn-primary btn-lg">
                 <i className="bi bi-plus me-2"></i>
                 Add Project
               </Link>
@@ -233,7 +235,7 @@ export const ProjectListPage: React.FC = () => {
                 </button>
               )}
               {canCreateProjects && (
-                <Link to="/projects/add" className="btn btn-primary">
+                <Link to="/projects/new" className="btn btn-primary">
                   Add Project
                 </Link>
               )}

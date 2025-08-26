@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
 
 from ..authentication import CsrfExemptSessionAuthentication, APITokenAuthentication
 
@@ -17,109 +19,104 @@ from ..serializers import (
     ProfileUpdateSerializer
 )
 from ..models import Profile
+from ..forms.auth import LoginForm, SignupForm
 
 
 class LoginFormConfigView(APIView):
     """API endpoint to return login form configuration"""
     permission_classes = [permissions.AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
-    
+
     def get(self, request):
-        form_config = {
-            "fields": {
-                "username": {
-                    "label": "Username",
-                    "type": "TextInput",
-                    "required": True,
-                    "help_text": "Enter your username",
-                    "disabled": False,
-                    "widget": "TextInput",
-                    "max_length": 150
-                },
-                "password": {
-                    "label": "Password",
-                    "type": "PasswordInput",
-                    "required": True,
-                    "help_text": "Enter your password",
-                    "disabled": False,
-                    "widget": "PasswordInput"
-                }
+        form = LoginForm()
+
+        captcha = CaptchaStore.generate_key()
+        captcha_url = captcha_image_url(captcha)
+
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
             }
-        }
-        return Response(form_config)
+            if name == "captcha":
+                field_data["captcha_key"] = captcha
+                field_data["captcha_image"] = request.build_absolute_uri(captcha_url)
+
+            fields[name] = field_data
+
+        return Response({"fields": fields}, status=status.HTTP_200_OK)
 
 
 class RegisterFormConfigView(APIView):
     """API endpoint to return registration form configuration"""
     permission_classes = [permissions.AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
-    
+
     def get(self, request):
-        form_config = {
-            "fields": {
-                "first_name": {
-                    "label": "First Name",
-                    "type": "TextInput",
-                    "required": False,
-                    "help_text": "Your first name",
-                    "disabled": False,
-                    "widget": "TextInput",
-                    "max_length": 30
-                },
-                "last_name": {
-                    "label": "Last Name",
-                    "type": "TextInput",
-                    "required": False,
-                    "help_text": "Your last name",
-                    "disabled": False,
-                    "widget": "TextInput",
-                    "max_length": 30
-                },
-                "username": {
-                    "label": "Username",
-                    "type": "TextInput",
-                    "required": True,
-                    "help_text": "Choose a unique username",
-                    "disabled": False,
-                    "widget": "TextInput",
-                    "max_length": 150
-                },
-                "email": {
-                    "label": "Email Address",
-                    "type": "EmailInput",
-                    "required": True,
-                    "help_text": "Enter a valid email address",
-                    "disabled": False,
-                    "widget": "EmailInput",
-                    "max_length": 254
-                },
-                "password": {
-                    "label": "Password",
-                    "type": "PasswordInput",
-                    "required": True,
-                    "help_text": "Password must be at least 8 characters",
-                    "disabled": False,
-                    "widget": "PasswordInput",
-                    "min_length": 8
-                },
-                "password_confirm": {
-                    "label": "Confirm Password",
-                    "type": "PasswordInput",
-                    "required": True,
-                    "help_text": "Enter your password again",
-                    "disabled": False,
-                    "widget": "PasswordInput"
-                }
+        form = SignupForm()
+
+        captcha = CaptchaStore.generate_key()
+        captcha_url = captcha_image_url(captcha)
+
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
             }
-        }
-        return Response(form_config)
+            if name == "captcha":
+                field_data["captcha_key"] = captcha
+                field_data["captcha_image"] = request.build_absolute_uri(captcha_url)
+
+            fields[name] = field_data
+
+        return Response({"fields": fields}, status=status.HTTP_200_OK)
 
 
 class RegisterUserView(APIView):
     """Register a new user - Class-based view"""
     permission_classes = [permissions.AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
-    
+
+    def get(self, request):
+        form = SignupForm()
+
+        captcha = CaptchaStore.generate_key()
+        captcha_url = captcha_image_url(captcha)
+
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+            if name == "captcha":
+                field_data["captcha_key"] = captcha
+                field_data["captcha_image"] = request.build_absolute_uri(captcha_url)
+
+            fields[name] = field_data
+
+        return Response({"fields": fields}, status=status.HTTP_200_OK)
+
     def post(self, request):
         """Register a new user"""
         serializer = UserRegistrationSerializer(data=request.data)
@@ -138,7 +135,33 @@ class LoginUserView(APIView):
     """Login user - Class-based view"""
     permission_classes = [permissions.AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
-    
+
+    def get(self, request):
+        form = LoginForm()
+
+        captcha = CaptchaStore.generate_key()
+        captcha_url = captcha_image_url(captcha)
+
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+            if name == "captcha":
+                field_data["captcha_key"] = captcha
+                field_data["captcha_image"] = request.build_absolute_uri(captcha_url)
+
+            fields[name] = field_data
+
+        return Response({"fields": fields}, status=status.HTTP_200_OK)
+
     def post(self, request):
         """Login user"""
         serializer = UserLoginSerializer(data=request.data)
@@ -158,7 +181,7 @@ class LogoutUserView(APIView):
     """Logout user - Class-based view"""
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [CsrfExemptSessionAuthentication, APITokenAuthentication]
-    
+
     def post(self, request):
         """Logout user"""
         try:

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateBlogPost } from '@/hooks/queries/blogQueries';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+// import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import UnifiedForm from '@/components/forms/UnifiedForm';
 
 interface BlogPostFormData {
   title: string;
@@ -101,168 +102,34 @@ export function BlogAddPage() {
   };
 
   return (
-    <div className="container my-5">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="card-header">
-              <h2 className="mb-0">Create New Blog Post</h2>
-            </div>
+    <section className="blog">
+      <div className="container my-5">
+        <div className="row justify-content-center">
+          <div className="card col-lg-8">
             <div className="card-body">
-              {errors.general && (
-                <AlertMessage 
-                  type="danger" 
-                  message={errors.general.join(', ')} 
-                  className="mb-4"
-                />
-              )}
+              <div className="section-title">
+                <h2 className="mb-0">Create Blog Post</h2>
+              </div>
 
-              <form onSubmit={handleSubmit}>
-                {/* Title */}
-                <div className="mb-3">
-                  <label htmlFor="title" className="form-label">
-                    Title <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Enter blog post title"
-                  />
-                  {errors.title && (
-                    <div className="invalid-feedback">
-                      {errors.title.join(', ')}
-                    </div>
-                  )}
-                </div>
+              {errors.general && errors.general.map((msg, idx) => (
+                <AlertMessage key={idx} type="danger" message={msg} />
+              ))}
 
-                {/* Content */}
-                <div className="mb-3">
-                  <label htmlFor="content" className="form-label">
-                    Content <span className="text-danger">*</span>
-                  </label>
-                  <textarea
-                    className={`form-control ${errors.content ? 'is-invalid' : ''}`}
-                    id="content"
-                    name="content"
-                    rows={12}
-                    value={formData.content}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Write your blog post content here..."
-                  />
-                  {errors.content && (
-                    <div className="invalid-feedback">
-                      {errors.content.join(', ')}
-                    </div>
-                  )}
-                  <div className="form-text">
-                    You can use HTML formatting in your content.
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="mb-3">
-                  <label htmlFor="tags" className="form-label">
-                    Tags
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.tags ? 'is-invalid' : ''}`}
-                    id="tags"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleInputChange}
-                    placeholder="technology, programming, web development"
-                  />
-                  {errors.tags && (
-                    <div className="invalid-feedback">
-                      {errors.tags.join(', ')}
-                    </div>
-                  )}
-                  <div className="form-text">
-                    Separate tags with commas.
-                  </div>
-                </div>
-
-                {/* Cover Image */}
-                <div className="mb-3">
-                  <label htmlFor="cover_image" className="form-label">
-                    Cover Image
-                  </label>
-                  <input
-                    type="file"
-                    className={`form-control ${errors.cover_image ? 'is-invalid' : ''}`}
-                    id="cover_image"
-                    name="cover_image"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  {errors.cover_image && (
-                    <div className="invalid-feedback">
-                      {errors.cover_image.join(', ')}
-                    </div>
-                  )}
-                  <div className="form-text">
-                    Upload a cover image for your blog post (optional).
-                  </div>
-                </div>
-
-                {/* Published */}
-                <div className="mb-4">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="published"
-                      name="published"
-                      checked={formData.published}
-                      onChange={handleInputChange}
-                    />
-                    <label className="form-check-label" htmlFor="published">
-                      Publish immediately
-                    </label>
-                  </div>
-                  <div className="form-text">
-                    Uncheck to save as draft.
-                  </div>
-                </div>
-
-                {/* Submit Buttons */}
-                <div className="d-flex gap-2">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <LoadingSpinner size="sm" className="me-2" />
-                        {formData.published ? 'Publishing...' : 'Saving...'}
-                      </>
-                    ) : (
-                      formData.published ? 'Publish Post' : 'Save as Draft'
-                    )}
-                  </button>
-                  
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate('/blog')}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+              <UnifiedForm
+                formType="create_blog_post"
+                formData={formData}
+                errors={errors}
+                isSubmitting={isSubmitting}
+                onInputChange={handleInputChange}
+                onFileChange={handleFileChange}
+                onSubmit={handleSubmit}
+                submitButtonText="Create Post"
+                loadingText="Creating..."
+              />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

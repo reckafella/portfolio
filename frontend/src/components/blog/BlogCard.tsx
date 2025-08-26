@@ -76,7 +76,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
               
               {canEditBlog && (
                 <Link
-                  to={`/blog/${post.slug}/edit`}
+                  to={`/blog/edit/${post.slug}`}
                   className="btn btn-secondary btn-sm"
                 >
                   Edit

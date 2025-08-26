@@ -157,7 +157,7 @@ export function useCreateBlogComment() {
       website?: string; 
       comment: string 
     }) => {
-      const response = await apiRequest(`/api/v1/blog/article/${data.post.slug}/comments/`, {
+      const response = await apiRequest(`/api/blog/article/${data.post.slug}/comments/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export function useCreateBlogComment() {
         body: JSON.stringify({
           name: data.name,
           email: data.email,
-          website: data.website,
+          website: data.website || '',
           comment: data.comment
         }),
       });

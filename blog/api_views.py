@@ -228,18 +228,7 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
         blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
 
         # Create the comment
-        try:
-            comment = serializer.save(post=blog_post)
-            # Return the newly created comment data
-            return Response(
-                serializer.to_representation(comment),
-                status=status.HTTP_201_CREATED
-            )
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return serializer.save(post=blog_post)
 
     def create(self, request, *args, **kwargs):
         """Override create to handle comment creation"""

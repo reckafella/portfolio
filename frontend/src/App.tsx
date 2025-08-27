@@ -19,6 +19,7 @@ import LoginForm from './components/forms/auth/LoginForm'
 import SignupForm from './components/forms/auth/SignupForm'
 import LogoutPage from './pages/auth/LogoutPage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { PublicRoute } from './components/auth/PublicRoute'
 import AuthProvider from './hooks/useAuth'
 import ErrorBoundary from './components/errors/ErrorBoundary'
 import { LoadingProvider } from './hooks/useLoading'
@@ -112,17 +113,13 @@ function App() {
                                             <Route path="/search" element={<SearchResults />} />
 
                                             {/* Authentication routes - organized under /auth for consistency */}
-                                            <Route path="/login" element={<LoginForm />} />
-                                            <Route path="/signup" element={<SignupForm />} />
+                                            <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />
+                                            <Route path="/signup" element={<PublicRoute><SignupForm /></PublicRoute>} />
                                             <Route path="/logout" element={<LogoutPage />} />
                                             
                                             {/* Legacy authentication route redirects for backward compatibility */}
-                                            <Route path="/login" element={<Navigate to="/login" replace />} />
                                             <Route path="/signin" element={<Navigate to="/login" replace />} />
-                                            <Route path="/signup" element={<Navigate to="/signup" replace />} />
                                             <Route path="/register" element={<Navigate to="/signup" replace />} />
-                                            <Route path="/logout" element={<Navigate to="/logout" replace />} />
-                                            <Route path="/signout" element={<Navigate to="/logout" replace />} />
 
                                             {/* Error routes */}
                                             <Route path="/error/400" element={<BadRequestPage />} />

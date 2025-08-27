@@ -448,10 +448,10 @@ CAPTCHA_REFRESH_CHALLENGE = True
 # Browser session timeout (when user closes browser)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
-SESSION_COOKIE_AGE = 18400
+# Inactivity timeout in seconds (8 hours = 28800 seconds)
+SESSION_COOKIE_AGE = 28800
 
-# Optional but recommended - update session on activity
+# Update session on every request to prevent timeout during editing
 SESSION_SAVE_EVERY_REQUEST = True
 
 PROJECT_TYPES = [

@@ -7,8 +7,8 @@ from django.http import (FileResponse, Http404, HttpResponseRedirect,
 from django.views.generic.base import RedirectView, TemplateView, View
 from wagtail.models import Page
 
-from ...app.models import Projects
-from ..models import BlogPostPage as BlogPost
+from app.models import Projects
+from blog.models import BlogPostPage as BlogPost
 
 
 class HomeView(TemplateView):

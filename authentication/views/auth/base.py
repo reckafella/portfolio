@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import FormView
 
-from ....app.views.helpers.helpers import is_ajax
+from app.views.helpers.helpers import is_ajax
 
 
 class BaseAuthentication(FormView):

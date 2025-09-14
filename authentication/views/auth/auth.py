@@ -8,9 +8,9 @@ from django.urls import reverse
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 
-from app.views.helpers.helpers import is_ajax
-from authentication.forms.auth import LoginForm, SignupForm
-from authentication.views.auth.base import BaseAuthentication
+from ....app.views.helpers.helpers import is_ajax
+from ...forms.auth import LoginForm, SignupForm
+from ...views.auth.base import BaseAuthentication
 
 
 class SignupView(BaseAuthentication):

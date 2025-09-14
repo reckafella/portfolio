@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
 
 from app.views.helpers.helpers import is_ajax
-from blog.models import BlogPostPage, ViewCountAttempt
+from ..models import BlogPostPage, ViewCountAttempt
 
 
 @method_decorator(require_http_methods(["POST"]), name='dispatch')

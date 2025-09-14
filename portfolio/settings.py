@@ -49,7 +49,7 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0"
 if ENVIRONMENT == 'production':
     # Allowed hosts
-    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=DEFAULT_HOSTS).split(",")
     # Installed Apps
     INSTALLED_APPS = []
 
@@ -76,13 +76,13 @@ else:
         import daphne
         INSTALLED_APPS.insert(0, 'daphne')
     except Exception:
-        pass
+        raise
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
 
     # CLOUDINARY CONFIG SETTINGS
-    from ..app.views.helpers.helpers import get_cloudinary_creds
+    from app.views.helpers.helpers import get_cloudinary_creds
     CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
     CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
     CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]

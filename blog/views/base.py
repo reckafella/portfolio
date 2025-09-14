@@ -6,14 +6,14 @@ from django.utils.text import slugify
 from django.views.generic import CreateView
 from titlecase import titlecase
 
-from ...app.views.helpers.cloudinary import (
+from app.views.helpers.cloudinary import (
     CloudinaryImageHandler,
     handle_image_upload
 )
-from ...app.views.helpers.helpers import handle_no_permissions, is_ajax
+from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from ..forms import BlogPostForm
 from ..models import BlogIndexPage, BlogPostImage, BlogPostPage
-from ...portfolio import settings
+from django.conf import settings
 
 uploader = CloudinaryImageHandler()
 

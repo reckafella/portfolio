@@ -8,7 +8,7 @@ from django.views.generic import DeleteView
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.models import BlogPostPage
+from ..models import BlogPostPage
 
 uploader = CloudinaryImageHandler()
 

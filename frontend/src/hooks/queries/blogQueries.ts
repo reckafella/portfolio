@@ -213,11 +213,11 @@ export function useCreateBlogPost() {
 
 export function useUpdateBlogPost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ slug, data }: { slug: string; data: FormData }) => {
       const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
-        method: 'PUT',
+        method: 'POST',
         body: data,
         headers: {
           // Don't set Content-Type for FormData - browser will set it with boundary
@@ -236,11 +236,11 @@ export function useUpdateBlogPost() {
 
 export function useDeleteBlogPost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (slug: string) => {
       const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
-        method: 'DELETE',
+        method: 'POST',
       });
       return response.ok;
     },

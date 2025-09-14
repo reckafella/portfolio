@@ -107,7 +107,7 @@ export function BlogEditPage() {
       formDataToSubmit.append('content', formData.content);
       formDataToSubmit.append('tags', formData.tags);
       formDataToSubmit.append('published', formData.published.toString());
-      
+
       if (formData.cover_image) {
         formDataToSubmit.append('cover_image', formData.cover_image);
       }

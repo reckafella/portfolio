@@ -70,8 +70,8 @@ if ENVIRONMENT == 'production':
     CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
-    ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
-    INSTALLED_APPS = []  # Remove daphne for local development
+    ALLOWED_HOSTS += [".github.dev"]
+    INSTALLED_APPS = []
     try:
         import daphne
         INSTALLED_APPS.insert(0, 'daphne')
@@ -82,7 +82,7 @@ else:
     REDIS_PASSWORD = get_redis_creds()[1]
 
     # CLOUDINARY CONFIG SETTINGS
-    from app.views.helpers.helpers import get_cloudinary_creds
+    from ..app.views.helpers.helpers import get_cloudinary_creds
     CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
     CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
     CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
@@ -132,7 +132,6 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://ethanmuthoni.me",
     "https://rohn.live",
     "https://portfolio-ot66.onrender.com",
     "http://localhost:8000",

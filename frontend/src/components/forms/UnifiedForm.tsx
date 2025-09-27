@@ -23,7 +23,7 @@ interface FormConfig {
 
 interface UnifiedFormProps {
     formType: 'contact' | 'login' | 'signup' | 'add_project' | 'update_project' | 'create_blog_post' | 'update_blog_post';
-    onSubmit: (_formData: Record<string, string | File | File[]>) => Promise<void>;
+    onSubmit: (_formData: Record<string, string | File | File[] | boolean>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
     success?: boolean;
@@ -50,7 +50,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     containerClassName: _containerClassName = '',
     cardClassName: _cardClassName = ''
 }) => {
-    const [formData, setFormData] = useState<Record<string, string | File | File[]>>({});
+    const [formData, setFormData] = useState<Record<string, string | File | File[] | boolean>>({});
     const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [captchaData, setCaptchaData] = useState<{key: string, image: string} | null>(null);
@@ -65,7 +65,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             case 'signup':
                 return '/api/v1/auth/signup/';
             case 'add_project':
-                return '/api/v1/projects/create/';
+                return '/api/v1/projects/create';
             case 'update_project':
                 return `/api/v1/projects/${slug}/update/`;
             case 'create_blog_post':
@@ -301,10 +301,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     };
 
     const handleInputChange = (fieldName: string, value: string | boolean | File | File[]) => {
-        setFormData(prev => ({
-            ...prev,
-            [fieldName]: value
-        }));
+        setFormData(prev => ({...prev, [fieldName]: value}));
     };
 
     const handleFileChange = (fieldName: string, files: FileList | null, multiple: boolean = false) => {

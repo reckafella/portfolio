@@ -20,7 +20,7 @@ class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
     template_name = "app/projects/create_or_update.html"
     context_object_name = "view"
 
-    def form_invalid(self, form):
+    def form_invalid(self, form, *args, **kwargs):
         """Handle form validation errors, especially for AJAX requests"""
         if is_ajax(self.request):
             # Collect all form errors
@@ -48,7 +48,7 @@ class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
             }, status=400)
 
         # For non-AJAX requests, use default behavior
-        return super().form_invalid(form)
+        return super().form_invalid(form, *args, **kwargs)
 
     def test_func(self):
         """ Allow only staff members/superusers to create projects """

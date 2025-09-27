@@ -113,7 +113,7 @@ class BlogPostPage(Page):
         FieldPanel("published"),
     ]
 
-    class Meta:
+    class Meta(Page.Meta):
         managed = True
 
     def save(self, *args, **kwargs):
@@ -144,7 +144,11 @@ class BlogPostPage(Page):
         return self.optimized_image_url or None
 
     def __str__(self):
-        return self.title + " by " + self.author.username
+        return (
+            f"{self.title} by {self.author.username}"
+            if self.author and self.author.username
+            else "Anonymous"
+        )
 
     def increment_view_count(self, request):
         """Increment the view count for this post"""

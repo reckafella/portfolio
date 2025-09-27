@@ -52,6 +52,24 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/passwords.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/search.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/inbox.css' %}">
+    
+    <!-- Accessibility CSS -->
+    <style>
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 1000;
+            border-radius: 4px;
+        }
+        .skip-to-content:focus {
+            top: 6px;
+        }
+    </style>
 
 
     <!-- Page title -->
@@ -69,16 +87,49 @@
     <meta name="googlebot-image" content="index, follow">
     <meta name="googlebot-video" content="index, follow">
     <meta name="googlebot-mobile" content="index, follow">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="language" content="en">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Ethan Wanyoike",
+        "jobTitle": "Software Engineer",
+        "description": "Software Engineer specializing in DevOps Engineering, Backend Development, Frontend Development, and Technical Writing",
+        "url": "{{ request.build_absolute_uri }}",
+        "sameAs": [
+            "https://www.linkedin.com/in/ethanmuthoni",
+            "https://github.com/reckafella",
+            "https://x.com/devrohn"
+        ],
+        "knowsAbout": [
+            "Python", "Django", "JavaScript", "TypeScript", "Docker", "AWS", "DevOps", "Web Development"
+        ]
+    }
+    </script>
 </head>
 
 <body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-to-content visually-hidden-focusable">Skip to main content</a>
+    
     {% if user.is_authenticated %}
     <div id="user-logged-in" hidden></div>
     {% endif %}
     {% csrf_token %}
     {% include 'app/includes/header.html' %}
 
-    <main class="main">
+    <main id="main-content" class="main" role="main">
         {% include 'app/includes/toast.html' %}
         {% block content %}
         {% endblock %}

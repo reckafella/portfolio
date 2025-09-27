@@ -86,7 +86,14 @@ export const handleApiError = (response: Response, error?: Error): void => {
   } else if (response.status === 403) {
     // Forbidden - redirect to forbidden page
     window.location.href = '/error/403';
-  } else if (response.status >= 500) {
+  } else if (response.status === 404) {
+    // Not found - redirect to not found page
+    window.location.href = '/error/404';
+  } else if (response.status === 400) {
+    // Bad request - redirect to bad request page
+    window.location.href = '/error/400';
+  }
+  else if (response.status >= 500) {
     // Server error - redirect to error page
     window.location.href = '/error/500';
   }

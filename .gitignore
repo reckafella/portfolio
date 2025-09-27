@@ -123,6 +123,7 @@ celerybeat.pid
 
 # Environments
 *.env
+.env.local
 .venv
 env/
 venv/
@@ -131,6 +132,10 @@ env.bak/
 venv.bak/
 .env/
 staticfiles/
+
+.vscode/settings.json
+.vscode/
+main.py
 
 # Spyder project settings
 .spyderproject

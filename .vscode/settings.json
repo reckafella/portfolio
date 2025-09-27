@@ -13,5 +13,11 @@
         "./env/lib/python3.12/site-packages"
     ],
     "python.analysis.indexing": true,
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python.languageServer": "None",
+    "cursorpyright.analysis.autoImportCompletions": true,
+    "cursorpyright.analysis.extraPaths": [
+        "./",
+        "./env/lib/python3.12/site-packages"
+    ],
 }

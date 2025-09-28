@@ -1,11 +1,15 @@
 from rest_framework import serializers
 from captcha.models import CaptchaStore
-from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 import re
+from titlecase import titlecase
+from django.db import transaction
+from app.views.helpers.cloudinary import CloudinaryImageHandler
 
 from .models import Message, Projects, Image, Video
 from app.views.helpers.helpers import guess_file_type
+
+uploader = CloudinaryImageHandler()
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -124,10 +128,25 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
                 f"Maximum {config['max_files']} images allowed, but {len(images)} were provided."
             )
 
-        valid_images = []
+        valid_images, errors = [], []
         total_size = 0
-        errors = []
 
+        self.validate_each_image(images, config, errors,
+                                 total_size, valid_images)
+
+        # Check total size
+        if total_size > config['max_total_size']:
+            max_total_mb = config['max_total_size'] / (1024 * 1024)
+            total_mb = total_size / (1024 * 1024)
+            errors.append(f"Total size too large ({total_mb:.1f}MB). Maximum {max_total_mb}MB allowed")
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return valid_images
+
+    def validate_each_image(self, images, config, errors, total_size, valid_images):
+        """Validate a single image file and return error message if invalid"""
         for i, image in enumerate(images, 1):
             try:
                 # Check file type
@@ -157,17 +176,6 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
             except Exception as e:
                 errors.append(f"File {i}: Error processing file - {str(e)}")
 
-        # Check total size
-        if total_size > config['max_total_size']:
-            max_total_mb = config['max_total_size'] / (1024 * 1024)
-            total_mb = total_size / (1024 * 1024)
-            errors.append(f"Total size too large ({total_mb:.1f}MB). Maximum {max_total_mb}MB allowed")
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return valid_images
-
     def validate(self, attrs):
         """Cross-field validation"""
         images = attrs.get('images', [])
@@ -183,9 +191,6 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new project with images and videos"""
-        from app.views.helpers.cloudinary import CloudinaryImageHandler
-        import re
-
         images = validated_data.pop('images', [])
         youtube_urls = validated_data.pop('youtube_urls', [])
 
@@ -350,8 +355,6 @@ class ProjectDeleteSerializer(serializers.ModelSerializer):
 
     def delete(self, instance):
         """Handle the complete deletion process with rollback on failure"""
-        from django.db import transaction
-
         success_messages = []
 
         try:

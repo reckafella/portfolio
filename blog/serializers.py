@@ -1,8 +1,18 @@
 from rest_framework import serializers
 from wagtail.api import APIField
 from wagtail.images.api.fields import ImageRenditionField
-from .models import BlogPostPage, BlogPostComment, BlogPostImage
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from titlecase import titlecase
+from django.db import transaction
+from django.utils import timezone
+import hashlib
+
+from app.views.helpers.cloudinary import CloudinaryImageHandler
+from blog.models import BlogPostPage, BlogPostComment, BlogPostImage
+from blog.models import BlogIndexPage
+
+uploader = CloudinaryImageHandler()
 
 
 class BlogPostImageSerializer(serializers.ModelSerializer):
@@ -77,8 +87,8 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
     def get_reading_time(self, obj):
         # Calculate reading time (approximately 200 words per minute)
         content = obj.content or ''
-        if hasattr(obj, 'stream_content') and obj.stream_content:
-            content += str(obj.stream_content)
+        # if hasattr(obj, 'stream_content') and obj.stream_content:
+        #    content += str(obj.stream_content)
 
         word_count = len(content.split()) if content else 0
         reading_time = max(1, round(word_count / 200))
@@ -109,7 +119,7 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
 
 class BlogPostCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating blog posts"""
-    tags_input = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags")
+    tags = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags")
     cover_image = serializers.FileField(
         write_only=True,
         required=False,
@@ -118,17 +128,11 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPostPage
-        fields = ['title', 'content', 'published', 'tags_input', 'cover_image']
+        fields = ['title', 'content', 'published', 'tags', 'cover_image']
 
     def create(self, validated_data):
-        from blog.models import BlogIndexPage
-        from django.utils.text import slugify
-        from titlecase import titlecase
-        from django.db import transaction
-        from app.views.helpers.cloudinary import CloudinaryImageHandler
-
         # Extract data from validated_data
-        tags_input = validated_data.pop('tags_input', '')
+        tags = validated_data.pop('tags', '')
         cover_image = validated_data.pop('cover_image', None)
 
         # Get the blog index page (parent)
@@ -170,8 +174,8 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
 
             # Handle tags
-            if tags_input:
-                tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
+            if tags:
+                tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
                 post.tags.set(*tag_names)
 
             # Create a revision
@@ -185,6 +189,97 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
                 revision.publish()
 
         return post
+
+    def _update_title_and_slug(self, instance, title):
+        """Update title and generate unique slug if needed"""
+        from django.utils.text import slugify
+        from titlecase import titlecase
+        from blog.models import BlogPostPage
+
+        instance.title = titlecase(title)
+        new_slug = slugify(title)
+
+        if instance.slug != new_slug:
+            # Check if slug already exists for another post
+            counter = 1
+            base_slug = new_slug
+            while BlogPostPage.objects.filter(slug=new_slug).exclude(id=instance.id).exists():
+                new_slug = f"{base_slug}-{counter}"
+                counter += 1
+            instance.slug = new_slug
+
+    def _update_cover_image(self, instance, cover_image):
+        """Handle cover image upload"""
+        from app.views.helpers.cloudinary import CloudinaryImageHandler
+
+        uploader = CloudinaryImageHandler()
+        try:
+            response = uploader.upload_image(
+                cover_image,
+                folder=f"portfolio/blog/{instance.slug}"
+            )
+            instance.cloudinary_image_id = response.get('cloudinary_image_id')
+            instance.cloudinary_image_url = response.get('cloudinary_image_url')
+            instance.optimized_image_url = response.get('optimized_image_url')
+        except Exception as e:
+            raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
+
+    def _update_tags(self, instance, tags):
+        """Handle tags update"""
+        if tags is None:
+            return
+
+        if tags:
+            tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
+            instance.tags.set(*tag_names)
+        else:
+            instance.tags.clear()
+
+    def _save_and_publish(self, instance, should_publish, user):
+        """Save instance, create revision and publish if needed"""
+        from django.db import transaction
+
+        with transaction.atomic():
+            instance.save()
+
+            # Create a revision
+            revision = instance.save_revision(
+                user=user,
+                approved_go_live_at=None
+            )
+
+            # Publish if requested
+            if should_publish:
+                revision.publish()
+
+    def update(self, instance, validated_data):
+        """Update an existing blog post"""
+        # Extract data from validated_data
+        tags = validated_data.pop('tags', None)
+        cover_image = validated_data.pop('cover_image', None)
+
+        # Update title and slug if needed
+        if 'title' in validated_data:
+            self._update_title_and_slug(instance, validated_data['title'])
+
+        # Update basic fields
+        if 'content' in validated_data:
+            instance.content = validated_data['content']
+        if 'published' in validated_data:
+            instance.published = validated_data['published']
+
+        # Handle cover image
+        if cover_image:
+            self._update_cover_image(instance, cover_image)
+
+        # Handle tags
+        self._update_tags(instance, tags)
+
+        # Save and publish
+        should_publish = validated_data.get('published', False)
+        self._save_and_publish(instance, should_publish, self.context['request'].user)
+
+        return instance
 
 
 class BlogCommentCreateSerializer(serializers.ModelSerializer):
@@ -208,10 +303,6 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
         post = validated_data.get('post')
         if not post:
             raise serializers.ValidationError("Post is required")
-
-        # Generate a unique anonymous username based on name and timestamp
-        from django.utils import timezone
-        import hashlib
 
         name = validated_data.get('name', '').strip()
         email = validated_data.get('email', '').strip().lower()

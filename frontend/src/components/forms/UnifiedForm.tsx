@@ -507,25 +507,25 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         <div 
                             className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
                             style={{ 
-                                borderColor: '#dee2e6',
-                                backgroundColor: '#f8f9fa',
+                                borderColor: 'var(--default-color)',
+                                backgroundColor: 'var(--card-background-color)',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease'
                             }}
                             onDragOver={(e) => {
                                 e.preventDefault();
-                                e.currentTarget.style.borderColor = '#007bff';
-                                e.currentTarget.style.backgroundColor = '#e3f2fd';
+                                e.currentTarget.style.borderColor = 'var(--accent-color)';
+                                e.currentTarget.style.backgroundColor = 'var(--card-background-color)';
                             }}
                             onDragLeave={(e) => {
                                 e.preventDefault();
-                                e.currentTarget.style.borderColor = '#dee2e6';
-                                e.currentTarget.style.backgroundColor = '#f8f9fa';
+                                e.currentTarget.style.borderColor = 'var(--default-color)';
+                                e.currentTarget.style.backgroundColor = 'var(--card-background-color)';
                             }}
                             onDrop={(e) => {
                                 e.preventDefault();
-                                e.currentTarget.style.borderColor = '#dee2e6';
-                                e.currentTarget.style.backgroundColor = '#f8f9fa';
+                                e.currentTarget.style.borderColor = 'var(--default-color)';
+                                e.currentTarget.style.backgroundColor = 'var(--card-background-color)';
                                 
                                 const files = Array.from(e.dataTransfer.files);
                                 if (files.length > 0) {
@@ -611,28 +611,28 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         <div 
                             className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
                             style={{ 
-                                borderColor: selectedImages.length >= 5 ? '#dc3545' : '#dee2e6',
-                                backgroundColor: selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa',
-                                cursor: selectedImages.length >= 5 ? 'not-allowed' : 'pointer',
+                                borderColor: selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--default-color)',
+                                backgroundColor: selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--card-background-color)',
+                                cursor: selectedImages.length > 5 ? 'not-allowed' : 'pointer',
                                 transition: 'all 0.3s ease',
-                                opacity: selectedImages.length >= 5 ? 0.6 : 1
+                                opacity: selectedImages.length > 5 ? 0.6 : 1
                             }}
                             onDragOver={(e) => {
                                 e.preventDefault();
-                                if (selectedImages.length < 5) {
-                                    e.currentTarget.style.borderColor = '#007bff';
-                                    e.currentTarget.style.backgroundColor = '#e3f2fd';
+                                if (selectedImages.length <= 5) {
+                                    e.currentTarget.style.borderColor = 'var(--text-success-color)';
+                                    e.currentTarget.style.backgroundColor = 'var(--card-background-color)';
                                 }
                             }}
                             onDragLeave={(e) => {
                                 e.preventDefault();
-                                e.currentTarget.style.borderColor = selectedImages.length >= 5 ? '#dc3545' : '#dee2e6';
-                                e.currentTarget.style.backgroundColor = selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa';
+                                e.currentTarget.style.borderColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--default-color)';
+                                e.currentTarget.style.backgroundColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--card-background-color)';
                             }}
                             onDrop={(e) => {
                                 e.preventDefault();
-                                e.currentTarget.style.borderColor = selectedImages.length >= 5 ? '#dc3545' : '#dee2e6';
-                                e.currentTarget.style.backgroundColor = selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa';
+                                e.currentTarget.style.borderColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--default-color)';
+                                e.currentTarget.style.backgroundColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--card-background-color)';
                                 
                                 if (selectedImages.length >= 5) {
                                     alert('You have already reached the maximum of 5 images.');
@@ -762,7 +762,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                                         handleFileChange(fieldName, newFiles, multiple);
                                                     }}
                                                 >
-                                                    <i className="bi bi-x-lg text-white" style={{ fontSize: '10px' }}></i>
+                                                    <i className="bi bi-x-lg" style={{ fontSize: '10px' }}></i>
                                                 </button>
                                                 
                                                 {/* Image Preview */}

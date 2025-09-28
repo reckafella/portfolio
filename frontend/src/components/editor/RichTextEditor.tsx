@@ -97,7 +97,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className={`rich-text-editor ${className}`}>
       {/* Toolbar */}
-      <div className="editor-toolbar border border-bottom-0 rounded-top p-2 bg-light">
+      <div className="editor-toolbar border border-bottom-0 rounded-top p-2">
         <div className="d-flex flex-wrap gap-1">
           {/* Text Formatting */}
           <div className="btn-group" role="group">

@@ -43,14 +43,14 @@ const UnauthorizedPage: React.FC = () => {
               <div className="error-suggestions mb-4">
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <div className="suggestion-card p-3 border rounded bg-white h-100">
+                    <div className="suggestion-card p-3 border rounded h-100">
                       <i className="bi bi-box-arrow-in-right fs-2 text-info mb-2"></i>
                       <h5 className="fw-semibold">Sign In</h5>
                       <p className="text-muted small mb-0">Access your account</p>
                     </div>
                   </div>
                   <div className="col-md-6">
-                    <div className="suggestion-card p-3 border rounded bg-white h-100">
+                    <div className="suggestion-card p-3 border rounded h-100">
                       <i className="bi bi-person-plus fs-2 text-info mb-2"></i>
                       <h5 className="fw-semibold">Create Account</h5>
                       <p className="text-muted small mb-0">Join our community</p>

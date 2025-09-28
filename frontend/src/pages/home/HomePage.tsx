@@ -26,10 +26,10 @@ const HomePage: React.FC = () => {
         ogDescription: 'Welcome to my portfolio! I am Ethan Wanyoike, a Software Engineer specializing in DevOps Engineering, Backend Development, Frontend Development, and Technical Writing.',
         ogType: 'website',
         ogUrl: window.location.origin,
-        ogImage: '/og-image.png',
+        ogImage: '/static/assets/images/og-default.jpeg',
         twitterTitle: 'Ethan Wanyoike - Software Engineer Portfolio',
         twitterDescription: 'Welcome to my portfolio! I am Ethan Wanyoike, a Software Engineer specializing in DevOps Engineering, Backend Development, Frontend Development, and Technical Writing.',
-        twitterImage: '/og-image.png',
+        twitterImage: '/static/assets/images/og-default.jpeg',
         canonical: window.location.origin
     });
     

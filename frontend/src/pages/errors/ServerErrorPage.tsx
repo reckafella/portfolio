@@ -14,7 +14,7 @@ const ServerErrorPage: React.FC = () => {
               {/* Error Code */}
               <div className="error-code mb-4">
                 <h1 className="display-1 fw-bold mb-0">500</h1>
-                <div className="error-divider mx-auto my-3" style={{width: '100px', height: '4px', backgroundColor: '#6c757d'}}></div>
+                <div className="error-divider mx-auto my-3" style={{width: '100px', height: '4px', backgroundColor: 'var(--text-error-color)'}}></div>
               </div>
 
               {/* Error Message */}

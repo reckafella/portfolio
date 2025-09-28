@@ -14,7 +14,7 @@ const NotFoundPage: React.FC = () => {
                             {/* Error Code */}
                             <div className="error-code mb-4">
                                 <h1 className="display-1 fw-bold text-primary mb-0">404</h1>
-                                <div className="error-divider mx-auto my-3" style={{ width: '100px', height: '4px', backgroundColor: '#0d6efd' }}></div>
+                                <div className="error-divider mx-auto my-3" style={{ width: '100px', height: '4px', backgroundColor: 'var(--text-error-color)' }}></div>
                             </div>
                             {/* Error Message */}
                             <div className="error-message mb-4">

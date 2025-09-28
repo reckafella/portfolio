@@ -81,11 +81,14 @@ export function BlogAddPage() {
         formDataToSubmit.append('cover_image', formData.cover_image);
       }
 
-      const newPost = await createBlogPostMutation.mutateAsync(formDataToSubmit);
+      const result = await createBlogPostMutation.mutateAsync(formDataToSubmit);
       
       // Navigate to the new post or blog list
-      if (formData.published) {
-        navigate(`/blog/${newPost.slug}`);
+      if (formData.published && result?.post?.slug) {
+        navigate(`/blog/${result.post.slug}`);
+      } else if (formData.published && result?.slug) {
+        // Fallback in case the API response structure is different
+        navigate(`/blog/${result.slug}`);
       } else {
         navigate('/blog');
       }

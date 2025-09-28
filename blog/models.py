@@ -2,7 +2,6 @@
 this is the model for the blog post using wagtail cms
 """
 import hashlib
-
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
@@ -13,11 +12,10 @@ from modelcluster.fields import ParentalKey
 from taggit.managers import TaggableManager
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin
-from wagtail.fields import RichTextField, StreamField
+from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
-from .blocks import BlogStreamBlock
-from .wagtail_models import CloudinaryWagtailImage
+from blog.wagtail_models import CloudinaryWagtailImage
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -59,18 +57,6 @@ class BlogPostPage(Page):
     # Current RichTextField (to be converted to StreamField)
     content = RichTextField(blank=True, null=True)
 
-    # Legacy RichTextField (to be deprecated after migration)
-    legacy_content = RichTextField(
-        blank=True, null=True,
-        help_text="Legacy content field - will be migrated to new format"
-    )
-
-    stream_content = StreamField(
-        BlogStreamBlock(), use_json_field=True,
-        null=True, blank=True,
-        help_text="New content format with inline images"
-    )
-
     published = models.BooleanField(default=False)
     post_created_at = models.DateTimeField(auto_now_add=True, null=True)
     post_updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -92,13 +78,7 @@ class BlogPostPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content", heading="Current Content (RichText)"),
-        FieldPanel("stream_content", heading="New Content (StreamField)",
-                   help_text="Use this for new posts with inline images"),
-        FieldPanel("legacy_content", heading="Legacy Content (Read-only)",
-                   read_only=True),
         FieldPanel("tags"),
-        InlinePanel("gallery_images", label="Legacy Gallery Images",
-                    help_text="Use inline images in content instead"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),

@@ -18,6 +18,6 @@
     "cursorpyright.analysis.autoImportCompletions": true,
     "cursorpyright.analysis.extraPaths": [
         "./",
-        "./env/lib/python3.12/site-packages"
+        "./venv/lib/python3.12/site-packages"
     ],
 }

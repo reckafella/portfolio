@@ -7,7 +7,9 @@ import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
 import { ProjectEditPage } from './pages/projects/ProjectEditPage'
 import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
+import { ProjectDetailPageEnhanced } from './pages/projects/ProjectDetailPageEnhanced'
 import { BlogListPage, BlogDetailPage, BlogAddPage, BlogEditPage } from './pages/blog'
+import { BlogEditorPage } from './pages/blog/BlogEditorPage'
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
 import SearchResults from './pages/search/SearchResults'
@@ -90,7 +92,7 @@ function App() {
                                                     </ProtectedRoute>
                                                 } 
                                             />
-                                            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+                                            <Route path="/projects/:slug" element={<ProjectDetailPageEnhanced />} />
                                             
                                             {/* Blog routes */}
                                             <Route path="/blog" element={<BlogListPage />} />
@@ -107,6 +109,14 @@ function App() {
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
                                                         <BlogEditPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route 
+                                                path="/blog/editor/:slug?" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <BlogEditorPage />
                                                     </ProtectedRoute>
                                                 } 
                                             />

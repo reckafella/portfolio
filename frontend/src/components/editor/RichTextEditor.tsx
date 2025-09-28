@@ -13,7 +13,7 @@ import Highlight from '@tiptap/extension-highlight';
 
 interface RichTextEditorProps {
   content: string;
-  onChange: (content: string) => void;
+  onChange: (_content: string) => void;
   placeholder?: string;
   className?: string;
   error?: boolean;

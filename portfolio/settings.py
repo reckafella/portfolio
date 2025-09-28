@@ -198,6 +198,11 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "PASSWORD": SUPABASE_DB_PW,
             "HOST": SUPABASE_HOST,
             "PORT": SUPABASE_PORT,
+            "OPTIONS": {
+                "connect_timeout": 30,
+                "options": "-c statement_timeout=300000",  # 5 minutes
+            },
+            "CONN_MAX_AGE": 600,  # 10 minutes connection pooling
         }
     }
 
@@ -230,8 +235,8 @@ if ENVIRONMENT == 'production':
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "PASSWORD": REDIS_PASSWORD,
-                "SOCKET_CONNECT_TIMEOUT": 5,
-                "SOCKET_TIMEOUT": 5,
+                "SOCKET_CONNECT_TIMEOUT": 30,
+                "SOCKET_TIMEOUT": 60,
                 "SOCKET_KEEPALIVE": True,
                 "SOCKET_KEEPALIVE_OPTIONS": {
                     "TCP_KEEPIDLE": 1,
@@ -239,8 +244,14 @@ if ENVIRONMENT == 'production':
                     "TCP_KEEPCNT": 5,
                 },
                 "CONNECTION_POOL_KWARGS": {
-                    "max_connections": 10,
+                    "max_connections": 20,
                     "retry_on_timeout": True,
+                    "socket_keepalive": True,
+                    "socket_keepalive_options": {
+                        "TCP_KEEPIDLE": 1,
+                        "TCP_KEEPINTVL": 3,
+                        "TCP_KEEPCNT": 5,
+                    },
                 },
             },
         }
@@ -334,47 +345,42 @@ WAGTAILIMAGES_IMAGE_MODEL = 'blog.CloudinaryWagtailImage'
 
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
 
-WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
+WAGTAILADMIN_BASE_URL = 'https://rohn.live'
 
-WAGTAILDOCS_EXTENSIONS = [
-    'csv',
-    'docx',
-    'key',
-    'odt',
-    'pdf',
-    'pptx',
-    'rtf',
-    'txt',
-    'xlsx',
-    'zip'
-]
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx',
+                          'rtf', 'txt', 'xlsx', 'zip']
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
-                         'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image', 'embed']
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
     'full': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
-                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image', 'embed']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
     'minimal': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
-                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
 }
+
+# Wagtail-specific timeout and session settings
+WAGTAILADMIN_TIMEOUT = 300  # 5 minutes timeout for admin operations
+WAGTAILADMIN_SESSION_TIMEOUT = 3600  # 1 hour session timeout for admin
+WAGTAILADMIN_AUTO_SAVE_INTERVAL = 30  # Auto-save every 30 seconds
 
 
 # Default primary key field type
@@ -449,9 +455,15 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Inactivity timeout in seconds (8 hours = 28800 seconds)
 SESSION_COOKIE_AGE = 28800
+CSRF_COOKIE_AGE = 28800
 
 # Update session on every request to prevent timeout during editing
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Additional session settings for long editing sessions
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_ENGINE_TIMEOUT = 3600  # 1 hour timeout for session engine operations
 
 PROJECT_TYPES = [
     ('personal', 'Personal'),

@@ -98,7 +98,8 @@ export function BlogEditorPage() {
               hasUnsavedChanges: false
             });
           } catch (error) {
-            setAutoSave(prev => ({ ...prev, isAutoSaving: false }));
+              setAutoSave(prev => ({ ...prev, isAutoSaving: false }));
+            // eslint-disable-next-line no-console
             console.warn('Auto-save failed:', error);
           }
         }

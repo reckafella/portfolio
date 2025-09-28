@@ -253,7 +253,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     <div className="dynamic-form">
       {/* Form Header */}
       <div className="mb-4">
-        <h2 className="h4 fw-bold text-dark mb-2">{schema.title}</h2>
+        <h2 className="h4 fw-bold mb-2">{schema.title}</h2>
         {schema.description && (
           <p className="text-muted mb-0">{schema.description}</p>
         )}

@@ -66,7 +66,7 @@ export default function SitemapPage() {
   const renderSitemapSection = (title: string, items: SitemapItem[], baseUrl: string = '') => (
     <div className="col-lg-4 col-md-6 mb-4">
       <div className="card h-100 shadow-sm">
-        <div className="card-header bg-primary text-white">
+        <div className="card-header bg-primary">
           <h5 className="card-title mb-0 text-center">
             <i className="bi bi-folder me-2"></i>
             {title}
@@ -103,7 +103,7 @@ export default function SitemapPage() {
             </div>
           )}
         </div>
-        <div className="card-footer bg-light text-center">
+        <div className="card-footer text-center">
           <small className="text-muted">
             {items.length} {title.toLowerCase()} total
           </small>
@@ -188,7 +188,7 @@ export default function SitemapPage() {
       {sitemapData && (
         <div className="row mt-5">
           <div className="col-12">
-            <div className="card bg-light">
+            <div className="card">
               <div className="card-body text-center">
                 <h5 className="card-title">Site Statistics</h5>
                 <div className="row g-3">

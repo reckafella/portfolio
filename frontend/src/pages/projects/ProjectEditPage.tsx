@@ -27,13 +27,13 @@ export const ProjectEditPage: React.FC = () => {
   usePageTitle(`Edit Project ${project?.title || 'Edit Project'}`);
 
   const updateProjectMutation = useUpdateProject();
-  const [initialData, setInitialData] = useState<Record<string, string>>({});
+  const [initialData, setInitialData] = useState<Record<string, string | number | boolean | File | File[]>>({});
   const [dataLoaded, setDataLoaded] = useState(false);
 
   // Populate initial data when project is loaded
   useEffect(() => {
     if (project && !dataLoaded) {
-      const formData: Record<string, string> = {
+      const formData: Record<string, string | number | boolean | File | File[]> = {
         title: project.title || '',
         description: project.description || '',
         short_description: project.short_description || '',
@@ -52,7 +52,7 @@ export const ProjectEditPage: React.FC = () => {
     }
   }, [project, dataLoaded]);
 
-  const handleSubmit = async (data: Record<string, string>) => {
+  const handleSubmit = async (data: Record<string, string | boolean | File | File[]>) => {
     await updateProjectMutation.mutateAsync({
       slug: String(slug),
       data
@@ -147,7 +147,7 @@ export const ProjectEditPage: React.FC = () => {
                                         slug={project.slug}
                                         submitButtonText="Update Project"
                                         loadingText="Updating..."
-                                        initialData={initialData}
+                                        initialData={initialData as Record<string, string | boolean>}
                                     />
                                 </div>
                             </div>
@@ -156,7 +156,7 @@ export const ProjectEditPage: React.FC = () => {
                         {/* Loading State for Form */}
                         {updateProjectMutation.isPending && (
                             <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-opacity-50" style={{ zIndex: 1050 }}>
-                                <div className="bg-white p-4 rounded shadow">
+                                <div className="p-4 rounded shadow">
                                     <LoadingSpinner text="Updating project..." />
                                 </div>
                             </div>

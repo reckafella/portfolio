@@ -59,7 +59,7 @@ const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ className = "" }) => {
   };
 
   // Apply theme with dramatic page-turning animation
-  const updateThemeWithAnimation = (theme: 'light' | 'dark', clickX = 0, clickY = 0) => {
+  const updateThemeWithAnimation = (theme: 'light' | 'dark', _clickX = 0, _clickY = 0) => {
     const overlay = overlayRef.current;
     if (!overlay) return;
 

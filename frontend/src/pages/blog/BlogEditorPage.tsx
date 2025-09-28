@@ -48,6 +48,7 @@ export function BlogEditorPage() {
     lastSaved: null,
     hasUnsavedChanges: false
   });
+  const [showPreview, setShowPreview] = useState(false);
   
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedContentRef = useRef<string>('');
@@ -98,9 +99,10 @@ export function BlogEditorPage() {
               hasUnsavedChanges: false
             });
           } catch (error) {
-              setAutoSave(prev => ({ ...prev, isAutoSaving: false }));
+            setAutoSave(prev => ({ ...prev, isAutoSaving: false }));
             // eslint-disable-next-line no-console
             console.warn('Auto-save failed:', error);
+            // Don't show user-facing errors for auto-save failures
           }
         }
       }, 2000); // Auto-save after 2 seconds of inactivity
@@ -192,12 +194,52 @@ export function BlogEditorPage() {
         result = await createBlogPostMutation.mutateAsync(formDataToSubmit);
       }
       
-      // Navigate to the post
-      navigate(`/blog/article/${result.slug}`);
+      // Navigate to the post only if we have a valid result with post data
+      if (result?.post?.slug) {
+        navigate(`/blog/article/${result.post.slug}`);
+      } else if (result?.slug) {
+        // Fallback in case the API response structure is different
+        navigate(`/blog/article/${result.slug}`);
+      } else {
+        // If no slug is available, show success message but don't redirect
+        setErrors({ general: [`${isEditing ? 'Updated' : 'Created'} successfully, but unable to navigate to post.`] });
+      }
     } catch (error: unknown) {
-      const errorData = error as { status?: number; data?: Record<string, string[]> };
-      if (errorData.status === 400 && errorData.data) {
-        setErrors(errorData.data);
+      // eslint-disable-next-line no-console
+      console.error('Blog post submission error:', error);
+      
+      // Handle different types of errors
+      if (error && typeof error === 'object') {
+        const errorObj = error as {
+          status?: number;
+          data?: Record<string, string[]>;
+          response?: {
+            data?: {
+              error?: string;
+            };
+          };
+          message?: string;
+        };
+        
+        // Check for validation errors (400 status with field-specific errors)
+        if (errorObj.status === 400 && errorObj.data && typeof errorObj.data === 'object') {
+          setErrors(errorObj.data);
+        }
+        // Check for API response errors
+        else if (errorObj.response && errorObj.response.data) {
+          if (typeof errorObj.response.data === 'object' && errorObj.response.data.error) {
+            setErrors({ general: [errorObj.response.data.error] });
+          } else {
+            setErrors({ general: [`Failed to ${isEditing ? 'update' : 'create'} blog post. Please try again.`] });
+          }
+        }
+        // Check for network or other errors
+        else if (errorObj.message) {
+          setErrors({ general: [errorObj.message] });
+        }
+        else {
+          setErrors({ general: [`Failed to ${isEditing ? 'update' : 'create'} blog post. Please try again.`] });
+        }
       } else {
         setErrors({ general: [`Failed to ${isEditing ? 'update' : 'create'} blog post. Please try again.`] });
       }
@@ -206,36 +248,39 @@ export function BlogEditorPage() {
     }
   };
 
-  const handlePreview = () => {
-    // Open preview in new tab
-    const previewWindow = window.open('', '_blank');
-    if (previewWindow) {
-      previewWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Preview: ${formData.title}</title>
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-          <style>
-            body { padding: 2rem; }
-            .preview-content { max-width: 800px; margin: 0 auto; }
-          </style>
-        </head>
-        <body>
-          <div class="preview-content">
-            <h1>${formData.title}</h1>
-            <div>${formData.content}</div>
+  const PreviewModal = ({ isOpen, onClose, title, content }: { isOpen: boolean; onClose: () => void; title: string; content: string }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
+        <div className="modal-backdrop fade show" onClick={onClose}></div>
+        <div className="modal-dialog modal-xl">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Preview: {title}</h5>
+              <button type="button" className="btn-close" onClick={onClose}></button>
+            </div>
+            <div className="modal-body">
+              <div className="preview-content">
+                <h1 className="mb-4">{title}</h1>
+                <div className="content" dangerouslySetInnerHTML={{ __html: content }}></div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={onClose}>
+                Close Preview
+              </button>
+            </div>
           </div>
-        </body>
-        </html>
-      `);
-    }
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="blog-editor-page">
       {/* Header */}
-      <div className="editor-header bg-white border-bottom sticky-top">
+      <div className="editor-header border-bottom sticky-top">
         <div className="container-fluid">
           <div className="row align-items-center py-3">
             <div className="col">
@@ -280,7 +325,7 @@ export function BlogEditorPage() {
                 <button
                   type="button"
                   className="btn btn-outline-secondary btn-sm"
-                  onClick={handlePreview}
+                  onClick={() => setShowPreview(true)}
                   disabled={!formData.title || !formData.content}
                 >
                   <i className="bi bi-eye me-1"></i>
@@ -483,6 +528,14 @@ export function BlogEditorPage() {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      <PreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        title={formData.title}
+        content={formData.content}
+      />
     </div>
   );
 }

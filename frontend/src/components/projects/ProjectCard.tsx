@@ -85,7 +85,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         />
         {!project.live && (
           <div className="position-absolute top-0 end-0 m-2">
-            <span className="badge bg-warning text-dark">
+            <span className="badge bg-warning">
               <i className="bi bi-eye-slash me-1"></i>
               Draft
             </span>

@@ -149,7 +149,7 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
                     "help_text": "Cover image for the blog post",
                     "accept": "image/*"
                 },
-                "tags_input": {
+                "tags": {
                     "label": "Tags",
                     "type": "text",
                     "required": False,
@@ -189,9 +189,28 @@ class BlogPostUpdateAPIView(generics.UpdateAPIView):
     serializer_class = BlogPostCreateSerializer
     lookup_field = 'slug'
     permission_classes = [IsAuthenticatedStaff]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_queryset(self):
         return BlogPostPage.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        """Handle blog post update with proper response"""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            post = serializer.save()
+            return Response({
+                'message': 'Blog post updated successfully',
+                'post': BlogPostPageSerializer(post).data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BlogPostDeleteAPIView(generics.DestroyAPIView):
@@ -339,7 +358,7 @@ def blog_post_form_config(request):
                 "disabled": False,
                 "widget": "Textarea"
             },
-            "tags_input": {
+            "tags": {
                 "label": "Tags",
                 "type": "TextInput",
                 "required": False,

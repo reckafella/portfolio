@@ -70,7 +70,7 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async updateProject(slug: string, data: Record<string, string | number | boolean>) {
+  async updateProject(slug: string, data: Record<string, string | number | boolean | File | File[]>) {
     const response = await projectApi.update(slug, data);
     if (!response.ok) {
       const errorData = await response.json();
@@ -145,7 +145,7 @@ export const useUpdateProject = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ slug, data }: { slug: string; data: Record<string, string | number | boolean> }) =>
+    mutationFn: ({ slug, data }: { slug: string; data: Record<string, string | number | boolean | File | File[]> }) =>
       projectApiFunctions.updateProject(slug, data),
     onSuccess: (_data, variables) => {
       // Invalidate specific project and projects list

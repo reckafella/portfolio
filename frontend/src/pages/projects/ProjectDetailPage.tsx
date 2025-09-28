@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useProjectBySlug, useDeleteProject } from '@/hooks/queries/projectQueries';
@@ -23,6 +24,22 @@ export const ProjectDetailPage: React.FC = () => {
 
   const deleteProjectMutation = useDeleteProject();
   usePageTitle(project?.title || 'Project Details');
+  
+  // Set meta tags for SEO and social sharing
+  useMetaTags({
+    title: project?.title || 'Project Details',
+    description: project?.description || 'View this project on Ethan Wanyoike\'s portfolio',
+    keywords: `${project?.title || 'project'}, portfolio, software development, web development, Ethan Wanyoike`,
+    ogTitle: `${project?.title || 'Project'} - Ethan Wanyoike`,
+    ogDescription: project?.description || 'View this project on Ethan Wanyoike\'s portfolio',
+    ogType: 'website',
+    ogUrl: `${window.location.origin}/projects/${slug}`,
+    ogImage: project?.cloudinary_image_url || '/og-image.png',
+    twitterTitle: `${project?.title || 'Project'} - Ethan Wanyoike`,
+    twitterDescription: project?.description || 'View this project on Ethan Wanyoike\'s portfolio',
+    twitterImage: project?.cloudinary_image_url || '/og-image.png',
+    canonical: `${window.location.origin}/projects/${slug}`
+  });
 
   const handleDelete = async () => {
     if (!project) return;

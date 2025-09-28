@@ -216,8 +216,8 @@ export function useUpdateBlogPost() {
 
   return useMutation({
     mutationFn: async ({ slug, data }: { slug: string; data: FormData }) => {
-      const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
-        method: 'POST',
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/update/`, {
+        method: 'PUT',
         body: data,
         headers: {
           // Don't set Content-Type for FormData - browser will set it with boundary
@@ -239,8 +239,8 @@ export function useDeleteBlogPost() {
 
   return useMutation({
     mutationFn: async (slug: string) => {
-      const response = await apiRequest(`/api/v1/blog/article/${slug}/`, {
-        method: 'POST',
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/delete/`, {
+        method: 'DELETE',
       });
       return response.ok;
     },

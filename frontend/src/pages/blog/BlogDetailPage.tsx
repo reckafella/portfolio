@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 interface CommentFormData {
   author_name: string;
@@ -41,6 +42,22 @@ export function BlogDetailPage() {
     error,
   } = useBlogPost(slug!);
   usePageTitle(`Blog - ${post?.title || 'Loading...'}`);
+  
+  // Set meta tags for SEO and social sharing
+  useMetaTags({
+    title: post?.title || 'Blog Post',
+    description: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+    keywords: post?.tags_list?.join(', ') || 'blog, portfolio, software engineering',
+    ogTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
+    ogDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+    ogType: 'article',
+    ogUrl: `${window.location.origin}/blog/article/${slug}`,
+    ogImage: post?.cover_image_url || post?.featured_image_url || '/og-image.png',
+    twitterTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
+    twitterDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+    twitterImage: post?.cover_image_url || post?.featured_image_url || '/og-image.png',
+    canonical: `${window.location.origin}/blog/article/${slug}`
+  });
 
   const createCommentMutation = useCreateBlogComment();
   const deleteBlogPostMutation = useDeleteBlogPost();

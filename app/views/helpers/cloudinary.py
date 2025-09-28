@@ -12,8 +12,7 @@ class CloudinaryImageHandler:
     Class to handle Cloudinary Image Upload and Delete operations.
     """
 
-    @staticmethod
-    def __init__() -> None:
+    def __init__(self) -> None:
         cloudinary.config(
             cloud_name=settings.CLOUDINARY_CLOUD_NAME,
             api_key=settings.CLOUDINARY_API_KEY,

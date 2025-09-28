@@ -160,7 +160,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
               {canEditProjects && (
                 <Link
-                  to={`/projects/${project.slug}/edit`}
+                  to={`/projects/edit/${project.slug}`}
                   className="btn btn-sm btn-outline-secondary"
                   title="Edit Project"
                 >

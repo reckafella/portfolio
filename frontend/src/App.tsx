@@ -11,6 +11,7 @@ import { BlogListPage, BlogDetailPage, BlogAddPage, BlogEditPage } from './pages
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
 import SearchResults from './pages/search/SearchResults'
+import SitemapPage from './pages/sitemap/SitemapPage'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/utils/ScrollToTop'
@@ -67,6 +68,9 @@ function App() {
                                     <RouteTransition>
                                         <Routes>
                                             <Route path="/" element={<HomePage />} />
+                                            
+                                            {/* Sitemap route */}
+                                            <Route path="/sitemap" element={<SitemapPage />} />
                                             
                                             {/* Project routes */}
                                             <Route path="/projects" element={<ProjectListPage />} />

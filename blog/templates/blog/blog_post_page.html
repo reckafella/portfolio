@@ -9,7 +9,7 @@
 {% block keywords %}blog, articles, posts, {{ post.title }}, portfolio{% endblock %}
 {% block author %}{{ post.author.get_full_name|default:post.author.username }}{% endblock %}
 
-{% include 'app/includes/meta_tags.html' with title=post.title description=post.excerpt image=post.cover_image_url|default:default_og_image %}
+{% include 'app/includes/meta_tags.html' with title=post.title description=post.excerpt image=post.cover_image_url %}
 
 {% block extra_css %}
 <style>

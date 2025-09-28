@@ -23,6 +23,10 @@ NODE_ENV=production npm run build
 
 cd ..
 
+# Copy Django static assets to React build directory
+echo "Copying Django static assets to React build..."
+cp -r app/static/* frontend/build/static/ 2>/dev/null || echo "No Django static assets to copy"
+
 # Ensure proper permissions for the build directory
 chmod -R 755 frontend/build/
 

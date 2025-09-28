@@ -5,6 +5,8 @@
 {% block keywords %}projects, portfolio, software development, web development, {{ project.title }}{% endblock %}
 {% block author %}{{ object.author.get_full_name|default:"Ethan1 Wanyoike" }}{% endblock %}
 
+{% include 'app/includes/meta_tags.html' with title=project.title description=project.description image=project.first_image.optimized_image_url %}
+
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">

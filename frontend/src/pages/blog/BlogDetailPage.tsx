@@ -52,10 +52,10 @@ export function BlogDetailPage() {
     ogDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
     ogType: 'article',
     ogUrl: `${window.location.origin}/blog/article/${slug}`,
-    ogImage: post?.cover_image_url || post?.featured_image_url || '/og-image.png',
+    ogImage: post?.cover_image_url || post?.featured_image_url,
     twitterTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
     twitterDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
-    twitterImage: post?.cover_image_url || post?.featured_image_url || '/og-image.png',
+    twitterImage: post?.cover_image_url || post?.featured_image_url,
     canonical: `${window.location.origin}/blog/article/${slug}`
   });
 

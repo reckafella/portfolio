@@ -307,10 +307,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    # React build directory
+    # React build directory (contains both React and Django static assets)
     os.path.join(BASE_DIR, 'frontend/build'),
-    # App static files
-    os.path.join(BASE_DIR, 'app/static'),
 ]
 
 STATICFILES_FINDERS = [

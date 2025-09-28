@@ -15,7 +15,9 @@ def metadata_context(request):
         'site_title': admin_user.get_full_name(),
         'site_description': 'A showcase of my projects and skills',
         'default_og_image': request.build_absolute_uri(
-            '/static/assets/images/og-default.jpeg')
+            '/static/assets/images/og-default.jpeg'),
+        'logo_og_image': request.build_absolute_uri(
+            '/static/assets/images/logo-og.png')  # Default logo for OG images
     }
 
 

@@ -34,10 +34,10 @@ export const ProjectDetailPage: React.FC = () => {
     ogDescription: project?.description || 'View this project on Ethan Wanyoike\'s portfolio',
     ogType: 'website',
     ogUrl: `${window.location.origin}/projects/${slug}`,
-    ogImage: project?.cloudinary_image_url || '/og-image.png',
+    ogImage: project?.first_image?.optimized_image_url || project?.first_image?.cloudinary_image_url,
     twitterTitle: `${project?.title || 'Project'} - Ethan Wanyoike`,
     twitterDescription: project?.description || 'View this project on Ethan Wanyoike\'s portfolio',
-    twitterImage: project?.cloudinary_image_url || '/og-image.png',
+    twitterImage: project?.first_image?.optimized_image_url || project?.first_image?.cloudinary_image_url,
     canonical: `${window.location.origin}/projects/${slug}`
   });
 

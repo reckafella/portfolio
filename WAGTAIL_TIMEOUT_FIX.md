@@ -28,6 +28,7 @@ You were experiencing HTTP 500 errors when saving Wagtail posts after editing fo
 ```
 
 **Changes**:
+
 - Increased connection timeout from 5 to 30 seconds
 - Increased socket timeout from 5 to 60 seconds
 - Increased max connections from 10 to 20
@@ -89,6 +90,7 @@ WAGTAILADMIN_AUTO_SAVE_INTERVAL = 30  # Auto-save every 30 seconds
 ### Local Testing
 
 1. **Start your development server**:
+
    ```bash
    python manage.py runserver
    ```
@@ -136,6 +138,7 @@ print(f"Active sessions: {Session.objects.count()}")
 ### Browser Console Monitoring
 
 The session keep-alive script logs important events:
+
 - Initialization message
 - Session warnings
 - Connection errors
@@ -145,6 +148,7 @@ The session keep-alive script logs important events:
 ### 1. Monitor Production Logs
 
 Set up logging to track:
+
 - Redis connection errors
 - Database timeout errors
 - Session-related errors
@@ -152,6 +156,7 @@ Set up logging to track:
 ### 2. Consider Auto-Save Feature
 
 Implement auto-save functionality for Wagtail posts:
+
 - Save drafts every 30 seconds
 - Show auto-save status to users
 - Handle conflicts between auto-save and manual save
@@ -159,6 +164,7 @@ Implement auto-save functionality for Wagtail posts:
 ### 3. Database Optimization
 
 Consider:
+
 - Adding database indexes for session-related queries
 - Monitoring database performance during peak usage
 - Setting up database connection pooling
@@ -166,6 +172,7 @@ Consider:
 ### 4. Redis Monitoring
 
 Monitor Redis:
+
 - Memory usage
 - Connection count
 - Response times

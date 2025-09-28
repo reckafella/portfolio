@@ -7,7 +7,7 @@
 {% block keywords %}blog, articles, posts, {{ article.title }}, portfolio{% endblock %}
 {% block author %}{{ article.author.get_full_name|default:article.author.username }}{% endblock %}
 
-{% include 'app/includes/meta_tags.html' with title=article.title description=article.excerpt image=article.first_image.optimized_image_url|default:default_og_image %}
+{% include 'app/includes/meta_tags.html' with title=article.title description=article.excerpt image=article.cover_image_url %}
 {% block content %}
 <div class="page-title">
     <div class="container d-lg-flex justify-content-between align-items-center">

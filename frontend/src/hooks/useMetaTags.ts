@@ -77,16 +77,16 @@ export const useMetaTags = (config: MetaTagConfig) => {
     if (config.ogDescription) {
       updateMetaTag('og:description', config.ogDescription, true);
     }
-    if (config.ogImage) {
-      // Ensure the image URL is absolute
-      const imageUrl = config.ogImage.startsWith('http') 
-        ? config.ogImage 
-        : `${window.location.origin}${config.ogImage}`;
-      updateMetaTag('og:image', imageUrl, true);
-      updateMetaTag('og:image:width', '1200', true);
-      updateMetaTag('og:image:height', '630', true);
-      updateMetaTag('og:image:alt', config.ogTitle || config.title || 'Ethan Wanyoike Portfolio', true);
-    }
+    
+    // Handle OG image - use provided image or default to logo
+    const ogImageUrl = config.ogImage || '/static/assets/images/logo-og.png';
+    const imageUrl = ogImageUrl.startsWith('http') 
+      ? ogImageUrl 
+      : `${window.location.origin}${ogImageUrl}`;
+    updateMetaTag('og:image', imageUrl, true);
+    updateMetaTag('og:image:width', '1200', true);
+    updateMetaTag('og:image:height', '630', true);
+    updateMetaTag('og:image:alt', config.ogTitle || config.title || 'Ethan Wanyoike Portfolio', true);
     if (config.ogUrl) {
       updateMetaTag('og:url', config.ogUrl, true);
     }
@@ -104,14 +104,13 @@ export const useMetaTags = (config: MetaTagConfig) => {
     if (config.twitterDescription) {
       updateMetaTag('twitter:description', config.twitterDescription, true);
     }
-    if (config.twitterImage) {
-      // Ensure the image URL is absolute
-      const imageUrl = config.twitterImage.startsWith('http') 
-        ? config.twitterImage 
-        : `${window.location.origin}${config.twitterImage}`;
-      updateMetaTag('twitter:image', imageUrl, true);
-      updateMetaTag('twitter:image:alt', config.twitterTitle || config.title || 'Ethan Wanyoike Portfolio', true);
-    }
+    // Handle Twitter image - use provided image or default to logo
+    const twitterImageUrl = config.twitterImage || config.ogImage || '/static/assets/images/logo-og.png';
+    const twitterImgUrl = twitterImageUrl.startsWith('http') 
+      ? twitterImageUrl 
+      : `${window.location.origin}${twitterImageUrl}`;
+    updateMetaTag('twitter:image', twitterImgUrl, true);
+    updateMetaTag('twitter:image:alt', config.twitterTitle || config.title || 'Ethan Wanyoike Portfolio', true);
     if (config.twitterSite) {
       updateMetaTag('twitter:site', config.twitterSite, true);
     }

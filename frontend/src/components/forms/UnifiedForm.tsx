@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './ImageUpload.css';
 
 interface FieldConfig {
     label: string;
@@ -34,6 +35,7 @@ interface UnifiedFormProps {
     additionalContent?: React.ReactNode;
     containerClassName?: string;
     cardClassName?: string;
+    initialData?: Record<string, string | boolean>;
 }
 
 const UnifiedForm: React.FC<UnifiedFormProps> = ({ 
@@ -48,7 +50,8 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     loadingText,
     additionalContent,
     containerClassName: _containerClassName = '',
-    cardClassName: _cardClassName = ''
+    cardClassName: _cardClassName = '',
+    initialData
 }) => {
     const [formData, setFormData] = useState<Record<string, string | File | File[] | boolean>>({});
     const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
@@ -222,36 +225,60 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         });
                     }
                     
-                    // Initialize form data with empty values
-                    const initialData: Record<string, string | File | File[]> = {};
+                    // Initialize form data with empty values or provided initial data
+                    const formInitialData: Record<string, string | File | File[] | boolean> = {};
                     Object.keys(config.fields).forEach(fieldName => {
                         const fieldConfig = config.fields[fieldName];
                         if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
-                            initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                            formInitialData[fieldName] = fieldConfig.multiple ? [] : '';
+                        } else if (fieldConfig.widget === 'CheckboxInput') {
+                            formInitialData[fieldName] = false;
                         } else {
-                            initialData[fieldName] = '';
+                            formInitialData[fieldName] = '';
                         }
                         // Pre-fill captcha key
                         if (fieldName === 'captcha' && captchaField?.captcha_key) {
-                            initialData['captcha_0'] = captchaField.captcha_key;
+                            formInitialData['captcha_0'] = captchaField.captcha_key;
                         }
                     });
-                    setFormData(initialData);
+                    
+                    // Override with provided initial data
+                    if (initialData) {
+                        Object.keys(initialData).forEach(key => {
+                            if (Object.prototype.hasOwnProperty.call(formInitialData, key)) {
+                                formInitialData[key] = initialData[key];
+                            }
+                        });
+                    }
+                    
+                    setFormData(formInitialData);
                 } else {
                     // Use fallback config if endpoint doesn't exist
                     const fallbackConfig = getFallbackConfig();
                     setFormConfig(fallbackConfig);
                     
-                    const initialData: Record<string, string | File | File[]> = {};
+                    const fallbackInitialData: Record<string, string | File | File[] | boolean> = {};
                     Object.keys(fallbackConfig.fields).forEach(fieldName => {
                         const fieldConfig = fallbackConfig.fields[fieldName];
                         if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
-                            initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                            fallbackInitialData[fieldName] = fieldConfig.multiple ? [] : '';
+                        } else if (fieldConfig.widget === 'CheckboxInput') {
+                            fallbackInitialData[fieldName] = false;
                         } else {
-                            initialData[fieldName] = '';
+                            fallbackInitialData[fieldName] = '';
                         }
                     });
-                    setFormData(initialData);
+                    
+                    // Override with provided initial data
+                    if (initialData) {
+                        Object.keys(initialData).forEach(key => {
+                            if (Object.prototype.hasOwnProperty.call(fallbackInitialData, key)) {
+                                fallbackInitialData[key] = initialData[key];
+                            }
+                        });
+                    }
+                    
+                    setFormData(fallbackInitialData);
                 }
             } catch (_) {
                 const noob = () => {} // work around so I can ignore the error
@@ -260,16 +287,28 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const fallbackConfig = getFallbackConfig();
                 setFormConfig(fallbackConfig);
                 
-                const initialData: Record<string, string | File | File[]> = {};
+                const errorFallbackData: Record<string, string | File | File[] | boolean> = {};
                 Object.keys(fallbackConfig.fields).forEach(fieldName => {
                     const fieldConfig = fallbackConfig.fields[fieldName];
                     if (fieldConfig.widget === 'FileInput' || fieldConfig.widget === 'ImageInput') {
-                        initialData[fieldName] = fieldConfig.multiple ? [] : '';
+                        errorFallbackData[fieldName] = fieldConfig.multiple ? [] : '';
+                    } else if (fieldConfig.widget === 'CheckboxInput') {
+                        errorFallbackData[fieldName] = false;
                     } else {
-                        initialData[fieldName] = '';
+                        errorFallbackData[fieldName] = '';
                     }
                 });
-                setFormData(initialData);
+                
+                // Override with provided initial data
+                if (initialData) {
+                    Object.keys(initialData).forEach(key => {
+                        if (Object.prototype.hasOwnProperty.call(errorFallbackData, key)) {
+                            errorFallbackData[key] = initialData[key];
+                        }
+                    });
+                }
+                
+                setFormData(errorFallbackData);
             } finally {
                 setLoading(false);
             }
@@ -304,7 +343,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         setFormData(prev => ({...prev, [fieldName]: value}));
     };
 
-    const handleFileChange = (fieldName: string, files: FileList | null, multiple: boolean = false) => {
+    const handleFileChange = (fieldName: string, files: FileList | File[] | null, multiple: boolean = false) => {
         if (!files) {
             setFormData(prev => ({
                 ...prev,
@@ -313,15 +352,18 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             return;
         }
 
+        // Convert FileList to Array if needed
+        const fileArray = Array.isArray(files) ? files : Array.from(files);
+
         if (multiple) {
             setFormData(prev => ({
                 ...prev,
-                [fieldName]: Array.from(files)
+                [fieldName]: fileArray
             }));
         } else {
             setFormData(prev => ({
                 ...prev,
-                [fieldName]: files[0]
+                [fieldName]: fileArray[0]
             }));
         }
     };
@@ -460,27 +502,99 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const selectedFiles = Array.isArray(fileValue) ? fileValue : (fileValue instanceof File ? [fileValue] : []);
                 
                 return (
-                    <div>
+                    <div className="file-upload-container">
+                        {/* Drag and Drop Area */}
+                        <div 
+                            className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
+                            style={{ 
+                                borderColor: '#dee2e6',
+                                backgroundColor: '#f8f9fa',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.style.borderColor = '#007bff';
+                                e.currentTarget.style.backgroundColor = '#e3f2fd';
+                            }}
+                            onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.style.borderColor = '#dee2e6';
+                                e.currentTarget.style.backgroundColor = '#f8f9fa';
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.style.borderColor = '#dee2e6';
+                                e.currentTarget.style.backgroundColor = '#f8f9fa';
+                                
+                                const files = Array.from(e.dataTransfer.files);
+                                if (files.length > 0) {
+                                    handleFileChange(fieldName, files, multiple);
+                                }
+                            }}
+                            onClick={() => {
+                                const input = document.getElementById(fieldName) as HTMLInputElement;
+                                input?.click();
+                            }}
+                        >
+                            <i className="bi bi-cloud-arrow-up fs-1 text-muted mb-2"></i>
+                            <p className="mb-1">
+                                <strong>Drop files here or click to browse</strong>
+                            </p>
+                            <p className="small text-muted mb-0">
+                                {accept && `Accepts: ${accept}`}
+                                {max_size && ` • Max ${formatFileSize(max_size)} per file`}
+                                {multiple && ' • Multiple files allowed'}
+                            </p>
+                        </div>
+                        
+                        {/* Hidden File Input */}
                         <input
                             type="file"
                             {...fileBaseProps}
+                            style={{ display: 'none' }}
                         />
-                        {max_size && (
-                            <div className="form-text">
-                                Maximum file size: {formatFileSize(max_size)}
-                            </div>
-                        )}
+                        
+                        {/* File List */}
                         {selectedFiles.length > 0 && (
-                            <div className="mt-2">
-                                <small className="text-muted">Selected files:</small>
-                                <ul className="list-unstyled mt-1">
+                            <div className="mt-3">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <small className="text-muted">
+                                        <strong>{selectedFiles.length}</strong> file{selectedFiles.length !== 1 ? 's' : ''} selected
+                                    </small>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger"
+                                        onClick={() => handleFileChange(fieldName, null, multiple)}
+                                    >
+                                        <i className="bi bi-trash me-1"></i>
+                                        Clear All
+                                    </button>
+                                </div>
+                                
+                                <div className="list-group">
                                     {selectedFiles.map((file, index) => (
-                                        <li key={index} className="small">
-                                            <i className="bi bi-file-earmark me-1"></i>
-                                            {file.name} ({formatFileSize(file.size)})
-                                        </li>
+                                        <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                            <div className="d-flex align-items-center">
+                                                <i className="bi bi-file-earmark me-2"></i>
+                                                <div>
+                                                    <div className="fw-medium">{file.name}</div>
+                                                    <small className="text-muted">{formatFileSize(file.size)}</small>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-outline-danger"
+                                                    onClick={() => {
+                                                        const newFiles = selectedFiles.filter((_, i) => i !== index);
+                                                        handleFileChange(fieldName, newFiles, multiple);
+                                                    }}
+                                            >
+                                                <i className="bi bi-x"></i>
+                                            </button>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -492,32 +606,223 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const selectedImages = Array.isArray(imageValue) ? imageValue : (imageValue instanceof File ? [imageValue] : []);
                 
                 return (
-                    <div>
+                    <div className="image-upload-container">
+                        {/* Drag and Drop Area */}
+                        <div 
+                            className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
+                            style={{ 
+                                borderColor: selectedImages.length >= 5 ? '#dc3545' : '#dee2e6',
+                                backgroundColor: selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa',
+                                cursor: selectedImages.length >= 5 ? 'not-allowed' : 'pointer',
+                                transition: 'all 0.3s ease',
+                                opacity: selectedImages.length >= 5 ? 0.6 : 1
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                if (selectedImages.length < 5) {
+                                    e.currentTarget.style.borderColor = '#007bff';
+                                    e.currentTarget.style.backgroundColor = '#e3f2fd';
+                                }
+                            }}
+                            onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.style.borderColor = selectedImages.length >= 5 ? '#dc3545' : '#dee2e6';
+                                e.currentTarget.style.backgroundColor = selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa';
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.style.borderColor = selectedImages.length >= 5 ? '#dc3545' : '#dee2e6';
+                                e.currentTarget.style.backgroundColor = selectedImages.length >= 5 ? '#f8d7da' : '#f8f9fa';
+                                
+                                if (selectedImages.length >= 5) {
+                                    alert('You have already reached the maximum of 5 images.');
+                                    return;
+                                }
+                                
+                                const files = Array.from(e.dataTransfer.files).filter(file => 
+                                    file.type.startsWith('image/')
+                                );
+                                if (files.length > 0) {
+                                    // For multiple images, append to existing files
+                                    if (multiple) {
+                                        const existingFiles = selectedImages as File[];
+                                        const newFiles = [...existingFiles, ...files];
+                                        
+                                        // Limit to 5 images total
+                                        if (newFiles.length > 5) {
+                                            alert('You can only upload up to 5 images. Please select fewer images.');
+                                            const limitedFiles = newFiles.slice(0, 5);
+                                            handleFileChange(fieldName, limitedFiles, multiple);
+                                        } else {
+                                            handleFileChange(fieldName, newFiles, multiple);
+                                        }
+                                    } else {
+                                        handleFileChange(fieldName, files, multiple);
+                                    }
+                                }
+                            }}
+                            onClick={() => {
+                                if (selectedImages.length >= 5) {
+                                    alert('You have already reached the maximum of 5 images.');
+                                    return;
+                                }
+                                const input = document.getElementById(fieldName) as HTMLInputElement;
+                                input?.click();
+                            }}
+                        >
+                            <i className="bi bi-cloud-arrow-up fs-1 text-muted mb-2"></i>
+                            <p className="mb-1">
+                                <strong>Drop images here or click to browse</strong>
+                            </p>
+                            <p className="small text-muted mb-0">
+                                Supports: JPG, PNG, GIF, WebP, BMP, SVG
+                                {max_size && ` • Max ${formatFileSize(max_size)} per file`}
+                                {multiple && ' • Up to 5 images allowed'}
+                                {selectedImages.length > 0 && ` • ${selectedImages.length}/5 selected`}
+                            </p>
+                        </div>
+                        
+                        {/* Hidden File Input */}
                         <input
                             type="file"
-                            {...fileBaseProps}
+                            id={fieldName}
+                            name={fieldName}
                             accept={accept || "image/*"}
+                            multiple={multiple}
+                            required={required}
+                            disabled={disabled || isSubmitting}
+                            onChange={(e) => {
+                                const files = e.target.files;
+                                if (files && files.length > 0) {
+                                    if (selectedImages.length >= 5) {
+                                        alert('You have already reached the maximum of 5 images.');
+                                        e.target.value = ''; // Clear the input
+                                        return;
+                                    }
+                                    
+                                    const fileArray = Array.from(files).filter(file => 
+                                        file.type.startsWith('image/')
+                                    );
+                                    
+                                    if (multiple) {
+                                        // For multiple images, append to existing files
+                                        const existingFiles = selectedImages as File[];
+                                        const newFiles = [...existingFiles, ...fileArray];
+                                        
+                                        // Limit to 5 images total
+                                        if (newFiles.length > 5) {
+                                            alert('You can only upload up to 5 images. Please select fewer images.');
+                                            const limitedFiles = newFiles.slice(0, 5);
+                                            handleFileChange(fieldName, limitedFiles, multiple);
+                                        } else {
+                                            handleFileChange(fieldName, newFiles, multiple);
+                                        }
+                                    } else {
+                                        handleFileChange(fieldName, fileArray, multiple);
+                                    }
+                                }
+                            }}
+                            style={{ display: 'none' }}
                         />
-                        {max_size && (
-                            <div className="form-text">
-                                Maximum file size: {formatFileSize(max_size)}
-                            </div>
-                        )}
+                        
+                        {/* Image Previews */}
                         {selectedImages.length > 0 && (
-                            <div className="mt-2">
-                                <small className="text-muted">Selected images:</small>
-                                <div className="row g-2 mt-1">
+                            <div className="mt-3">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <small className="text-muted">
+                                        <strong>{selectedImages.length}</strong> image{selectedImages.length !== 1 ? 's' : ''} selected
+                                    </small>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger"
+                                        onClick={() => handleFileChange(fieldName, null, multiple)}
+                                    >
+                                        <i className="bi bi-trash me-1"></i>
+                                        Clear All
+                                    </button>
+                                </div>
+                                
+                                <div className="row g-2">
                                     {selectedImages.map((file, index) => (
-                                        <div key={index} className="col-6 col-md-4">
-                                            <div className="card">
+                                        <div key={index} className="col-6 col-md-4 col-lg-3">
+                                            <div className="card position-relative">
+                                                {/* Remove Button */}
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                                    style={{ 
+                                                        borderRadius: '50%', 
+                                                        width: '24px', 
+                                                        height: '24px', 
+                                                        padding: '0',
+                                                        zIndex: 10
+                                                    }}
+                                                    onClick={() => {
+                                                        const newFiles = selectedImages.filter((_, i) => i !== index);
+                                                        handleFileChange(fieldName, newFiles, multiple);
+                                                    }}
+                                                >
+                                                    <i className="bi bi-x-lg text-white" style={{ fontSize: '10px' }}></i>
+                                                </button>
+                                                
+                                                {/* Image Preview */}
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={`Preview ${index + 1}`}
                                                     className="card-img-top"
-                                                    style={{ height: '100px', objectFit: 'cover' }}
+                                                    style={{ 
+                                                        height: '120px', 
+                                                        objectFit: 'cover',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onClick={() => {
+                                                        // Create and show lightbox modal
+                                                        const modal = document.createElement('div');
+                                                        modal.className = 'modal fade';
+                                                        modal.innerHTML = `
+                                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">${file.name}</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body text-center">
+                                                                        <img src="${URL.createObjectURL(file)}" class="img-fluid" style="max-height: 70vh;">
+                                                                        <p class="mt-2 text-muted">${formatFileSize(file.size)}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        `;
+                                                        document.body.appendChild(modal);
+                                                        
+                                                        // Show modal using Bootstrap
+                                                        const bootstrapModal = new (window as unknown as { bootstrap: { Modal: new (_modal: HTMLElement) => { show: () => void } } }).bootstrap.Modal(modal);
+                                                        bootstrapModal.show();
+                                                        
+                                                        // Clean up modal after it's hidden
+                                                        modal.addEventListener('hidden.bs.modal', () => {
+                                                            document.body.removeChild(modal);
+                                                        });
+                                                    }}
                                                 />
+                                                
+                                                {/* File Info */}
                                                 <div className="card-body p-2">
-                                                    <small className="text-muted">{file.name}</small>
+                                                    <small className="card-text text-truncate d-block" title={file.name}>
+                                                        {file.name}
+                                                    </small>
+                                                    <small className="text-muted">{formatFileSize(file.size)}</small>
+                                                    
+                                                    {/* File Size Progress Bar */}
+                                                    <div className="mt-1">
+                                                        <div className="progress" style={{ height: '4px' }}>
+                                                            <div 
+                                                                className={`progress-bar ${file.size > (max_size || 5 * 1024 * 1024) ? 'bg-danger' : 'bg-success'}`}
+                                                                role="progressbar" 
+                                                                style={{ width: '100%' }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -581,13 +886,15 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             
             case 'CheckboxInput':
                 return (
-                    <div className="input-group form-check">
+                    <div className="form-check">
                         <input
                             type="checkbox"
                             role='switch'
                             {...booleanBaseProps}
                         />
-                        
+                        <label htmlFor={fieldName} className="form-check-label ms-2">
+                            {fieldConfig.label || fieldConfig.help_text || 'Enable this option'}
+                        </label>
                     </div>
                 );
 
@@ -601,7 +908,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         }
     };
 
-    const getFieldLayoutClass = (fieldName: string) => {
+    const getFieldLayoutClass = (fieldName: string, _fieldConfig: FieldConfig) => {
         // Special layout rules based on field name and form type
         if (fieldName === 'message' || fieldName === 'captcha') {
             return 'col-12 mb-3';
@@ -679,11 +986,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             <form onSubmit={handleSubmit} method="POST">
                 <div className="row g-3">
                     {Object.entries(formConfig.fields).map(([fieldName, fieldConfig]) => (
-                        <div key={fieldName} className={getFieldLayoutClass(fieldName)}>
+                        <div key={fieldName} className={getFieldLayoutClass(fieldName, fieldConfig)}>
+                            {fieldConfig.widget !== 'CheckboxInput' && (
                             <label htmlFor={fieldName} className="form-label fw-medium">
                                 {fieldConfig.label}
                                 {fieldConfig.required && <span className="text-danger ms-1">*</span>}
                             </label>
+                            )}
                             {renderField(fieldName, fieldConfig)}
                         </div>
                     ))}

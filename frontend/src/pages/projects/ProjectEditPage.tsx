@@ -139,13 +139,15 @@ export const ProjectEditPage: React.FC = () => {
                             <div className="card shadow-sm">
                                 <div className="card-body">
                                     <UnifiedForm
-                                        config={formConfig}
+                                        formType="update_project"
                                         onSubmit={handleSubmit}
+                                        isSubmitting={updateProjectMutation.isPending}
+                                        error={updateProjectMutation.isError ? "Failed to update project. Please try again." : undefined}
+                                        title="Edit Project"
+                                        slug={project.slug}
                                         submitButtonText="Update Project"
                                         loadingText="Updating..."
-                                        isLoading={updateProjectMutation.isPending}
                                         initialData={initialData}
-                                        showProgressBar={true}
                                     />
                                 </div>
                             </div>

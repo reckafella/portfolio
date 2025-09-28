@@ -75,8 +75,8 @@ else:
     try:
         import daphne
         INSTALLED_APPS.insert(0, 'daphne')
-    except Exception:
-        raise
+    except ImportError:
+        pass  # daphne not available, skip it
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]

@@ -7,13 +7,13 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.conf import settings
 
-from ..models import Projects, Image, Video
-from ..forms.projects import ProjectsForm
-from ..serializers import (
+from app.models import Projects, Image, Video
+from app.forms.projects import ProjectsForm
+from app.serializers import (
     ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
     ImageSerializer, VideoSerializer
 )
-from ..permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
+from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
 
 class ProjectListAPIView(generics.ListAPIView):
@@ -119,9 +119,9 @@ class ProjectCreateAPIView(generics.CreateAPIView):
     def get_form_fields(self, form):
         fields = {}
         for name, field in form.fields.items():
-            fields[name] = {
+            field_data = {
                 "label": field.label,
-                "type": field.widget.__class__.__name__,
+                "type": "ImageInput" if name == "images" else field.widget.__class__.__name__,
                 "required": field.required,
                 "help_text": field.help_text,
                 "disabled": field.disabled,
@@ -129,6 +129,18 @@ class ProjectCreateAPIView(generics.CreateAPIView):
                 "max_length": field.max_length if hasattr(field, 'max_length') else None,
                 "min_length": field.min_length if hasattr(field, 'min_length') else None,
             }
+
+            # Add choices for ChoiceField widgets
+            if hasattr(field, 'choices') and field.choices:
+                field_data["choices"] = list(field.choices)
+
+            # Update image field to use FileInput & type = "file"
+            if name == "images":
+                field_data["widget"] = "FileInput"
+                field_data["type"] = "ImageInput"
+                field_data["multiple"] = True
+
+            fields[name] = field_data
         return fields
 
     def perform_create(self, serializer):
@@ -151,16 +163,23 @@ class ProjectUpdateAPIView(generics.UpdateAPIView):
     def get_form_fields(self, form):
         fields = {}
         for name, field in form.fields.items():
-            fields[name] = {
+            field_data = {
                 "label": field.label,
-                "type": field.widget.__class__.__name__,
+                "type": "ImageInput" if name == "images" else field.widget.__class__.__name__,
                 "required": field.required,
                 "help_text": field.help_text,
                 "disabled": field.disabled,
-                "widget": field.widget.__class__.__name__,
+                "multiple": True if name == "images" else False,
+                "widget": "ImageInput" if name == "images" else field.widget.__class__.__name__,
                 "max_length": field.max_length if hasattr(field, 'max_length') else None,
                 "min_length": field.min_length if hasattr(field, 'min_length') else None,
             }
+
+            # Add choices for ChoiceField widgets
+            if hasattr(field, 'choices') and field.choices:
+                field_data["choices"] = list(field.choices)
+
+            fields[name] = field_data
         return fields
 
     def get_queryset(self):

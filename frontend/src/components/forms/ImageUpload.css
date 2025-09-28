@@ -1,0 +1,119 @@
+/* File Upload Component Styles */
+.image-upload-container,
+.file-upload-container {
+  position: relative;
+}
+
+.drag-drop-area {
+  transition: all 0.3s ease;
+  border: 2px dashed #dee2e6;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-drop-area:hover {
+  border-color: #007bff;
+  background-color: #e3f2fd;
+}
+
+.drag-drop-area.drag-hover {
+  border-color: #007bff;
+  background-color: #e3f2fd;
+  transform: scale(1.02);
+}
+
+.image-preview-container .card {
+  transition: transform 0.2s ease;
+}
+
+.image-preview-container .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview-container .card img {
+  transition: opacity 0.2s ease;
+}
+
+.image-preview-container .card img:hover {
+  opacity: 0.9;
+}
+
+/* Progress bar styling */
+.progress {
+  background-color: #e9ecef;
+}
+
+.progress-bar.bg-success {
+  background-color: #28a745 !important;
+}
+
+.progress-bar.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+/* Remove button styling */
+.btn-danger.position-absolute {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger.position-absolute:hover {
+  transform: scale(1.1);
+}
+
+/* Modal styling for lightbox */
+.modal .modal-dialog {
+  max-width: 90vw;
+}
+
+.modal .modal-body img {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* File list styling */
+.list-group-item {
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.list-group-item .btn-outline-danger:hover {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .drag-drop-area {
+    min-height: 100px;
+    padding: 1rem;
+  }
+  
+  .drag-drop-area i {
+    font-size: 2rem !important;
+  }
+  
+  .drag-drop-area p {
+    font-size: 0.9rem;
+  }
+  
+  .image-preview-container .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 576px) {
+  .image-preview-container .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

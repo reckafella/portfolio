@@ -5,6 +5,8 @@ from django.conf import settings
 from django.http import (FileResponse, Http404, HttpResponseRedirect,
                          JsonResponse)
 from django.views.generic.base import RedirectView, TemplateView, View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from wagtail.models import Page
 
 from app.models import Projects
@@ -96,6 +98,47 @@ class SitemapView(TemplateView):
         context['blog_posts'] = blog_posts
         context['page_title'] = "Sitemap"
         return context
+
+
+class SitemapAPIView(APIView):
+    """API view to provide sitemap data for React frontend"""
+    
+    def get(self, request):
+        pages = Page.objects.live().specific().order_by('-first_published_at')
+        projects = Projects.objects.filter(live=True).order_by('-created_at')
+        blog_posts = BlogPost.objects.live().order_by('-first_published_at')
+        
+        # Serialize the data
+        sitemap_data = {
+            'pages': [
+                {
+                    'title': page.title,
+                    'url': page.url,
+                    'last_modified': page.last_published_at.isoformat() if page.last_published_at else None,
+                }
+                for page in pages
+            ],
+            'projects': [
+                {
+                    'title': project.title,
+                    'slug': project.slug,
+                    'url': f'/projects/{project.slug}',
+                    'last_modified': project.updated_at.isoformat() if project.updated_at else None,
+                }
+                for project in projects
+            ],
+            'blog_posts': [
+                {
+                    'title': post.title,
+                    'slug': post.slug,
+                    'url': f'/blog/article/{post.slug}',
+                    'last_modified': post.first_published_at.isoformat() if post.first_published_at else None,
+                }
+                for post in blog_posts
+            ]
+        }
+        
+        return Response(sitemap_data)
 
 
 class CustomRedirectView(RedirectView):

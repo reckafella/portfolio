@@ -9,6 +9,7 @@ export const ROUTES = {
   SERVICES: '/services',
   CONTACT: '/contact',
   SEARCH: '/search',
+  SITEMAP: '/sitemap',
 
   // Blog routes
   BLOG: {

@@ -69,14 +69,4 @@ urlpatterns = [
     re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")
 ]
 
-# Add error test routes for development
-if settings.DEBUG:
-    from app.views.error_views import custom_400, custom_403, custom_404, custom_500
-    urlpatterns += [
-        path('test/400/', lambda request: custom_400(request), name='test_400'),
-        path('test/403/', lambda request: custom_403(request), name='test_403'),
-        path('test/404/', lambda request: custom_404(request), name='test_404'),
-        path('test/500/', lambda request: custom_500(request), name='test_500'),
-    ]
-
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

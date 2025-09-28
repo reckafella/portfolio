@@ -120,27 +120,85 @@ export const projectApi = {
      * Get field parameters for update
      */
     getUpdateFieldParams: async (slug: string): Promise<Response> => {
-      return apiRequest(`/api/v1/projects/${slug}/update`);
+      return apiRequest(`/api/v1/projects/${slug}/update/`);
     },
 
   /**
    * Create a new project
    */
-  create: async (projectData: Record<string, string | number | boolean>): Promise<Response> => {
-    return apiRequest('/api/v1/projects/create', {
-      method: 'POST',
-      body: JSON.stringify(projectData),
-    });
+  create: async (projectData: Record<string, string | number | boolean | File | File[]>): Promise<Response> => {
+    // Check if we have file data
+    const hasFiles = Object.values(projectData).some(value => 
+      value instanceof File || (Array.isArray(value) && value.length > 0 && value[0] instanceof File)
+    );
+
+    if (hasFiles) {
+      // Use FormData for file uploads
+      const formData = new FormData();
+      Object.keys(projectData).forEach(key => {
+        const value = projectData[key];
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof File) {
+          value.forEach((file: File) => {
+            formData.append(key, file);
+          });
+        } else {
+          formData.append(key, String(value));
+        }
+      });
+
+      return apiRequest('/api/v1/projects/create', {
+        method: 'POST',
+        body: formData,
+        headers: {}, // Let the browser set Content-Type for FormData
+      });
+    } else {
+      // Use JSON for regular data
+      return apiRequest('/api/v1/projects/create', {
+        method: 'POST',
+        body: JSON.stringify(projectData),
+      });
+    }
   },
 
   /**
    * Update an existing project
    */
-  update: async (slug: string, projectData: Record<string, string | number | boolean>): Promise<Response> => {
-    return apiRequest(`/api/v1/projects/${slug}/update`, {
-      method: 'PUT',
-      body: JSON.stringify(projectData),
-    });
+  update: async (slug: string, projectData: Record<string, string | number | boolean | File | File[]>): Promise<Response> => {
+    // Check if we have file data
+    const hasFiles = Object.values(projectData).some(value => 
+      value instanceof File || (Array.isArray(value) && value.length > 0 && value[0] instanceof File)
+    );
+
+    if (hasFiles) {
+      // Use FormData for file uploads
+      const formData = new FormData();
+      Object.keys(projectData).forEach(key => {
+        const value = projectData[key];
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof File) {
+          value.forEach((file: File) => {
+            formData.append(key, file);
+          });
+        } else {
+          formData.append(key, String(value));
+        }
+      });
+
+      return apiRequest(`/api/v1/projects/${slug}/update/`, {
+        method: 'PUT',
+        body: formData,
+        headers: {}, // Let the browser set Content-Type for FormData
+      });
+    } else {
+      // Use JSON for regular data
+      return apiRequest(`/api/v1/projects/${slug}/update/`, {
+        method: 'PUT',
+        body: JSON.stringify(projectData),
+      });
+    }
   },
 
   /**

@@ -1,23 +1,17 @@
 {
-    "python.defaultInterpreterPath": ".env/bin/python",
+    "python.defaultInterpreterPath": "./venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.typeCheckingMode": "strict",
     "files.associations": {
         "*.py": "python"
     },
-    "python-envs.pythonProjects": [],
     "python.analysis.extraPaths": [
-        "./",
-        "./env/lib/python3.12/site-packages"
-    ],
-    "python.analysis.indexing": true,
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python.languageServer": "None",
-    "cursorpyright.analysis.autoImportCompletions": true,
-    "cursorpyright.analysis.extraPaths": [
         "./",
         "./venv/lib/python3.12/site-packages"
     ],
+    "python.analysis.indexing": true,
+    /* "python-envs.defaultEnvManager": "ms-python.python:system", */
+    "python.languageServer": "Pylance",
 }

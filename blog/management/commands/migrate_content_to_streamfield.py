@@ -56,22 +56,8 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(f"  Content preview: "
                                   f"{post.content[:100]}...")
+
             else:
-                # Convert RichText to StreamField
-                # Start with a basic rich text block
-                stream_data = [
-                    {
-                        'type': 'rich_text',
-                        'value': post.content
-                    }
-                ]
-
-                # Save the current content to legacy_content
-                post.legacy_content = post.content
-
-                # Set the new StreamField content
-                post.stream_content = stream_data
-
                 # Save the post
                 post.save()
 

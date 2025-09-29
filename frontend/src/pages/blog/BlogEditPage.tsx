@@ -175,15 +175,14 @@ export function BlogEditPage() {
         data: formDataToSubmit
       });
       
-      // Navigate to the updated post only if we have a valid result
-      if (result?.post?.slug) {
-        navigate(`/blog/article/${result.post.slug}`);
-      } else if (result?.slug) {
-        // Fallback in case the API response structure is different
-        navigate(`/blog/article/${result.slug}`);
+      // Navigate to the updated post
+      // The backend returns: { message: '...', post: { ...post data with slug } }
+      const postSlug = result?.post?.slug;
+      if (postSlug) {
+        navigate(`/blog/article/${postSlug}`);
       } else {
-        // If no slug is available, show success message but don't redirect
-        setErrors({ general: ['Updated successfully, but unable to navigate to post.'] });
+        // If no slug is available, stay on the edit page and show success message
+        setErrors({ general: ['Post updated successfully! You can continue editing or go back to the blog list.'] });
       }
     } catch (error: unknown) {
       // eslint-disable-next-line no-console
@@ -204,7 +203,17 @@ export function BlogEditPage() {
         
         // Check for validation errors (400 status with field-specific errors)
         if (errorObj.status === 400 && errorObj.data && typeof errorObj.data === 'object') {
-          setErrors(errorObj.data);
+          // Handle validation errors from the backend
+          const validationErrors: Record<string, string[]> = {};
+          Object.keys(errorObj.data).forEach(key => {
+            const value = errorObj.data[key];
+            if (Array.isArray(value)) {
+              validationErrors[key] = value;
+            } else if (typeof value === 'string') {
+              validationErrors[key] = [value];
+            }
+          });
+          setErrors(validationErrors);
         }
         // Check for duplicate title error or other API response errors
         else if (errorObj.response?.data) {

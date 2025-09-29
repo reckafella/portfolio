@@ -200,6 +200,15 @@ export function useCreateBlogPost() {
           // Don't set Content-Type for FormData - browser will set it with boundary
         },
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('Blog post creation failed') as any;
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
+      }
+
       return response.json();
     },
     onSuccess: () => {
@@ -223,6 +232,15 @@ export function useUpdateBlogPost() {
           // Don't set Content-Type for FormData - browser will set it with boundary
         },
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('Blog post update failed') as any;
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
+      }
+
       return response.json();
     },
     onSuccess: (_, { slug }) => {

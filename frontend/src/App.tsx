@@ -6,10 +6,9 @@ import HomePage from './pages/home/HomePage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
 import { ProjectEditPage } from './pages/projects/ProjectEditPage'
-import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
+/* import { ProjectDetailPage } from './pages/projects/ProjectDetailPage' */
 import { ProjectDetailPageEnhanced } from './pages/projects/ProjectDetailPageEnhanced'
 import { BlogListPage, BlogDetailPage, BlogAddPage, BlogEditPage } from './pages/blog'
-import { BlogEditorPage } from './pages/blog/BlogEditorPage'
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
 import SearchResults from './pages/search/SearchResults'
@@ -116,7 +115,7 @@ function App() {
                                                 path="/blog/editor/:slug?" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
-                                                        <BlogEditorPage />
+                                                        <BlogEditPage />
                                                     </ProtectedRoute>
                                                 } 
                                             />

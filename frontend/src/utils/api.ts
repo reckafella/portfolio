@@ -78,6 +78,7 @@ export const apiRequest = async (url: string, options: RequestOptions = {}): Pro
 
 /**
  * Handle API errors and redirect if necessary
+ * Note: Don't redirect on 400 errors as they are often validation errors that should be handled by the UI
  */
 export const handleApiError = (response: Response, error?: Error): void => {
   if (response.status === 401) {
@@ -89,10 +90,8 @@ export const handleApiError = (response: Response, error?: Error): void => {
   } else if (response.status === 404) {
     // Not found - redirect to not found page
     window.location.href = '/error/404';
-  } else if (response.status === 400) {
-    // Bad request - redirect to bad request page
-    window.location.href = '/error/400';
   }
+  // Removed 400 auto-redirect to allow proper validation error handling
   else if (response.status >= 500) {
     // Server error - redirect to error page
     window.location.href = '/error/500';

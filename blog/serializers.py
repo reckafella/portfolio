@@ -9,8 +9,7 @@ from django.utils import timezone
 import hashlib
 
 from app.views.helpers.cloudinary import CloudinaryImageHandler
-from blog.models import BlogPostPage, BlogPostComment, BlogPostImage
-from blog.models import BlogIndexPage
+from blog.models import BlogPostPage, BlogPostComment, BlogPostImage, BlogIndexPage
 
 uploader = CloudinaryImageHandler()
 
@@ -119,7 +118,7 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
 
 class BlogPostCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating blog posts"""
-    tags = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags")
+    tags = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags", allow_blank=True)
     cover_image = serializers.FileField(
         write_only=True,
         required=False,
@@ -130,65 +129,101 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
         model = BlogPostPage
         fields = ['title', 'content', 'published', 'tags', 'cover_image']
 
+    def validate_published(self, value):
+        """Handle string to boolean conversion for published field"""
+        if isinstance(value, str):
+            return value.lower() in ('true', '1', 'yes', 'on')
+        return bool(value)
+
     def create(self, validated_data):
-        # Extract data from validated_data
         tags = validated_data.pop('tags', '')
         cover_image = validated_data.pop('cover_image', None)
+        blog_index = self._get_or_create_blog_index()
 
-        # Get the blog index page (parent)
-        blog_index = BlogIndexPage.objects.first()
-        if not blog_index:
-            raise serializers.ValidationError("Blog index page not found")
-
-        # Initialize Cloudinary uploader
-        uploader = CloudinaryImageHandler()
-
-        # Create the blog post page
         with transaction.atomic():
-            post = BlogPostPage(
-                title=titlecase(validated_data['title']),
-                slug=slugify(validated_data['title']),
-                content=validated_data.get('content', ''),
-                published=validated_data.get('published', False),
-                author=self.context['request'].user,
-                seo_title=titlecase(validated_data['title']),
-                seo_description=validated_data.get('content', '')[:160],
-            )
-
-            # Add to parent page
-            blog_index.add_child(instance=post)
-            post.save()
-
-            # Handle cover image
-            if cover_image:
-                try:
-                    response = uploader.upload_image(
-                        cover_image,
-                        folder=f"portfolio/blog/{post.slug}"
-                    )
-                    post.cloudinary_image_id = response.get('cloudinary_image_id')
-                    post.cloudinary_image_url = response.get('cloudinary_image_url')
-                    post.optimized_image_url = response.get('optimized_image_url')
-                    post.save()
-                except Exception as e:
-                    raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
-
-            # Handle tags
-            if tags:
-                tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
-                post.tags.set(*tag_names)
-
-            # Create a revision
-            revision = post.save_revision(
-                user=self.context['request'].user,
-                approved_go_live_at=None
-            )
-
-            # Publish if requested
-            if validated_data.get('published', False):
-                revision.publish()
+            post = self._create_blog_post(validated_data, blog_index)
+            self._handle_post_assets(post, cover_image, tags)
+            self._create_revision_and_publish(post, validated_data.get('published', False))
 
         return post
+
+    def _get_or_create_blog_index(self):
+        """Get or create the blog index page"""
+        blog_index = BlogIndexPage.objects.first()
+        if not blog_index:
+            # Try to find existing blog home page
+            existing_page = BlogIndexPage.objects.filter(slug='blog-home').first()
+            if existing_page:
+                return existing_page
+
+            # Create a new blog index page
+            with transaction.atomic():
+                blog_index = BlogIndexPage(
+                    title="Blog Home",
+                    slug="blog-home",
+                )
+                blog_index = BlogIndexPage.add_root(instance=blog_index)
+                blog_index.save()
+
+        if not blog_index:
+            raise serializers.ValidationError("Unable to create or find blog index page")
+        return blog_index
+
+    def _create_blog_post(self, validated_data, blog_index):
+        """Create the blog post instance"""
+        post = BlogPostPage(
+            title=titlecase(validated_data['title']),
+            slug=slugify(validated_data['title']),
+            content=validated_data.get('content', ''),
+            published=validated_data.get('published', False),
+            author=self.context['request'].user,
+            seo_title=titlecase(validated_data['title']),
+            seo_description=validated_data.get('content', '')[:160],
+        )
+
+        # Add to parent page
+        try:
+            blog_index.add_child(instance=post)
+            post.save()
+        except Exception as e:
+            raise serializers.ValidationError(f"Failed to create blog post: {str(e)}")
+        return post
+
+    def _handle_cover_image(self, post, cover_image):
+        """Handle cover image upload"""
+        if cover_image:
+            try:
+                uploader = CloudinaryImageHandler()
+                response = uploader.upload_image(
+                    cover_image,
+                    folder=f"portfolio/blog/{post.slug}"
+                )
+                post.cloudinary_image_id = response.get('cloudinary_image_id')
+                post.cloudinary_image_url = response.get('cloudinary_image_url')
+                post.optimized_image_url = response.get('optimized_image_url')
+                post.save()
+            except Exception as e:
+                raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
+
+    def _handle_tags(self, post, tags):
+        """Handle tags assignment"""
+        if tags:
+            tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
+            post.tags.set(tag_names)
+
+    def _handle_post_assets(self, post, cover_image, tags):
+        """Handle cover image and tags for the post"""
+        self._handle_cover_image(post, cover_image)
+        self._handle_tags(post, tags)
+
+    def _create_revision_and_publish(self, post, should_publish):
+        """Create revision and publish if requested"""
+        revision = post.save_revision(
+            user=self.context['request'].user,
+            approved_go_live_at=None
+        )
+        if should_publish:
+            revision.publish()
 
     def _update_title_and_slug(self, instance, title):
         """Update title and generate unique slug if needed"""
@@ -231,7 +266,7 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
 
         if tags:
             tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
-            instance.tags.set(*tag_names)
+            instance.tags.set(tag_names)
         else:
             instance.tags.clear()
 

@@ -141,11 +141,10 @@ export function BlogAddPage() {
       const result = await createBlogPostMutation.mutateAsync(formDataToSubmit);
       
       // Navigate to the new post or blog list
-      if (formData.published && result?.post?.slug) {
-        navigate(`/blog/${result.post.slug}`);
-      } else if (formData.published && result?.slug) {
-        // Fallback in case the API response structure is different
-        navigate(`/blog/${result.slug}`);
+      // The backend returns: { message: '...', post: { ...post data with slug } }
+      const postSlug = result?.post?.slug;
+      if (formData.published && postSlug) {
+        navigate(`/blog/article/${postSlug}`);
       } else {
         navigate('/blog');
       }
@@ -168,7 +167,17 @@ export function BlogAddPage() {
         
         // Check for validation errors (400 status with field-specific errors)
         if (errorObj.status === 400 && errorObj.data && typeof errorObj.data === 'object') {
-          setErrors(errorObj.data);
+          // Handle validation errors from the backend
+          const validationErrors: Record<string, string[]> = {};
+          Object.keys(errorObj.data).forEach(key => {
+            const value = errorObj.data[key];
+            if (Array.isArray(value)) {
+              validationErrors[key] = value;
+            } else if (typeof value === 'string') {
+              validationErrors[key] = [value];
+            }
+          });
+          setErrors(validationErrors);
         }
         // Check for duplicate title error or other API response errors
         else if (errorObj.response?.data) {

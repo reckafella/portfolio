@@ -1,0 +1,59 @@
+/* Project Cards Custom Styling */
+
+/* Badge styling */
+.card .badge {
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.card:hover .badge {
+    transform: translateY(-3px);
+}
+
+/* Image placeholder styling */
+.card .bg-light.card-img-top {
+    min-height: 160px;
+    transition: all 0.3s ease;
+}
+
+.card:hover .bg-light.card-img-top {
+    background-color: var(--card-background-color) !important;
+}
+
+.card:hover .bi-image {
+    color: var(--default-color) !important;
+}
+
+/* Card hover effects */
+.card.transition-effect {
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.card.transition-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Image hover effect */
+.card .card-img-top {
+    transition: all 0.5s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Fix for image container overflow */
+.card .position-relative {
+    overflow: hidden;
+}
+.card .btn-border {
+    border: 1px solid var(--default-color);
+    transition: all 0.3s ease;
+}

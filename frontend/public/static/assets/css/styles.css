@@ -1,0 +1,431 @@
+button[type=submit] {
+    border: 0;
+    padding: 10px 12px;
+    /* color: #01172b; */
+    transition: 0.4s;
+    border-radius: 10px;
+    /* border: 2px solid #01172b;
+    background: #fff; */
+}
+  
+button[type=submit]:hover {
+    /* background: #01172b;
+    color: #fff; */
+    font-weight: bold;
+}
+
+/*--------------------------------------------------------------
+# Top Bar
+--------------------------------------------------------------*/
+#topbar {
+  height: 60px;
+  padding: 0;
+  font-size: 14px;
+  transition: all 0.5s;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.8);
+  z-index: 996;
+}
+
+#topbar.topbar-scrolled {
+  top: -60px;
+}
+
+#topbar .contact-info a {
+  line-height: 0;
+  color: rgba(255, 255, 255, 0.8);
+  transition: 0.3s;
+}
+
+#topbar .contact-info a:hover {
+  text-decoration: underline;
+}
+
+#topbar .contact-info i {
+  color: #f6b024;
+  line-height: 0;
+  margin-right: 5px;
+}
+
+#topbar .contact-info .phone-icon {
+  margin-left: 15px;
+}
+
+#topbar .cta {
+  background: transparent;
+}
+
+#topbar .cta a {
+  color: #fff;
+  background: #f6b024;
+  padding: 6px 24px 8px 24px;
+  display: inline-block;
+  transition: 0.3s;
+  border-radius: 50px;
+}
+
+#topbar .cta a:hover {
+  background: #f1a40a;
+}
+
+.satisfy-regular {
+  font-family: "Satisfy", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.playwrite-be-wal {
+  font-family: "Playwrite BE WAL", cursive;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.kalam-light {
+  font-family: "Kalam", cursive;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.kalam-regular {
+  font-family: "Kalam", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.kalam-bold {
+  font-family: "Kalam", cursive;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.bg-brown {
+  background-color: #cccccb;
+}
+
+.bg-opacity-90 {
+  --bs-bg-opacity: 0.9;
+}
+
+.btn[data-bs-busy="true"] {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn[data-bs-busy="true"] .spinner-border {
+  position: relative;
+  margin-right: 8px;
+}
+
+/* Optional: Fade transition for state changes */
+.btn {
+  transition: all 0.5s ease;
+}
+
+/* Optional: Disable text selection during loading */
+.btn[data-bs-busy="true"] {
+  user-select: none;
+}
+
+
+.source-serif-4-regular {
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.source-serif-4-bold {
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.stix-two-text-regular {
+  font-family: "STIX Two Text", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.stix-two-text-bold {
+  font-family: "STIX Two Text", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Captcha input with refresh button styling */
+.captcha-input-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.captcha-input-with-refresh {
+  padding-right: 40px;
+}
+
+.captcha-refresh-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--default-color);
+  /* z-index: 10; */
+  transition: color 0.3s;
+}
+
+.captcha-refresh-btn:hover {
+  color: var(--accent-color);
+}
+
+@keyframes rotate {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.captcha-refresh-btn.rotating {
+  animation: rotate 1s ease-in-out infinite;
+}
+
+@keyframes flash-success {
+  0% { border-color: #28a745; box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); }
+  100% { border-color: #ced4da; box-shadow: none; }
+}
+
+.captcha.captcha-refreshed {
+  border: 2px solid #28a745;
+  animation: flash-success 1s ease-in-out;
+}
+
+.image-crop-container {
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+
+}
+.cropper-container {
+  border: 1px solid var(--default-divider);
+  display: flex;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.cropper-container, .crop-wrap-box {
+  display: none;
+}
+
+.crop-preview {
+  width: 200px;
+  height: 200px;
+  border: 1px solid var(--default-color);
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.file-upload {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.file-drop-zone {
+  border: 2px dashed var(--default-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
+}
+.file-info {
+  background: var(--background-color);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Accordion */
+.accordion-item {
+  border: 1px solid var(--default-color);
+  border-radius: 8px;
+  padding: 1px 2px;
+  background-color: transparent;
+}
+
+.accordion-button:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--accent-color);
+  background-color: transparent;
+}
+
+.accordion-flush .accordion-button {
+  padding: 10px 0;
+  background: none;
+  border: 0;
+}
+
+.accordion-flush .accordion-button:not(.collapsed) {
+  box-shadow: none;
+  color: var(--accent-color);
+}
+
+.accordion-flush .accordion-body {
+  padding: 0 0 15px 0;
+  color: var(--accent-color);
+  font-size: 15px;
+}
+
+
+
+/****************************************
+* Rich text editor styles
+****************************************/
+/* Enhanced styles for rich text content editing */
+.rich-text-content {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 12px;
+  background-color: var(--background-color);
+}
+
+.rich-text-content:focus {
+  background-color: var(--background-color);
+  border-color: var(--accent-color);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem var(--accent-color);
+}
+
+.content-preview {
+  background: inherit;
+  border: 1px solid var(--default-color);
+  border-radius: 0.375rem;
+  padding: 20px;
+  margin-top: 10px;
+  min-height: 200px;
+}
+
+.preview-toggle {
+  color: var(--default-color);
+  background-color: var(--accent-color);
+  border: 1px solid var(--default-color);
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.preview-toggle:hover {
+  color: var(--accent-color);
+  background-color: var(--default-color);
+  border: 1px solid var(--accent-color);
+  transition: 0.3s ease;
+}
+
+.preview-toggle.active {
+  background: var(--special-background-color);
+  color: var(--default-color);
+}
+
+/*--------------------------------------------------------------
+# Session Warning Modal
+--------------------------------------------------------------*/
+.session-warning-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.session-warning-content {
+  background: var(--background-color);
+  border: 1px solid var(--default-color);
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: var(--default-color);
+}
+
+.session-warning-content h4 {
+  color: var(--heading-color);
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+}
+
+.session-warning-content p {
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.session-warning-content #session-countdown {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.session-warning-content .btn {
+  margin: 5px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.session-warning-content .btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.session-warning-content .btn-primary:hover {
+  background-color: var(--heading-color);
+  transform: translateY(-1px);
+}
+
+.session-warning-content .btn-secondary {
+  background-color: var(--default-color);
+  color: var(--background-color);
+}
+
+.session-warning-content .btn-secondary:hover {
+  background-color: var(--heading-color);
+  transform: translateY(-1px);
+}

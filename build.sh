@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# Update and upgrade system packages
+sudo apt update
+sudo apt upgrade -y
+
 # Update pip && install dependencies
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
@@ -18,23 +22,16 @@ cd frontend/
 npm install
 npm audit fix --force
 
-# Copy Django static assets to React build directory
-echo "Copying Django static assets to React build..."
-cp -r app/static/* frontend/build/static/ 2>/dev/null || echo "No Django static assets to copy"
-
-
 # Build the frontend with production settings
 NODE_ENV=production npm run build
 
 cd ..
-
 
 # Ensure proper permissions for the build directory
 chmod -R 755 frontend/build/
 
 # Collect static files
 python3 manage.py collectstatic --no-input --clear
-
 
 # Apply database migrations
 python3 manage.py makemigrations

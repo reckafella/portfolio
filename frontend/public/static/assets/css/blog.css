@@ -1,0 +1,923 @@
+/*--------------------------------------------------------------
+# Blog
+--------------------------------------------------------------*/
+.blog {
+  padding: 5px;
+  background-color: var(--blog-background-color);
+  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
+}
+
+.blog .entry {
+  padding: 10px;
+  margin-bottom: 30px;
+  box-shadow: 1px 1px color-mix(in srgb, var(--default-color), transparent 10%);
+  border-radius: 5px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
+  background-color: var(--special-background-color);
+}
+
+
+.blog .entry .entry-img,
+.blog .entry .entry-content img {
+  max-height: 450px;
+  overflow: hidden;
+}
+
+.blog .entry .entry-title {
+  font-size: 20px;
+  /*line-height: 1;*/
+  font-weight: 700;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.blog .entry .entry-title a {
+  color: var(--default-color);
+  transition: 0.3s;
+}
+
+.blog .entry .entry-title a:hover {
+  color: var(--accent-color);
+}
+
+.blog .entry .entry-meta {
+  margin-bottom: 15px;
+  color: var(--accent-color);
+}
+
+.blog .entry .entry-meta ul,
+.blog .entry .entry-footer ul {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: calc(100% - 20px);
+  list-style: none;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.blog .entry .entry-meta ul li:not(:first-child) {
+  padding-left: 15px;
+}
+
+.blog .entry .entry-meta i {
+  font-size: 14px;
+  margin-right: 8px;
+  line-height: 0;
+}
+
+.blog .entry .entry-meta a,
+.blog .entry .entry-meta #view-count {
+  color: var(--default-color);
+  font-size: 14px;
+  display: inline-block;
+  line-height: 1;
+}
+
+.blog .entry .entry-content {
+  margin-top: 20px;
+}
+
+.blog .entry .entry-content p {
+  line-height: 2.0;
+}
+
+.blog .entry .entry-content h3 {
+  font-size: 22px;
+  margin-top: 30px;
+  font-weight: 500;
+}
+
+.blog .entry .entry-content blockquote {
+  overflow: hidden;
+  /* background-color: color-mix(in srgb, var(--background-color), transparent 48%); */
+  padding: 20px;
+  position: relative;
+  text-align: start;
+  margin: 10px 0;
+}
+
+.blog .entry .entry-content blockquote p {
+  color: var(--default-color);
+  line-height: 1.6;
+  margin-bottom: 0;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+}
+
+.blog .entry .entry-content blockquote::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--accent-color);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.blog .entry .entry-footer {
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
+}
+
+.blog .entry .entry-footer i {
+  color: var(--default-color);
+  font-size: 14px;
+  margin-right: 5px;
+  display: inline;
+}
+
+.blog .entry .entry-footer a {
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.blog .entry .entry-footer .read-article{
+  font-size: 14px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+
+.blog .entry .entry-footer .read-article i {
+  padding-left: 5px;
+  color: inherit;
+  background: transparent;
+}
+
+.blog .entry .entry-footer .cats {
+  list-style: none;
+  display: inline;
+  padding: 0 20px 0 0;
+  font-size: 14px;
+}
+
+.blog .entry .entry-footer .cats li {
+  display: inline-block;
+}
+
+.blog .entry .entry-footer .tags {
+  list-style: none;
+  display: inline;
+  padding: 0;
+  font-size: 14px;
+}
+
+.blog .entry .entry-footer .tags li {
+  display: inline-block;
+}
+
+.blog .entry .entry-footer .tags li:not(:last-child)::after {
+  content: ",";
+  padding-right: 5px;
+  padding-left: 1px;
+  color: var(--default-color);
+}
+
+.blog .entry .entry-footer .tags li:last-child::after {
+  content: "";
+  padding: 0;
+}
+
+.blog .entry .entry-footer .tags li:hover a{
+  color: var(--background-color);
+  background-color: var(--contrast-color);
+  /* padding: 2px 3px; */
+}
+
+.blog .entry .entry-footer .tags li:hover a  {
+  color: inherit;
+  background: none;
+} 
+
+.blog .entry-single {
+  margin-bottom: 30px;
+}
+
+/* .blog .blog-author {
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.blog .blog-author img {
+  width: 120px;
+  margin-right: 20px;
+}
+
+.blog .blog-author h4 {
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 0px;
+  padding: 0;
+  color: var(--default-color);
+}
+
+.blog .blog-author .social-links {
+  margin: 0 10px 10px 0;
+}
+
+.blog .blog-author .social-links a {
+  color: rgba(8, 128, 232, 0.5);
+  margin-right: 5px;
+}
+
+.blog .blog-author p {
+  font-style: italic;
+  color: #b7b7b7;
+} */
+
+.blog .blog-comments {
+  margin-bottom: 30px;
+}
+
+.blog .blog-comments .comments-count {
+  font-weight: bold;
+}
+
+.blog .blog-comments .comment {
+  margin-top: 30px;
+  position: relative;
+}
+
+.blog .blog-comments .comment .comment-img {
+  margin-right: 14px;
+}
+
+.blog .blog-comments .comment .comment-img img {
+  width: 60px;
+}
+
+.blog .blog-comments .comment h5 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.blog .blog-comments .comment h5 a {
+  font-weight: bold;
+  color: #444444;
+  transition: 0.3s;
+}
+
+.blog .blog-comments .comment h5 a:hover {
+  color: #f6b024;
+}
+
+.blog .blog-comments .comment h5 .reply {
+  padding-left: 10px;
+  color: var(--default-color);
+}
+
+.blog .blog-comments .comment h5 .reply i {
+  font-size: 20px;
+}
+
+.blog .blog-comments .comment time {
+  display: block;
+  font-size: 14px;
+  color: #2b99f8;
+  margin-bottom: 5px;
+}
+
+.blog .blog-comments .comment.comment-reply {
+  padding-left: 40px;
+}
+
+.blog .blog-comments .reply-form {
+  margin-top: 30px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.blog .blog-comments .reply-form h4 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.blog .blog-comments .reply-form p {
+  font-size: 14px;
+}
+
+.blog .blog-comments .reply-form input {
+  border-radius: 4px;
+  padding: 10px 10px;
+  font-size: 14px;
+}
+
+.blog .blog-comments .reply-form input:focus {
+  box-shadow: none;
+  border-color: #fad386;
+}
+
+.blog .blog-comments .reply-form textarea {
+  border-radius: 4px;
+  padding: 10px 10px;
+  font-size: 14px;
+}
+
+.blog .blog-comments .reply-form textarea:focus {
+  box-shadow: none;
+  border-color: #fad386;
+}
+
+.blog .blog-comments .reply-form .form-group {
+  margin-bottom: 25px;
+}
+
+.blog .blog-comments .reply-form .btn-primary {
+  border-radius: 4px;
+  padding: 10px 20px;
+  border: 0;
+  background-color: var(--default-color);
+}
+
+.blog .blog-comments .reply-form .btn-primary:hover {
+  background-color: #138df7;
+}
+
+.blog .blog-pagination {
+  color: var(--default-color);
+}
+
+.blog .blog-pagination ul {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.blog .blog-pagination li {
+  margin: 0 5px;
+  transition: 0.3s;
+}
+
+.blog .blog-pagination li a {
+  color: var(--default-color);
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog .blog-pagination li.active,
+.blog .blog-pagination li:hover {
+  background: #f6b024;
+}
+
+.blog .blog-pagination li.active a,
+.blog .blog-pagination li:hover a {
+  color: #fff;
+}
+
+/*--------------------------------------------------------------
+# Widgets
+--------------------------------------------------------------*/
+.widgets-container {
+  margin: 40px 0 30px 0;
+}
+
+.widget-title {
+  color: var(--heading-color);
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0 0 0 10px;
+  margin: 0 0 20px 0;
+  border-left: 4px solid var(--accent-color);
+}
+
+.widget-item {
+  margin-bottom: 30px;
+  background-color: color-mix(in srgb, var(--background-color), transparent 8%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 8%);
+  color: var(--default-color);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--default-color), transparent 8%);
+  padding: 30px;
+  border-radius: 5px;
+}
+
+.widget-item:last-child {
+  margin-bottom: 0;
+}
+
+.blog-author-widget img {
+  max-width: 100px;
+  margin-right: 20px;
+}
+
+.blog-author-widget h4 {
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 0px;
+  padding: 0;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+}
+
+.blog-author-widget .social-links {
+  margin: 5px 0;
+}
+
+.blog-author-widget .social-links a {
+  color: color-mix(in srgb, var(--default-color), transparent 10%);
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.blog-author-widget .social-links a:hover {
+  color: var(--accent-color);
+}
+
+.blog-author-widget p {
+  font-style: italic;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  margin: 10px 0 0 0;
+}
+
+.search-widget form {
+  background: var(--background-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 0%);
+  padding: 3px 10px;
+  position: relative;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.search-widget form input[type=text],
+.search-widget form input[type=search] {
+  border: none;
+  padding: 4px;
+  width: calc(100% - 40px);
+  background-color: transparent;
+  color: var(--default-color);
+}
+
+.search-widget form input[type=text]:focus,
+.search-widget form input[type=search]:focus {
+  box-shadow: none;
+  border: none;
+  outline: none;
+}
+
+.search-widget form button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border: 0;
+  background: none;
+  font-size: 16px;
+  padding: 0 20px;
+  /* margin: -1px; */
+  background: none;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  transition: 0.3s;
+  line-height: 0;
+}
+
+
+.search-widget form button i {
+  color: var(--accent-color);
+  line-height: 0;
+  background: none;
+}
+
+
+.search-widget form button:hover {
+  transform: rotate(90deg);
+  background: none;
+}
+.search-widget form:is(:focus-within) {
+  border-color: var(--accent-color);
+}
+
+.search-widget form select {
+  border: 0;
+  padding: 4px;
+  border-radius: 4px;
+  width: calc(100% - 40px);
+}
+
+.recent-posts-widget .post-item {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.recent-posts-widget .post-item:last-child {
+  margin-bottom: 0;
+}
+
+.recent-posts-widget .post-item img {
+  width: 80px;
+  margin-right: 15px;
+}
+
+.recent-posts-widget .post-item h4 {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.recent-posts-widget .post-item h4 a {
+  color: var(--default-color);
+  transition: 0.3s;
+}
+
+.recent-posts-widget .post-item h4 a:hover {
+  color: var(--accent-color);
+}
+
+.recent-posts-widget .post-item time {
+  display: block;
+  font-style: italic;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--default-color), transparent 50%);
+}
+
+.tags-widget ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tags-widget ul li {
+  display: inline-block;
+}
+
+.tags-widget ul a {
+  background-color: color-mix(in srgb, var(--default-color), transparent 94%);
+  color: color-mix(in srgb, var(--default-color), transparent 5%);
+  border-radius: 50px;
+  font-size: 14px;
+  padding: 5px 10px;
+  margin: 0 6px 8px 0;
+  display: inline-block;
+  transition: 0.3s;
+}
+
+.tags-widget ul a:hover {
+  color: var(--background-color);
+  background-color: var(--default-color);
+}
+
+.tags-widget ul a span {
+  padding-left: 5px;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  font-size: 14px;
+}
+
+.tags-widget ul a:hover span {
+  color: var(--background-color);
+}
+
+.blog-author-widget-2 img {
+  max-width: 160px;
+}
+
+.blog-author-widget-2 h4 {
+  font-weight: 600;
+  font-size: 24px;
+  margin: 15px 0 0 0;
+  padding: 0;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+}
+
+.blog-author-widget-2 .social-links {
+  margin: 5px 0;
+}
+
+.blog-author-widget-2 .social-links a {
+  color: color-mix(in srgb, var(--default-color), transparent 60%);
+  margin: 0 3px;
+  font-size: 18px;
+}
+
+.blog-author-widget-2 .social-links a:hover {
+  color: var(--accent-color);
+}
+
+.blog-author-widget-2 p {
+  font-style: italic;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  margin: 10px 0 0 0;
+}
+
+.content-editor-section {
+    transition: all 0.3s ease;
+}
+
+.btn-group .btn-check:checked + .btn {
+    background-color: var(--background-color);
+    border-color: var(--default-color);
+    color: var(--accent-color);
+}
+
+.content-preview .card {
+    border: 1px solid var(--default-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.ql-editor {
+    min-height: 200px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.ql-toolbar {
+    border-top: 1px solid var(--default-color);
+    border-left: 1px solid var(--default-color);
+    border-right: 1px solid var(--default-color);
+}
+
+.ql-container {
+    border-bottom: 1px solid var(--default-color);
+    border-left: 1px solid var(--default-color);
+    border-right: 1px solid var(--default-color);
+}
+
+/* Custom alert styling for advanced editor info */
+.alert-info {
+    background-color: color-mix(in srgb, var(--background-color), transparent 94%);
+    border-color: color-mix(in srgb, var(--default-color), transparent 70%);
+    color: color-mix(in srgb, var(--default-color), transparent 30%);
+}
+
+/* Loading animation for future StreamField integration */
+.streamfield-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--default-color);
+    border-top: 3px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* Block CSS */
+.blog-image-block {
+    /* Ensure the block never exceeds container width */
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.blog-image-left {
+    float: left;
+    margin: 0 1.5rem 1rem 0;
+    max-width: 40%;
+}
+
+.blog-image-right {
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+    max-width: 40%;
+}
+
+.blog-image-center {
+    text-align: center;
+    margin: 2rem 0;
+    max-width: 100%;
+}
+
+.blog-image-full {
+    margin: 2rem 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Responsive image sizing that respects container boundaries */
+.blog-image-small img {
+    max-width: min(300px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-medium img {
+    max-width: min(500px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-large img {
+    max-width: min(700px, 100%);
+    width: auto;
+    height: auto;
+}
+
+.blog-image-full img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Fallback for browsers that don't support min() function */
+@supports not (max-width: min(300px, 100%)) {
+    .blog-image-small img {
+        max-width: 300px;
+        width: 100%;
+    }
+    
+    .blog-image-medium img {
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    .blog-image-large img {
+        max-width: 700px;
+        width: 100%;
+    }
+}
+
+/* Additional safety for all images in blog content */
+.blog-image-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-image-left,
+    .blog-image-right {
+        float: none;
+        margin: 1rem 0;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .blog .entry .entry-content p {
+      line-height: 1.6;
+    }
+    
+    /* On mobile, all images should be responsive */
+    .blog-image-small img,
+    .blog-image-medium img,
+    .blog-image-large img {
+        max-width: 100%;
+        width: auto;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+    .blog-image-left,
+    .blog-image-right {
+        margin: 1rem 0;
+    }
+    .blog .entry .entry-content p {
+      line-height: 1.4;
+    }
+    
+    /* Reduce horizontal margins on small screens */
+    .blog-image-left {
+        margin-right: 0.5rem;
+    }
+    
+    .blog-image-right {
+        margin-left: 0.5rem;
+    }
+}
+
+
+/* Enhanced styling for StreamField blog content */
+.blog-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    /* Ensure content doesn't overflow container */
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Global image container rules */
+.blog-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+/* Handle any media elements with hardcoded dimensions */
+.blog-content img[width],
+.blog-content img[height] {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+.blog-content figure {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content .rich-text-block {
+    margin: 1.5rem 0;
+    max-width: 100%;
+}
+
+.blog-content .rich-text-block p {
+    margin-bottom: 1.2rem;
+    max-width: 100%;
+}
+
+/* Handle images in rich text content */
+.blog-content .rich-text-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+    margin: 1rem auto;
+}
+
+.blog-content .rich-text-block h2,
+.blog-content .rich-text-block h3,
+.blog-content .rich-text-block h4,
+.blog-content .rich-text-block h5 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.blog-content .rich-text-block ul,
+.blog-content .rich-text-block ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.blog-content .rich-text-block li {
+    margin-bottom: 0.5rem;
+}
+
+/* Image block specific styling is in the image_block.html template */
+
+.blog-content .heading-block {
+    clear: both;
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.blog-content .quote-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .code-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .callout-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .embed-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+/* Ensure proper spacing after floating images */
+.blog-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Container overflow protection */
+.blog-content {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* Prevent horizontal scrolling on the main container */
+.container, .card {
+    overflow-x: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-content {
+        font-size: 1rem;
+        padding: 0 0.5rem; /* Add some padding on mobile */
+    }
+    
+    .blog-content .rich-text-block h2,
+    .blog-content .rich-text-block h3,
+    .blog-content .rich-text-block h4,
+    .blog-content .rich-text-block h5 {
+        margin-top: 2rem;
+    }
+    
+    /* Ensure all floating elements are contained on mobile */
+    .blog-content .rich-text-block img {
+        float: none !important;
+        margin: 1rem auto;
+        display: block;
+        text-align: center;
+    }
+}

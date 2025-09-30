@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 from blog.models import BlogPostPage, BlogPostComment  # , BlogPostImage
-from blog.views.api.serializers.serializers import (
+from .serializers.serializers import (
     BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer,
     BlogPostCommentSerializer, BlogCommentCreateSerializer
 )

@@ -3,21 +3,17 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 
-from .models import BlogPostPage, BlogPostComment, BlogPostImage
-from .forms import BlogPostForm
-from .serializers import (
+from blog.models import BlogPostPage, BlogPostComment  # , BlogPostImage
+from blog.views.api.serializers.serializers import (
     BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer,
-    BlogPostCommentSerializer, BlogCommentCreateSerializer,
-    BlogPostImageSerializer
+    BlogPostCommentSerializer, BlogCommentCreateSerializer
 )
 from rest_framework.permissions import IsAuthenticated
-from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
+from app.permissions import IsAuthenticatedStaff, IsStaffOrReadOnly
 
 
 class BlogPostPagination(PageNumberPagination):
@@ -37,7 +33,8 @@ class BlogPostListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        queryset = BlogPostPage.objects.live().public().order_by('-first_published_at')
+        queryset = BlogPostPage.objects.live().public().order_by(
+            '-first_published_at')
 
         # Filter by tag
         tag = self.request.query_params.get('tag', None)
@@ -66,15 +63,20 @@ class BlogPostDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return BlogPostPage.objects.live().public().select_related('author').prefetch_related('images', 'comments', 'tags')
+        return BlogPostPage.objects.live().public().select_related('author')\
+            .prefetch_related('images', 'comments', 'tags')
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
 
         # Increment view count (with basic security)
-        user_agent = request.META.get('HTTP_USER_AGENT', '')
-        if not any(bot in user_agent.lower() for bot in ['bot', 'crawler', 'spider']):
-            instance.increment_view_count(request)
+        try:
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            if not any(bot in user_agent.lower() for bot in ['bot', 'crawler', 'spider']):
+                instance.increment_view_count(request)
+        except Exception as e:
+            # Log error but don't fail the request
+            print(f'Error incrementing view count: {str(e)}')
 
         # Get the base post data
         serializer = self.get_serializer(instance)
@@ -165,11 +167,25 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
         }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        # Handle file uploads
-        serializer = self.get_serializer(data=request.data)
+        # Ensure we're getting a content type that includes files
+        content_type = request.content_type or ''
+        if not content_type.startswith('multipart/form-data'):
+            return Response({
+                'error': 'Content-Type must be multipart/form-data'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Convert string 'true'/'false' to boolean for published field
+        data = request.data.copy()
+        if 'published' in data:
+            data['published'] = data['published'].lower() in ('true', '1', 'yes')
+
+        serializer = self.get_serializer(data=data)
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'error': 'Validation failed',
+                'details': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             post = serializer.save()
@@ -178,8 +194,13 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
                 'post': BlogPostPageSerializer(post).data
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
+            # Log the full error for debugging
+            import traceback
+            print('Blog post creation error:', str(e))
+            print(traceback.format_exc())
             return Response({
-                'error': str(e)
+                'error': 'Failed to create blog post',
+                'details': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
@@ -190,13 +211,13 @@ class BlogPostUpdateAPIView(generics.UpdateAPIView):
     """API view for updating blog posts (staff only)"""
     serializer_class = BlogPostCreateSerializer
     lookup_field = 'slug'
-    permission_classes = [IsAuthenticatedStaff]
+    permission_classes = [IsAuthenticatedStaff, IsStaffOrReadOnly]
     parser_classes = (MultiPartParser, FormParser)
 
     def get_queryset(self):
         return BlogPostPage.objects.all()
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs) -> Response:
         """Handle blog post update with proper response"""
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -224,7 +245,11 @@ class BlogPostDeleteAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return BlogPostPage.objects.all()
+        queryset = BlogPostPage.objects.all()
+        user = self.request.user
+        if not user.is_staff:
+            queryset = queryset.filter(author=user)
+        return queryset
 
     def perform_destroy(self, instance):
         serializer = self.get_serializer(instance)
@@ -238,8 +263,11 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         blog_slug = self.kwargs.get('blog_slug')
-        blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
-        return BlogPostComment.objects.filter(post=blog_post).select_related('author').order_by('-created_at')
+        blog_post = get_object_or_404(
+            BlogPostPage.objects.live().public(), slug=blog_slug)
+
+        return BlogPostComment.objects.filter(
+            post=blog_post).select_related('author').order_by('-created_at')
 
     def get_serializer_class(self):
         if self.request.method == 'GET':

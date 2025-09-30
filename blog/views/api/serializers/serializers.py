@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from wagtail.api import APIField
-from wagtail.images.api.fields import ImageRenditionField
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from titlecase import titlecase
@@ -21,7 +19,8 @@ class BlogPostImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPostImage
-        fields = ['id', 'cloudinary_image_id', 'cloudinary_image_url', 'optimized_image_url', 'image_url', 'optimized_url']
+        fields = ['id', 'cloudinary_image_id', 'cloudinary_image_url',
+                  'optimized_image_url', 'image_url', 'optimized_url']
 
     def get_image_url(self, obj):
         return obj.cloudinary_image_url or None
@@ -60,6 +59,7 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
     first_published_at = serializers.DateTimeField()
     content = serializers.CharField()
     intro = serializers.SerializerMethodField()
+    published = serializers.BooleanField()
 
     class Meta:
         model = BlogPostPage
@@ -86,12 +86,9 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
     def get_reading_time(self, obj):
         # Calculate reading time (approximately 200 words per minute)
         content = obj.content or ''
-        # if hasattr(obj, 'stream_content') and obj.stream_content:
-        #    content += str(obj.stream_content)
-
         word_count = len(content.split()) if content else 0
         reading_time = max(1, round(word_count / 200))
-        return f"{reading_time} min read"
+        return f"~{reading_time} min read"
 
     def get_excerpt(self, obj):
         content = obj.content or ''
@@ -108,8 +105,8 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
         return ''
 
     def get_featured_image_url(self, obj):
-        if obj.cover_image_url:
-            return obj.cover_image_url
+        if obj.images.first():
+            return obj.images.first().optimized_image_url
         return None
 
     def get_tags_list(self, obj):
@@ -178,7 +175,7 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
             published=validated_data.get('published', False),
             author=self.context['request'].user,
             seo_title=titlecase(validated_data['title']),
-            seo_description=validated_data.get('content', '')[:160],
+            # seo_description=validated_data.get('content', '')[:160],
         )
 
         # Add to parent page
@@ -193,17 +190,43 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
         """Handle cover image upload"""
         if cover_image:
             try:
+                # Validate file size (15MB limit)
+                if cover_image.size > 15 * 1024 * 1024:
+                    raise serializers.ValidationError('Cover image must be less than 15MB')
+
+                # Validate file type
+                content_type = cover_image.content_type.lower()
+                if not content_type.startswith('image/'):
+                    raise serializers.ValidationError('File must be an image')
+
+                allowed_types = {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}
+                if content_type not in allowed_types:
+                    raise serializers.ValidationError(
+                        'Image must be JPEG, PNG, WebP or GIF'
+                    )
+
                 uploader = CloudinaryImageHandler()
                 response = uploader.upload_image(
                     cover_image,
                     folder=f"portfolio/blog/{post.slug}"
                 )
+
+                if not response or 'cloudinary_image_url' not in response:
+                    raise serializers.ValidationError(
+                        'Failed to get image URL from Cloudinary'
+                    )
+
                 post.cloudinary_image_id = response.get('cloudinary_image_id')
                 post.cloudinary_image_url = response.get('cloudinary_image_url')
                 post.optimized_image_url = response.get('optimized_image_url')
                 post.save()
+
+            except serializers.ValidationError:
+                raise
             except Exception as e:
-                raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
+                raise serializers.ValidationError({
+                    'cover_image': f'Failed to upload cover image: {str(e)}'
+                })
 
     def _handle_tags(self, post, tags):
         """Handle tags assignment"""

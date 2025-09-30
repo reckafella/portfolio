@@ -3,7 +3,7 @@
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.typeCheckingMode": "standard",
     "files.associations": {
         "*.py": "python"
     },
@@ -14,4 +14,7 @@
     "python.analysis.indexing": true,
     /* "python-envs.defaultEnvManager": "ms-python.python:system", */
     "python.languageServer": "Pylance",
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.diagnosticMode": "workspace"
 }

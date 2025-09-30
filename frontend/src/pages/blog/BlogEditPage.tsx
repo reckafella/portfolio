@@ -102,7 +102,7 @@ export function BlogEditPage() {
     return <LoadingSpinner />;
   }
 
-  if (postError || !post) {
+  if (postError || post) {
     return (
       <div className="container my-5">
         <AlertMessage 
@@ -257,7 +257,7 @@ export function BlogEditPage() {
                     <div>
                       <h2 className="mb-0">Edit Blog Post</h2>
                       <small className="text-muted">
-                        Editing: {post.title}
+                        Editing: {post?.title || 'Untitled'}
                       </small>
                     </div>
                     <div className="d-flex gap-2">

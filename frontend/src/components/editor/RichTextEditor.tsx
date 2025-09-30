@@ -22,7 +22,7 @@ interface RichTextEditorProps {
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   content,
   onChange,
-  placeholder = 'Start writing your content...',
+  placeholder = 'Start writing your Blog Post...',
   className = '',
   error = false
 }) => {

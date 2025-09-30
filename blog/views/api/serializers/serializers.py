@@ -190,36 +190,25 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
         """Handle cover image upload"""
         if cover_image:
             try:
-                # Validate file size (15MB limit)
-                if cover_image.size > 15 * 1024 * 1024:
-                    raise serializers.ValidationError('Cover image must be less than 15MB')
-
-                # Validate file type
-                content_type = cover_image.content_type.lower()
-                if not content_type.startswith('image/'):
-                    raise serializers.ValidationError('File must be an image')
-
-                allowed_types = {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}
-                if content_type not in allowed_types:
-                    raise serializers.ValidationError(
-                        'Image must be JPEG, PNG, WebP or GIF'
-                    )
-
+                from app.views.helpers.cloudinary import handle_image_upload
                 uploader = CloudinaryImageHandler()
-                response = uploader.upload_image(
-                    cover_image,
+
+                # Upload image using helper function
+                response = handle_image_upload(
+                    instance=post,
+                    uploader=uploader,
+                    image=cover_image,
                     folder=f"portfolio/blog/{post.slug}"
                 )
 
-                if not response or 'cloudinary_image_url' not in response:
-                    raise serializers.ValidationError(
-                        'Failed to get image URL from Cloudinary'
+                if response:
+                    # Create a BlogPostImage instance
+                    BlogPostImage.objects.create(
+                        post=post,
+                        cloudinary_image_id=response['cloudinary_image_id'],
+                        cloudinary_image_url=response['cloudinary_image_url'],
+                        optimized_image_url=response['optimized_image_url']
                     )
-
-                post.cloudinary_image_id = response.get('cloudinary_image_id')
-                post.cloudinary_image_url = response.get('cloudinary_image_url')
-                post.optimized_image_url = response.get('optimized_image_url')
-                post.save()
 
             except serializers.ValidationError:
                 raise
@@ -268,17 +257,29 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
 
     def _update_cover_image(self, instance, cover_image):
         """Handle cover image upload"""
-        from app.views.helpers.cloudinary import CloudinaryImageHandler
+        from app.views.helpers.cloudinary import handle_image_upload, CloudinaryImageHandler
 
-        uploader = CloudinaryImageHandler()
         try:
-            response = uploader.upload_image(
-                cover_image,
+            # Remove any existing images first
+            instance.images.all().delete()
+
+            # Upload new image using helper function
+            uploader = CloudinaryImageHandler()
+            response = handle_image_upload(
+                instance=instance,
+                uploader=uploader,
+                image=cover_image,
                 folder=f"portfolio/blog/{instance.slug}"
             )
-            instance.cloudinary_image_id = response.get('cloudinary_image_id')
-            instance.cloudinary_image_url = response.get('cloudinary_image_url')
-            instance.optimized_image_url = response.get('optimized_image_url')
+
+            if response:
+                # Create a new BlogPostImage instance
+                BlogPostImage.objects.create(
+                    post=instance,
+                    cloudinary_image_id=response['cloudinary_image_id'],
+                    cloudinary_image_url=response['cloudinary_image_url'],
+                    optimized_image_url=response['optimized_image_url']
+                )
         except Exception as e:
             raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
 

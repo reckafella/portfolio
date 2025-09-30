@@ -102,7 +102,7 @@ export function BlogEditPage() {
     return <LoadingSpinner />;
   }
 
-  if (postError || post) {
+  if (postError || !post) {
     return (
       <div className="container my-5">
         <AlertMessage 

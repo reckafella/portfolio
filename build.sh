@@ -2,8 +2,8 @@
 set -o errexit
 
 # Update and upgrade system packages
-sudo apt update
-sudo apt upgrade -y
+# sudo apt update
+# sudo apt upgrade -y
 
 # Update pip && install dependencies
 python3 -m pip install --upgrade pip

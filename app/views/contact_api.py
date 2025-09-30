@@ -6,9 +6,10 @@ from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 from django.http import JsonResponse
 
-from ..serializers import MessageSerializer, ContactFormSerializer
-from ..forms.contact import ContactForm
-# from ..models import Message
+from app.serializers.contact_serializer import (
+    ContactFormSerializer, MessageSerializer
+)
+from app.forms.contact import ContactForm
 
 
 @api_view(['GET'])

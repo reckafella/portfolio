@@ -9,542 +9,555 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { useMetaTags } from '@/hooks/useMetaTags';
 
 interface CommentFormData {
-  author_name: string;
-  author_email: string;
-  content: string;
+    name: string;
+    email: string;
+    website?: string;
+    comment: string;
 }
 
-/* interface CommentSubmitData {
-  name: string;
-  email: string;
-  comment: string;
-  website?: string;
-  post: BlogPost;
+interface BlogComment {
+    id: number;
+    author_name: string;
+    content: string;
+    created_at: string;
 }
- */
+
 export function BlogDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
-  const { canCreateProjects: canEdit } = useStaffPermissions();
-  
-  const [commentForm, setCommentForm] = useState<CommentFormData>({
-    author_name: '',
-    author_email: '',
-    content: '',
-  });
-  const [showCommentForm, setShowCommentForm] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+    const { slug } = useParams<{ slug: string }>();
+    const navigate = useNavigate();
+    const { canCreateProjects: canEdit } = useStaffPermissions();
 
-  const {
-    data: post,
-    isLoading,
-    error,
-  } = useBlogPost(slug!);
-  usePageTitle(`Blog - ${post?.title || 'Loading...'}`);
-  
-  // Set meta tags for SEO and social sharing
-  useMetaTags({
-    title: post?.title || 'Blog Post',
-    description: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
-    keywords: post?.tags_list?.join(', ') || 'blog, portfolio, software engineering',
-    ogTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
-    ogDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
-    ogType: 'article',
-    ogUrl: `${window.location.origin}/blog/article/${slug}`,
-    ogImage: post?.cover_image_url || post?.featured_image_url,
-    twitterTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
-    twitterDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
-    twitterImage: post?.cover_image_url || post?.featured_image_url,
-    canonical: `${window.location.origin}/blog/article/${slug}`
-  });
+    const [commentForm, setCommentForm] = useState<CommentFormData>({
+        name: '',
+        email: '',
+        website: '',
+        comment: ''
+    });
+    const [commentError, setCommentError] = useState<string | null>(null);
+    const [showCommentForm, setShowCommentForm] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
-  const createCommentMutation = useCreateBlogComment();
-  const deleteBlogPostMutation = useDeleteBlogPost();
+    const {
+        data: post,
+        isLoading,
+        error,
+    } = useBlogPost(slug!);
+    usePageTitle(`Blog - ${post?.title || 'Loading...'}`);
 
-  const handleCopyLink = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
-    } catch (error) {
-      console.error('Failed to copy link:', error);
-    }
-  }, []);
+    // Set meta tags for SEO and social sharing
+    useMetaTags({
+        title: post?.title || 'Blog Post',
+        description: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+        keywords: post?.tags_list?.join(', ') || 'blog, portfolio, software engineering',
+        ogTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
+        ogDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+        ogType: 'article',
+        ogUrl: `${window.location.origin}/blog/article/${slug}`,
+        ogImage: post?.cover_image_url || post?.featured_image_url,
+        twitterTitle: `${post?.title || 'Blog Post'} - Ethan Wanyoike`,
+        twitterDescription: post?.excerpt || 'Read this blog post on Ethan Wanyoike\'s portfolio',
+        twitterImage: post?.cover_image_url || post?.featured_image_url,
+        canonical: `${window.location.origin}/blog/article/${slug}`
+    });
 
-  const handleDelete = async () => {
-    if (!post) return;
-    
-    try {
-      await deleteBlogPostMutation.mutateAsync(post.slug);
-      navigate('/blog');
-    } catch {
-      // Error is handled by the mutation's error state
-    }
-  };
+    const createCommentMutation = useCreateBlogComment();
+    const deleteBlogPostMutation = useDeleteBlogPost();
 
-  if (!slug) {
-    return (
-      <AlertMessage
-        type="danger"
-        message="Invalid blog post URL. Please check the address and try again."
-      />
-    );
-  }
+    const handleCopyLink = useCallback(async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            setShowToast(true);
+            // Hide toast after 3 seconds
+            setTimeout(() => setShowToast(false), 3000);
+        } catch (error) {
+            <AlertMessage type="danger" className="mt-2"
+                message={`Failed to copy link. ${error}.`} />
+        }
+    }, []);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+    const handleDelete = async () => {
+        if (!post) return;
 
-  if (error || !post) {
-    return (
-      <div className="container my-5">
-        <AlertMessage
-          type="danger"
-          message="Blog post not found. It may have been moved or deleted."
-        />
-        <div className="text-center mt-4">
-          <Link to="/blog" className="btn btn-primary">
-            <i className="bi bi-arrow-left me-2"></i>
-            Back to Blog
-          </Link>
-        </div>
-      </div>
-    );
-  }
+        try {
+            await deleteBlogPostMutation.mutateAsync(post.slug);
+            navigate('/blog');
+        } catch {
+            // Error is handled by the mutation's error state
+        }
+    };
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!commentForm.author_name || !commentForm.author_email || !commentForm.content) {
-      return;
-    }
-
-    try {
-      await createCommentMutation.mutateAsync({
-        name: commentForm.author_name,
-        email: commentForm.author_email,
-        comment: commentForm.content,
-        post: post,  // Pass the entire post object
-      });
-
-      setCommentForm({ author_name: '', author_email: '', content: '' });
-      setShowCommentForm(false);
-    } catch {
-      // Error is handled by the mutation's error state
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB');
-  };
-
-  if (!slug) {
-    return (
-      <AlertMessage
-        type="danger"
-        message="Invalid blog post URL. Please check the address and try again."
-      />
-    );
-  }
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error || !post) {
-    return (
-      <div className="container my-5">
-        <AlertMessage
-          type="danger"
-          message="Blog post not found. It may have been moved or deleted."
-        />
-        <div className="text-center mt-4">
-          <Link to="/blog" className="btn btn-primary">
-            <i className="bi bi-arrow-left me-2"></i>
-            Back to Blog
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <section className='blog'>
-      {/* Toast Notification */}
-      <div className="position-fixed top-0 end-50 p-3" style={{ zIndex: 1050 }}>
-        <div className={`toast ${showToast ? 'show' : ''}`} role="alert" aria-live="assertive" aria-atomic="true">
-          <div className="toast-body d-flex bg-success justify-content-between">
-            <span><i className="bi bi-check-circle-fill me-2"></i>Link copied to clipboard!</span>
-            <button type="button" className="btn-close" onClick={() => setShowToast(false)}></button>
-          </div>
-        </div>
-      </div>
-
-      <div className="container my-5">
-        <div className="row justify-content-center">
-          <div className="entry entry-single col-lg-8">
-
-            {/* Post Header */}
-            <h2 className="entry-title">{post.title}</h2>
-            <div className="entry-meta">
-              <ul>
-                <li>
-                  <i className="bi bi-person"></i>
-                  <Link to={`#`}>{post.author}</Link>
-                </li>
-                <li>
-                  <i className="bi bi-calendar"></i>
-                  <Link to={`/blog/date/${formatDate(post.first_published_at)}`}>{formatDate(post.first_published_at)}</Link>
-                </li>
-                <li>
-                  <i className="bi bi-clock"></i>
-                  <Link to={`#`} className='text-decoration-none'>{post?.reading_time}</Link>
-                </li>
-                <li>
-                  <i className="bi bi-eye"></i>
-                  <Link to={`#`} className='text-decoration-none'>
-                    {post?.view_count ? post?.view_count === 1 ? `${post?.view_count} view` : `${post?.view_count} views` : 0}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Featured Image */}
-            {post.featured_image_url && (
-              <div className="mb-4">
-                <img
-                  src={post.featured_image_url}
-                  alt={post.title}
-                  className="img-fluid entry-img rounded shadow-sm"
-                  style={{ width: '100%', height: '400px', objectFit: 'cover' }}
-                />
-              </div>
-            )}
-            <div className="d-flex justify-content-start align-items-center text-muted mb-3">
-
-              {/* {post.comments_count && (
-                <span>
-                  <i className="bi bi-comments me-1"></i>
-                  {post.comments_count ? `${post.comments_count > 0 ? post.comments_count : 0} comments` : 'No comments'}
-                </span>
-              )} */}
-
-
-
-
-              {/* Edit/Delete Buttons */}
-              {canEdit && (
-                <div className="mb-2 entry-meta">
-                  <div className="btn-group gap-3 gap-lg-5" role="group">
-                    <button
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={() => navigate(`/blog/edit/${post.slug}`)}
-                    >
-                      <i className="bi bi-pencil me-1"></i>
-                      Edit Post
-                    </button>
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() => setShowDeleteModal(true)}
-                    >
-                      <i className="bi bi-trash me-1"></i>
-                      Delete Post
-                    </button>
-                  </div>
-                </div>
-              )}
-              </div>
-            {/* Share Buttons */}
-            <div className="border-top border-bottom py-4 mb-5">
-              <h6 className="mb-3">Share this post</h6>
-              <div className="d-flex gap-2">
-                <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-twitter-x me-1"></i>
-                  Twitter
-                </a>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-facebook me-1"></i>
-                  Facebook
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-linkedin me-1"></i>
-                  LinkedIn
-                </a>
-                <button
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={handleCopyLink}
-                >
-                  <i className="bi bi-link me-1"></i>
-                  Copy Link
-                </button>
-              </div>
-            </div>
-
-            {/* Post Content */}
-            <div 
-              className="mb-3 entry-content"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-              
+    if (!slug) {
+        return (
+            <AlertMessage
+                type="danger"
+                message="Invalid blog post URL. Please check the address and try again."
             />
+        );
+    }
 
-              {/* Tags */}
-            <div className="entry-footer d-flex">
-              <i className="bi bi-tags"></i>
-              {post.tags_list && post.tags_list.length > 0 && (
-                <ul className="tags mx-0">
-                  {post.tags_list.map((tag) => (
-                    <li>
-                    <Link
-                      key={tag}
-                      to={`/blog?tag=${encodeURIComponent(tag)}`}
-                      className="text-decoration-none me-0"
-                    >
-                      {tag}
-                    </Link></li>
-                  ))}
-                </ul>
-              )}
-            </div>
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
-            {/* Share Buttons */}
-            <div className="border-top border-bottom py-4 mb-5">
-              <h6 className="mb-3">Share this post</h6>
-              <div className="d-flex gap-2">
-                <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-twitter-x me-1"></i>
-                  Twitter
-                </a>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-facebook me-1"></i>
-                  Facebook
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  <i className="bi bi-linkedin me-1"></i>
-                  LinkedIn
-                </a>
-                <button
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={handleCopyLink}
-                >
-                  <i className="bi bi-link me-1"></i>
-                  Copy Link
-                </button>
-              </div>
-            </div>
-
-            {/* Comments Section */}
-            <div>
-              <div className="d-flex justify-content-around align-items-center mb-2 mb-lg-3">
-                <h4>Comments ({post.comments_count || 0})</h4>
-                {!showCommentForm && (
-                  <button
-                    className="btn btn-primary"
-                    disabled={true}/* {createCommentMutation.isPending} */
-                    onClick={() => setShowCommentForm(true)}
-                  >
-                    Add Comment 
-                    <i className="bi bi-pencil mx-1"></i>
-                  </button>
-                )}
-              </div>
-            </div>
-
-              {/* Comment Form */}
-              {showCommentForm && (
-                <div className="card mb-4">
-                  <div className="card-header">
-                    <h6 className="mb-0">Leave a Comment</h6>
-                  </div>
-                  <div className="card-body">
-                    <form onSubmit={handleCommentSubmit}>
-                      <div className="row mb-3">
-                        <div className="col-md-6">
-                          <label htmlFor="author_name" className="form-label">
-                            Name *
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="author_name"
-                            value={commentForm.author_name}
-                            onChange={(e) => setCommentForm({ ...commentForm, author_name: e.target.value })}
-                            required
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label htmlFor="author_email" className="form-label">
-                            Email *
-                          </label>
-                          <input
-                            type="email"
-                            className="form-control"
-                            id="author_email"
-                            value={commentForm.author_email}
-                            onChange={(e) => setCommentForm({ ...commentForm, author_email: e.target.value })}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="content" className="form-label">
-                          Comment *
-                        </label>
-                        <textarea
-                          className="form-control"
-                          id="content"
-                          rows={4}
-                          value={commentForm.content}
-                          onChange={(e) => setCommentForm({ ...commentForm, content: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="d-flex gap-2">
-                        <button
-                          type="submit"
-                          className="btn btn-primary"
-                          disabled={createCommentMutation.isPending}
-                        >
-                          {createCommentMutation.isPending ? (
-                            <>
-                              <span className="spinner-grow spinner-grow-sm me-1" />
-                              Posting...
-                            </>
-                          ) : (
-                            'Post Comment'
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-outline-secondary"
-                          onClick={() => setShowCommentForm(false)}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                    
-                    {createCommentMutation.isError && (
-                      <AlertMessage
-                        type="danger"
-                        message="Failed to post comment. Please try again."
-                        className="mt-3"
-                      />
-                    )}
-                  </div>
+    if (error || !post) {
+        return (
+            <div className="container my-5">
+                <AlertMessage
+                    type="danger"
+                    message="Blog post not found. It may have been moved or deleted."
+                />
+                <div className="text-center mt-4">
+                    <Link to="/blog" className="btn btn-primary">
+                        <i className="bi bi-arrow-left me-2"></i>
+                        Back to Blog
+                    </Link>
                 </div>
-              )}
+            </div>
+        );
+    }
 
-              {/* Comments List */}
-              {post.comments && post.comments.length > 0 ? (
-                <div className="space-y-4">
-                  {post.comments.map((comment) => (
-                    <div key={comment.id} className="card">
-                      <div className="card-body">
-                        <div className="d-flex justify-content-between align-items-start mb-2">
-                          <div>
-                            <h6 className="mb-1">{comment.author_name}</h6>
-                            <small className="text-muted">
-                              {formatDate(comment.created_at)}
-                            </small>
-                          </div>
-                        </div>
-                        <p className="mb-0">{comment.content}</p>
-                      </div>
+    const handleCommentSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!slug) {
+            setCommentError('Cannot submit comment: invalid post URL');
+            return;
+        }
+        setCommentError(null);
+
+        if (!commentForm.name || !commentForm.email || !commentForm.comment) {
+            setCommentError('Please fill in all required fields');
+            return;
+        }
+
+        try {
+            await createCommentMutation.mutateAsync({
+                ...commentForm,
+                post_slug: post.slug,
+            });
+            // Reset form and hide it
+            setCommentForm({
+                name: '', email: '',
+                website: '', comment: ''
+            });
+            setShowCommentForm(false);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to post comment';
+            setCommentError(errorMessage);
+        }
+    };
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-GB');
+    };
+
+    if (!slug) {
+        return (
+            <AlertMessage
+                type="danger"
+                message="Invalid blog post URL. Please check the address and try again."
+            />
+        );
+    }
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
+
+    if (error || !post) {
+        return (
+            <div className="container my-5">
+                <AlertMessage
+                    type="danger"
+                    message="Blog post not found. It may have been moved or deleted."
+                />
+                
+                <div className="text-center mt-4">
+                    <Link to="/blog" className="btn btn-primary">
+                        <i className="bi bi-arrow-left me-2"></i>
+                        Back to Blog
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <section className='blog'>
+            {/* Toast Notification */}
+            <div className="position-fixed top-0 end-50 p-3" style={{ zIndex: 1050 }}>
+                <div className={`toast ${showToast ? 'show' : ''}`} role="alert" aria-live="assertive" aria-atomic="true">
+                    <div className="toast-body d-flex bg-success justify-content-between">
+                        <span><i className="bi bi-check-circle-fill me-2"></i>Link copied to clipboard!</span>
+                        <button type="button" className="btn-close" onClick={() => setShowToast(false)}></button>
                     </div>
-                  ))}
                 </div>
-              ) : (
-                <div className="text-center py-4 text-muted">
-                  <i className="bi bi-comments fa-2x mb-2"></i>
-                  <p>No comments yet. Commenting Coming Soon!</p>
-                </div>
-              )}
             </div>
-          </div>
 
-        {/* Delete Confirmation Modal */}
-        {showDeleteModal && (
-          <div className="modal show d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Confirm Delete</h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setShowDeleteModal(false)}
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <p>Are you sure you want to delete this blog post?</p>
-                  <p className="text-muted">
-                    <strong>"{post?.title}"</strong>
-                  </p>
-                  <p className="text-danger">
-                    <small>This action cannot be undone.</small>
-                  </p>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setShowDeleteModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={handleDelete}
-                    disabled={deleteBlogPostMutation.isPending}
-                  >
-                    {deleteBlogPostMutation.isPending ? (
-                      <>
-                        <LoadingSpinner size="sm" className="me-2" />
-                        Deleting...
-                      </>
-                    ) : (
-                      'Delete Post'
+            <div className="container my-5">
+                <div className="row justify-content-center">
+                    <div className="entry entry-single col-lg-8">
+                        {/* Post Header */}
+                        <h2 className="entry-title">{post.title}</h2>
+                        <div className="entry-meta">
+                            <ul>
+                                <li>
+                                    <i className="bi bi-person"></i>
+                                    <Link to={`#`}>{post.author}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-calendar"></i>
+                                    <Link to={`/blog/date/${formatDate(post.first_published_at)}`}>{formatDate(post.first_published_at)}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-clock"></i>
+                                    <Link to={`#`} className='text-decoration-none'>{post?.reading_time}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-eye"></i>
+                                    <Link to={`#`} className='text-decoration-none'>
+                                        {post?.view_count ? post?.view_count === 1 ? `${post?.view_count} view` : `${post?.view_count} views` : 0}
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Featured Image */}
+                        {post.featured_image_url && (
+                            <div className="mb-4">
+                                <img
+                                    src={post.featured_image_url}
+                                    alt={post.title}
+                                    className="img-fluid entry-img rounded shadow-sm"
+                                    style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+                                />
+                            </div>
+                        )}
+                        <div className="d-flex justify-content-start align-items-center text-muted mb-3">
+                            {/* {post.comments_count && (
+                            <span><i className="bi bi-comments me-1"></i>
+                            {post.comments_count ? `${post.comments_count > 0 ? post.comments_count : 0} comments` : 'No comments'}
+                            </span>
+                            )} */}
+
+                            {/* Edit/Delete Buttons */}
+                            {canEdit && (
+                                <div className="mb-2 entry-meta">
+                                    <div className="btn-group gap-3 gap-lg-5" role="group">
+                                        <button
+                                            className="btn btn-outline-primary btn-sm"
+                                            onClick={() => navigate(`/blog/edit/${post.slug}`)}
+                                        >
+                                            <i className="bi bi-pencil me-1"></i>
+                                            Edit Post
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-danger btn-sm"
+                                            onClick={() => setShowDeleteModal(true)}
+                                        >
+                                            <i className="bi bi-trash me-1"></i>
+                                            Delete Post
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        {/* Share Buttons */}
+                        <div className="border-top border-bottom py-4 mb-5">
+                            <h6 className="mb-3">Share this post</h6>
+                            <div className="d-flex gap-2">
+                                <a
+                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-twitter-x me-1"></i>
+                                    Twitter
+                                </a>
+                                <a
+                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-facebook me-1"></i>
+                                    Facebook
+                                </a>
+                                <a
+                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-linkedin me-1"></i>
+                                    LinkedIn
+                                </a>
+                                <button
+                                    className="btn btn-outline-secondary btn-sm"
+                                    onClick={handleCopyLink}
+                                >
+                                    <i className="bi bi-link me-1"></i>
+                                    Copy Link
+                                </button>
+                            </div>
+                        </div>
+                        {/* Post Content */}
+                        <div
+                            className="mb-3 entry-content"
+                            dangerouslySetInnerHTML={{ __html: post.content }}
+                        />
+                        
+                        {/* Tags */}
+                        <div className="entry-footer d-flex">
+                            <i className="bi bi-tags"></i>
+                            {post.tags_list && post.tags_list.length > 0 && (
+                                <ul className="tags mx-0">
+                                    {post.tags_list.map((tag) => (
+                                        <li>
+                                            <Link
+                                                key={tag}
+                                                to={`/blog?tag=${encodeURIComponent(tag)}`}
+                                                className="text-decoration-none me-0"
+                                            >
+                                                {tag}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
+                        {/* Share Buttons */}
+                        <div className="border-top border-bottom py-4 mb-5">
+                            <h6 className="mb-3">Share this post</h6>
+                            <div className="d-flex gap-2">
+                                <a
+                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-twitter-x me-1"></i>
+                                    Twitter
+                                </a>
+                                <a
+                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-facebook me-1"></i>
+                                    Facebook
+                                </a>
+                                <a
+                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="btn btn-outline-primary btn-sm"
+                                >
+                                    <i className="bi bi-linkedin me-1"></i> LinkedIn
+                                </a>
+                                <button
+                                    className="btn btn-outline-secondary btn-sm"
+                                    onClick={handleCopyLink}
+                                >
+                                    <i className="bi bi-link me-1"></i> Copy Link
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Comments Section */}
+                        <div>
+                            <div className="d-flex justify-content-around align-items-center mb-2 mb-lg-3">
+                                <h4>Comments ({post.comments_count || 0})</h4>
+                                {!showCommentForm && (
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={() => setShowCommentForm(true)}
+                                    >
+                                        Add Comment <i className="bi bi-pencil ms-2"></i>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                        {/* Comment Form */}
+                        {showCommentForm && (
+                            <div className="card mb-4">
+                                <div className="card-header">
+                                    <h6 className="mb-0">Leave a Comment</h6>
+                                </div>
+                                <div className="card-body">
+                                    <form onSubmit={handleCommentSubmit}>
+                                        <div className="row mb-3">
+                                            <div className="col-md-6">
+                                                <label htmlFor="name" className="form-label">
+                                                    Name <span className="text-danger">*</span>
+                                                </label>
+                                                <input
+                                                    type="text" className="form-control"
+                                                    id="name" name="name" value={commentForm.name}
+                                                    onChange={(e) => setCommentForm({
+                                                        ...commentForm, name: e.target.value
+                                                    })}
+                                                    required minLength={2} maxLength={100}
+                                                />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label htmlFor="email" className="form-label">
+                                                    Email <span className="text-danger">*</span>
+                                                </label>
+                                                <input
+                                                    type="email" className="form-control"
+                                                    id="email" name="email"
+                                                    value={commentForm.email}
+                                                    onChange={(e) => setCommentForm({
+                                                        ...commentForm, email: e.target.value
+                                                    })}
+                                                    required minLength={5} maxLength={100}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="website" className="form-label">
+                                                Website
+                                            </label>
+                                            <input
+                                                type="url" className="form-control"
+                                                id="website" name="website"
+                                                value={commentForm.website}
+                                                onChange={(e) => setCommentForm({
+                                                    ...commentForm, website: e.target.value
+                                                })}
+                                                placeholder="https://"
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="comment" className="form-label">
+                                                Comment <span className="text-danger">*</span>
+                                            </label>
+                                            <textarea
+                                                className="form-control" id="comment"
+                                                name="comment" rows={4}
+                                                value={commentForm.comment}
+                                                onChange={(e) => setCommentForm({
+                                                    ...commentForm, comment: e.target.value
+                                                })}
+                                                required minLength={10} maxLength={1000}
+                                            />
+                                        </div>
+                                        {commentError && (
+                                            <AlertMessage
+                                                type="danger"
+                                                message={commentError}
+                                                className="mb-3"
+                                            />
+                                        )}
+                                        <div className="d-flex gap-2">
+                                            <button
+                                                type="submit"
+                                                className="btn btn-primary"
+                                                disabled={createCommentMutation.isPending}
+                                            >
+                                                {createCommentMutation.isPending ? (
+                                                    <>
+                                                        <span className="spinner-grow spinner-grow-sm me-1" />
+                                                        Posting...
+                                                    </>
+                                                ) : (
+                                                    'Post Comment'
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary"
+                                                onClick={() => setShowCommentForm(false)}
+                                            >
+                                                <i className="bi bi-x-lg ms-1"></i> Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    {createCommentMutation.isError && (
+                                        <AlertMessage type="danger" className="mt-3"
+                                            message="Failed to post comment. Please try again."
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {/* Comments List */}
+                        {post.comments && post.comments.length > 0 ? (
+                            <div className="comments-list space-y-4">
+                                {post.comments.map((comment: BlogComment) => (
+                                    <div key={comment.id} className="card mb-3">
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h6 className="mb-1">{comment.author_name}</h6>
+                                                    <small className="text-muted">
+                                                        {new Date(comment.created_at).toLocaleDateString()}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div className="comment-content">{comment.content}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-muted">No comments yet. Be the first to comment!</p>
+                        )}
+                    </div>
+
+                    
+                    {/* Delete Confirmation Modal */}
+                    {showDeleteModal && (
+                        <div className="modal show d-block" tabIndex={-1}>
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Confirm Delete</h5>
+                                        <button
+                                            type="button" className="btn-close"
+                                            onClick={() => setShowDeleteModal(false)}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="modal-body">
+                                        <p>Are you sure you want to delete this blog post?</p>
+                                        <p className="text-muted">
+                                            <strong>"{post?.title}"</strong>
+                                        </p>
+                                        <p className="text-danger">
+                                            <small>This action cannot be undone.</small>
+                                        </p>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button
+                                            type="button" className="btn btn-secondary"
+                                            onClick={() => setShowDeleteModal(false)}
+                                        >
+                                            Cancel <i className="bi bi-x-lg ms-1"></i>
+                                        </button>
+                                        
+                                        <button onClick={handleDelete}
+                                            type="button" className="btn btn-danger"
+                                            disabled={deleteBlogPostMutation.isPending}
+                                        >
+                                            {deleteBlogPostMutation.isPending ? (
+                                                <>
+                                                    <LoadingSpinner size="sm" className="me-2" />
+                                                    Deleting...
+                                                </>
+                                            ) : (
+                                                'Delete Post'
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     )}
-                  </button>
+                    {showDeleteModal && <div className="modal-backdrop show"></div>}
                 </div>
-              </div>
             </div>
-          </div>
-        )}
-        {showDeleteModal && <div className="modal-backdrop show"></div>}
-      </div>
-    </section>
-  );
+        </section>
+    );
 }

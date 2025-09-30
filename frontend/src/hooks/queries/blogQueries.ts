@@ -11,6 +11,7 @@ export interface BlogPost {
   intro?: string;
   date: string;
   featured_image_url?: string;
+  cover_image_url?: string;
   tags_list: string[];
   reading_time: string;
   view_count: number;
@@ -149,24 +150,28 @@ export function useBlogPostFormConfig() {
 export function useCreateBlogComment() {
   const queryClient = useQueryClient();
   
-  return useMutation({
-    mutationFn: async (data: { 
-      post: BlogPost; 
-      name: string; 
-      email: string; 
-      website?: string; 
-      comment: string 
-    }) => {
-      const response = await apiRequest(`/api/v1/blog/article/${data.post.slug}/comments/`, {
+  return useMutation<
+    BlogComment,
+    Error,
+    {
+      post_slug: string;
+      name: string;
+      email: string;
+      website?: string;
+      comment: string;
+    }
+  >({
+    mutationFn: async ({ post_slug, name, email, website, comment }) => {
+      const response = await apiRequest(`/api/v1/blog/article/${post_slug}/comments/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          website: data.website || '',
-          comment: data.comment
+          name,
+          email,
+          website,
+          comment
         }),
       });
 
@@ -181,9 +186,9 @@ export function useCreateBlogComment() {
     },
     onSuccess: (_, data) => {
       // Invalidate comments for this blog post
-      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post.slug) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post_slug) });
       // Invalidate the blog post to update comment count
-      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post.slug) });
+      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post_slug) });
     },
   });
 }

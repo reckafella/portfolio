@@ -13,9 +13,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 
-from ..forms.contact import ContactForm
-from ..models import Message
-from ..views.helpers.helpers import is_ajax
+from app.forms.contact import ContactForm
+from app.models import Message
+from app.views.helpers.helpers import is_ajax
 
 
 class ContactFormConfigView(View):

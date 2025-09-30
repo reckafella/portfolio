@@ -279,14 +279,26 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
         blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
 
         # Create the comment
-        return serializer.save(post=blog_post)
+        comment = serializer.save(post=blog_post)
+        return Response(serializer.to_representation(comment), status=status.HTTP_201_CREATED)
 
     def create(self, request, *args, **kwargs):
         """Override create to handle comment creation"""
+        blog_slug = self.kwargs.get('blog_slug')
+        if not blog_slug:
+            return Response(
+                {"error": "Blog post slug is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        response = self.perform_create(serializer)
-        return response
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Invalid data", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return self.perform_create(serializer)
 
 
 @api_view(['GET'])

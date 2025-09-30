@@ -205,8 +205,8 @@ export function BlogEditPage() {
         if (errorObj.status === 400 && errorObj.data && typeof errorObj.data === 'object') {
           // Handle validation errors from the backend
           const validationErrors: Record<string, string[]> = {};
-          Object.keys(errorObj.data).forEach(key => {
-            const value = errorObj.data[key];
+          Object.keys(errorObj?.data).forEach(key => {
+            const value = errorObj?.data?.[key];
             if (Array.isArray(value)) {
               validationErrors[key] = value;
             } else if (typeof value === 'string') {

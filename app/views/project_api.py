@@ -7,12 +7,14 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.conf import settings
 
-from app.models import Projects, Image, Video
-from app.forms.projects import ProjectsForm
-from app.serializers import (
+
+from app.serializers.project_serializer import (
     ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
     ImageSerializer, VideoSerializer
 )
+from app.models import Projects, Image, Video
+from app.forms.projects import ProjectsForm
+
 from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
 
 
@@ -114,7 +116,8 @@ class ProjectCreateAPIView(generics.CreateAPIView):
     def get(self, request, *args, **kwargs):
         """ Returns the form fields for creating a project """
         form = ProjectsForm()
-        return Response({"fields": self.get_form_fields(form)}, status=status.HTTP_200_OK)
+        return Response({"fields": self.get_form_fields(form)},
+                        status=status.HTTP_200_OK)
 
     def get_form_fields(self, form):
         fields = {}
@@ -158,7 +161,8 @@ class ProjectUpdateAPIView(generics.UpdateAPIView):
     def get(self, request, *args, **kwargs):
         """ Returns the form fields for updating a project """
         form = ProjectsForm(instance=self.get_object())
-        return Response({"fields": self.get_form_fields(form)}, status=status.HTTP_200_OK)
+        return Response({"fields": self.get_form_fields(form)},
+                        status=status.HTTP_200_OK)
 
     def get_form_fields(self, form):
         fields = {}

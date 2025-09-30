@@ -11,6 +11,7 @@ from app.views.project_api import (
     project_form_config
 )
 from app.views.views import SitemapAPIView
+from app.views.api.about_view import AboutAPIView
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -37,6 +38,9 @@ urlpatterns = [
 
     # Sitemap API
     path('sitemap/', SitemapAPIView.as_view(), name='sitemap_api'),
+
+    # About Page API
+    path('about/', AboutAPIView.as_view(), name='about_api'),
 
     # Include router URLs (ViewSet-based)
     path('', include(router.urls)),

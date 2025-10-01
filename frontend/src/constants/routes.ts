@@ -6,6 +6,7 @@
 export const ROUTES = {
   // Core pages
   HOME: '/',
+  ABOUT: '/about',
   SERVICES: '/services',
   CONTACT: '/contact',
   SEARCH: '/search',
@@ -16,7 +17,7 @@ export const ROUTES = {
     LIST: '/blog',
     DETAIL: (slug: string) => `/blog/article/${slug}`,
     ADD: '/blog/new',
-    EDIT: (slug: string) => `/blog/edit/${slug}`,
+    EDIT: (slug: string) => `/blog/article/${slug}/edit`,
     TAG: (tag: string) => `/blog?tag=${encodeURIComponent(tag)}`,
   },
 
@@ -25,7 +26,7 @@ export const ROUTES = {
     LIST: '/projects',
     DETAIL: (slug: string) => `/projects/${slug}`,
     ADD: '/projects/new',
-    EDIT: (slug: string) => `/projects/edit/${slug}`,
+    EDIT: (slug: string) => `/projects/${slug}/edit`,
   },
 
   // Authentication routes
@@ -59,6 +60,7 @@ export const ROUTES = {
 // Navigation items for the main navigation component
 export const NAV_ITEMS = [
   { path: ROUTES.HOME, label: 'Home' },
+  { path: ROUTES.ABOUT, label: 'About' },
   { path: ROUTES.SERVICES, label: 'Services' },
   { path: ROUTES.PROJECTS.LIST, label: 'Projects' },
   { path: ROUTES.BLOG.LIST, label: 'Blog' },

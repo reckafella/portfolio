@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.api import api_views
+from blog.views.api import api_views
 
 app_name = 'blog_api'
 
@@ -13,6 +13,7 @@ urlpatterns = [
 
     # Comment endpoints
     path('article/<slug:blog_slug>/comments/', api_views.BlogCommentListCreateAPIView.as_view(), name='comment-list-create'),
+    path('captcha/refresh/', api_views.refresh_captcha, name='refresh-captcha'),
 
     # Utility endpoints
     path('stats/', api_views.blog_stats_api, name='stats'),

@@ -23,7 +23,7 @@ interface FormConfig {
 }
 
 interface UnifiedFormProps {
-    formType: 'contact' | 'login' | 'signup' | 'add_project' | 'update_project' | 'create_blog_post' | 'update_blog_post';
+    formType: 'contact' | 'login' | 'signup' | 'add_project' | 'update_project' | 'create_blog_post' | 'update_blog_post' | 'comment';
     onSubmit: (_formData: Record<string, string | File | File[] | boolean>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
@@ -83,6 +83,56 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     // Get fallback configuration for each form type
     const getFallbackConfig = (): FormConfig => {
         switch (formType) {
+            case 'comment':
+                return {
+                    "fields": {
+                        "name": {
+                            "label": "Name",
+                            "type": "TextInput",
+                            "required": true,
+                            "help_text": "Your name",
+                            "disabled": false,
+                            "widget": "TextInput",
+                            "max_length": 100
+                        },
+                        "email": {
+                            "label": "Email",
+                            "type": "EmailInput",
+                            "required": true,
+                            "help_text": "Your email address (will not be published)",
+                            "disabled": false,
+                            "widget": "EmailInput",
+                            "max_length": 254
+                        },
+                        "website": {
+                            "label": "Website",
+                            "type": "URLInput",
+                            "required": false,
+                            "help_text": "Your website (optional)",
+                            "disabled": false,
+                            "widget": "URLInput",
+                            "max_length": 200
+                        },
+                        "comment": {
+                            "label": "Comment",
+                            "type": "Textarea",
+                            "required": true,
+                            "help_text": "Share your thoughts...",
+                            "disabled": false,
+                            "widget": "Textarea",
+                            "min_length": 10,
+                            "max_length": 1000
+                        },
+                        "captcha": {
+                            "label": "CAPTCHA",
+                            "type": "CaptchaTextInput",
+                            "required": true,
+                            "help_text": "Enter the characters shown in the image",
+                            "disabled": false,
+                            "widget": "CaptchaTextInput"
+                        }
+                    }
+                };
             case 'login':
                 return {
                     "fields": {

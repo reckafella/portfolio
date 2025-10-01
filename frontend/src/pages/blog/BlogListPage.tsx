@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
-import { useBlogPosts, useBlogStats, BlogFilters } from '@/hooks/queries/blogQueries';
+import { useBlogPosts, useBlogStats, BlogFilters, BlogPost } from '@/hooks/queries/blogQueries';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogFiltersComponent } from '@/components/blog/BlogFilters';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
@@ -123,7 +123,7 @@ export const BlogListPage: React.FC = () => {
           {posts.length > 0 ? (
             <>
               <div className="row g-4 mb-5">
-                {posts.map((post) => (
+                {posts.map((post: BlogPost) => (
                   <div key={post.id} className="col-md-6 col-lg-12">
                     <BlogCard post={post} />
                   </div>

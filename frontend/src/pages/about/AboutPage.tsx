@@ -35,7 +35,7 @@ const AboutPage: React.FC = () => {
   useEffect(() => {
     const fetchAboutData = async () => {
       try {
-        const response = await axios.get('/api/about/');
+        const response = await axios.get('/api/v1/about/');
         setData(response.data);
         setError(null);
       } catch (err) {
@@ -68,7 +68,7 @@ const AboutPage: React.FC = () => {
 
   const downloadResume = async () => {
     try {
-      const response = await axios.get('/api/resume-pdf', {
+      const response = await axios.get('/api/v1/resume-pdf', {
         responseType: 'blob'
       });
       
@@ -94,7 +94,7 @@ const AboutPage: React.FC = () => {
           <p className="lead">My professional journey and experiences</p>
           <Button
             variant="info"
-            href="/api/resume-pdf"
+            href="/api/v1/resume-pdf"
             onClick={downloadResume}
             className="mt-3"
           >

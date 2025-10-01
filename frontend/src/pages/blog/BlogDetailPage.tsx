@@ -1,19 +1,13 @@
 import { useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useBlogPost, useCreateBlogComment, useDeleteBlogPost } from '@/hooks/queries/blogQueries';
+import { useBlogPost, useDeleteBlogPost } from '@/hooks/queries/blogQueries';
 import '@/styles/toast.css';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useMetaTags } from '@/hooks/useMetaTags';
-
-interface CommentFormData {
-    name: string;
-    email: string;
-    website?: string;
-    comment: string;
-}
+import CommentForm from '@/components/forms/blog/CommentForm';
 
 interface BlogComment {
     id: number;
@@ -27,16 +21,10 @@ export function BlogDetailPage() {
     const navigate = useNavigate();
     const { canCreateProjects: canEdit } = useStaffPermissions();
 
-    const [commentForm, setCommentForm] = useState<CommentFormData>({
-        name: '',
-        email: '',
-        website: '',
-        comment: ''
-    });
-    const [commentError, setCommentError] = useState<string | null>(null);
     const [showCommentForm, setShowCommentForm] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
+
 
     const {
         data: post,
@@ -61,7 +49,6 @@ export function BlogDetailPage() {
         canonical: `${window.location.origin}/blog/article/${slug}`
     });
 
-    const createCommentMutation = useCreateBlogComment();
     const deleteBlogPostMutation = useDeleteBlogPost();
 
     const handleCopyLink = useCallback(async () => {
@@ -117,35 +104,7 @@ export function BlogDetailPage() {
         );
     }
 
-    const handleCommentSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!slug) {
-            setCommentError('Cannot submit comment: invalid post URL');
-            return;
-        }
-        setCommentError(null);
 
-        if (!commentForm.name || !commentForm.email || !commentForm.comment) {
-            setCommentError('Please fill in all required fields');
-            return;
-        }
-
-        try {
-            await createCommentMutation.mutateAsync({
-                ...commentForm,
-                post_slug: post.slug,
-            });
-            // Reset form and hide it
-            setCommentForm({
-                name: '', email: '',
-                website: '', comment: ''
-            });
-            setShowCommentForm(false);
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to post comment';
-            setCommentError(errorMessage);
-        }
-    };
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-GB');
@@ -367,6 +326,7 @@ export function BlogDetailPage() {
                                 <h4>Comments ({post.comments_count || 0})</h4>
                                 {!showCommentForm && (
                                     <button
+                                        disabled={true}
                                         className="btn btn-primary"
                                         onClick={() => setShowCommentForm(true)}
                                     >
@@ -377,108 +337,12 @@ export function BlogDetailPage() {
                         </div>
                         {/* Comment Form */}
                         {showCommentForm && (
-                            <div className="card mb-4">
-                                <div className="card-header">
-                                    <h6 className="mb-0">Leave a Comment</h6>
-                                </div>
-                                <div className="card-body">
-                                    <form onSubmit={handleCommentSubmit}>
-                                        <div className="row mb-3">
-                                            <div className="col-md-6">
-                                                <label htmlFor="name" className="form-label">
-                                                    Name <span className="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text" className="form-control"
-                                                    id="name" name="name" value={commentForm.name}
-                                                    onChange={(e) => setCommentForm({
-                                                        ...commentForm, name: e.target.value
-                                                    })}
-                                                    required minLength={2} maxLength={100}
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label htmlFor="email" className="form-label">
-                                                    Email <span className="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="email" className="form-control"
-                                                    id="email" name="email"
-                                                    value={commentForm.email}
-                                                    onChange={(e) => setCommentForm({
-                                                        ...commentForm, email: e.target.value
-                                                    })}
-                                                    required minLength={5} maxLength={100}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="website" className="form-label">
-                                                Website
-                                            </label>
-                                            <input
-                                                type="url" className="form-control"
-                                                id="website" name="website"
-                                                value={commentForm.website}
-                                                onChange={(e) => setCommentForm({
-                                                    ...commentForm, website: e.target.value
-                                                })}
-                                                placeholder="https://"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="comment" className="form-label">
-                                                Comment <span className="text-danger">*</span>
-                                            </label>
-                                            <textarea
-                                                className="form-control" id="comment"
-                                                name="comment" rows={4}
-                                                value={commentForm.comment}
-                                                onChange={(e) => setCommentForm({
-                                                    ...commentForm, comment: e.target.value
-                                                })}
-                                                required minLength={10} maxLength={1000}
-                                            />
-                                        </div>
-                                        {commentError && (
-                                            <AlertMessage
-                                                type="danger"
-                                                message={commentError}
-                                                className="mb-3"
-                                            />
-                                        )}
-                                        <div className="d-flex gap-2">
-                                            <button
-                                                type="submit"
-                                                className="btn btn-primary"
-                                                disabled={createCommentMutation.isPending}
-                                            >
-                                                {createCommentMutation.isPending ? (
-                                                    <>
-                                                        <span className="spinner-grow spinner-grow-sm me-1" />
-                                                        Posting...
-                                                    </>
-                                                ) : (
-                                                    'Post Comment'
-                                                )}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-secondary"
-                                                onClick={() => setShowCommentForm(false)}
-                                            >
-                                                <i className="bi bi-x-lg ms-1"></i> Cancel
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                    {createCommentMutation.isError && (
-                                        <AlertMessage type="danger" className="mt-3"
-                                            message="Failed to post comment. Please try again."
-                                        />
-                                    )}
-                                </div>
-                            </div>
+                            <CommentForm
+                                postSlug={post.slug}
+                                onSuccess={() => {
+                                    setShowCommentForm(false);
+                                }}
+                            />
                         )}
                         {/* Comments List */}
                         {post.comments && post.comments.length > 0 ? (

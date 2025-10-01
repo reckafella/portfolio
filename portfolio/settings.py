@@ -14,6 +14,8 @@ import os
 import os.path
 from pathlib import Path
 
+import daphne.testing
+
 from app.views.helpers.helpers import get_error_files
 
 # import random
@@ -54,11 +56,6 @@ if ENVIRONMENT == 'production':
     INSTALLED_APPS = []
 
     # Supabase settings
-    SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
-    SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
-    SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
-    SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
-    SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
     # Redis settings
     REDIS_URL = os.environ.get("REDIS_URL", default="")
@@ -74,6 +71,7 @@ else:
     INSTALLED_APPS = []
     try:
         import daphne
+        daphne.testing
         INSTALLED_APPS.insert(0, 'daphne')
     except ImportError:
         pass  # daphne not available, skip it
@@ -186,6 +184,12 @@ TEMPLATES = [
 ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
+
+SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
+SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
+SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
+SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
+SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -425,24 +429,18 @@ ERROR_500: str = get_error_files()[3]
 
 
 # captcha settings
-""" CAPTCHA_CHOICES = (
-    'captcha.helpers.math_challenge',
-    'captcha.helpers.random_char_challenge',
-)
-
-CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
- """
-
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-CAPTCHA_TIMEOUT = 10  # Increased to 10 minutes
-# CAPTCHA_IMAGE_SIZE = (100, 50)
-CAPTCHA_LENGTH = 6
-CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
-                           'captcha.helpers.noise_arcs')
-# CAPTCHA_LETTER_ROTATION = (-30, 30)
-# CAPTCHA_FOREGROUND_COLOR = '#333'
-# CAPTCHA_BACKGROUND_COLOR = '#fff'
-CAPTCHA_FONT_SIZE = 30
+CAPTCHA_TIMEOUT = 5  # 5 minutes timeout
+CAPTCHA_LENGTH = 6  # 6 characters
+CAPTCHA_NOISE_FUNCTIONS = (
+    'captcha.helpers.noise_dots',
+    'captcha.helpers.noise_arcs',
+)
+CAPTCHA_IMAGE_SIZE = (150, 50)  # Larger image for better readability
+CAPTCHA_LETTER_ROTATION = (-10, 10)  # Less rotation for better readability
+CAPTCHA_FOREGROUND_COLOR = '#001F3F'  # Dark blue for better contrast
+CAPTCHA_BACKGROUND_COLOR = '#FFFFFF'  # White background
+CAPTCHA_FONT_SIZE = 32  # Larger font
 CAPTCHA_OUTPUT_FORMAT = 'png'
 CAPTCHA_IMAGE_BEFORE_FIELD = True
 CAPTCHA_REFRESH_CHALLENGE = True

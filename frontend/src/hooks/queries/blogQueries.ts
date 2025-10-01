@@ -147,52 +147,6 @@ export function useBlogPostFormConfig() {
 }
 
 // Blog mutations
-export function useCreateBlogComment() {
-  const queryClient = useQueryClient();
-  
-  return useMutation<
-    BlogComment,
-    Error,
-    {
-      post_slug: string;
-      name: string;
-      email: string;
-      website?: string;
-      comment: string;
-    }
-  >({
-    mutationFn: async ({ post_slug, name, email, website, comment }) => {
-      const response = await apiRequest(`/api/v1/blog/article/${post_slug}/comments/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          website,
-          comment
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || errorData.message || 'Failed to create comment'
-        );
-      }
-
-      return response.json();
-    },
-    onSuccess: (_, data) => {
-      // Invalidate comments for this blog post
-      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post_slug) });
-      // Invalidate the blog post to update comment count
-      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post_slug) });
-    },
-  });
-}
-
 export function useCreateBlogPost() {
   const queryClient = useQueryClient();
   

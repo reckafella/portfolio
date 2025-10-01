@@ -1,11 +1,14 @@
 from rest_framework import generics, status, permissions, filters
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import QuerySet
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
 
 from blog.models import BlogPostPage, BlogPostComment  # , BlogPostImage
 from .serializers.serializers import (
@@ -214,7 +217,7 @@ class BlogPostUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticatedStaff, IsStaffOrReadOnly]
     parser_classes = (MultiPartParser, FormParser)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return BlogPostPage.objects.all()
 
     def update(self, request, *args, **kwargs) -> Response:
@@ -261,7 +264,7 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     pagination_class = BlogPostPagination
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         blog_slug = self.kwargs.get('blog_slug')
         blog_post = get_object_or_404(
             BlogPostPage.objects.live().public(), slug=blog_slug)
@@ -276,7 +279,8 @@ class BlogCommentListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         blog_slug = self.kwargs.get('blog_slug')
-        blog_post = get_object_or_404(BlogPostPage.objects.live().public(), slug=blog_slug)
+        blog_post = get_object_or_404(
+            BlogPostPage.objects.live().public(), slug=blog_slug)
 
         # Create the comment
         comment = serializer.save(post=blog_post)
@@ -421,4 +425,17 @@ def blog_post_form_config(request):
                 "choices": [["false", "Save as Draft"], ["true", "Publish Now"]]
             }
         }
+    })
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def refresh_captcha(request):
+    """API endpoint for refreshing CAPTCHA"""
+    captcha_key = CaptchaStore.generate_key()
+    captcha_obj = CaptchaStore.objects.get(hashkey=captcha_key)
+
+    return Response({
+        'captcha_key': captcha_key,
+        'captcha_image': captcha_image_url(captcha_obj.hashkey)
     })

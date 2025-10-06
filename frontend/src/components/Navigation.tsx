@@ -53,6 +53,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         setIsStaffDropdownOpen(!isStaffDropdownOpen);
     };
 
+
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
@@ -112,6 +113,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         </ul>
                                     </li>
                                 )}
+
 
                                 <li className={`dropdown ${isToggleDropdownOpen ? 'active' : ''}`}>
                                     <a role="button"

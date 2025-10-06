@@ -12,6 +12,15 @@ export const ROUTES = {
   SEARCH: '/search',
   SITEMAP: '/sitemap',
 
+  // About page management routes
+  ABOUT_MANAGE: {
+    OVERVIEW: '/about/edit',
+    PROFILE: '/about/edit/profile',
+    EDUCATION: '/about/edit/education',
+    EXPERIENCE: '/about/edit/experience',
+    SKILLS: '/about/edit/skills',
+  },
+
   // Blog routes
   BLOG: {
     LIST: '/blog',
@@ -71,6 +80,15 @@ export const NAV_ITEMS = [
 export const STAFF_NAV_ITEMS = [
   { path: ROUTES.PROJECTS.ADD, label: 'Add Project' },
   { path: '/admin', label: 'Admin Panel' },
+] as const;
+
+// About management navigation items  
+export const ABOUT_MANAGE_NAV_ITEMS = [
+  { path: ROUTES.ABOUT_MANAGE.OVERVIEW, label: 'Edit Overview', icon: 'bi-pencil-square' },
+  { path: ROUTES.ABOUT_MANAGE.PROFILE, label: 'Edit Profile', icon: 'bi-person-gear' },
+  { path: ROUTES.ABOUT_MANAGE.EDUCATION, label: 'Manage Education', icon: 'bi-mortarboard' },
+  { path: ROUTES.ABOUT_MANAGE.EXPERIENCE, label: 'Manage Experience', icon: 'bi-briefcase' },
+  { path: ROUTES.ABOUT_MANAGE.SKILLS, label: 'Manage Skills', icon: 'bi-gear-wide-connected' },
 ] as const;
 
 /**

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from taggit.managers import TaggableManager
-from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page

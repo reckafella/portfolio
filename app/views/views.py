@@ -102,12 +102,12 @@ class SitemapView(TemplateView):
 
 class SitemapAPIView(APIView):
     """API view to provide sitemap data for React frontend"""
-    
+
     def get(self, request):
         pages = Page.objects.live().specific().order_by('-first_published_at')
         projects = Projects.objects.filter(live=True).order_by('-created_at')
         blog_posts = BlogPost.objects.live().order_by('-first_published_at')
-        
+
         # Serialize the data
         sitemap_data = {
             'pages': [
@@ -137,7 +137,7 @@ class SitemapAPIView(APIView):
                 for post in blog_posts
             ]
         }
-        
+
         return Response(sitemap_data)
 
 

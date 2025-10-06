@@ -514,24 +514,24 @@ CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
 
 # General rate limit value from environment variable, default == 1000
 try:
-    RATELIMIT = int(os.environ.get("RATELIMIT", "10000"))
+    RATE_LIMIT = int(os.environ.get("RATE_LIMIT", "10000"))
 except (ValueError, TypeError):
-    RATELIMIT = 1000
+    RATE_LIMIT = 1000
 
 LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
                                  default="googlebot,bravebot").split(",")
 SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
                                  default="crawler,spider,scraper").split(",")
 
-# if RATELIMIT is less than 1000, set it to 1000
-if RATELIMIT < 1000:
-    RATELIMIT = 1000
+# if RATE_LIMIT is less than 1000, set it to 1000
+if RATE_LIMIT < 1000:
+    RATE_LIMIT = 1000
 
 # Comprehensive Rate Limiting Settings
 RATE_LIMITING = {
     # Global rate limiting (requests per hour per IP)
     'GLOBAL': {
-        'REQUESTS': RATELIMIT,  # requests per hour
+        'REQUESTS': RATE_LIMIT,  # requests per hour
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'global_rate_limit',
     },
@@ -553,7 +553,7 @@ RATE_LIMITING = {
 
     # API rate limiting (if you have APIs)
     'API': {
-        'REQUESTS': RATELIMIT,  # max 100 API calls per hour per IP
+        'REQUESTS': RATE_LIMIT,  # max 100 API calls per hour per IP
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'api_rate_limit',
     },

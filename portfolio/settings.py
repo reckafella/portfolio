@@ -513,17 +513,15 @@ CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
 # ============================
 
 # General rate limit value from environment variable, default == 1000
-RATELIMIT = os.environ.get("RATELIMIT", default=10000)
+try:
+    RATELIMIT = int(os.environ.get("RATELIMIT", "10000"))
+except (ValueError, TypeError):
+    RATELIMIT = 1000
+
 LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
                                  default="googlebot,bravebot").split(",")
 SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
                                  default="crawler,spider,scraper").split(",")
-
-# if RATELIMIT is not an integer, set it to 1000
-try:
-    RATELIMIT = int(RATELIMIT)
-except (ValueError, TypeError, Exception):
-    RATELIMIT = 1000
 
 # if RATELIMIT is less than 1000, set it to 1000
 if RATELIMIT < 1000:

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ImageUpload.css';
+import '../../styles/captcha.css';
 
 interface FieldConfig {
     label: string;

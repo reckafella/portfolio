@@ -4,15 +4,20 @@ import os
 from django.conf import settings
 from django.http import (FileResponse, Http404, HttpResponseRedirect,
                          JsonResponse)
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView, TemplateView, View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from wagtail.models import Page
 
+from app.utils.cache import cache_page_for_user, cache_page_with_prefix
+
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
 
 
+@method_decorator(cache_page_with_prefix('home', 300), name='dispatch')
 class HomeView(TemplateView):
     """Class-based view to render the home page"""
     template_name = "app/home.html"
@@ -31,12 +36,14 @@ class HomeView(TemplateView):
         return context
 
 
+@method_decorator(cache_page_with_prefix('about', 3600), name='dispatch')
 class AboutView(TemplateView):
     """Class-based view to render the about page"""
     template_name = "app/about.html"
     status = 200
 
 
+@method_decorator(cache_page_with_prefix('services', 3600), name='dispatch')
 class ServicesView(TemplateView):
     """Class-based view to render the services page"""
     template_name = "app/services/services.html"
@@ -48,6 +55,7 @@ class ServicesView(TemplateView):
         return context
 
 
+@method_decorator(cache_page_with_prefix('resume', 3600), name='dispatch')
 class ResumeView(TemplateView):
     """Class-based view to render the resume page"""
     template_name = "app/resume.html"
@@ -84,6 +92,7 @@ class ResumePDFView(View):
         )
 
 
+@method_decorator(cache_page_with_prefix('sitemap', 3600), name='dispatch')
 class SitemapView(TemplateView):
     """Class-based view to render the sitemap"""
     template_name = "app/sitemaps/sitemap.html"
@@ -100,6 +109,7 @@ class SitemapView(TemplateView):
         return context
 
 
+@method_decorator(cache_page_with_prefix('sitemap-api', 3600), name='get')
 class SitemapAPIView(APIView):
     """API view to provide sitemap data for React frontend"""
 

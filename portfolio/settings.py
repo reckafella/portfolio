@@ -75,9 +75,15 @@ else:
         INSTALLED_APPS.insert(0, 'daphne')
     except ImportError:
         pass  # daphne not available, skip it
+
+    """
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
+    """
+
+    REDIS_URL = os.environ.get("REDIS_URL", default="redis-14483.crce199.us-west-2-2.ec2.redns.redis-cloud.com:14483")
+    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="6T8eLziQOa7MRXquePpm6b6tOYVjyB7M")
 
     # CLOUDINARY CONFIG SETTINGS
     from app.views.helpers.helpers import get_cloudinary_creds
@@ -139,6 +145,7 @@ CORS_ALLOWED_ORIGINS = [
 
 
 MIDDLEWARE = [
+    "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -151,6 +158,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "portfolio.middlewares.rate_limit.RateLimitMiddleware",
     "blog.middlewares.security.ViewCountSecurityMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 # portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
@@ -226,37 +234,44 @@ else:
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
 
+# Cache settings
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
+CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
+USE_CACHE = True
+
 # sessions
 SESSION_CACHE_ALIAS = "default"
 
-if ENVIRONMENT == 'production':
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "PASSWORD": REDIS_PASSWORD,
-                "SOCKET_CONNECT_TIMEOUT": 30,
-                "SOCKET_TIMEOUT": 60,
-                "SOCKET_KEEPALIVE": True,
-                "SOCKET_KEEPALIVE_OPTIONS": {
-                    "TCP_KEEPIDLE": 1,
-                    "TCP_KEEPINTVL": 1,
-                    "TCP_KEEPCNT": 5
-                },
-                "CONNECTION_POOL_KWARGS": {
-                    "max_connections": 20,
-                    "retry_on_timeout": True,
-                    "socket_keepalive": True
-                }
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": REDIS_PASSWORD,
+            "SOCKET_CONNECT_TIMEOUT": 30,
+            "SOCKET_TIMEOUT": 60,
+            "SOCKET_KEEPALIVE": True,
+            "SOCKET_KEEPALIVE_OPTIONS": {
+                "TCP_KEEPIDLE": 1,
+                "TCP_KEEPINTVL": 1,
+                "TCP_KEEPCNT": 5
+            },
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 20,
+                "retry_on_timeout": True,
+                "socket_keepalive": True
             }
         }
     }
-else:
-    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+}
+
+""" else:
+    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db" """
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

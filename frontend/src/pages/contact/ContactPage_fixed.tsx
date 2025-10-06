@@ -6,7 +6,7 @@ import { useSendMessage } from '@/hooks/queries/contactQueries';
 const ContactPage: React.FC = () => {
     const sendMessageMutation = useSendMessage();
 
-    const handleSubmit = async (formData: Record<string, string>) => {
+    const handleSubmit = async (formData: Record<string, string | boolean | File | File[]>) => {
         await sendMessageMutation.mutateAsync(formData);
     };
 

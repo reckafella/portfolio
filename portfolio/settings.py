@@ -59,7 +59,7 @@ if ENVIRONMENT == 'production':
 
     # Redis settings
     REDIS_URL = os.environ.get("REDIS_URL", default="")
-    REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
+    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
 
     # CLOUDINARY CONFIG SETTINGS
     CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
@@ -187,7 +187,7 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 
 SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
 SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
-SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
+SUPABASE_PASSWORD = os.environ.get("SUPABASE_DB_PASSWORD", default="")
 SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
 SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
@@ -199,7 +199,7 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "ENGINE": "django.db.backends.postgresql",
             "NAME": SUPABASE_DB_NAME,
             "USER": SUPABASE_USER,
-            "PASSWORD": SUPABASE_DB_PW,
+            "PASSWORD": SUPABASE_PASSWORD,
             "HOST": SUPABASE_HOST,
             "PORT": SUPABASE_PORT,
             "OPTIONS": {
@@ -235,7 +235,7 @@ if ENVIRONMENT == 'production':
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://" + REDIS_URL,
+            "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "PASSWORD": REDIS_PASSWORD,
@@ -245,19 +245,14 @@ if ENVIRONMENT == 'production':
                 "SOCKET_KEEPALIVE_OPTIONS": {
                     "TCP_KEEPIDLE": 1,
                     "TCP_KEEPINTVL": 1,
-                    "TCP_KEEPCNT": 5,
+                    "TCP_KEEPCNT": 5
                 },
                 "CONNECTION_POOL_KWARGS": {
                     "max_connections": 20,
                     "retry_on_timeout": True,
-                    "socket_keepalive": True,
-                    "socket_keepalive_options": {
-                        "TCP_KEEPIDLE": 1,
-                        "TCP_KEEPINTVL": 3,
-                        "TCP_KEEPCNT": 5,
-                    },
-                },
-            },
+                    "socket_keepalive": True
+                }
+            }
         }
     }
 else:

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
 import { BsDownload, BsGeoAlt, BsEnvelope, BsBuilding, BsLaptop, BsGraphUp } from 'react-icons/bs';
 import axios from 'axios';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
@@ -86,83 +85,71 @@ const AboutPage: React.FC = () => {
   };
 
   return (
-    <Container className="py-5">
-      {/* Title Section */}
-      <Row className="mb-4 text-center">
-        <Col>
+    <section id="resume" className="resume section py-4">
+      <div className="container">
+        <div className="section-title text-center mb-1">
           <h1>About Me</h1>
-          <p className="lead">My professional journey and experiences</p>
-          <Button
-            variant="info"
-            href="/api/v1/resume-pdf"
-            onClick={downloadResume}
-            className="mt-3"
-          >
-            <BsDownload className="me-2" />
-            Download CV
-          </Button>
-        </Col>
-      </Row>
+          <p>My professional journey and experiences</p>
+          <div className="mt-3">
+            <button 
+              onClick={downloadResume}
+              className="btn btn-primary me-2" 
+              title="Download Resume"
+            >
+              <BsDownload className="me-2" />
+              Download Resume
+            </button>
+          </div>
+        </div>
 
-      <Row>
-        {/* Left Column */}
-        <Col lg={6}>
-          {/* Summary */}
-          <Card className="mb-4">
-            <Card.Body>
-              <h3>Summary</h3>
-              <h4>{data.name}</h4>
-              <p><em>{data.summary}</em></p>
-              <ul className="list-unstyled">
-                <li>
-                  <BsGeoAlt className="me-2" />
-                  {data.location}
-                </li>
-                <li>
-                  <BsEnvelope className="me-2" />
-                  {data.email}
-                </li>
-              </ul>
-            </Card.Body>
-          </Card>
+        <div className="container">
+          <div className="row">
+            {/* Left Column */}
+            <div className="col-lg-6">
+              <h3 className="resume-title">Summary</h3>
+              <div className="resume-item pb-0 mb-3">
+                <h4>{data.name}</h4>
+                <p><em>{data.summary}</em></p>
+                <ul className="list-unstyled">
+                  <li>
+                    <BsGeoAlt className="me-2" />
+                    {data.location}
+                  </li>
+                  <li>
+                    <BsEnvelope className="me-2" />
+                    {data.email}
+                  </li>
+                </ul>
+              </div>
 
-          {/* Education */}
-          <Card className="mb-4">
-            <Card.Body>
-              <h3>Education</h3>
+              <h3 className="resume-title">Education</h3>
               {data.education.map((edu, index) => (
-                <div key={index} className="mb-4">
+                <div key={index} className="resume-item">
                   <h4>{edu.degree}</h4>
                   <h5 className="text-success">{edu.period}</h5>
                   <p><em>{edu.institution}</em></p>
                   <p>{edu.description}</p>
                 </div>
               ))}
-            </Card.Body>
-          </Card>
 
-          {/* Skills */}
-          <Card className="mb-4">
-            <Card.Body>
-              <h3>Skills</h3>
-              <div className="skill-tags">
-                {data.skills.map((skill, index) => (
-                  <Badge bg="success" className="m-1" key={index}>
-                    {skill}
-                  </Badge>
-                ))}
+              <h3 className="resume-title">Skills</h3>
+              <div className="resume-item">
+                <h4>Technical Skills</h4>
+                <div className="skill-tags">
+                  {data.skills.map((skill, index) => (
+                    <span key={index} className="badge bg-success m-1">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </Card.Body>
-          </Card>
-        </Col>
+            </div>
 
-        {/* Right Column */}
-        <Col lg={6}>
-          <Card>
-            <Card.Body>
-              <h3>Professional Experience</h3>
+            {/* Right Column */}
+            <div className="col-lg-6">
+              <h3 className="resume-title">Professional Experience</h3>
               {data.experience.map((exp, index) => (
-                <div key={index} className="mb-4">
+                <div key={index} className="resume-item">
                   <h4>{exp.title}</h4>
                   <h5 className="text-success">{exp.period}</h5>
                   <p>
@@ -178,11 +165,11 @@ const AboutPage: React.FC = () => {
                   </ul>
                 </div>
               ))}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

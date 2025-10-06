@@ -69,7 +69,7 @@ This project is a personal portfolio website that highlights my skills, projects
     ```sh
     pip install -r requirements.txt
     ```
-   
+
 4. Create a cloudinary account (used for image hosting)
    - Copy the required details: name, api key and api secret into a file named "cloudinary.json"
      - "CLOUDINARY_CLOUD_NAME": "your cloudinary name",

@@ -1,0 +1,136 @@
+/* Styles for Editable About Page */
+
+.edit-icon-btn {
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  margin-left: 8px;
+}
+
+.edit-icon-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+  text-decoration: none !important;
+}
+
+.edit-icon-btn:focus {
+  box-shadow: none !important;
+  text-decoration: none !important;
+  outline: none !important;
+}
+
+/* Hide edit icons when printing */
+@media print {
+  .edit-icon-btn {
+    display: none !important;
+  }
+}
+
+/* Debug styles */
+.auth-debug {
+  font-family: monospace;
+  background: rgba(255,255,255,0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+/* Profile edit form styling */
+.profile-edit-form {
+  background: var(--about-background-color);
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.profile-edit-form .form-label {
+  color: var(--default-color);
+  font-weight: 500;
+}
+
+.profile-edit-form .form-control {
+  border: 2px solid var(--surface-color, --default-color);
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: all 0.3s ease;
+}
+
+.profile-edit-form .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(var(--accent-color), 0.1);
+}
+
+.profile-edit-form .form-control.is-invalid {
+  border-color: var(--text-error-color);
+}
+
+.profile-edit-form .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.profile-edit-form .btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.profile-edit-form .invalid-feedback {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.profile-edit-form .form-text {
+  font-size: 0.8rem;
+  color: var(--default-color);
+}
+
+.profile-edit-form .text-danger {
+  color: var(--text-error-color) !important;
+}
+
+/* Global edit mode indicator */
+.global-edit-mode {
+  background: linear-gradient(135deg, var(--text-warning-color) 0%, var(--text-warning-color) 100%);
+  border: 2px dashed var(--text-warning-color);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.global-edit-mode .alert {
+  background: rgba(var(--text-warning-color), 0.1);
+  border-color: var(--text-warning-color);
+  color: var(--text-warning-color);
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  margin-bottom: 0;
+}
+
+/* Simple edit forms styling */
+.skills-edit-form,
+.education-edit-form,
+.experience-edit-form {
+  margin-bottom: 20px;
+}
+
+.skills-edit-form .form-control,
+.education-edit-form .form-control,
+.experience-edit-form .form-control {
+  border: 1px solid var(--surface-color);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+.skills-edit-form .form-control:focus,
+.education-edit-form .form-control:focus,
+.experience-edit-form .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.15rem rgba(var(--accent-color), 0.1);
+}

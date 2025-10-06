@@ -57,6 +57,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [captchaData, setCaptchaData] = useState<{key: string, image: string} | null>(null);
+    const [isRefreshingCaptcha, setIsRefreshingCaptcha] = useState(false);
 
     // Determine API endpoint based on form type
     const getApiEndpoint = (slug?: string) => {
@@ -368,24 +369,54 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     }, [formType]); // eslint-disable-line
 
     const refreshCaptcha = async () => {
+        console.log('🔄 Captcha refresh initiated');
+        setIsRefreshingCaptcha(true);
+        const oldCaptchaKey = captchaData?.key;
+        console.log('📝 Old captcha key:', oldCaptchaKey);
+        
         try {
-            const response = await fetch('/api/v1/captcha/refresh');
+            // Send old captcha key for cleanup
+            const url = new URL('/api/v1/captcha/refresh', window.location.origin);
+            if (oldCaptchaKey) {
+                url.searchParams.append('old_key', oldCaptchaKey);
+            }
+            console.log('🌐 Fetching from:', url.toString());
+            
+            const response = await fetch(url.toString());
+            console.log('📡 Response status:', response.status, response.ok);
+            
             if (response.ok) {
                 const data = await response.json();
+                console.log('✅ New captcha data:', data);
+                // Only update captcha if refresh succeeded
                 setCaptchaData({
                     key: data.captcha_key,
                     image: data.captcha_image
                 });
-                // Update form data with new captcha key
+                // Update form data with new captcha key and clear input
                 setFormData(prev => ({
                     ...prev,
                     captcha_0: data.captcha_key,
-                    captcha: '' // Clear the captcha input
+                    captcha_1: '', // Clear the captcha input field
+                    captcha: '' // Also clear if using this field name
                 }));
+                
+                // Also clear the actual input element
+                const captchaInput = document.querySelector('input[name="captcha"], input[placeholder*="characters"]') as HTMLInputElement;
+                if (captchaInput) {
+                    captchaInput.value = '';
+                    console.log('🧹 Captcha input field cleared');
+                }
+                console.log('✨ Captcha updated successfully');
+            } else {
+                console.error('❌ Response not OK:', response.status);
             }
         } catch (error) {
-            const noob = () => { };
-            if (error instanceof Error) noob();
+            console.error('❌ Captcha refresh error:', error);
+            // Keep the old captcha on error - don't update anything
+        } finally {
+            setIsRefreshingCaptcha(false);
+            console.log('🏁 Refresh complete, isRefreshingCaptcha set to false');
         }
     };
 
@@ -894,7 +925,11 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         src={captchaData.image} 
                                         alt="CAPTCHA" 
                                         className="border rounded"
-                                        style={{ height: '50px' }}
+                                        style={{ 
+                                            height: '50px',
+                                            opacity: isRefreshingCaptcha ? 0.5 : 1,
+                                            transition: 'opacity 0.3s ease'
+                                        }}
                                         onError={(_e) => {
                                             refreshCaptcha();
                                         }}
@@ -902,11 +937,16 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                     <button
                                         type="button"
                                         className="btn btn-outline-secondary btn-sm"
-                                        onClick={refreshCaptcha}
-                                        disabled={isSubmitting}
+                                        onClick={() => {
+                                            console.log('🖱️ Refresh button clicked, isRefreshingCaptcha:', isRefreshingCaptcha);
+                                            refreshCaptcha();
+                                        }}
+                                        disabled={isSubmitting || isRefreshingCaptcha}
                                         title="Refresh CAPTCHA"
                                     >
-                                        <i className="bi bi-arrow-clockwise"></i>
+                                        <i 
+                                            className={`bi bi-arrow-clockwise ${isRefreshingCaptcha ? 'captcha-refresh-spin' : ''}`}
+                                        ></i>
                                     </button>
                                 </div>
                             </div>
@@ -919,8 +959,9 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         type="button" 
                                         className="btn btn-link btn-sm p-0 ms-1" 
                                         onClick={refreshCaptcha}
+                                        disabled={isRefreshingCaptcha}
                                     >
-                                        Try again
+                                        {isRefreshingCaptcha ? 'Loading...' : 'Try again'}
                                     </button>
                                 </small>
                             </div>

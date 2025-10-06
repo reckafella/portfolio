@@ -118,6 +118,8 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'captcha': 'Invalid CAPTCHA. Please try again.'}
                 )
+            # Delete used CAPTCHA after successful validation
+            captcha.delete()
         except CaptchaStore.DoesNotExist:
             raise serializers.ValidationError(
                 {'captcha': 'CAPTCHA has expired. Please refresh and try again.'}

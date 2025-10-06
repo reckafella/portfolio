@@ -15,7 +15,19 @@ from app.forms.contact import ContactForm
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def captcha_refresh(request):
-    """Generate new CAPTCHA challenge"""
+    """Generate new CAPTCHA challenge and clean up old one"""
+    # Delete old CAPTCHA if provided
+    old_key = request.GET.get('old_key')
+    if old_key:
+        try:
+            old_captcha = CaptchaStore.objects.get(hashkey=old_key)
+            old_captcha.delete()
+        except CaptchaStore.DoesNotExist:
+            pass  # Already deleted or expired
+
+    # Clean up expired captchas
+    CaptchaStore.remove_expired()
+
     # Create new CAPTCHA
     captcha = CaptchaStore.generate_key()
     captcha_url = captcha_image_url(captcha)

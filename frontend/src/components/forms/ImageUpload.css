@@ -4,10 +4,25 @@
   position: relative;
 }
 
+/* Captcha Refresh Animation */
+@keyframes captcha-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.captcha-refresh-spin {
+  animation: captcha-spin 1s linear infinite;
+  display: inline-block;
+}
+
 .drag-drop-area {
   transition: all 0.3s ease;
-  border: 2px dashed #dee2e6;
-  background-color: #f8f9fa;
+  border: 2px dashed var(--surface-color);
+  background-color: var(--background-color);
   cursor: pointer;
   min-height: 120px;
   display: flex;
@@ -17,13 +32,13 @@
 }
 
 .drag-drop-area:hover {
-  border-color: #007bff;
-  background-color: #e3f2fd;
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
 }
 
 .drag-drop-area.drag-hover {
-  border-color: #007bff;
-  background-color: #e3f2fd;
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
   transform: scale(1.02);
 }
 
@@ -33,7 +48,7 @@
 
 .image-preview-container .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(var(--default-color), 0.1);
 }
 
 .image-preview-container .card img {
@@ -46,20 +61,20 @@
 
 /* Progress bar styling */
 .progress {
-  background-color: #e9ecef;
+  background-color: var(--spedial-background-color);
 }
 
 .progress-bar.bg-success {
-  background-color: #28a745 !important;
+  background-color: var(--text-success-color) !important;
 }
 
 .progress-bar.bg-danger {
-  background-color: #dc3545 !important;
+  background-color: var(--text-error-color) !important;
 }
 
 /* Remove button styling */
 .btn-danger.position-absolute {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(var(--default-color), 0.2);
 }
 
 .btn-danger.position-absolute:hover {
@@ -73,17 +88,17 @@
 
 .modal .modal-body img {
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(var(--default-color), 0.15);
 }
 
 /* File list styling */
 .list-group-item {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--surface-color);
   transition: background-color 0.2s ease;
 }
 
 .list-group-item:hover {
-  background-color: #f8f9fa;
+  background-color: var(--background-color);
 }
 
 .list-group-item .btn-outline-danger:hover {

@@ -12,7 +12,7 @@ const LoginForm: React.FC = () => {
   const { showLoader, hideLoader } = usePreloader();
   usePageTitle('Login');
 
-  const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
+  const handleSubmit = async (formData: Record<string, string | boolean | File | File[]>) => {
     showLoader(); // Show global preloader during authentication
 
     try {

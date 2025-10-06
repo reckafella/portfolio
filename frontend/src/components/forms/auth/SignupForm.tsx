@@ -12,7 +12,7 @@ const SignupForm: React.FC = () => {
   const signupMutation = useSignup();
   const { showLoader, hideLoader } = usePreloader();
 
-  const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
+  const handleSubmit = async (formData: Record<string, string | boolean | File | File[]>) => {
     showLoader(); // Show global preloader during registration
 
     try {

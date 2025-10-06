@@ -431,7 +431,19 @@ def blog_post_form_config(request):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def refresh_captcha(request):
-    """API endpoint for refreshing CAPTCHA"""
+    """API endpoint for refreshing CAPTCHA and cleaning up old one"""
+    # Delete old CAPTCHA if provided
+    old_key = request.GET.get('old_key')
+    if old_key:
+        try:
+            old_captcha = CaptchaStore.objects.get(hashkey=old_key)
+            old_captcha.delete()
+        except CaptchaStore.DoesNotExist:
+            pass  # Already deleted or expired
+
+    # Clean up expired captchas
+    CaptchaStore.remove_expired()
+
     captcha_key = CaptchaStore.generate_key()
     captcha_obj = CaptchaStore.objects.get(hashkey=captcha_key)
 

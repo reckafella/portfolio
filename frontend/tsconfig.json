@@ -26,6 +26,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "src/components/.backup/Logo-bk-cursive.tsx", "src/components/.backup/Logo-bk-2.tsx", "src/components/forms/about/.ProfileEditForm.tsx", "src/components/forms/about/.ExperienceEditForm.tsx", "src/components/forms/about/.EducationEditForm.tsx", "src/components/forms/about/.SkillsEditForm.tsx"],
+  "include": ["src", "src/components/.backup/Logo-bk-cursive.tsx", "src/components/.backup/Logo-bk-2.tsx", "src/components/forms/about/.ProfileEditForm.tsx", "src/components/forms/about/.ExperienceEditForm.tsx", "src/components/forms/about/.EducationEditForm.tsx", "src/components/forms/about/.SkillsEditForm.tsx", "src/pages/about/.AboutPage.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

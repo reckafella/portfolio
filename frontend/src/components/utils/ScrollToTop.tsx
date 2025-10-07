@@ -1,5 +1,6 @@
 // src/components/ScrollToTop.tsx
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -28,8 +29,8 @@ const ScrollToTop = () => {
     };
 
     return (
-        <a 
-            href="#" 
+        <Link 
+            to="#" 
             className={`scroll-top d-flex justify-content-center align-items-center ${isVisible ? 'active' : ''}`}
             onClick={(e) => {
                 e.preventDefault();
@@ -37,7 +38,7 @@ const ScrollToTop = () => {
             }}
         >
             <i className="bi bi-arrow-up-short fw-bold"></i>
-        </a>
+        </Link>
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 const LogoutPage: React.FC = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(true);
@@ -72,17 +73,7 @@ const LogoutPage: React.FC = () => {
               <div className="mb-4">
                 {isLoggingOut ? (
                   <>
-                    <div className="d-flex justify-content-center align-items-center mb-3">
-                      <div className="spinner-grow spinner-grow-sm text-danger" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <div className="spinner-grow text-info">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <div className="spinner-grow spinner-grow-lg text-success">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
+                    <LoadingSpinner size="md" text="Logging out..." />
                     <h4>Logging you out...</h4>
                     <p className="text-muted">Please wait while we sign you out securely.</p>
                   </>

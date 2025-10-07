@@ -50,22 +50,22 @@ urlpatterns = [
     path("wagtail/admin/", include(wagtailadmin_urls)),
     path("app-running", app_is_running.as_view(), name="app_is_running"),
     path("wagtail/", include(wagtail_urls)),
-    
+
     # API endpoints
     path("api/v1/", include("app.api_urls")),
-    
-    # Regular app URLs
-    path("app/", include("blog.urls"), name="blog"),
-    path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
-    path("captcha/", include("captcha.urls")),
-    path("app/", include("app.urls"), name="app"),
-    path("app/", include("authentication.urls"), name="auth"),
-    
+
     # React frontend assets (catch specific asset paths first)
     re_path(r"^assets/(?P<path>.*)$", FrontendAPIView.as_view(), name="react_assets"),
     re_path(r"^favicon\.(svg|ico)$", FrontendAPIView.as_view(), name="react_favicon"),
-    
-    # React frontend (catch-all for React Router)
+
+    # Regular app URLs - ordered from most specific to least specific
+    path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
+    path("captcha/", include("captcha.urls")),
+    path("blog/", include("blog.urls"), name="blog"),
+    path("auth/", include("authentication.urls"), name="auth"),
+    path("app/", include("app.urls"), name="app"),
+
+    # React frontend (catch-all for React Router) - must be last
     re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")
 ]
 

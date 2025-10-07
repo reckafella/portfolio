@@ -235,7 +235,7 @@ export function BlogEditorPage() {
   return (
     <div className="blog-editor-page">
       {/* Header */}
-      <div className="editor-header bg-white border-bottom sticky-top">
+      <div className="editor-header border-bottom">
         <div className="container-fluid">
           <div className="row align-items-center py-3">
             <div className="col">

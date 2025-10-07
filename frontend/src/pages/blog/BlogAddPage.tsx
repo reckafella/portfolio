@@ -211,7 +211,7 @@ export function BlogAddPage() {
 
   return (
     <>
-      <section className="blog">
+      <section className="blog-editor-page">
         <div className="container my-5">
           <div className="row justify-content-center">
             <div className="col-lg-10">

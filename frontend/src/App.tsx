@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import HomePage from './pages/home/HomePage'
-import EditableAboutPage from './pages/about/EditableAboutPage'
+import AboutPage from './pages/about/AboutPage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
 import { ProjectEditPage } from './pages/projects/ProjectEditPage'
@@ -76,7 +76,7 @@ function App() {
                                             
                                             {/* Project routes */}
                                             {/* About route */}
-                                            <Route path="/about" element={<EditableAboutPage />} />
+                                            <Route path="/about" element={<AboutPage />} />
                                             
                                             {/* Project routes */}
                                             <Route path="/projects" element={<ProjectListPage />} />

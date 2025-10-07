@@ -88,6 +88,7 @@
   --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #3a0369; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --logo-color: var(--accent-color); /* Logo color matches accent color in light theme */
   --text-error-color: #dc3545;
   --text-success-color: #198754;
   --text-warning-color: #ffc107;
@@ -124,6 +125,7 @@
   /* search bar background should have dim color like Twitter */
   --search-bar-background-color: var(--special-background-color);
   --accent-color:#fe8c00;
+  --logo-color: var(--accent-color); /* Logo color matches accent color in dark theme */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);

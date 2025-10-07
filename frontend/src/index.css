@@ -297,7 +297,7 @@ body.search-active #full-page-search {
   transform: scale(1.1);
 }
  */
-/* Dark theme adjustments */
+/* Dark theme adjustments
 [data-bs-theme="dark"] .search-overlay {
   background: rgba(33, 37, 41, 0.98);
 }
@@ -318,7 +318,7 @@ body.search-active #full-page-search {
 
 [data-bs-theme="dark"] .search-close:hover {
   color: #fff;
-}
+} */
 
 /* Bootstrap custom enhancements */
 .hover-shadow {

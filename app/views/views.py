@@ -10,11 +10,19 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from wagtail.models import Page
+from django.utils.cache import get_cache_key, learn_cache_key
 
 from app.utils.cache import cache_page_for_user, cache_page_with_prefix
-
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
+
+
+def get_view_cache_key(request, prefix, key_prefix=None):
+    """Helper function to get a cache key for a view."""
+    if not key_prefix:
+        key_prefix = getattr(request, '_cache_prefix', '') or ''
+    user_prefix = getattr(request, '_cache_user', '') or ''
+    return f"{prefix}:{user_prefix}:{key_prefix}:{request.build_absolute_uri()}"
 
 
 @method_decorator(cache_page_with_prefix('home', 300), name='dispatch')

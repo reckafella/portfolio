@@ -76,14 +76,12 @@ else:
     except ImportError:
         pass  # daphne not available, skip it
 
-    """
     from app.views.helpers.helpers import get_redis_creds
     REDIS_URL = get_redis_creds()[0]
     REDIS_PASSWORD = get_redis_creds()[1]
-    """
 
-    REDIS_URL = os.environ.get("REDIS_URL", default="redis-14483.crce199.us-west-2-2.ec2.redns.redis-cloud.com:14483")
-    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="6T8eLziQOa7MRXquePpm6b6tOYVjyB7M")
+    """ REDIS_URL = os.environ.get("REDIS_URL", default="redis-14483.crce199.us-west-2-2.ec2.redns.redis-cloud.com:14483")
+    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="6T8eLziQOa7MRXquePpm6b6tOYVjyB7M") """
 
     # CLOUDINARY CONFIG SETTINGS
     from app.views.helpers.helpers import get_cloudinary_creds
@@ -133,19 +131,8 @@ REST_FRAMEWORK = {
     },
 }
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://rohn.live",
-    "https://portfolio-ot66.onrender.com",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:4173",
-]
-
-
 MIDDLEWARE = [
-    "django.middleware.cache.UpdateCacheMiddleware",
+    "portfolio.middlewares.cache.CustomUpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -158,7 +145,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "portfolio.middlewares.rate_limit.RateLimitMiddleware",
     "blog.middlewares.security.ViewCountSecurityMiddleware",
-    "django.middleware.cache.FetchFromCacheMiddleware",
+    "portfolio.middlewares.cache.CustomFetchFromCacheMiddleware",
 ]
 
 # portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
@@ -239,6 +226,17 @@ CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
 CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
 USE_CACHE = True
+
+# Cache configuration
+CACHE_DYNAMIC_PAGES = 300  # 5 minutes
+CACHE_STATIC_PAGES = 3600  # 1 hour
+CACHE_API_PAGES = 15  # 15 seconds
+
+# Don't cache pages for authenticated users or POST requests
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+
+# Don't cache responses with these status codes
+CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
 
 # sessions
 SESSION_CACHE_ALIAS = "default"
@@ -501,9 +499,15 @@ SITE_ID = 1
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:4173",
+    "http://localhost:5173",
+    "http://localhost:8000",
     "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Vite default port
+    "http://127.0.0.1:4173",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://rohn.live",
+    "https://portfolio-ot66.onrender.com",
 ]
 
 if ENVIRONMENT == 'production':

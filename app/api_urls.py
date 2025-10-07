@@ -23,6 +23,7 @@ from app.views.api.about_update_views import (
     BulkSkillsView,
     reorder_items
 )
+from app.views.api.captcha_views import CaptchaRefreshAPIView
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -72,6 +73,9 @@ urlpatterns = [
 
     # Reorder API
     path('about/reorder/', reorder_items, name='reorder_items_api'),
+
+    # Captcha API
+    path('captcha/refresh/', CaptchaRefreshAPIView.as_view(), name='captcha_refresh_api'),
 
     # Include router URLs (ViewSet-based)
     path('', include(router.urls)),

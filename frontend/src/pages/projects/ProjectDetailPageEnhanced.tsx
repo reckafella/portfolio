@@ -229,10 +229,10 @@ export const ProjectDetailPageEnhanced: React.FC = () => {
                       )}
                       <li className="list-group-item d-flex justify-content-between align-items-center">
                         {(canEditProjects || canDeleteProjects) && (
-                          <div className="btn-group" role="group">
+                          <div className="btn-group gap-3" role="group">
                             {canEditProjects && (
                               <button
-                                className="btn btn-outline-primary btn-sm"
+                                className="btn btn-primary btn-sm"
                                 onClick={() => navigate(`/projects/edit/${project.slug}`)}
                               >
                                 <i className="bi bi-pencil me-1"></i>
@@ -263,6 +263,7 @@ export const ProjectDetailPageEnhanced: React.FC = () => {
                             } else {
                               navigator.clipboard.writeText(window.location.href);
                               // You could add a toast notification here
+                              alert('Project URL copied to clipboard!');
                             }
                           }}
                         >
@@ -342,11 +343,16 @@ export const ProjectDetailPageEnhanced: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal show d-flex" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Delete Project</h5>
+                <h5
+                  className="modal-title"
+                  style={{ color: '#dc3545' }}
+                >
+                  Confirm Project Deletion!
+                </h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -354,19 +360,25 @@ export const ProjectDetailPageEnhanced: React.FC = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to delete "{project.title}"? This action cannot be undone.</p>
+                <p>Are you sure you want to delete "{project.title}"?</p>
+                <p
+                  className='mb-0'
+                  style={{ fontSize: '1.2rem', fontStyle: 'italic', color: '#dc3545' }}
+                >
+                  This action cannot be undone.
+                </p>
               </div>
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn btn-primary"
                   onClick={() => setShowDeleteModal(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-outline-danger"
                   onClick={handleDelete}
                   disabled={deleteProjectMutation.isPending}
                 >

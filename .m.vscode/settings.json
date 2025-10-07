@@ -1,0 +1,25 @@
+{
+    "python.languageServer": "Pylance",
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "cursorpyright.analysis.extraPaths": [
+        "./app",
+        "./blog",
+        "./portfolio",
+        "./portfolio/wsgi.py",
+        "./portfolio/asgi.py"
+    ],
+    "cursorpyright.analysis.typeCheckingMode": "basic",
+    "cursorpyright.analysis.diagnosticSeverityOverrides": {
+        "reportUndefinedVariable": "hint",
+        "reportUnusedImport": "hint",
+        "reportUnusedVariable": "hint",
+        "reportUnusedFunction": "hint",
+        "reportUnusedClass": "hint",
+        "reportUnusedDecorator": "hint",
+        "reportMissingParameterType": "hint",
+        "reportMissingReturnType": "hint",
+        "reportCompatibleMethodOverride": "hint",
+        "reportMissingTypeStubs": "hint",
+        "reportAttributeAccessibleIssue": "hint",
+    }
+}

@@ -3,7 +3,7 @@ import { BlogFilters } from '@/hooks/queries/blogQueries';
 
 interface BlogFiltersProps {
     filters: BlogFilters;
-    onFiltersChange: (filters: BlogFilters) => void;
+    onFiltersChange: (_filters: BlogFilters) => void;
     tags: Array<{ name: string; count: number }>;
     totalCount: number;
 }
@@ -11,7 +11,7 @@ interface BlogFiltersProps {
 export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCount }: BlogFiltersProps) {
   const [expandFilters, setExpandFilters] = useState(false);
 
-  const handleFilterChange = (key: keyof BlogFilters, value: any) => {
+  const handleFilterChange = (key: keyof BlogFilters, value: string | number | undefined) => {
     onFiltersChange({
       ...filters,
       [key]: value,
@@ -44,11 +44,12 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
   ];
 
     return (
-        <div className="p-3 rounded mb-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="p-0 rounded mb-2 mb-lg-3">
+            <div className="d-flex justify-content-between align-items-center mb-1">
                 <h6 className="mb-0 d-flex">Filter Posts (
-                    <p className="text-muted mb-0">
+                    <p className="text-muted mb-1">
                         {totalCount > 0 && `${totalCount} post${totalCount !== 1 ? 's' : ''} found`}
+                        {totalCount === 0 && 'No posts found'}
                     </p>)
                 </h6>
                 <button
@@ -62,7 +63,7 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
             <form action="" className='card form-control' method="get">
                 <div className="card-body">
                     {/* Search Input - Always Visible */}
-                    <div className="mb-3">
+                    <div className="mb-0 mb-md-1">
                         <input
                             type="text"
                             className="form-control"

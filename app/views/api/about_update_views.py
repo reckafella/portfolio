@@ -9,7 +9,7 @@ from django.db import transaction
 from app.models import Profile, Education, Experience, Skill
 from app.serializers.about_update_serializers import (
     ProfileUpdateSerializer,
-    EducationSerializer, 
+    EducationSerializer,
     ExperienceSerializer,
     SkillSerializer,
     BulkSkillsSerializer
@@ -19,7 +19,7 @@ from app.serializers.about_update_serializers import (
 class ProfileUpdateView(APIView):
     """Update profile information"""
     permission_classes = [IsAuthenticated]
-    
+
     def put(self, request):
         """Update profile data"""
         try:
@@ -27,7 +27,7 @@ class ProfileUpdateView(APIView):
             profile = Profile.objects.first()
             if not profile:
                 profile = Profile()
-            
+
             serializer = ProfileUpdateSerializer(profile, data=request.data, partial=False)
             if serializer.is_valid():
                 profile = serializer.save()
@@ -48,13 +48,13 @@ class ProfileUpdateView(APIView):
                     'success': False,
                     'errors': serializer.errors
                 }, status=status.HTTP_400_BAD_REQUEST)
-                
+
         except Exception as e:
             return Response({
                 'success': False,
                 'message': f'Error updating profile: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     def patch(self, request):
         """Partially update profile data"""
         try:
@@ -64,7 +64,7 @@ class ProfileUpdateView(APIView):
                     'success': False,
                     'message': 'Profile not found'
                 }, status=status.HTTP_404_NOT_FOUND)
-            
+
             serializer = ProfileUpdateSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 profile = serializer.save()
@@ -85,7 +85,7 @@ class ProfileUpdateView(APIView):
                     'success': False,
                     'errors': serializer.errors
                 }, status=status.HTTP_400_BAD_REQUEST)
-                
+
         except Exception as e:
             return Response({
                 'success': False,
@@ -96,7 +96,7 @@ class ProfileUpdateView(APIView):
 class EducationListCreateView(APIView):
     """List and create education entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         """Get all education entries"""
         education = Education.objects.filter(is_active=True).order_by('order', '-created_at')
@@ -105,7 +105,7 @@ class EducationListCreateView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def post(self, request):
         """Create new education entry"""
         serializer = EducationSerializer(data=request.data)
@@ -126,7 +126,7 @@ class EducationListCreateView(APIView):
 class EducationDetailView(APIView):
     """Retrieve, update and delete education entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, education_id):
         """Get specific education entry"""
         education = get_object_or_404(Education, id=education_id)
@@ -135,7 +135,7 @@ class EducationDetailView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def put(self, request, education_id):
         """Update education entry"""
         education = get_object_or_404(Education, id=education_id)
@@ -152,7 +152,7 @@ class EducationDetailView(APIView):
                 'success': False,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, education_id):
         """Delete education entry"""
         education = get_object_or_404(Education, id=education_id)
@@ -166,7 +166,7 @@ class EducationDetailView(APIView):
 class ExperienceListCreateView(APIView):
     """List and create experience entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         """Get all experience entries"""
         experience = Experience.objects.filter(is_active=True).order_by('order', '-created_at')
@@ -175,7 +175,7 @@ class ExperienceListCreateView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def post(self, request):
         """Create new experience entry"""
         serializer = ExperienceSerializer(data=request.data)
@@ -196,7 +196,7 @@ class ExperienceListCreateView(APIView):
 class ExperienceDetailView(APIView):
     """Retrieve, update and delete experience entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, experience_id):
         """Get specific experience entry"""
         experience = get_object_or_404(Experience, id=experience_id)
@@ -205,7 +205,7 @@ class ExperienceDetailView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def put(self, request, experience_id):
         """Update experience entry"""
         experience = get_object_or_404(Experience, id=experience_id)
@@ -222,7 +222,7 @@ class ExperienceDetailView(APIView):
                 'success': False,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, experience_id):
         """Delete experience entry"""
         experience = get_object_or_404(Experience, id=experience_id)
@@ -236,7 +236,7 @@ class ExperienceDetailView(APIView):
 class SkillsListCreateView(APIView):
     """List and create skill entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         """Get all skills"""
         skills = Skill.objects.filter(is_active=True).order_by('order', 'name')
@@ -245,7 +245,7 @@ class SkillsListCreateView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def post(self, request):
         """Create new skill"""
         serializer = SkillSerializer(data=request.data)
@@ -266,7 +266,7 @@ class SkillsListCreateView(APIView):
 class SkillDetailView(APIView):
     """Retrieve, update and delete skill entries"""
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, skill_id):
         """Get specific skill"""
         skill = get_object_or_404(Skill, id=skill_id)
@@ -275,7 +275,7 @@ class SkillDetailView(APIView):
             'success': True,
             'data': serializer.data
         })
-    
+
     def put(self, request, skill_id):
         """Update skill"""
         skill = get_object_or_404(Skill, id=skill_id)
@@ -292,7 +292,7 @@ class SkillDetailView(APIView):
                 'success': False,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, skill_id):
         """Delete skill"""
         skill = get_object_or_404(Skill, id=skill_id)
@@ -306,14 +306,14 @@ class SkillDetailView(APIView):
 class BulkSkillsView(APIView):
     """Bulk operations for skills"""
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
         """Bulk create/update skills"""
         serializer = BulkSkillsSerializer(data=request.data)
         if serializer.is_valid():
             skills_data = serializer.validated_data
             created_skills = []
-            
+
             with transaction.atomic():
                 for i, skill_name in enumerate(skills_data['skills']):
                     skill, created = Skill.objects.get_or_create(
@@ -334,7 +334,7 @@ class BulkSkillsView(APIView):
                         skill.is_active = True
                         skill.save()
                         created_skills.append(skill)
-            
+
             return Response({
                 'success': True,
                 'message': f'Successfully processed {len(created_skills)} skills',
@@ -354,36 +354,36 @@ def reorder_items(request):
     try:
         item_type = request.data.get('type')  # 'education', 'experience', 'skills'
         items = request.data.get('items')  # [{'id': 1, 'order': 0}, ...]
-        
+
         if not item_type or not items:
             return Response({
                 'success': False,
                 'message': 'Type and items are required'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         model_map = {
             'education': Education,
-            'experience': Experience, 
+            'experience': Experience,
             'skills': Skill
         }
-        
+
         if item_type not in model_map:
             return Response({
                 'success': False,
                 'message': 'Invalid item type'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         Model = model_map[item_type]
-        
+
         with transaction.atomic():
             for item in items:
                 Model.objects.filter(id=item['id']).update(order=item['order'])
-        
+
         return Response({
             'success': True,
             'message': f'{item_type.title()} items reordered successfully'
         })
-        
+
     except Exception as e:
         return Response({
             'success': False,

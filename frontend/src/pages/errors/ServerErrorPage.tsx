@@ -5,15 +5,15 @@ import { Link } from 'react-router-dom';
 const ServerErrorPage: React.FC = () => {
   usePageTitle('500 - Server Error');
 
-    return (
-        <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
+  return (
+    <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-6 col-md-8 text-center">
             <div className="error-content">
               {/* Error Code */}
-              <div className="error-code mb-4">
-                <h1 className="display-1 fw-bold mb-0">500</h1>
+              <div className="error-code mb-4" style={{color: 'var(--text-error-color)'}}>
+                <h1 className="display-1 fw-bold mb-0" style={{color: 'var(--text-error-color)'}}>500</h1>
                 <div className="error-divider mx-auto my-3" style={{width: '100px', height: '4px', backgroundColor: 'var(--text-error-color)'}}></div>
               </div>
 
@@ -42,14 +42,14 @@ const ServerErrorPage: React.FC = () => {
                   <div className="col-md-6">
                     <div className="suggestion-card p-3 border rounded h-100">
                       <i className="bi bi-clock-history fs-2 text-secondary mb-2"></i>
-                      <h5 className="fw-semibold">Wait & Retry</h5>
+                      <h3 className="fw-semibold">Wait & Retry</h3>
                       <p className="text-muted small mb-0">Try again in a few moments</p>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="suggestion-card p-3 border rounded h-100">
                       <i className="bi bi-house-door fs-2 text-secondary mb-2"></i>
-                      <h5 className="fw-semibold">Go Home</h5>
+                      <h3 className="fw-semibold">Go Home</h3>
                       <p className="text-muted small mb-0">Return to the main page</p>
                     </div>
                   </div>

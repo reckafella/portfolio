@@ -92,11 +92,11 @@ export const BlogListPage: React.FC = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             {canCreateBlog && (
               <div className="btn-group">
-                <Link to="/blog/new" className="btn btn-outline-primary">
+                <Link to="/blog/new" className="btn btn-primary">
                   <i className="bi bi-plus me-2"></i>
                   New Post
                 </Link>
-                <Link to="/blog/editor" className="btn btn-primary">
+                <Link to="/blog/editor" className="btn btn-outline-primary">
                   <i className="bi bi-pencil-square me-2"></i>
                   Rich Editor
                 </Link>
@@ -115,7 +115,9 @@ export const BlogListPage: React.FC = () => {
           {/* Loading State */}
           {postsLoading && (
             <div className="text-center my-4">
-              <LoadingSpinner />
+                  <LoadingSpinner
+                    text="Loading blog posts..."
+                  />
             </div>
           )}
 

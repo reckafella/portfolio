@@ -1,52 +1,172 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
+
+interface SearchResult {
+  id: string | number;
+  title: string;
+  description?: string;
+  url: string;
+  type: 'blog_post' | 'project' | 'action';
+  action_type?: string;
+  icon?: string;
+  tags?: string[];
+  category?: string;
+  created_at?: string;
+  first_published_at?: string;
+  view_count?: number;
+}
+
+interface SearchResultsData {
+  posts: SearchResult[];
+  projects: SearchResult[];
+  actions: SearchResult[];
+}
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [results, setResults] = useState<any[]>([]);
+  const category = searchParams.get('category') || 'all';
+  const sort = searchParams.get('sort') || 'relevance';
+  
+  const [results, setResults] = useState<SearchResultsData>({
+    posts: [],
+    projects: [],
+    actions: []
+  });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
     if (query) {
-      performSearch(query);
+      performSearch(query, category, sort);
     }
-  }, [query]);
+  }, [query, category, sort]);
 
-  const performSearch = async (searchQuery: string) => {
+  const performSearch = async (searchQuery: string, searchCategory: string, searchSort: string) => {
     setLoading(true);
+    setError(null);
+    
     try {
-      // Mock search results - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const mockResults = [
-        {
-          id: 1,
-          type: 'project',
-          title: 'Portfolio Website',
-          description: 'Personal portfolio built with React and FastAPI',
-          url: '/projects'
-        },
-        {
-          id: 2,
-          type: 'blog',
-          title: 'Getting Started with FastAPI',
-          description: 'A comprehensive guide to building APIs with FastAPI',
-          url: '/blog/fastapi-guide'
-        }
-      ].filter(item => 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const params = new URLSearchParams({
+        q: searchQuery,
+        category: searchCategory,
+        sort: searchSort,
+        page_size: '20'
+      });
 
-      setResults(mockResults);
+      const response = await fetch(`/api/v1/search/?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setResults(data.results);
+        setTotalResults(data.total_results);
+      } else {
+        setError(data.message || 'Search failed');
+        setResults({ posts: [], projects: [], actions: [] });
+        setTotalResults(0);
+      }
     } catch (error) {
-      const noot = () => { }
-      if (error instanceof Error) noot();
-      setResults([]);
+      setError(error instanceof Error ? error.message : 'An error occurred while searching');
+      setResults({ posts: [], projects: [], actions: [] });
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderResultItem = (result: SearchResult) => {
+    const getTypeIcon = (type: string) => {
+      switch (type) {
+        case 'blog_post':
+          return 'bi-file-earmark-text';
+        case 'project':
+          return 'bi-folder';
+        case 'action':
+          return result.icon || 'bi-lightning';
+        default:
+          return 'bi-file';
+      }
+    };
+
+    const getTypeLabel = (type: string) => {
+      switch (type) {
+        case 'blog_post':
+          return 'Blog Post';
+        case 'project':
+          return 'Project';
+        case 'action':
+          return 'Action';
+        default:
+          return 'Result';
+      }
+    };
+
+    return (
+      <div key={`${result.type}-${result.id}`} className="card mb-3">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-start mb-2">
+            <h5 className="card-title mb-0 d-flex align-items-center">
+              <i className={`bi ${getTypeIcon(result.type)} me-2 text-primary`}></i>
+              <Link to={result.url} className="text-decoration-none">
+                {result.title}
+              </Link>
+            </h5>
+            <span className={`badge ${
+              result.type === 'blog_post' ? 'bg-info' : 
+              result.type === 'project' ? 'bg-success' : 'bg-warning'
+            }`}>
+              {getTypeLabel(result.type)}
+            </span>
+          </div>
+          
+          {result.description && (
+            <p className="card-text text-muted">{result.description}</p>
+          )}
+          
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex gap-2 flex-wrap">
+              {result.tags && result.tags.length > 0 && (
+                <div className="d-flex gap-1">
+                  {result.tags.slice(0, 3).map((tag, index) => (
+                    <span key={index} className="badge bg-secondary">{tag}</span>
+                  ))}
+                  {result.tags.length > 3 && (
+                    <span className="badge bg-light text-dark">+{result.tags.length - 3} more</span>
+                  )}
+                </div>
+              )}
+              
+              {result.category && (
+                <span className="badge bg-outline-secondary">{result.category}</span>
+              )}
+              
+              {result.view_count && (
+                <small className="text-muted">
+                  <i className="bi bi-eye me-1"></i>
+                  {result.view_count} views
+                </small>
+              )}
+            </div>
+            
+            <Link to={result.url} className="btn btn-outline-primary btn-sm">
+              {result.type === 'action' ? 'Go to Action' : 'View Details'}
+              <i className="bi bi-arrow-right ms-1"></i>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -54,64 +174,86 @@ const SearchResults: React.FC = () => {
       <section className="py-5">
         <div className="container">
           <div className="row">
-            <div className="col-12">
-              <h1 className="h2 fw-bold mb-4">Search Results</h1>
-              
-              {query && (
-                <p className="text-muted mb-4">
-                  Showing results for: <strong>"{query}"</strong>
-                </p>
-              )}
-
-              {loading ? (
-                <div className="d-flex justify-content-center py-5">
-                  <div className="spinner-grow spinner-grow-sm text-danger" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <div className="spinner-grow text-info">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <div className="spinner-grow spinner-grow-lg text-success">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : results.length > 0 ? (
-                <div className="row">
-                  {results.map((result) => (
-                    <div key={result.id} className="col-12 mb-4">
-                      <div className="card border-0 shadow-sm h-100">
-                        <div className="card-body">
-                          <div className="d-flex align-items-center mb-2">
-                            <span className={`badge ${result.type === 'project' ? 'bg-primary' : 'bg-success'} me-2`}>
-                              {result.type}
-                            </span>
-                          </div>
-                          <h3 className="h5 fw-bold">
-                            <a href={result.url} className="text-decoration-none">
-                              {result.title}
-                            </a>
-                          </h3>
-                          <p className="text-muted mb-0">{result.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : query ? (
-                <div className="text-center py-5">
-                  <div className="text-muted display-1 mb-4">🔍</div>
-                  <h3 className="fw-semibold text-muted mb-2">No results found</h3>
+            <div className="col-lg-10 mx-auto">
+              <div className="text-center mb-5">
+                <h1 className="display-6 mb-3">Search Results</h1>
+                {query && (
                   <p className="text-muted">
-                    Try adjusting your search terms or browse our projects and blog posts.
+                    Results for "<strong>{query}</strong>"
+                    {totalResults > 0 && ` (${totalResults} found)`}
                   </p>
+                )}
+              </div>
+              
+              {loading ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Searching...</span>
+                  </div>
+                  <p className="mt-3 text-muted">Searching for "{query}"...</p>
+                </div>
+              ) : error ? (
+                <div className="alert alert-danger text-center">
+                  <i className="bi bi-exclamation-triangle me-2"></i>
+                  {error}
+                </div>
+              ) : totalResults === 0 ? (
+                <div className="text-center py-5">
+                  <i className="bi bi-search display-1 text-muted mb-3"></i>
+                  <h4>No results found</h4>
+                  <p className="text-muted">
+                    No results found for "<strong>{query}</strong>". 
+                    Try different keywords or check your spelling.
+                  </p>
+                  <div className="mt-4">
+                    <Link to="/blog" className="btn btn-outline-primary me-2">
+                      Browse Blog Posts
+                    </Link>
+                    <Link to="/projects" className="btn btn-outline-success">
+                      Browse Projects
+                    </Link>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-5">
-                  <div className="text-muted display-1 mb-4">🔍</div>
-                  <h3 className="fw-semibold text-muted mb-2">Start Searching</h3>
-                  <p className="text-muted">
-                    Enter a search term to find projects, blog posts, and more.
-                  </p>
+                <div>
+                  {/* Actions Section */}
+                  {results.actions.length > 0 && (
+                    <div className="mb-5">
+                      <h3 className="h5 mb-3">
+                        <i className="bi bi-lightning me-2"></i>
+                        Quick Actions ({results.actions.length})
+                      </h3>
+                      <div className="row">
+                        {results.actions.map(renderResultItem)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Blog Posts Section */}
+                  {results.posts.length > 0 && (
+                    <div className="mb-5">
+                      <h3 className="h5 mb-3">
+                        <i className="bi bi-file-earmark-text me-2"></i>
+                        Blog Posts ({results.posts.length})
+                      </h3>
+                      <div className="row">
+                        {results.posts.map(renderResultItem)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Projects Section */}
+                  {results.projects.length > 0 && (
+                    <div className="mb-5">
+                      <h3 className="h5 mb-3">
+                        <i className="bi bi-folder me-2"></i>
+                        Projects ({results.projects.length})
+                      </h3>
+                      <div className="row">
+                        {results.projects.map(renderResultItem)}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -60,6 +60,7 @@ export function BlogEditorPage() {
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedContentRef = useRef<string>('');
+  const initialContentRef = useRef<string>('');
 
   // Helper function to check if form data meets auto-save criteria
   const shouldAutoSave = (data: BlogPostFormData): boolean => {
@@ -87,10 +88,7 @@ export function BlogEditorPage() {
 
   // Auto-save function
   const performAutoSave = useCallback(async (data: BlogPostFormData) => {
-    if (!shouldAutoSave(data)) {
-      return;
-    }
-
+    
     setAutoSave(prev => ({ ...prev, isAutoSaving: true }));
 
     try {
@@ -107,6 +105,7 @@ export function BlogEditorPage() {
       }
 
       lastSavedContentRef.current = data.content;
+      initialContentRef.current = data.content; // Update initial content to current
       setAutoSave({
         isAutoSaving: false,
         lastSaved: new Date(),
@@ -121,13 +120,15 @@ export function BlogEditorPage() {
   // Populate form with existing post data
   useEffect(() => {
     if (post && !initialDataLoaded && isEditing) {
+      const initialContent = post.content || '';
       setFormData({
         title: post.title || '',
-        content: post.content || '',
+        content: initialContent,
         tags: post.tags_list?.join(', ') || '',
         published: post.published || false
       });
-      lastSavedContentRef.current = post.content || '';
+      lastSavedContentRef.current = initialContent;
+      initialContentRef.current = initialContent;
       setInitialDataLoaded(true);
     }
   }, [post, initialDataLoaded, isEditing]);
@@ -138,10 +139,10 @@ export function BlogEditorPage() {
       clearTimeout(autoSaveTimeoutRef.current);
     }
 
-    // Check if content has changed and meets auto-save criteria
-    if (formData.content && formData.content !== lastSavedContentRef.current) {
+    // Check if content has changed from initial load and meets auto-save criteria
+    if (formData.content && formData.content !== initialContentRef.current && shouldAutoSave(formData)) {
       setAutoSave(prev => ({ ...prev, hasUnsavedChanges: true }));
-
+      
       autoSaveTimeoutRef.current = setTimeout(() => {
         performAutoSave(formData);
       }, 2000); // Auto-save after 2 seconds of inactivity
@@ -152,7 +153,36 @@ export function BlogEditorPage() {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [formData, performAutoSave]);
+  }, [formData, performAutoSave, isEditing]);
+
+  // Warn user before leaving with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (autoSave.hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return 'You have unsaved changes. Are you sure you want to leave?';
+      }
+    };
+
+    const handlePopState = (e: PopStateEvent) => {
+      if (autoSave.hasUnsavedChanges) {
+        const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+        if (!confirmLeave) {
+          e.preventDefault();
+          window.history.pushState(null, '', window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [autoSave.hasUnsavedChanges]);
 
   // Redirect if user doesn't have permission
   if (!canCreateBlog && !isEditing) {
@@ -313,7 +343,16 @@ export function BlogEditorPage() {
                   <button
                     type="button"
                     className="btn btn-outline-secondary btn-sm rounded"
-                    onClick={() => navigate('/blog')}
+                    onClick={() => {
+                      if (autoSave.hasUnsavedChanges) {
+                        const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+                        if (confirmLeave) {
+                          navigate('/blog');
+                        }
+                      } else {
+                        navigate('/blog');
+                      }
+                    }}
                   >
                     <i className="bi bi-arrow-left me-1"></i>
                     Back to Blog

@@ -9,7 +9,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 
-export const BlogListPage: React.FC = () => {
+export function BlogListPage() {
   usePageTitle('Blog');
   const { canCreateProjects: canCreateBlog } = useStaffPermissions();
   const [filters, setFilters] = useState<BlogFilters>({ page: 1, page_size: 6 });
@@ -68,14 +68,16 @@ export const BlogListPage: React.FC = () => {
   };
 
   if (postsLoading && !posts.length) {
-    return <LoadingSpinner />;
+    <div className='row justify-content-center align-items-center'>
+      return <LoadingSpinner />;
+    </div>
   }
 
   if (postsError && !posts.length) {
     return (
       <AlertMessage
         type="danger"
-        message="Unable to load blog posts. Please try again later."
+        message={"Failed to load blog posts. Please try again later."}
       />
     );
   }

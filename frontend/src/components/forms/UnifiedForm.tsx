@@ -39,11 +39,11 @@ interface UnifiedFormProps {
     initialData?: Record<string, string | boolean>;
 }
 
-const UnifiedForm: React.FC<UnifiedFormProps> = ({ 
+const UnifiedForm: React.FC<UnifiedFormProps> = ({
     formType,
-    onSubmit, 
-    isSubmitting, 
-    error, 
+    onSubmit,
+    isSubmitting,
+    error,
     success,
     title,
     slug,
@@ -267,7 +267,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 if (response.ok) {
                     const config = await response.json();
                     setFormConfig(config);
-                    
+
                     // Extract CAPTCHA data if present (for contact form)
                     const captchaField = config.fields?.captcha;
                     if (captchaField && captchaField.captcha_key && captchaField.captcha_image) {
@@ -276,7 +276,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             image: captchaField.captcha_image
                         });
                     }
-                    
+
                     // Initialize form data with empty values or provided initial data
                     const formInitialData: Record<string, string | File | File[] | boolean> = {};
                     Object.keys(config.fields).forEach(fieldName => {
@@ -293,7 +293,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             formInitialData['captcha_0'] = captchaField.captcha_key;
                         }
                     });
-                    
+
                     // Override with provided initial data
                     if (initialData) {
                         Object.keys(initialData).forEach(key => {
@@ -302,13 +302,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             }
                         });
                     }
-                    
+
                     setFormData(formInitialData);
                 } else {
                     // Use fallback config if endpoint doesn't exist
                     const fallbackConfig = getFallbackConfig();
                     setFormConfig(fallbackConfig);
-                    
+
                     const fallbackInitialData: Record<string, string | File | File[] | boolean> = {};
                     Object.keys(fallbackConfig.fields).forEach(fieldName => {
                         const fieldConfig = fallbackConfig.fields[fieldName];
@@ -320,7 +320,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             fallbackInitialData[fieldName] = '';
                         }
                     });
-                    
+
                     // Override with provided initial data
                     if (initialData) {
                         Object.keys(initialData).forEach(key => {
@@ -329,7 +329,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             }
                         });
                     }
-                    
+
                     setFormData(fallbackInitialData);
                 }
             } catch (_) {
@@ -338,7 +338,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 // Use fallback config on error
                 const fallbackConfig = getFallbackConfig();
                 setFormConfig(fallbackConfig);
-                
+
                 const errorFallbackData: Record<string, string | File | File[] | boolean> = {};
                 Object.keys(fallbackConfig.fields).forEach(fieldName => {
                     const fieldConfig = fallbackConfig.fields[fieldName];
@@ -350,7 +350,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         errorFallbackData[fieldName] = '';
                     }
                 });
-                
+
                 // Override with provided initial data
                 if (initialData) {
                     Object.keys(initialData).forEach(key => {
@@ -359,7 +359,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         }
                     });
                 }
-                
+
                 setFormData(errorFallbackData);
             } finally {
                 setLoading(false);
@@ -372,16 +372,16 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     const refreshCaptcha = async () => {
         setIsRefreshingCaptcha(true);
         const oldCaptchaKey = captchaData?.key;
-        
+
         try {
             // Send old captcha key for cleanup
             const url = new URL('/api/v1/captcha/refresh', window.location.origin);
             if (oldCaptchaKey) {
                 url.searchParams.append('old_key', oldCaptchaKey);
             }
-            
+
             const response = await fetch(url.toString());
-            
+
             if (response.ok) {
                 const data = await response.json();
                 // Only update captcha if refresh succeeded
@@ -396,7 +396,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     captcha_1: '', // Clear the captcha input field
                     captcha: '' // Also clear if using this field name
                 }));
-                
+
                 // Also clear the actual input element
                 const captchaInput = document.querySelector('input[name="captcha"], input[placeholder*="characters"]') as HTMLInputElement;
                 if (captchaInput) {
@@ -446,14 +446,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
 
         // Prepare form data for submission
         const submitData = { ...formData };
-        
+
         // Handle CAPTCHA field specially for contact forms
         if (formType === 'contact' && captchaData && formData.captcha) {
             submitData.captcha_0 = captchaData.key;
             submitData.captcha_1 = formData.captcha;
             delete submitData.captcha; // Remove the original captcha field
         }
-        
+
         await onSubmit(submitData);
     };
 
@@ -466,7 +466,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             id: fieldName,
             name: fieldName,
             value: typeof value === 'string' ? value : '',
-            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => 
+            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
                 handleInputChange(fieldName, e.target.value),
             required,
             disabled: disabled || isSubmitting,
@@ -480,7 +480,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             id: fieldName,
             name: fieldName,
             checked: Boolean(value),
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                 handleInputChange(fieldName, e.target.checked),
             required,
             disabled: disabled || isSubmitting,
@@ -491,7 +491,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         const fileBaseProps = {
             id: fieldName,
             name: fieldName,
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                 handleFileChange(fieldName, e.target.files, multiple),
             required,
             disabled: disabled || isSubmitting,
@@ -516,7 +516,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         {...textBaseProps}
                     />
                 );
-            
+
             case 'EmailInput':
                 return (
                     <input
@@ -548,7 +548,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         {...textBaseProps}
                     />
                 );
-            
+
             case 'Textarea':
                 return (
                     <textarea
@@ -573,13 +573,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             case 'FileInput': {
                 const fileValue = value as File | File[] | string;
                 const selectedFiles = Array.isArray(fileValue) ? fileValue : (fileValue instanceof File ? [fileValue] : []);
-                
+
                 return (
                     <div className="file-upload-container">
                         {/* Drag and Drop Area */}
-                        <div 
+                        <div
                             className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
-                            style={{ 
+                            style={{
                                 borderColor: 'var(--default-color)',
                                 backgroundColor: 'var(--card-background-color)',
                                 cursor: 'pointer',
@@ -599,7 +599,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                 e.preventDefault();
                                 e.currentTarget.style.borderColor = 'var(--default-color)';
                                 e.currentTarget.style.backgroundColor = 'var(--card-background-color)';
-                                
+
                                 const files = Array.from(e.dataTransfer.files);
                                 if (files.length > 0) {
                                     handleFileChange(fieldName, files, multiple);
@@ -620,14 +620,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                 {multiple && ' • Multiple files allowed'}
                             </p>
                         </div>
-                        
+
                         {/* Hidden File Input */}
                         <input
                             type="file"
                             {...fileBaseProps}
                             style={{ display: 'none' }}
                         />
-                        
+
                         {/* File List */}
                         {selectedFiles.length > 0 && (
                             <div className="mt-3">
@@ -644,7 +644,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         Clear All
                                     </button>
                                 </div>
-                                
+
                                 <div className="list-group">
                                     {selectedFiles.map((file, index) => (
                                         <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
@@ -677,13 +677,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             case 'ImageInput': {
                 const imageValue = value as File | File[] | string;
                 const selectedImages = Array.isArray(imageValue) ? imageValue : (imageValue instanceof File ? [imageValue] : []);
-                
+
                 return (
                     <div className="image-upload-container">
                         {/* Drag and Drop Area */}
-                        <div 
+                        <div
                             className="drag-drop-area border-2 border-dashed rounded p-4 text-center"
-                            style={{ 
+                            style={{
                                 borderColor: selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--default-color)',
                                 backgroundColor: selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--card-background-color)',
                                 cursor: selectedImages.length > 5 ? 'not-allowed' : 'pointer',
@@ -706,13 +706,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                 e.preventDefault();
                                 e.currentTarget.style.borderColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--default-color)';
                                 e.currentTarget.style.backgroundColor = selectedImages.length > 5 ? 'var(--text-error-color)' : 'var(--card-background-color)';
-                                
+
                                 if (selectedImages.length >= 5) {
                                     alert('You have already reached the maximum of 5 images.');
                                     return;
                                 }
-                                
-                                const files = Array.from(e.dataTransfer.files).filter(file => 
+
+                                const files = Array.from(e.dataTransfer.files).filter(file =>
                                     file.type.startsWith('image/')
                                 );
                                 if (files.length > 0) {
@@ -720,7 +720,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                     if (multiple) {
                                         const existingFiles = selectedImages as File[];
                                         const newFiles = [...existingFiles, ...files];
-                                        
+
                                         // Limit to 5 images total
                                         if (newFiles.length > 5) {
                                             alert('You can only upload up to 5 images. Please select fewer images.');
@@ -754,7 +754,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                 {selectedImages.length > 0 && ` • ${selectedImages.length}/5 selected`}
                             </p>
                         </div>
-                        
+
                         {/* Hidden File Input */}
                         <input
                             type="file"
@@ -772,16 +772,16 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         e.target.value = ''; // Clear the input
                                         return;
                                     }
-                                    
-                                    const fileArray = Array.from(files).filter(file => 
+
+                                    const fileArray = Array.from(files).filter(file =>
                                         file.type.startsWith('image/')
                                     );
-                                    
+
                                     if (multiple) {
                                         // For multiple images, append to existing files
                                         const existingFiles = selectedImages as File[];
                                         const newFiles = [...existingFiles, ...fileArray];
-                                        
+
                                         // Limit to 5 images total
                                         if (newFiles.length > 5) {
                                             alert('You can only upload up to 5 images. Please select fewer images.');
@@ -797,7 +797,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             }}
                             style={{ display: 'none' }}
                         />
-                        
+
                         {/* Image Previews */}
                         {selectedImages.length > 0 && (
                             <div className="mt-3">
@@ -814,7 +814,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         Clear All
                                     </button>
                                 </div>
-                                
+
                                 <div className="row g-2">
                                     {selectedImages.map((file, index) => (
                                         <div key={index} className="col-6 col-md-4 col-lg-3">
@@ -823,10 +823,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                                 <button
                                                     type="button"
                                                     className="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                                                    style={{ 
-                                                        borderRadius: '50%', 
-                                                        width: '24px', 
-                                                        height: '24px', 
+                                                    style={{
+                                                        borderRadius: '50%',
+                                                        width: '24px',
+                                                        height: '24px',
                                                         padding: '0',
                                                         zIndex: 10
                                                     }}
@@ -837,14 +837,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                                 >
                                                     <i className="bi bi-x-lg" style={{ fontSize: '10px' }}></i>
                                                 </button>
-                                                
+
                                                 {/* Image Preview */}
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={`Preview ${index + 1}`}
                                                     className="card-img-top"
-                                                    style={{ 
-                                                        height: '120px', 
+                                                    style={{
+                                                        height: '120px',
                                                         objectFit: 'cover',
                                                         cursor: 'pointer'
                                                     }}
@@ -867,31 +867,31 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                                             </div>
                                                         `;
                                                         document.body.appendChild(modal);
-                                                        
+
                                                         // Show modal using Bootstrap
                                                         const bootstrapModal = new (window as unknown as { bootstrap: { Modal: new (_modal: HTMLElement) => { show: () => void } } }).bootstrap.Modal(modal);
                                                         bootstrapModal.show();
-                                                        
+
                                                         // Clean up modal after it's hidden
                                                         modal.addEventListener('hidden.bs.modal', () => {
                                                             document.body.removeChild(modal);
                                                         });
                                                     }}
                                                 />
-                                                
+
                                                 {/* File Info */}
                                                 <div className="card-body p-2">
                                                     <small className="card-text text-truncate d-block" title={file.name}>
                                                         {file.name}
                                                     </small>
                                                     <small className="text-muted">{formatFileSize(file.size)}</small>
-                                                    
+
                                                     {/* File Size Progress Bar */}
                                                     <div className="mt-1">
                                                         <div className="progress" style={{ height: '4px' }}>
-                                                            <div 
+                                                            <div
                                                                 className={`progress-bar ${file.size > (max_size || 5 * 1024 * 1024) ? 'bg-danger' : 'bg-success'}`}
-                                                                role="progressbar" 
+                                                                role="progressbar"
                                                                 style={{ width: '100%' }}
                                                             ></div>
                                                         </div>
@@ -906,18 +906,18 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                     </div>
                 );
             }
-            
+
             case 'CaptchaTextInput':
                 return (
                     <div>
                         {captchaData ? (
                             <div className="captcha-container mb-3">
                                 <div className="d-flex align-items-center gap-2 mb-2">
-                                    <img 
-                                        src={captchaData.image} 
-                                        alt="CAPTCHA" 
+                                    <img
+                                        src={captchaData.image}
+                                        alt="CAPTCHA"
                                         className="border rounded"
-                                        style={{ 
+                                        style={{
                                             height: '50px',
                                             opacity: isRefreshingCaptcha ? 0.5 : 1,
                                             transition: 'opacity 0.3s ease'
@@ -935,7 +935,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         disabled={isSubmitting || isRefreshingCaptcha}
                                         title="Refresh CAPTCHA"
                                     >
-                                        <i 
+                                        <i
                                             className={`bi bi-arrow-clockwise ${isRefreshingCaptcha ? 'captcha-refresh-spin' : ''}`}
                                         ></i>
                                     </button>
@@ -945,10 +945,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                             <div className="alert alert-warning mb-3">
                                 <small>
                                     <i className="bi bi-exclamation-triangle me-1"></i>
-                                    CAPTCHA failed to load. 
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-link btn-sm p-0 ms-1" 
+                                    CAPTCHA failed to load.
+                                    <button
+                                        type="button"
+                                        className="btn btn-link btn-sm p-0 ms-1"
                                         onClick={refreshCaptcha}
                                         disabled={isRefreshingCaptcha}
                                     >
@@ -965,7 +965,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         />
                     </div>
                 );
-            
+
             case 'CheckboxInput':
                 return (
                     <div className="form-check">
@@ -995,14 +995,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         if (fieldName === 'message' || fieldName === 'captcha') {
             return 'col-12 mb-3';
         }
-        
+
         // For auth forms, stack most fields
         if (formType === 'login') {
             return 'col-12 mb-3';
         }
 
         // For signup, name fields side by side
-        if ((formType === 'signup') && 
+        if ((formType === 'signup') &&
             (fieldName === 'first_name' || fieldName === 'last_name')) {
             return 'col-md-6 mb-3';
         }
@@ -1011,7 +1011,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
         if (formType === 'contact' && (fieldName === 'name' || fieldName === 'email')) {
             return 'col-md-6 mb-3';
         }
-        
+
         // Default to full width
         return 'col-12 mb-3';
     };
@@ -1079,10 +1079,10 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                         </div>
                     ))}
                 </div>
-                
+
                 <div className="col-12 text-center mt-4">
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={isSubmitting}
                         className={`btn btn-lg w-50 py-2 ${isSubmitting ? 'btn-secondary' : 'btn-primary'}`}
                     >

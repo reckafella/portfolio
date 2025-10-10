@@ -93,8 +93,8 @@ export function useBlogPost(slug: string) {
       const response = await apiRequest(`/api/v1/blog/article/${slug}/`);
       return response.json() as Promise<BlogPost>;
     },
-    enabled: !!slug,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !slug.match('undefined') && !!slug,
+    staleTime: 20 * 60 * 1000, // 20 minutes
   });
 }
 

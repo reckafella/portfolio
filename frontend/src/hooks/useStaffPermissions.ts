@@ -10,12 +10,18 @@ export const useStaffPermissions = () => {
   const canCreateProjects = isStaff;
   const canEditProjects = isStaff;
   const canDeleteProjects = isStaff;
+  const canCreateBlog = isStaff;
+  const canEditBlog = isStaff;
+  const canDeleteBlog = isStaff;
   
   return {
     isStaff,
     canCreateProjects,
     canEditProjects,
     canDeleteProjects,
+    canCreateBlog,
+    canEditBlog,
+    canDeleteBlog,
     isAuthenticated
   };
 };

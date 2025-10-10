@@ -17,7 +17,7 @@ def cache_page_with_prefix(prefix, timeout=None):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            if not settings.USE_CACHE:
+            if not settings.USE_CACHE or request.user.is_authenticated:
                 return view_func(request, *args, **kwargs)
 
             # Add prefix to the request for key generation

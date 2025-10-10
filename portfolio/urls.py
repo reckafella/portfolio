@@ -61,7 +61,7 @@ urlpatterns = [
     # Regular app URLs - ordered from most specific to least specific
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
-    path("blog/", include("blog.urls"), name="blog"),
+    path("app/blog/", include("blog.urls"), name="blog"),
     path("auth/", include("authentication.urls"), name="auth"),
     path("app/", include("app.urls"), name="app"),
 

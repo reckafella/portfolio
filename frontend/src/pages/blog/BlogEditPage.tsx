@@ -101,7 +101,7 @@ export function BlogEditPage() {
   if (isLoadingPost) {
     return <LoadingSpinner />;
   }
-
+/* 
   if (postError || !post) {
     return (
       <div className="container my-5">
@@ -112,7 +112,7 @@ export function BlogEditPage() {
       </div>
     );
   }
-
+ */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;

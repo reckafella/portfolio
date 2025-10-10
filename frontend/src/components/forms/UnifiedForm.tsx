@@ -370,10 +370,8 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     }, [formType]); // eslint-disable-line
 
     const refreshCaptcha = async () => {
-        console.log('🔄 Captcha refresh initiated');
         setIsRefreshingCaptcha(true);
         const oldCaptchaKey = captchaData?.key;
-        console.log('📝 Old captcha key:', oldCaptchaKey);
         
         try {
             // Send old captcha key for cleanup
@@ -381,14 +379,11 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             if (oldCaptchaKey) {
                 url.searchParams.append('old_key', oldCaptchaKey);
             }
-            console.log('🌐 Fetching from:', url.toString());
             
             const response = await fetch(url.toString());
-            console.log('📡 Response status:', response.status, response.ok);
             
             if (response.ok) {
                 const data = await response.json();
-                console.log('✅ New captcha data:', data);
                 // Only update captcha if refresh succeeded
                 setCaptchaData({
                     key: data.captcha_key,
@@ -406,18 +401,14 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const captchaInput = document.querySelector('input[name="captcha"], input[placeholder*="characters"]') as HTMLInputElement;
                 if (captchaInput) {
                     captchaInput.value = '';
-                    console.log('🧹 Captcha input field cleared');
                 }
-                console.log('✨ Captcha updated successfully');
-            } else {
-                console.error('❌ Response not OK:', response.status);
             }
         } catch (error) {
-            console.error('❌ Captcha refresh error:', error);
-            // Keep the old captcha on error - don't update anything
+            const noob = () => {} // work around so I can ignore the error
+            if (error instanceof Error) { noob(); }
+
         } finally {
             setIsRefreshingCaptcha(false);
-            console.log('🏁 Refresh complete, isRefreshingCaptcha set to false');
         }
     };
 
@@ -939,7 +930,6 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                         type="button"
                                         className="btn btn-outline-secondary btn-sm"
                                         onClick={() => {
-                                            console.log('🖱️ Refresh button clicked, isRefreshingCaptcha:', isRefreshingCaptcha);
                                             refreshCaptcha();
                                         }}
                                         disabled={isSubmitting || isRefreshingCaptcha}

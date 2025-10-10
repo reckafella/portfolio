@@ -5,14 +5,12 @@ from django.conf import settings
 from django.http import (FileResponse, Http404, HttpResponseRedirect,
                          JsonResponse)
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView, TemplateView, View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from wagtail.models import Page
-from django.utils.cache import get_cache_key, learn_cache_key
 
-from app.utils.cache import cache_page_for_user, cache_page_with_prefix
+from app.utils.cache import cache_page_with_prefix
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
 
@@ -49,6 +47,10 @@ class AboutView(TemplateView):
     """Class-based view to render the about page"""
     template_name = "app/about.html"
     status = 200
+
+    def dispatch(self, request, *args, **kwargs):
+        # Allow unauthenticated access to the about page
+        return super().dispatch(request, *args, **kwargs)
 
 
 @method_decorator(cache_page_with_prefix('services', 3600), name='dispatch')

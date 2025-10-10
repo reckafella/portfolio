@@ -132,7 +132,6 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
-    "portfolio.middlewares.cache.CustomUpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -413,8 +412,20 @@ if (ENVIRONMENT == 'production' and not DEBUG):
     SECURE_PROXY_SSL_HEADER: tuple = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_REF: str = "no-referrer"
     SECURE_REF_POLICY: str = "strict-origin-when-cross-origin"
+else:
+    # Development settings - allow cookies over HTTP
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
 
 CSRF_FAILURE_VIEW = csrf_failure_view
+
+# In development, be more lenient with CSRF checks for API endpoints
+if ENVIRONMENT != 'production':
+    # Allow CSRF cookie to be read by JavaScript for debugging
+    CSRF_COOKIE_HTTPONLY = False
+    # Use a simple cookie name
+    CSRF_COOKIE_NAME = 'csrftoken'
+    SESSION_COOKIE_NAME = 'sessionid'
 
 # Maximum upload size for images in bytes
 MAX_UPLOAD_SIZE: int = 15 * 1024 * 1024  # 15MB or 15 * 1024 * 1024 bytes
@@ -466,7 +477,21 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Additional session settings for long editing sessions
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Environment-specific cookie settings
+if ENVIRONMENT == 'production':
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+else:
+    # For development, use 'Lax' which works with HTTP
+    # Note: Cookies will be domain-specific (localhost vs 127.0.0.1)
+    # For consistent behavior, use the same domain throughout development
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    # Don't set a specific domain, allowing cookies to work on whichever domain is accessed
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
+
 SESSION_ENGINE_TIMEOUT = 3600  # 1 hour timeout for session engine operations
 
 PROJECT_TYPES = [
@@ -510,17 +535,27 @@ CORS_ALLOWED_ORIGINS = [
     "https://portfolio-ot66.onrender.com",
 ]
 
-if ENVIRONMENT == 'production':
-    CORS_ALLOWED_ORIGINS += [
-        "https://ethanmuthoni.me",
-        "https://www.ethanmuthoni.me",
-        "https://portfolio-ot66.onrender.com",
-        "https://rohn.live"
-    ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
+
+# ============================
+# CSRF CONFIGURATION
+# ============================
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:4173",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:4173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://rohn.live",
+    "https://portfolio-ot66.onrender.com",
+]
 
 # ============================
 # RATE LIMITING CONFIGURATION

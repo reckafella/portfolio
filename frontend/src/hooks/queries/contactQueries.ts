@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 // Contact API functions
 const contactApiFunctions = {
-  async sendMessage(data: Record<string, string>) {
+  async sendMessage(data:  Record<string, string | boolean | File | File[]>) {
     const response = await fetch('/api/v1/contact/', {
       method: 'POST',
       headers: {

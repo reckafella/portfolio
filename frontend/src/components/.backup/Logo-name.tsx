@@ -1,15 +1,18 @@
-import * as React from "react";
+/* import * as React from "react";
 
 const SVGLogoComponent = (props: React.SVGProps<SVGSVGElement>) => (
+  
   <svg
-        viewBox="0 0 390.062 107.345"
-        preserveAspectRatio="xMidYMid meet"
-        xmlns="http://www.w3.org/2000/svg"
-        className=" logo-img img-fluid"
+    viewBox="0 0 390.062 107.345"
+    preserveAspectRatio="xMidYMid meet"
+    xmlns="http://www.w3.org/2000/svg"
+    className=" logo-img img-fluid"
     style={{
       transform: "scale(1)",
+      width: "200px",
       cursor: "pointer",
       overflow: "visible",
+      height: "auto"
     }}
     {...props}
   >
@@ -64,5 +67,112 @@ const SVGLogoComponent = (props: React.SVGProps<SVGSVGElement>) => (
     </g>
   </svg>
 );
+
+export default SVGLogoComponent;
+ */
+import * as React from "react";
+
+const SVGLogoComponent = (props: React.SVGProps<SVGSVGElement>) => {
+  const firstName = "Ethan";
+  const lastName = "Wanyoike";
+  
+  // Calculate text paths for circular arrangement
+  const radius = 60; // Radius for text circle
+  const centerX = 105;
+  const centerY = 55;
+  
+  return (
+    <svg
+      viewBox="0 0 370.024 101.732"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      className="logo-img img-fluid"
+      style={{
+        width: "200px",
+        height: "auto",
+        transform: "scale(1)",
+        cursor: "pointer",
+        overflow: "visible",
+      }}
+      {...props}
+    >
+      <defs id="SvgjsDefs1001">
+        <linearGradient id="SvgjsLinearGradient1013">
+          <stop id="SvgjsStop1014" stopColor="var(--accent-color, #ff6b35)" offset={0} />
+          <stop id="SvgjsStop1015" stopColor="var(--accent-color, #ff6b35)" offset={0.6} />
+          <stop id="SvgjsStop1016" stopColor="var(--accent-color, #ff6b35)" offset={1} />
+        </linearGradient>
+        
+        {/* Define circular paths for text */}
+        <path
+          id="circlePath1"
+          d={`M ${centerX - radius},${centerY} A ${radius},${radius} 0 0,1 ${centerX + radius},${centerY}`}
+        />
+        <path
+          id="circlePath2"
+          d={`M ${centerX + radius},${centerY} A ${radius},${radius} 0 0,1 ${centerX - radius},${centerY}`}
+        />
+      </defs>
+
+      {/* Flame Icon - centered */}
+      <g
+        id="SvgjsG1007"
+        transform="matrix(1.0590915099643143,0,0,1.0590915099643143,55,-5.971026026903345)"
+        fill="url(#SvgjsLinearGradient1013)"
+      >
+        <g
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="black"
+          fontFamily="Times New Roman"
+          fontSize={15}
+          transform="scale(1 -1)"
+        >
+          <g transform="translate(0 -96)">
+            <g>
+              <path
+                d="M 21.633,34.925 C 24.973,46.855 40.837,53.71 46.922,66.223 C 49.866,72.279 48.49,83.461 43.464,87.939 C 43.197,88.178 42.09,90.326 43.217,89.521 C 54.416,81.327 63.521,70.509 59.309,60.068 C 53.464,45.577 38.409,38.34 38.519,23.585 C 38.566,17.447 43.088,12.523 48.838,7.375 L 49.073,6.299 C 34.143,10.56 17.742,21.028 21.633,34.925 Z M 59.314,18.723 C 67.987,26.524 73.282,31.263 71.043,40.298 C 73.766,36.119 76.295,30.323 74.135,25.806 C 72.203,21.769 70.28,18.956 63.244,15.02 C 59.515,12.935 56.712,10.677 54.37,6.898 C 54.248,10.853 55.011,14.852 59.314,18.723 Z M 49.686,32.153 C 53.003,38.255 57.845,42.622 62.538,48.882 C 65.869,53.325 68.92,60.704 65.731,66.728 L 65.937,67.016 C 70.824,61.556 71.028,52.654 69.495,46.059 C 67.086,35.69 58.5,31.5 53.511,23.918 C 51.557,20.948 50.446,17.311 51,13.5 C 45.461,18.021 46.717,26.69 49.686,32.153 Z"
+                strokeLinejoin="miter"
+                strokeLinecap="round"
+                stroke="none"
+                strokeWidth={0.85}
+                fill="url(#SvgjsLinearGradient1013)"
+                markerStart="none"
+                markerEnd="none"
+                strokeMiterlimit={79.8403193612775}
+              />
+            </g>
+          </g>
+        </g>
+      </g>
+
+      {/* First Name - Top Arc */}
+      <text
+        fill="url(#SvgjsLinearGradient1013)"
+        fontSize="24"
+        fontWeight="700"
+        fontFamily="Arial, sans-serif"
+        letterSpacing="3"
+      >
+        <textPath href="#circlePath1" startOffset="50%" textAnchor="middle">
+          {firstName.toUpperCase()}
+        </textPath>
+      </text>
+
+      {/* Last Name - Bottom Arc */}
+      <text
+        fill="url(#SvgjsLinearGradient1013)"
+        fontSize="24"
+        fontWeight="700"
+        fontFamily="Arial, sans-serif"
+        letterSpacing="3"
+      >
+        <textPath href="#circlePath2" startOffset="50%" textAnchor="middle">
+          {lastName.toUpperCase()}
+        </textPath>
+      </text>
+    </svg>
+  );
+};
 
 export default SVGLogoComponent;

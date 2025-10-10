@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 interface SearchProps {
   className?: string;
   onToggleSearch: () => void;
@@ -8,8 +7,8 @@ interface SearchProps {
 const Search: React.FC<SearchProps> = ({ className = "", onToggleSearch }) => {
   return (
     <div className={`d-block search-icon ${className}`}>
-      <Link
-        to="#"
+      <a
+        href="#"
         type="button" 
         role="button" 
         className="search-bar-toggle"
@@ -18,7 +17,7 @@ const Search: React.FC<SearchProps> = ({ className = "", onToggleSearch }) => {
         title="Search"
       >
         <i className="bi bi-search"></i>
-      </Link>
+      </a>
     </div>
   );
 };

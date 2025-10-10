@@ -57,8 +57,7 @@ class SearchView(ListView):
         if self.category in ["all", "posts"]:
             post_results = BlogPost.objects.filter(
                 Q(title__icontains=self.query) |
-                Q(content__icontains=self.query) |
-                Q(tags__icontains=self.query)
+                Q(content__icontains=self.query)
             )
         if self.category in ["all", "projects"]:
             project_results = Projects.objects.filter(

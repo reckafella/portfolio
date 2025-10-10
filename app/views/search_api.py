@@ -1,13 +1,11 @@
 from django.db.models import Q, Count
-from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 
 from app.models import Projects
-from blog.models import BlogPostImage, BlogPostPage as BlogPost
-from authentication.models import User
+from blog.models import BlogPostPage as BlogPost
 
 
 def _search_blog_posts(query, sort, page, page_size):

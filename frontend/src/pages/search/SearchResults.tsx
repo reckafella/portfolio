@@ -1,3 +1,4 @@
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 
@@ -27,7 +28,7 @@ const SearchResults: React.FC = () => {
   const query = searchParams.get('q') || '';
   const category = searchParams.get('category') || 'all';
   const sort = searchParams.get('sort') || 'relevance';
-  
+
   const [results, setResults] = useState<SearchResultsData>({
     posts: [],
     projects: [],
@@ -46,7 +47,7 @@ const SearchResults: React.FC = () => {
   const performSearch = async (searchQuery: string, searchCategory: string, searchSort: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const params = new URLSearchParams({
         q: searchQuery,
@@ -67,7 +68,7 @@ const SearchResults: React.FC = () => {
       }
 
       const data = await response.json();
-      
+
       if (data.success) {
         setResults(data.results);
         setTotalResults(data.total_results);
@@ -123,17 +124,17 @@ const SearchResults: React.FC = () => {
               </Link>
             </h5>
             <span className={`badge ${
-              result.type === 'blog_post' ? 'bg-info' : 
+              result.type === 'blog_post' ? 'bg-info' :
               result.type === 'project' ? 'bg-success' : 'bg-warning'
             }`}>
               {getTypeLabel(result.type)}
             </span>
           </div>
-          
+
           {result.description && (
             <p className="card-text text-muted">{result.description}</p>
           )}
-          
+
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex gap-2 flex-wrap">
               {result.tags && result.tags.length > 0 && (
@@ -146,11 +147,11 @@ const SearchResults: React.FC = () => {
                   )}
                 </div>
               )}
-              
+
               {result.category && (
                 <span className="badge bg-outline-secondary">{result.category}</span>
               )}
-              
+
               {result.view_count && (
                 <small className="text-muted">
                   <i className="bi bi-eye me-1"></i>
@@ -158,7 +159,7 @@ const SearchResults: React.FC = () => {
                 </small>
               )}
             </div>
-            
+
             <Link to={result.url} className="btn btn-outline-primary btn-sm">
               {result.type === 'action' ? 'Go to Action' : 'View Details'}
               <i className="bi bi-arrow-right ms-1"></i>
@@ -175,22 +176,19 @@ const SearchResults: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-10 mx-auto">
-              <div className="text-center mb-5">
-                <h1 className="display-6 mb-3">Search Results</h1>
+              <div className="text-center section-title">
+                <h1 className="fw-bold mb-3">Search Results</h1>
                 {query && (
-                  <p className="text-muted">
+                  <p className="">
                     Results for "<strong>{query}</strong>"
                     {totalResults > 0 && ` (${totalResults} found)`}
                   </p>
                 )}
               </div>
-              
+
               {loading ? (
                 <div className="text-center py-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Searching...</span>
-                  </div>
-                  <p className="mt-3 text-muted">Searching for "{query}"...</p>
+                  <LoadingSpinner text={`Searching for "${query}"`} />
                 </div>
               ) : error ? (
                 <div className="alert alert-danger text-center">
@@ -199,10 +197,10 @@ const SearchResults: React.FC = () => {
                 </div>
               ) : totalResults === 0 ? (
                 <div className="text-center py-5">
-                  <i className="bi bi-search display-1 text-muted mb-3"></i>
-                  <h4>No results found</h4>
+                  <i className="bi bi-search display-3 text-muted mb-3"></i>
+                  <h2>No results found</h2>
                   <p className="text-muted">
-                    No results found for "<strong>{query}</strong>". 
+                    No results found for "<strong>{query}</strong>".
                     Try different keywords or check your spelling.
                   </p>
                   <div className="mt-4">

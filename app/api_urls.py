@@ -24,6 +24,7 @@ from app.views.api.about_update_views import (
     reorder_items
 )
 from app.views.api.captcha_views import CaptchaRefreshAPIView
+from app.views.search_api import search_api, search_suggestions_api
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -76,6 +77,10 @@ urlpatterns = [
 
     # Captcha API
     path('captcha/refresh/', CaptchaRefreshAPIView.as_view(), name='captcha_refresh_api'),
+
+    # Search APIs
+    path('search/', search_api, name='search_api'),
+    path('search/suggestions/', search_suggestions_api, name='search_suggestions_api'),
 
     # Include router URLs (ViewSet-based)
     path('', include(router.urls)),

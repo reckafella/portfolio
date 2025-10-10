@@ -51,6 +51,9 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
   });
   const [showFilters, setShowFilters] = useState(false);
   const [expandAccordion, setExpandAccordion] = useState(false);
+  
+  // Local state for form inputs to prevent auto-submission
+  const [localFilters, setLocalFilters] = useState<ProjectFiltersState>(filters);
 
   useEffect(() => {
     fetchFilterOptions();
@@ -99,8 +102,30 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     setExpandAccordion(!expandAccordion);
   }
 
+  // Update local filters when props change
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
   const handleInputChange = (name: keyof ProjectFiltersState, value: string) => {
-    onFilterChange({ [name]: value });
+    setLocalFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onFilterChange(localFilters);
+  };
+
+  const handleClearFilters = () => {
+    const clearedFilters = {
+      search: '',
+      category: '',
+      project_type: '',
+      client: '',
+      ordering: '-created_at'
+    };
+    setLocalFilters(clearedFilters);
+    onClearFilters();
   };
 
   const hasActiveFilters = Object.entries(filters).some(
@@ -141,7 +166,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
           data-bs-parent="#projectFiltersAccordion"
         >
           <div className="accordion-body">
-            <form method="get" className="card g-3 form-control">
+            <form onSubmit={handleSubmit} className="card g-3 form-control">
               <div className="card-body row form-group">
                 <div className="col-md-5">
                   <label htmlFor="search" className='form-label'>Search Project</label>
@@ -149,19 +174,24 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                     <span className="input-group-text">
                       <i className="bi bi-search"></i>
                     </span>
-                    <input type="text" className="form-control"
+                    <input 
+                      type="text" 
+                      className="form-control"
                       placeholder='Search Project...'
-                      value={filters.search}
+                      value={localFilters.search}
                       onChange={(e) => handleInputChange('search', e.target.value)}
-                      name="search" id="search" />
+                      name="search" 
+                      id="search" 
+                    />
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <label className="form-label" htmlFor="sort_by">Sort By</label>
                   <select
                     className="form-select"
                     id='sort_by'
-                    value={filters.ordering}
+                    name="ordering"
+                    value={localFilters.ordering}
                     onChange={(e) => handleInputChange('ordering', e.target.value)}
                   >
                     {orderingOptions.map(option => (
@@ -171,9 +201,9 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                     ))}
                   </select>
                 </div>
-                <div className="col-md-3 text-end">
+                <div className="col-md-4 text-end d-flex gap-2 justify-content-end">
                   <button
-                    className="btn btn-outline-secondary me-2"
+                    className="btn btn-outline-secondary"
                     onClick={() => setShowFilters(!showFilters)}
                     type="button"
                   >
@@ -185,14 +215,22 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                       </span>
                     )}
                   </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    <i className="bi bi-search me-1"></i>
+                    Apply
+                  </button>
                   {hasActiveFilters && (
                     <button
                       className="btn btn-outline-warning"
-                      onClick={onClearFilters}
+                      onClick={handleClearFilters}
                       type="button"
                       title="Clear all filters"
-                    > Clear
-                      <i className="bi bi-x"></i>
+                    > 
+                      <i className="bi bi-x me-1"></i>
+                      Clear
                     </button>
                   )}
                 </div>
@@ -209,7 +247,8 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                       <select
                         id="categoryFilter"
                         className="form-select"
-                        value={filters.category}
+                        name="category"
+                        value={localFilters.category}
                         onChange={(e) => handleInputChange('category', e.target.value)}
                       >
                         <option value="">All Categories</option>
@@ -229,7 +268,8 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                       <select
                         id="typeFilter"
                         className="form-select"
-                        value={filters.project_type}
+                        name="project_type"
+                        value={localFilters.project_type}
                         onChange={(e) => handleInputChange('project_type', e.target.value)}
                       >
                         <option value="">All Types</option>
@@ -249,7 +289,8 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                       <select
                         id="clientFilter"
                         className="form-select"
-                        value={filters.client}
+                        name="client"
+                        value={localFilters.client}
                         onChange={(e) => handleInputChange('client', e.target.value)}
                       >
                         <option value="">All Clients</option>

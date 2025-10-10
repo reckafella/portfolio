@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BlogFilters } from '@/hooks/queries/blogQueries';
 
 interface BlogFiltersProps {
@@ -10,20 +10,34 @@ interface BlogFiltersProps {
 
 export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCount }: BlogFiltersProps) {
   const [expandFilters, setExpandFilters] = useState(false);
+  
+  // Local state for form inputs to prevent auto-submission
+  const [localFilters, setLocalFilters] = useState<BlogFilters>(filters);
 
-  const handleFilterChange = (key: keyof BlogFilters, value: string | number | undefined) => {
+  // Update local filters when props change
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
+  const handleInputChange = (key: keyof BlogFilters, value: string | number | undefined) => {
+    setLocalFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     onFiltersChange({
-      ...filters,
-      [key]: value,
+      ...localFilters,
       page: 1, // Reset to first page when filtering
     });
   };
 
   const clearFilters = () => {
-    onFiltersChange({
+    const clearedFilters = {
       page: 1,
       page_size: filters.page_size,
-    });
+    };
+    setLocalFilters(clearedFilters);
+    onFiltersChange(clearedFilters);
   };
 
   const currentYear = new Date().getFullYear();
@@ -60,17 +74,22 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                     {expandFilters ? 'Hide Filters' : 'Show Filters'}
                 </button>
             </div>
-            <form action="" className='card form-control' method="get">
+            <form onSubmit={handleSubmit} className='card form-control'>
                 <div className="card-body">
                     {/* Search Input - Always Visible */}
-                    <div className="mb-0 mb-md-1">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search blog posts..."
-                            value={filters.search || ''}
-                            onChange={(e) => handleFilterChange('search', e.target.value || undefined)}
-                        />
+                    <div className="mb-3">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search blog posts..."
+                                value={localFilters.search || ''}
+                                onChange={(e) => handleInputChange('search', e.target.value || undefined)}
+                            />
+                            <button type="submit" className="btn btn-primary">
+                                <i className="bi bi-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div className="card-footer">
@@ -78,12 +97,12 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                     <div className={`collapse ${expandFilters ? 'show' : ''}`}>
                         <div className="row g-3">
                         {/* Tags Filter */}
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <label className="form-label">Filter by Tag</label>
                             <select
                             className="form-select"
-                            value={filters.tag || ''}
-                            onChange={(e) => handleFilterChange('tag', e.target.value || undefined)}
+                            value={localFilters.tag || ''}
+                            onChange={(e) => handleInputChange('tag', e.target.value || undefined)}
                             >
                             <option value="">All Tags</option>
                             {tags.map((tag) => (
@@ -99,8 +118,8 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                             <label className="form-label">Year</label>
                             <select
                             className="form-select"
-                            value={filters.year || ''}
-                            onChange={(e) => handleFilterChange('year', e.target.value ? parseInt(e.target.value) : undefined)}
+                            value={localFilters.year || ''}
+                            onChange={(e) => handleInputChange('year', e.target.value ? parseInt(e.target.value) : undefined)}
                             >
                             <option value="">All Years</option>
                             {years.map((year) => (
@@ -116,8 +135,8 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                             <label className="form-label">Month</label>
                             <select
                             className="form-select"
-                            value={filters.month || ''}
-                            onChange={(e) => handleFilterChange('month', e.target.value ? parseInt(e.target.value) : undefined)}
+                            value={localFilters.month || ''}
+                            onChange={(e) => handleInputChange('month', e.target.value ? parseInt(e.target.value) : undefined)}
                             >
                             <option value="">All Months</option>
                             {months.map((month) => (
@@ -129,12 +148,12 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                         </div>
 
                         {/* Sort Order */}
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <label className="form-label">Sort By</label>
                             <select
                             className="form-select"
-                            value={filters.ordering || '-first_published_at'}
-                            onChange={(e) => handleFilterChange('ordering', e.target.value)}
+                            value={localFilters.ordering || '-first_published_at'}
+                            onChange={(e) => handleInputChange('ordering', e.target.value)}
                             >
                             <option value="-first_published_at">Newest First</option>
                             <option value="first_published_at">Oldest First</option>
@@ -149,8 +168,8 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                             <label className="form-label">Posts Per Page</label>
                             <select
                             className="form-select"
-                            value={filters.page_size || 6}
-                            onChange={(e) => handleFilterChange('page_size', parseInt(e.target.value))}
+                            value={localFilters.page_size || 6}
+                            onChange={(e) => handleInputChange('page_size', parseInt(e.target.value))}
                             >
                             <option value={6}>6 posts</option>
                             <option value={12}>12 posts</option>
@@ -158,13 +177,22 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                             </select>
                         </div>
 
-                        {/* Clear Filters */}
-                        <div className="col-md-3 d-flex align-items-end">
+                        {/* Apply and Clear Filters */}
+                        <div className="col-md-3 d-flex align-items-end gap-2">
                             <button
-                            className="btn btn-outline-secondary w-100"
-                            onClick={clearFilters}
+                            type="submit"
+                            className="btn d-flex justify-content-center align-items-center btn-primary flex-grow-1"
                             >
-                            Clear Filters
+                            <i className="bi bi-search me-1"></i>
+                            Apply
+                            </button>
+                            <button
+                            className="btn d-flex btn-outline-secondary"
+                            onClick={clearFilters}
+                            type="button"
+                            >
+                            <i className="bi bi-x me-1"></i>
+                            Clear
                             </button>
                         </div>
                         </div>

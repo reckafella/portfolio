@@ -92,7 +92,7 @@ export function BlogEditPage() {
       <div className="container my-5">
         <AlertMessage 
           type="danger" 
-          message="You don't have permission to edit blog posts." 
+          message={`You don't have permission to edit blog posts. ${postError}`} 
         />
       </div>
     );
@@ -101,18 +101,18 @@ export function BlogEditPage() {
   if (isLoadingPost) {
     return <LoadingSpinner />;
   }
-/* 
+
   if (postError || !post) {
     return (
       <div className="container my-5">
         <AlertMessage 
           type="danger" 
-          message="Blog post not found or you don't have permission to edit it." 
+          message={`Blog post not found or You don't have permission to edit it. ${postError}`} 
         />
       </div>
     );
   }
- */
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;

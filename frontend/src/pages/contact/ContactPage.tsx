@@ -19,7 +19,7 @@ const ContactPage: React.FC = () => {
                 <div className="info-wrap card col-12 col-md-11 col-lg-10 mx-auto">
                     <div className="text-center">
                         <div className="section-title">
-                            <h1 className="">Contact Me</h1>
+                            <h1 className="">Contact me</h1>
                         </div>
 
                         <p className="lead mx-auto" style={{ maxWidth: '42rem' }}>

@@ -88,7 +88,6 @@
   --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #3a0369; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --logo-color: var(--accent-color); /* Logo color matches accent color in light theme */
   --text-error-color: #dc3545;
   --text-success-color: #198754;
   --text-warning-color: #ffc107;
@@ -125,7 +124,6 @@
   /* search bar background should have dim color like Twitter */
   --search-bar-background-color: var(--special-background-color);
   --accent-color:#fe8c00;
-  --logo-color: var(--accent-color); /* Logo color matches accent color in dark theme */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
@@ -954,6 +952,19 @@ section,
   position: relative;
 }
 
+.section-title h1:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--accent-color);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
 .section-title h2 {
   font-size: 24px;
   font-weight: 700;
@@ -962,7 +973,7 @@ section,
   position: relative;
 }
 
-.section-title h2:after, .section-title h1:after {
+.section-title h2:after {
   content: "";
   position: absolute;
   display: block;
@@ -1558,36 +1569,30 @@ section,
 .contact {
   background-color: var(--contact-background-color);
   padding: 60px 0;
-  box-shadow: 0px 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
 }
 
 .contact .info-wrap {
-  box-shadow: 0px 0px 10px color-mix(in srgb, var(--default-color), transparent 70%);
+  box-shadow: 0px 0px 20px color-mix(in srgb, var(--default-color), transparent 70%);
   padding: 30px 20px;
 }
 
 .contact .info-item i {
   font-size: 18px;
   color: var(--accent-color);
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: all 0.3s ease-in-out;
   border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--accent-color), transparent 20%);
-  margin-right: 20px;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 40%);
+  margin-right: 15px;
 }
 
-.contact .info-wrap h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 2px 0;
-}
-
-.contact .info-item h2 {
-  font-size: 20px;
+.contact .info-item h3 {
+  font-size: 18px;
   font-weight: 700;
   margin: 0 0 2px 0;
 }
@@ -1700,21 +1705,21 @@ Cards
   padding: 20px;
 }
 
-.card .card-body form {
+form {
   padding: 0;
 }
 
-.card .card-body form input[type=text],
-.card .card-body form input[type=email],
-.card .card-body form input[type=password],
-.card .card-body form input[type=tel],
-.card .card-body form input[type=number],
-.card .card-body form input[type=date],
-.card .card-body form input[type=time],
-.card .card-body form input[type=url],
-.card .card-body form input[type=search],
-.card .card-body form input[type=file],
-.card .card-body form textarea {
+form input[type=text],
+form input[type=email],
+form input[type=password],
+form input[type=tel],
+form input[type=number],
+form input[type=date],
+form input[type=time],
+form input[type=url],
+form input[type=search],
+form input[type=file],
+form textarea {
   font-size: 14px;
   padding: 10px 12px;
   box-shadow: none;
@@ -1724,41 +1729,41 @@ Cards
   border-color: color-mix(in srgb, var(--default-color), transparent 60%);
 }
 
-.card .card-body form input[type=text]:focus,
-.card .card-body form input[type=email]:focus,
-.card .card-body form input[type=password]:focus,
-.card .card-body form input[type=tel]:focus,
-.card .card-body form input[type=number]:focus,
-.card .card-body form input[type=date]:focus,
-.card .card-body form input[type=time]:focus,
-.card .card-body form input[type=url]:focus,
-.card .card-body form input[type=search]:focus,
-.card .card-body form input[type=file]:focus,
-.card .card-body form textarea:focus {
+form input[type=text]:focus,
+form input[type=email]:focus,
+form input[type=password]:focus,
+form input[type=tel]:focus,
+form input[type=number]:focus,
+form input[type=date]:focus,
+form input[type=time]:focus,
+form input[type=url]:focus,
+form input[type=search]:focus,
+form input[type=file]:focus,
+form textarea:focus {
   border-color: var(--accent-color);
 }
 
 /* placeholder */
-.card .card-body form input[type=text]::placeholder,
-.card .card-body form input[type=email]::placeholder,
-.card .card-body form input[type=password]::placeholder,
-.card .card-body form input[type=tel]::placeholder,
-.card .card-body form input[type=number]::placeholder,
-.card .card-body form input[type=date]::placeholder,
-.card .card-body form input[type=time]::placeholder,
-.card .card-body form input[type=url]::placeholder,
-.card .card-body form input[type=search]::placeholder,
-.card .card-body form input[type=file]::placeholder,
-.card .card-body form textarea::placeholder {
+form input[type=text]::placeholder,
+form input[type=email]::placeholder,
+form input[type=password]::placeholder,
+form input[type=tel]::placeholder,
+form input[type=number]::placeholder,
+form input[type=date]::placeholder,
+form input[type=time]::placeholder,
+form input[type=url]::placeholder,
+form input[type=search]::placeholder,
+form input[type=file]::placeholder,
+form textarea::placeholder {
   color: color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
-.card .card-body form .form-switch input {
+form .form-switch input {
   padding: 5px 20px;
 }
 
-.card .card-header button[type=button],
-.card .card-body button[type=button]
+button[type=button],
+button[type=button]
  {
   border-radius: 10px;
   /* background-color: transparent; */

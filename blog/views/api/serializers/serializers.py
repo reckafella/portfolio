@@ -88,7 +88,7 @@ class BlogPostPageSerializer(serializers.ModelSerializer):
         content = obj.content or ''
         word_count = len(content.split()) if content else 0
         reading_time = max(1, round(word_count / 200))
-        return f"~{reading_time} min read"
+        return f"{reading_time} min read"
 
     def get_excerpt(self, obj):
         content = obj.content or ''

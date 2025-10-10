@@ -53,7 +53,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, title, con
 
 export function BlogAddPage() {
   const navigate = useNavigate();
-  const { canCreateProjects: canCreateBlog } = useStaffPermissions();
+  const { canCreateBlog } = useStaffPermissions();
   const createBlogPostMutation = useCreateBlogPost();
   usePageTitle('Create Blog Post');
 
@@ -374,7 +374,7 @@ export function BlogAddPage() {
                       <div className="form-check">
                         <input
                           className="form-check-input"
-                          type="checkbox"
+                          type="switch"
                           id="published"
                           name="published"
                           checked={formData.published}

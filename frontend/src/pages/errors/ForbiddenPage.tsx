@@ -17,8 +17,8 @@ const ForbiddenPage: React.FC = () => {
                         <div className="error-content">
                             {/* Error Code */}
                             <div className="error-code mb-4">
-                                <h1 className="display-1 fw-bold text-warning mb-0">403</h1>
-                                <div className="error-divider mx-auto my-3" style={{ width: '100px', height: '4px', backgroundColor: 'var(--text-error-color)' }}></div>
+                                <h1 className="fw-bold mb-0" style={{ color: 'var(--text-error-color)' }}>403</h1>
+                                <div className="error-divider mx-auto my-3" style={{ width: 'auto', height: '.23rem', backgroundColor: 'var(--text-error-color)' }}></div>
                             </div>
                             {/* Error Message */}
                             <div className="error-message mb-4">
@@ -72,8 +72,7 @@ const ForbiddenPage: React.FC = () => {
                                     Need access?
                                     <Link to="/contact" className="text-decoration-none ms-1">
                                         Contact me
-                                    </Link>
-                                    for assistance.
+                                    </Link> for assistance.
                                 </p>
                             </div>
                         </div>

@@ -7,6 +7,7 @@ import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
 import { PreviewModal } from './PreviewModal';
+import '@/styles/blog.css';
 
 import {
     ForbiddenPage,

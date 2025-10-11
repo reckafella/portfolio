@@ -7,6 +7,7 @@ import { BlogFiltersComponent } from '@/components/blog/BlogFilters';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import '@/styles/blog.css';
 
 export function BlogListPage() {
   usePageTitle('Blog');

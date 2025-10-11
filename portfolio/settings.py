@@ -144,7 +144,8 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "portfolio.middlewares.rate_limit.RateLimitMiddleware",
     "blog.middlewares.security.ViewCountSecurityMiddleware",
-    "portfolio.middlewares.cache.CustomFetchFromCacheMiddleware",
+    # Intelligent Cache Middleware - Masterpiece Solution
+    "portfolio.middlewares.intelligent_cache.IntelligentFetchFromCacheMiddleware",
 ]
 
 # portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
@@ -220,52 +221,54 @@ else:
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
 
-# Cache settings
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
-CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
-USE_CACHE = True
+# Import intelligent cache settings
+try:
+    from portfolio.cache_settings.cache_settings import *
+except ImportError:
+    # Fallback cache settings if cache_settings.py is not available
+    CACHE_MIDDLEWARE_ALIAS = 'default'
+    CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
+    USE_CACHE = True
 
-# Cache configuration
-CACHE_DYNAMIC_PAGES = 300  # 5 minutes
-CACHE_STATIC_PAGES = 3600  # 1 hour
-CACHE_API_PAGES = 15  # 15 seconds
+    # Cache configuration
+    CACHE_DYNAMIC_PAGES = 300  # 5 minutes
+    CACHE_STATIC_PAGES = 3600  # 1 hour
+    CACHE_API_PAGES = 15  # 15 seconds
 
-# Don't cache pages for authenticated users or POST requests
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+    # Don't cache pages for authenticated users or POST requests
+    CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
-# Don't cache responses with these status codes
-CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
+    # Don't cache responses with these status codes
+    CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
 
-# sessions
-SESSION_CACHE_ALIAS = "default"
+    # sessions
+    SESSION_CACHE_ALIAS = "default"
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
-
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": REDIS_PASSWORD,
-            "SOCKET_CONNECT_TIMEOUT": 30,
-            "SOCKET_TIMEOUT": 60,
-            "SOCKET_KEEPALIVE": True,
-            "SOCKET_KEEPALIVE_OPTIONS": {
-                "TCP_KEEPIDLE": 1,
-                "TCP_KEEPINTVL": 1,
-                "TCP_KEEPCNT": 5
-            },
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 20,
-                "retry_on_timeout": True,
-                "socket_keepalive": True
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": REDIS_PASSWORD,
+                "SOCKET_CONNECT_TIMEOUT": 30,
+                "SOCKET_TIMEOUT": 60,
+                "SOCKET_KEEPALIVE": True,
+                "SOCKET_KEEPALIVE_OPTIONS": {
+                    "TCP_KEEPIDLE": 1,
+                    "TCP_KEEPINTVL": 1,
+                    "TCP_KEEPCNT": 5
+                },
+                "CONNECTION_POOL_KWARGS": {
+                    "max_connections": 20,
+                    "retry_on_timeout": True,
+                    "socket_keepalive": True
+                }
             }
         }
     }
-}
 
 """ else:
     SESSION_ENGINE = "django.contrib.sessions.backends.cached_db" """

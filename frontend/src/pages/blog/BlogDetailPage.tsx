@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useBlogPost, useDeleteBlogPost } from '@/hooks/queries/blogQueries';
 import '@/styles/toast.css';
@@ -7,21 +7,14 @@ import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useMetaTags } from '@/hooks/useMetaTags';
-import CommentForm from '@/components/forms/blog/CommentForm';
-
-interface BlogComment {
-    id: number;
-    author_name: string;
-    content: string;
-    created_at: string;
-}
+import { ShareButton } from '@/components/share';
+import '@/styles/blog.css';
 
 export function BlogDetailPage() {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { canCreateProjects: canEdit } = useStaffPermissions();
 
-    const [showCommentForm, setShowCommentForm] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
@@ -50,18 +43,6 @@ export function BlogDetailPage() {
     });
 
     const deleteBlogPostMutation = useDeleteBlogPost();
-
-    const handleCopyLink = useCallback(async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-            setShowToast(true);
-            // Hide toast after 3 seconds
-            setTimeout(() => setShowToast(false), 3000);
-        } catch (error) {
-            <AlertMessage type="danger" className="mt-2"
-                message={`Failed to copy link. ${error}.`} />
-        }
-    }, []);
 
     const handleDelete = async () => {
         if (!post) return;
@@ -153,34 +134,9 @@ export function BlogDetailPage() {
                 </div>
             </div>
 
-            <div className="container my-5">
+            <div className="container my-2">
                 <div className="row justify-content-center">
-                    <div className="entry entry-single col-lg-8">
-                        {/* Post Header */}
-                        <h2 className="entry-title">{post.title}</h2>
-                        <div className="entry-meta">
-                            <ul>
-                                <li>
-                                    <i className="bi bi-person"></i>
-                                    <Link to={`#`}>{post.author}</Link>
-                                </li>
-                                <li>
-                                    <i className="bi bi-calendar"></i>
-                                    <Link to={`/blog/date/${formatDate(post.first_published_at)}`}>{formatDate(post.first_published_at)}</Link>
-                                </li>
-                                <li>
-                                    <i className="bi bi-clock"></i>
-                                    <Link to={`#`} className='text-decoration-none'>{post?.reading_time}</Link>
-                                </li>
-                                <li>
-                                    <i className="bi bi-eye"></i>
-                                    <Link to={`#`} className='text-decoration-none'>
-                                        {post?.view_count ? post?.view_count === 1 ? `${post?.view_count} view` : `${post?.view_count} views` : 0}
-                                    </Link>
-                                </li>
-                            </ul>
-                        </div>
-
+                    <div className="entry entry-single col-lg-9">
                         {/* Featured Image */}
                         {post.featured_image_url && (
                             <div className="mb-4">
@@ -192,15 +148,10 @@ export function BlogDetailPage() {
                                 />
                             </div>
                         )}
-                        <div className="d-flex justify-content-start align-items-center text-muted mb-3">
-                            {/* {post.comments_count && (
-                            <span><i className="bi bi-comments me-1"></i>
-                            {post.comments_count ? `${post.comments_count > 0 ? post.comments_count : 0} comments` : 'No comments'}
-                            </span>
-                            )} */}
 
-                            {/* Edit/Delete Buttons */}
-                            {canEdit && (
+                        {/* Edit/Delete Buttons */}
+                        {canEdit && (
+                            <div className="d-flex justify-content-start align-items-center text-muted mb-3">
                                 <div className="mb-2 entry-meta">
                                     <div className="btn-group gap-3 gap-lg-5" role="group">
                                         <button
@@ -219,44 +170,43 @@ export function BlogDetailPage() {
                                         </button>
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                        {/* Share Buttons */}
-                        <div className="border-top border-bottom py-4 mb-5">
-                            <h6 className="mb-3">Share this post</h6>
-                            <div className="d-flex gap-2">
-                                <a
-                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-twitter-x me-1"></i>
-                                    Twitter
-                                </a>
-                                <a
-                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-facebook me-1"></i>
-                                    Facebook
-                                </a>
-                                <a
-                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-linkedin me-1"></i>
-                                    LinkedIn
-                                </a>
-                                <button
-                                    className="btn btn-outline-secondary btn-sm"
-                                    onClick={handleCopyLink}
-                                >
-                                    <i className="bi bi-link me-1"></i>
-                                    Copy Link
-                                </button>
                             </div>
+                        )}
+
+                        {/* Post Header */}
+                        <h2 className="entry-title">{post.title}</h2>
+                        <div className="entry-meta">
+                            <ul>
+                                <li>
+                                    <i className="bi bi-person"></i>
+                                    <Link to={`#`}>{post.author}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-calendar"></i>
+                                    <Link to={`#`}>{formatDate(post.first_published_at)}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-clock"></i>
+                                    <Link to={`#`} className='text-decoration-none'>{post?.reading_time}</Link>
+                                </li>
+                                <li>
+                                    <i className="bi bi-eye"></i>
+                                    <Link to={`#`} className='text-decoration-none'>
+                                        {post?.view_count ? post?.view_count === 1 ? `${post?.view_count} view` : `${post?.view_count} views` : 0}
+                                    </Link>
+                                </li>
+                                <li className="d-flex align-items-center">
+                                    <ShareButton
+                                        url={window.location.href}
+                                        title={post.title}
+                                        imageUrl={post.featured_image_url || post.cover_image_url}
+                                        description={post.excerpt}
+                                        variant="icon"
+                                        size="sm"
+                                        className="btn-sm special-btn"
+                                    />
+                                </li>
+                            </ul>
                         </div>
                         {/* Post Content */}
                         <div
@@ -264,108 +214,37 @@ export function BlogDetailPage() {
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />
                         
-                        {/* Tags */}
-                        <div className="entry-footer d-flex">
-                            <i className="bi bi-tags"></i>
-                            {post.tags_list && post.tags_list.length > 0 && (
-                                <ul className="tags mx-0">
-                                    {post.tags_list.map((tag) => (
-                                        <li>
-                                            <Link
-                                                key={tag}
-                                                to={`/blog?tag=${encodeURIComponent(tag)}`}
-                                                className="text-decoration-none me-0"
-                                            >
-                                                {tag}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-
-                        {/* Share Buttons */}
-                        <div className="border-top border-bottom py-4 mb-5">
-                            <h6 className="mb-3">Share this post</h6>
-                            <div className="d-flex gap-2">
-                                <a
-                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-twitter-x me-1"></i>
-                                    Twitter
-                                </a>
-                                <a
-                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-facebook me-1"></i>
-                                    Facebook
-                                </a>
-                                <a
-                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="btn btn-outline-primary btn-sm"
-                                >
-                                    <i className="bi bi-linkedin me-1"></i> LinkedIn
-                                </a>
-                                <button
-                                    className="btn btn-outline-secondary btn-sm"
-                                    onClick={handleCopyLink}
-                                >
-                                    <i className="bi bi-link me-1"></i> Copy Link
-                                </button>
-                            </div>
-                        </div>
-                        
-                        {/* Comments Section */}
-                        <div>
-                            <div className="d-flex justify-content-around align-items-center mb-2 mb-lg-3">
-                                <h4>Comments ({post.comments_count || 0})</h4>
-                                {!showCommentForm && (
-                                    <button
-                                        disabled={true}
-                                        className="btn btn-primary"
-                                        onClick={() => setShowCommentForm(true)}
-                                    >
-                                        Add Comment <i className="bi bi-pencil ms-2"></i>
-                                    </button>
+                        {/* Tags and Share */}
+                        <div className="entry-footer d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center">
+                                <i className="bi bi-tags me-2"></i>
+                                {post.tags_list && post.tags_list.length > 0 && (
+                                    <ul className="tags mx-0">
+                                        {post.tags_list.map((tag) => (
+                                            <li key={tag}>
+                                                <Link
+                                                    to={`/blog?tag=${encodeURIComponent(tag)}`}
+                                                    className="text-decoration-none me-0"
+                                                >
+                                                    {tag}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
-                        </div>
-                        {/* Comment Form */}
-                        {showCommentForm && (
-                            <CommentForm
-                                postSlug={post.slug}
-                                onSuccess={() => {
-                                    setShowCommentForm(false);
-                                }}
-                            />
-                        )}
-                        {/* Comments List */}
-                        {post.comments && post.comments.length > 0 ? (
-                            <div className="comments-list space-y-4">
-                                {post.comments.map((comment: BlogComment) => (
-                                    <div key={comment.id} className="card mb-3">
-                                        <div className="card-body">
-                                            <div className="d-flex justify-content-between align-items-start mb-2">
-                                                <div>
-                                                    <h6 className="mb-1">{comment.author_name}</h6>
-                                                    <small className="text-muted">
-                                                        {new Date(comment.created_at).toLocaleDateString()}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <div className="comment-content">{comment.content}</div>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="d-flex align-items-center">
+                                <ShareButton
+                                    url={window.location.href}
+                                    title={post.title}
+                                    imageUrl={post.featured_image_url || post.cover_image_url}
+                                    description={post.excerpt}
+                                    variant="both"
+                                    size="sm"
+                                    className="btn-outline-secondary"
+                                />
                             </div>
-                        ) : (
-                            <p className="text-muted">No comments yet. Be the first to comment!</p>
-                        )}
+                        </div>
                     </div>
 
                     

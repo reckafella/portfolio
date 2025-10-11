@@ -243,7 +243,6 @@ if ENVIRONMENT == 'production':
                 "LOCATION": REDIS_URL,
                 "OPTIONS": {
                     "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                    "PARSER_CLASS": "redis.connection.PythonParser",
                     "PASSWORD": REDIS_PASSWORD if REDIS_PASSWORD else None,
                     "SOCKET_TIMEOUT": 5,
                     "RETRY_ON_TIMEOUT": True,

@@ -170,8 +170,17 @@ SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
 SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
 
 # Redis settings
-REDIS_URL = os.environ.get("REDIS_URL", default="")
+REDIS_URL = os.environ.get("REDIS_URL", default="redis://localhost:6379/0")
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
+
+# Ensure Redis URL is properly formatted
+if ENVIRONMENT == 'production':
+    # For production, use the full Redis URL from environment
+    if not REDIS_URL.startswith(('redis://', 'rediss://')):
+        REDIS_URL = f"redis://{REDIS_URL}"
+else:
+    # For development, use localhost
+    REDIS_URL = "redis://localhost:6379/0"
 
 
 # Database
@@ -237,23 +246,20 @@ except ImportError:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL if REDIS_URL.startswith("redis://") else f"redis://{REDIS_URL}",
+            "LOCATION": REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "PASSWORD": REDIS_PASSWORD,
                 "SOCKET_CONNECT_TIMEOUT": 30,
                 "SOCKET_TIMEOUT": 60,
                 "SOCKET_KEEPALIVE": True,
-                "SOCKET_KEEPALIVE_OPTIONS": {
-                    "TCP_KEEPIDLE": 1,
-                    "TCP_KEEPINTVL": 1,
-                    "TCP_KEEPCNT": 5
-                },
                 "CONNECTION_POOL_KWARGS": {
                     "max_connections": 20,
-                    "retry_on_timeout": True,
-                    "socket_keepalive": True
-                }
+                    "retry_on_timeout": True
+                },
+                "PARSER_CLASS": "redis.connection.HiredisParser",
+                "RETRY_ON_TIMEOUT": True,
+                "DB": 0
             }
         }
     }

@@ -55,16 +55,6 @@ if ENVIRONMENT == 'production':
     # Installed Apps
     INSTALLED_APPS = []
 
-    # Supabase settings
-
-    # Redis settings
-    REDIS_URL = os.environ.get("REDIS_URL", default="")
-    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
-
-    # CLOUDINARY CONFIG SETTINGS
-    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
-    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
-    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
     ALLOWED_HOSTS += [".github.dev"]
@@ -75,20 +65,6 @@ else:
         INSTALLED_APPS.insert(0, 'daphne')
     except ImportError:
         pass  # daphne not available, skip it
-
-    from app.views.helpers.helpers import get_redis_creds
-    REDIS_URL = get_redis_creds()[0]
-    REDIS_PASSWORD = get_redis_creds()[1]
-
-    """ REDIS_URL = os.environ.get("REDIS_URL", default="redis-14483.crce199.us-west-2-2.ec2.redns.redis-cloud.com:14483")
-    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="6T8eLziQOa7MRXquePpm6b6tOYVjyB7M") """
-
-    # CLOUDINARY CONFIG SETTINGS
-    from app.views.helpers.helpers import get_cloudinary_creds
-    CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
-    CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
-    CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
-
 
 INSTALLED_APPS += [
     "django.contrib.admin", "django.contrib.auth", "rest_framework",
@@ -179,12 +155,24 @@ TEMPLATES = [
 ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
+# CLOUDINARY CONFIG SETTINGS
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 
+
+# --------------- DATABASE CONFIGURATION -----------------
+# Supabase settings
 SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
 SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
 SUPABASE_PASSWORD = os.environ.get("SUPABASE_DB_PASSWORD", default="")
 SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
 SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
+
+# Redis settings
+REDIS_URL = os.environ.get("REDIS_URL", default="")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

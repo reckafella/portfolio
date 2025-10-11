@@ -253,17 +253,26 @@ if ENVIRONMENT == 'production':
                 }
             }
         }
+        # Use cache for sessions
+        SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+        SESSION_CACHE_ALIAS = "default"
     except Exception as e:
         print(f"Error configuring Redis cache: {e}")
+        # Fallback to database sessions if Redis fails
+        SESSION_ENGINE = "django.contrib.sessions.backends.db"
         CACHES = {
             "default": {
-                "BACKEND": "django.contrib.sessions.backends.db",
+                "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+                "LOCATION": "fallback-cache"
             }
         }
 else:
+    # Development environment - use local memory cache and database sessions
+    SESSION_ENGINE = "django.contrib.sessions.backends.db"
     CACHES = {
         "default": {
-            "BACKEND": "django.contrib.sessions.backends.db",
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake"
         }
     }
 

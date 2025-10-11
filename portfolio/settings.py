@@ -40,21 +40,17 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 """ All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "True")
-DEBUG = False if DEBUG == "False" else True
-# DEBUG = True
-
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0"
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,rohn.live,portfolio-ot66.onrender.com"
 if ENVIRONMENT == 'production':
     # Allowed hosts
     ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=DEFAULT_HOSTS).split(",")
     # Installed Apps
     INSTALLED_APPS = []
-
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
     ALLOWED_HOSTS += [".github.dev"]
@@ -218,54 +214,59 @@ else:
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
 
-# Import intelligent cache settings
-try:
-    from portfolio.cache_settings.cache_settings import *
-except ImportError:
-    # Fallback cache settings if cache_settings.py is not available
-    CACHE_MIDDLEWARE_ALIAS = 'default'
-    CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
-    CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
-    USE_CACHE = True
+# Cache settings
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
+CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
+USE_CACHE = True
 
-    # Cache configuration
-    CACHE_DYNAMIC_PAGES = 300  # 5 minutes
-    CACHE_STATIC_PAGES = 3600  # 1 hour
-    CACHE_API_PAGES = 15  # 15 seconds
+# Cache configuration
+CACHE_DYNAMIC_PAGES = 300  # 5 minutes
+CACHE_STATIC_PAGES = 3600  # 1 hour
+CACHE_API_PAGES = 15  # 15 seconds
 
-    # Don't cache pages for authenticated users or POST requests
-    CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+# Don't cache pages for authenticated users or POST requests
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
-    # Don't cache responses with these status codes
-    CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
+# Don't cache responses with these status codes
+CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
 
-    # sessions
-    SESSION_CACHE_ALIAS = "default"
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# sessions
+SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "PASSWORD": REDIS_PASSWORD,
-                "SOCKET_CONNECT_TIMEOUT": 30,
-                "SOCKET_TIMEOUT": 60,
-                "SOCKET_KEEPALIVE": True,
-                "CONNECTION_POOL_KWARGS": {
-                    "max_connections": 20,
-                    "retry_on_timeout": True
-                },
-                "PARSER_CLASS": "redis.connection.HiredisParser",
-                "RETRY_ON_TIMEOUT": True,
-                "DB": 0
+if ENVIRONMENT == 'production':
+    try:
+        CACHES = {
+            "default": {
+                "BACKEND": "django_redis.cache.RedisCache",
+                "LOCATION": REDIS_URL,
+                "OPTIONS": {
+                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                    "PARSER_CLASS": "redis.connection.HiredisParser",
+                    "PASSWORD": REDIS_PASSWORD if REDIS_PASSWORD else None,
+                    "SOCKET_TIMEOUT": 5,
+                    "RETRY_ON_TIMEOUT": True,
+                    "CONNECTION_POOL_KWARGS": {
+                        "max_connections": 20,
+                        "retry_on_timeout": True
+                    }
+                }
             }
         }
+    except Exception as e:
+        print(f"Error configuring Redis cache: {e}")
+        CACHES = {
+            "default": {
+                "BACKEND": "django.contrib.sessions.backends.db",
+            }
+        }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.contrib.sessions.backends.db",
+        }
     }
-
-""" else:
-    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db" """
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

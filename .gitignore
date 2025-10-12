@@ -179,5 +179,11 @@ cloudinary.json
 redis.json
 copilot-instructions.md
 media/
-node_modules/
 Share-README.md
+MD/
+docs/
+videos/
+OG_IMAGE_IMPLEMENTATION.md
+test_static.py
+WAGTAIL_TIMEOUT_FIX.md
+node_modules/

@@ -539,6 +539,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://rohn.live",
     "https://portfolio-ot66.onrender.com",
+    "https://devrohn.vercel.app/",
+    "https://portfolio-kdmpak3os-devrohn.vercel.app/",
+    "https://portfolio-git-master-devrohn.vercel.app/",
+    "https://portfolio-git-vercel-devrohn.vercel.app/"
 ]
 
 

@@ -20,6 +20,6 @@
         "reportMissingReturnType": "hint",
         "reportCompatibleMethodOverride": "hint",
         "reportMissingTypeStubs": "hint",
-        "reportAttributeAccessibleIssue": "hint",
+        "reportAttributeAccessibleIssue": "hint"
     }
 }

@@ -69,20 +69,10 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
             'client', 'project_url', 'live', 'images', 'youtube_urls'
         )
         extra_kwargs = {
-            'title': {
-                'required': True,
-                'min_length': 5,
-                'max_length': 200,
-            },
-            'description': {
-                'required': True,
-                'min_length': 25,
-                'max_length': 1500,
-            },
-            'project_url': {
-                'required': True,
-                'max_length': 250,
-            }
+            'title': {'required': True, 'min_length': 5, 'max_length': 200},
+            'project_url': {'required': True, 'max_length': 250},
+            'description': {'required': True, 'min_length': 25,
+                            'max_length': 1500}
         }
 
     def validate_youtube_urls(self, value):

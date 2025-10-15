@@ -1,18 +1,16 @@
+from typing import Never
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.conf import settings
 
 
-from app.serializers.project_serializer import (
+from app.api.serializers.project_serializer import (
     ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
-    ImageSerializer, VideoSerializer
 )
-from app.models import Projects, Image, Video
+from app.models import Projects
 from app.forms.projects import ProjectsForm
 
 from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
@@ -51,17 +49,18 @@ class ProjectListAPIView(generics.ListAPIView):
             )
 
         # Sorting
-        sort_by = self.request.query_params.get('sort_by', '-created_at') or self.request.query_params.get('ordering', '-created_at')
+        sort_by = self.request.query_params.get('sort_by', '-created_at') or\
+            self.request.query_params.get('ordering', '-created_at')
         allowed_sort_fields = [
-            '-created_at', 'created_at', 'title', '-title', 'category', '-category',
-            'client', '-client', 'project_type', '-project_type'
+            '-created_at', 'created_at', 'title', 'category', 'client',
+            '-category', '-client', 'project_type', '-project_type', '-title'
         ]
         if sort_by in allowed_sort_fields:
             queryset = queryset.order_by(sort_by)
 
         return queryset
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Response:
         queryset = self.get_queryset()
 
         # Pagination
@@ -69,7 +68,6 @@ class ProjectListAPIView(generics.ListAPIView):
         paginator = Paginator(queryset, page_size)
         page_number = request.query_params.get('page', 1)
         page_obj = paginator.get_page(page_number)
-
         serializer = self.get_serializer(page_obj, many=True)
 
         return Response({
@@ -158,7 +156,7 @@ class ProjectUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticatedStaff]
     lookup_field = 'slug'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> Response:
         """ Returns the form fields for updating a project """
         form = ProjectsForm(instance=self.get_object())
         return Response({"fields": self.get_form_fields(form)},
@@ -204,106 +202,6 @@ class ProjectDeleteAPIView(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         serializer = self.get_serializer(instance)
         return serializer.delete(instance)
-
-
-@api_view(['GET'])
-def project_form_config(request):
-    """
-    API endpoint to get project form configuration
-    """
-    return Response({
-        "form_title": "Add New Project",
-        "form_description": "Create a new project to showcase in your portfolio",
-        "submit_text": "Create Project",
-        "fields": [
-            {
-                "name": "title",
-                "label": "Project Title",
-                "type": "text",
-                "required": True,
-                "placeholder": "Enter a descriptive title for your project",
-                "help_text": "A clear, concise title that describes your project",
-                "max_length": 200,
-                "widget": {
-                    "type": "TextInput",
-                    "attrs": {"class": "form-control"}
-                }
-            },
-            {
-                "name": "description",
-                "label": "Description",
-                "type": "textarea",
-                "required": True,
-                "placeholder": "Provide a detailed description of the project...",
-                "help_text": "Describe what the project does, technologies used, and key features",
-                "max_length": 2000,
-                "widget": {
-                    "type": "Textarea",
-                    "attrs": {"class": "form-control", "rows": 6}
-                }
-            },
-            {
-                "name": "project_type",
-                "label": "Project Type",
-                "type": "select",
-                "required": True,
-                "help_text": "Select the type of project",
-                "choices": list(Projects.PROJECT_TYPES),
-                "widget": {
-                    "type": "Select",
-                    "attrs": {"class": "form-select"}
-                }
-            },
-            {
-                "name": "category",
-                "label": "Category",
-                "type": "select",
-                "required": True,
-                "help_text": "Choose the project category",
-                "choices": list(Projects.CATEGORY_CHOICES),
-                "widget": {
-                    "type": "Select",
-                    "attrs": {"class": "form-select"}
-                }
-            },
-            {
-                "name": "client",
-                "label": "Client",
-                "type": "text",
-                "required": False,
-                "placeholder": "Client name (optional)",
-                "help_text": "Client name for commissioned work (leave blank for personal projects)",
-                "max_length": 200,
-                "widget": {
-                    "type": "TextInput",
-                    "attrs": {"class": "form-control"}
-                }
-            },
-            {
-                "name": "project_url",
-                "label": "Project URL",
-                "type": "url",
-                "required": False,
-                "placeholder": "https://example.com",
-                "help_text": "Link to the live project (optional)",
-                "widget": {
-                    "type": "URLInput",
-                    "attrs": {"class": "form-control"}
-                }
-            },
-            {
-                "name": "live",
-                "label": "Make Live",
-                "type": "checkbox",
-                "required": False,
-                "help_text": "Check to make this project visible to the public",
-                "widget": {
-                    "type": "CheckboxInput",
-                    "attrs": {"class": "form-check-input"}
-                }
-            }
-        ]
-    })
 
 
 class ProjectViewSet(viewsets.ModelViewSet):

@@ -2,7 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from captcha.models import CaptchaStore
-from .models import Profile, SocialLinks, UserSettings, UserProfileImage
+from authentication.models import (
+    Profile, SocialLinks, UserSettings, UserProfileImage
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,12 +20,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
     password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True)
-    captcha_0 = serializers.CharField(max_length=40, required=False, write_only=True)
-    captcha_1 = serializers.CharField(max_length=10, required=False, write_only=True)
+    captcha_0 = serializers.CharField(max_length=40, required=False,
+                                      write_only=True)
+    captcha_1 = serializers.CharField(max_length=10, required=False,
+                                      write_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password_confirm', 'first_name', 'last_name', 'captcha_0', 'captcha_1')
+        fields = ('username', 'email', 'password', 'password_confirm',
+                  'first_name', 'last_name', 'captcha_0', 'captcha_1')
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
@@ -35,14 +40,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         if captcha_key and captcha_value:
             try:
-                captcha_instance = CaptchaStore.objects.get(hashkey=captcha_key)
-                if captcha_instance.response.lower() != captcha_value.lower():
-                    raise serializers.ValidationError({"captcha": "Invalid CAPTCHA"})
-                # Delete used CAPTCHA
-                captcha_instance.delete()
-            except CaptchaStore.DoesNotExist:
-                raise serializers.ValidationError({"captcha": "CAPTCHA has expired or is invalid"})
+                # current captcha instance
+                cur_captcha = CaptchaStore.objects.get(hashkey=captcha_key)
+                if cur_captcha.response.lower() != captcha_value.lower():
+                    raise serializers.ValidationError(
+                        {"captcha": "Invalid CAPTCHA"}
+                    )
 
+                cur_captcha.delete()  # Delete used CAPTCHA
+            except CaptchaStore.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"captcha": "CAPTCHA has expired or is invalid"}
+                )
         return attrs
 
     def create(self, validated_data):
@@ -57,8 +66,10 @@ class UserLoginSerializer(serializers.Serializer):
     """Serializer for user login"""
     username = serializers.CharField()
     password = serializers.CharField()
-    captcha_0 = serializers.CharField(max_length=40, required=False, write_only=True)
-    captcha_1 = serializers.CharField(max_length=10, required=False, write_only=True)
+    captcha_0 = serializers.CharField(max_length=40, required=False,
+                                      write_only=True)
+    captcha_1 = serializers.CharField(max_length=10, required=False,
+                                      write_only=True)
 
     def validate(self, attrs):
         username = attrs.get('username')
@@ -71,13 +82,17 @@ class UserLoginSerializer(serializers.Serializer):
 
             if captcha_key and captcha_value:
                 try:
-                    captcha_instance = CaptchaStore.objects.get(hashkey=captcha_key)
-                    if captcha_instance.response.lower() != captcha_value.lower():
-                        raise serializers.ValidationError({"captcha": "Invalid CAPTCHA"})
-                    # Delete used CAPTCHA
-                    captcha_instance.delete()
+                    cur_captcha = CaptchaStore.objects.get(hashkey=captcha_key)
+                    if cur_captcha.response.lower() != captcha_value.lower():
+                        raise serializers.ValidationError(
+                            {"captcha": "Invalid CAPTCHA"}
+                        )
+
+                    cur_captcha.delete()  # Delete used CAPTCHA
                 except CaptchaStore.DoesNotExist:
-                    raise serializers.ValidationError({"captcha": "CAPTCHA has expired or is invalid"})
+                    raise serializers.ValidationError(
+                        {"captcha": "CAPTCHA has expired or is invalid"}
+                    )
 
             user = authenticate(username=username, password=password)
             if not user:

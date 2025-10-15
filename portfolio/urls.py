@@ -29,7 +29,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from app.views.views import CustomRedirectView
 from authentication.views.auth.captcha import CaptchaRefreshView
-from app.views.base_api import FrontendAPIView
+from app.api.views.base import FrontendAPIView
 from app.views.views import AppHealthCheckView as app_is_running
 
 # Error handling
@@ -52,7 +52,7 @@ urlpatterns = [
     path("wagtail/", include(wagtail_urls)),
 
     # API endpoints
-    path("api/v1/", include("app.api_urls")),
+    path("api/v1/", include("app.api.urls")),
 
     # React frontend assets (catch specific asset paths first)
     re_path(r"^assets/(?P<path>.*)$", FrontendAPIView.as_view(), name="react_assets"),

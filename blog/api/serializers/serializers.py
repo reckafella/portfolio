@@ -175,7 +175,6 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
             published=validated_data.get('published', False),
             author=self.context['request'].user,
             seo_title=titlecase(validated_data['title']),
-            # seo_description=validated_data.get('content', '')[:160],
         )
 
         # Add to parent page

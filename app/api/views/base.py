@@ -62,7 +62,8 @@ class FrontendAPIView(View):
 
         if not os.path.exists(index_path):
             return HttpResponse(
-                'React frontend not built. Run "npm run build" from the frontend directory.',
+                (b'React frontend not built.' +
+                 b'Run "npm run build" from the frontend directory.'),
                 status=503,
                 content_type='text/plain'
             )
@@ -77,7 +78,7 @@ class FrontendAPIView(View):
                 f'{settings.STATIC_URL}assets/' if not settings.DEBUG else '/assets/'
             )
 
-            response = HttpResponse(content, content_type='text/html')
+            response = HttpResponse(content.encode('utf-8'), content_type='text/html')
             # Don't cache the main HTML file
             response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
             response['Pragma'] = 'no-cache'
@@ -87,7 +88,7 @@ class FrontendAPIView(View):
 
         except IOError:
             return HttpResponse(
-                'Error reading React frontend files.',
+                'Error reading React frontend files.'.encode('utf-8'),
                 status=500,
                 content_type='text/plain'
             )

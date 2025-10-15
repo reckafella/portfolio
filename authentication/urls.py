@@ -3,13 +3,13 @@ from django.urls import path
 from app.views.views import CustomRedirectView as RedirectView
 from authentication.views.auth.auth import LoginView, LogoutView, SignupView
 from authentication.views.auth.sessions import ManageSessionView
-from authentication.views.profile.profile import ProfileView as _PV, CitiesAPIView
+from authentication.views.profile.profile import ProfileView, CitiesAPIView
 from authentication.api_views import get_current_user, update_auth_state
 
 app_name = "authentication"
 
 urlpatterns = [
-    path('profile/<str:username>', _PV.as_view(), name='user_profile'),
+    path('profile/<str:username>', ProfileView.as_view(), name='user_profile'),
     path('api/cities/', CitiesAPIView.as_view(), name='cities_api'),
     path('api/auth/user/', get_current_user, name='current_user'),
     path('api/auth/update-state/', update_auth_state, name='update_auth_state'),

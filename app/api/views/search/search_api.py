@@ -11,8 +11,7 @@ from blog.models import BlogPostPage as BlogPost
 def _search_blog_posts(query, sort, page, page_size):
     """Search and return blog posts"""
     post_queryset = BlogPost.objects.filter(
-        Q(title__icontains=query) |
-        Q(content__icontains=query) |
+        Q(title__icontains=query) | Q(content__icontains=query) |
         Q(tags__name__icontains=query)
     ).distinct()
 
@@ -50,12 +49,9 @@ def _search_blog_posts(query, sort, page, page_size):
 def _search_projects(query, sort, page, page_size):
     """Search and return projects"""
     project_queryset = Projects.objects.filter(
-        Q(title__icontains=query) |
-        Q(description__icontains=query) |
-        Q(project_url__icontains=query) |
-        Q(category__icontains=query) |
-        Q(project_type__icontains=query) |
-        Q(client__icontains=query)
+        Q(title__icontains=query) | Q(description__icontains=query) |
+        Q(project_url__icontains=query) | Q(category__icontains=query) |
+        Q(project_type__icontains=query) | Q(client__icontains=query)
     ).filter(live=True)
 
     # Apply sorting
@@ -185,7 +181,7 @@ def _search_actions(query, user):
 @permission_classes([IsAuthenticatedOrReadOnly])
 def search_api(request):
     """
-    Enhanced search API that supports projects, blog posts, and authenticated user actions
+    Search API that supports projects, blog posts, and authenticated user actions
     """
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', 'all')
@@ -219,7 +215,7 @@ def search_api(request):
         project_results = _search_projects(query, sort, page, page_size)
 
     # Search for authenticated user actions
-    if request.user.is_authenticated and category in ['all', 'actions']:
+    if request.user.is_staff and category in ['all', 'actions']:
         action_results = _search_actions(query, request.user)
 
     # Calculate total results
@@ -238,7 +234,7 @@ def search_api(request):
             'actions': action_results
         },
         'total_results': total_results,
-        'has_next': (len(post_results) + len(project_results)) >= page_size,  # Only count content results for pagination
+        'has_next': (len(post_results) + len(project_results)) >= page_size,
         'has_previous': page > 1
     })
 

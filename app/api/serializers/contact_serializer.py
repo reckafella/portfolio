@@ -8,16 +8,17 @@ uploader = CloudinaryImageHandler()
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    """ Serializer for the Message Model """
+    """
+    Serializer for the Message Model
     class Meta:
         model = Message
         fields = ('id', 'name', 'subject', 'email',
                   'message', 'created_at', 'is_read')
         read_only_fields = ('id', 'created_at', 'is_read')
 
-
-class ContactFormSerializer(serializers.Serializer):
-    """ Serializer for contact form with CAPTCHA validation """
+    class ContactFormSerializer(serializers.Serializer):
+    Serializer for contact form with CAPTCHA validation
+    """
     name = serializers.CharField(max_length=50, min_length=5)
     email = serializers.EmailField(max_length=70)
     subject = serializers.CharField(max_length=150, min_length=15)

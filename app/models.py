@@ -15,18 +15,16 @@ class Projects(models.Model):
 
     title = models.CharField(unique=True, max_length=200)
     description = RichTextField()
-    project_type = models.CharField(max_length=20,
-                                    choices=PROJECT_TYPES,
-                                    default='personal')
-    category = models.CharField(max_length=100,
-                                choices=CATEGORY_CHOICES,
-                                default='Web Development')
+    project_type = models.CharField(
+        max_length=20, choices=PROJECT_TYPES, default='personal')
+    category = models.CharField(
+        max_length=100, choices=CATEGORY_CHOICES, default='Web Development')
     client = models.CharField(max_length=200, default="Personal")
     project_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(max_length=100, unique=True)
-    live = models.BooleanField(default=True)  # type: ignore[call-arg]
+    live = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -37,7 +35,7 @@ class Projects(models.Model):
 
     @property
     def first_image(self):
-        return self.images.first() if self.images.first() else None  # type: ignore[attr-defined]
+        return self.images.first() if self.images.first() else None
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -53,7 +51,7 @@ class Image(models.Model):
                                            null=True)
     cloudinary_image_url = models.URLField(blank=True, null=True)
     optimized_image_url = models.URLField(blank=True, null=True)
-    live = models.BooleanField(default=True)  # type: ignore[call-arg]
+    live = models.BooleanField(default=True)
 
 
 class Video(models.Model):
@@ -61,7 +59,7 @@ class Video(models.Model):
                                 related_name='videos')
     youtube_url = models.URLField(max_length=200, null=True,)
     thumbnail_url = models.URLField(max_length=200, null=True, blank=True)
-    live = models.BooleanField(default=True)  # type: ignore[call-arg]
+    live = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if self.youtube_url and not self.thumbnail_url:
@@ -98,7 +96,7 @@ class Message(models.Model):
     subject = models.CharField(max_length=200, blank=True)
     message = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)  # type: ignore[call-arg]
+    is_read = models.BooleanField(default=False)
 
     def mark_as_read(self):
         self.is_read = True
@@ -145,7 +143,7 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         # Ensure only one profile instance exists
-        if not self.pk and Profile.objects.exists():  # type: ignore[attr-defined]
+        if not self.pk and Profile.objects.exists():
             raise ValueError(
                 "Only one profile can exist. Please edit the existing profile."
             )
@@ -163,15 +161,15 @@ class Education(models.Model):
         help_text="End date of education (leave blank if currently studying)"
     )
     is_current = models.BooleanField(
-        default=False,  # type: ignore[call-arg]
+        default=False,
         help_text="Check if currently studying here")
     institution = models.CharField(max_length=200)
     description = models.TextField()
     order = models.PositiveIntegerField(
-        default=0,  # type: ignore[call-arg]
+        default=0,
         help_text="Order of display (lower numbers appear first)"
     )
-    is_active = models.BooleanField(default=True)  # type: ignore[call-arg]
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -179,11 +177,11 @@ class Education(models.Model):
     def period(self):
         """Generate period string from dates"""
         if self.is_current or not self.end_date:
-            return f"{self.start_date.strftime('%b. %Y')} - Present"  # type: ignore[attr-defined]
+            return f"{self.start_date.strftime('%b. %Y')} - Present"
         else:
             return (
-                f"{self.start_date.strftime('%b. %Y')}" +  # type: ignore[attr-defined]
-                f" - {self.end_date.strftime('%b. %Y')}"  # type: ignore[attr-defined]
+                f"{self.start_date.strftime('%b. %Y')}" +
+                f" - {self.end_date.strftime('%b. %Y')}"
             )
 
     class Meta:
@@ -214,7 +212,7 @@ class Experience(models.Model):
         help_text="End date of employment (leave blank if currently working)"
     )
     is_current = models.BooleanField(
-        default=False,  # type: ignore[call-arg]
+        default=False,
         help_text="Check if currently working here"
     )
     company = models.CharField(max_length=200)
@@ -226,10 +224,10 @@ class Experience(models.Model):
         default=list
     )
     order = models.PositiveIntegerField(
-        default=0,  # type: ignore[call-arg]
+        default=0,
         help_text="Order of display (lower numbers appear first)"
     )
-    is_active = models.BooleanField(default=True)  # type: ignore[call-arg]
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -237,11 +235,11 @@ class Experience(models.Model):
     def period(self):
         """Generate period string from dates"""
         if self.is_current or not self.end_date:
-            return (f"{self.start_date.strftime('%b. %Y')}" +  # type: ignore[attr-defined]
+            return (f"{self.start_date.strftime('%b. %Y')}" +
                     "- Present")
         else:
-            return (f"{self.start_date.strftime('%b. %Y')}" +  # type: ignore[attr-defined]
-                    f"- {self.end_date.strftime('%b. %Y')}")  # type: ignore[attr-defined]
+            return (f"{self.start_date.strftime('%b. %Y')}" +
+                    f"- {self.end_date.strftime('%b. %Y')}")
 
     class Meta:
         ordering = ['order', '-created_at']
@@ -263,13 +261,13 @@ class Skill(models.Model):
     )
     proficiency_level = models.IntegerField(
         choices=[(1, 'Beginner'), (2, 'Intermediate'), (3, 'Advanced'), (4, 'Expert')],
-        default=3  # type: ignore[call-arg]
+        default=3
     )
     order = models.PositiveIntegerField(
-        default=0,  # type: ignore[call-arg]
+        default=0,
         help_text="Order of display (lower numbers appear first)"
     )
-    is_active = models.BooleanField(default=True)  # type: ignore[call-arg]
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

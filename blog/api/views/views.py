@@ -10,8 +10,8 @@ from django.views.decorators.cache import cache_page
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 
-from blog.models import BlogPostPage, BlogPostComment  # , BlogPostImage
-from .serializers.serializers import (
+from blog.models import BlogPostPage, BlogPostComment
+from blog.api.serializers.serializers import (
     BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer,
     BlogPostCommentSerializer, BlogCommentCreateSerializer
 )

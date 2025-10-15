@@ -2,8 +2,9 @@
     "python.defaultInterpreterPath": "./venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "standard",
+    "cursorpyright.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "cursorpyright.analysis.typeCheckingMode": "off",
     "files.associations": {
         "*.py": "python"
     },
@@ -11,10 +12,13 @@
         "./",
         "./venv/lib/python3.12/site-packages"
     ],
-    "python.analysis.indexing": true,
-    /* "python-envs.defaultEnvManager": "ms-python.python:system", */
-    "python.languageServer": "Pylance",
+    "cursorpyright.analysis.extraPaths": [
+        "./",
+        "./venv/lib/python3.12/site-packages"
+    ],
+    "python.languageServer": "None",
     "python.analysis.inlayHints.variableTypes": true,
+    "cursorpyright.analysis.inlayHints.variableTypes": false,
     "python.analysis.inlayHints.functionReturnTypes": true,
-    "python.analysis.diagnosticMode": "workspace"
+    "cursorpyright.analysis.inlayHints.functionReturnTypes": true,
 }

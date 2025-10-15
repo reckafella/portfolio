@@ -5,15 +5,23 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from rest_framework.permissions import AllowAny
 
 from app.models import Profile, Education, Experience, Skill
-from app.serializers.about_update_serializers import (
-    ProfileUpdateSerializer,
-    EducationSerializer,
-    ExperienceSerializer,
-    SkillSerializer,
-    BulkSkillsSerializer
+from app.api.serializers.about_serializer import (
+    AboutPageSerializer, ProfileUpdateSerializer, EducationSerializer,
+    ExperienceSerializer, SkillSerializer, BulkSkillsSerializer
 )
+
+
+class AboutPageAPIView(APIView):
+    """API view for the About page data"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        """Handle GET request to retrieve about page data"""
+        serializer = AboutPageSerializer()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProfileUpdateView(APIView):

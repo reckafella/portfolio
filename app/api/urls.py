@@ -1,30 +1,19 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from app.views.contact_api import ContactFormAPIView
-from app.views.project_api import (
-    ProjectListAPIView,
-    ProjectDetailAPIView,
-    ProjectCreateAPIView,
-    ProjectUpdateAPIView,
-    ProjectDeleteAPIView,
-    ProjectViewSet,
-    project_form_config
+
+from app.api.views.contact.contact_api import ContactPageAPIView
+from app.api.views.projects.project_api import (
+    ProjectListAPIView, ProjectDetailAPIView, ProjectCreateAPIView,
+    ProjectUpdateAPIView, ProjectDeleteAPIView, ProjectViewSet,
 )
 from app.views.views import ResumePDFView, SitemapAPIView
-from app.views.api.about_view import AboutAPIView
-from app.views.api.about_update_views import (
-    ProfileUpdateView,
-    EducationListCreateView,
-    EducationDetailView,
-    ExperienceListCreateView,
-    ExperienceDetailView,
-    SkillsListCreateView,
-    SkillDetailView,
-    BulkSkillsView,
-    reorder_items
+from app.api.views.about.about_page import (
+    AboutPageAPIView, ProfileUpdateView, EducationListCreateView,
+    EducationDetailView, ExperienceListCreateView, ExperienceDetailView,
+    SkillsListCreateView, SkillDetailView, BulkSkillsView, reorder_items
 )
-from app.views.api.captcha_views import CaptchaRefreshAPIView
-from app.views.search_api import search_api, search_suggestions_api
+from app.api.views.about.captcha import CaptchaRefreshAPIView
+from app.api.views.search.search_api import search_api, search_suggestions_api
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -32,14 +21,14 @@ router.register(r'projects', ProjectViewSet, basename='project')
 
 urlpatterns = [
     # Contact API
-    path('contact/', ContactFormAPIView.as_view(), name='contact_api'),
+    path('contact/', ContactPageAPIView.as_view(), name='contact_api'),
     path("auth", include("rest_framework.urls")),
     path("auth/", include("authentication.api.urls")),
 
     # Blog API
-    path('blog/', include('blog.api_urls')),
+    path('blog/', include('blog.api.urls')),
 
-    # Project APIs (function-based)
+    # Project APIs URLs
     path('projects/list', ProjectListAPIView.as_view(), name='project_list_api'),
     path('projects/create/', ProjectCreateAPIView.as_view(), name='project_create_api'),
     path('projects/<slug:slug>/', ProjectDetailAPIView.as_view(), name='project_detail_api'),
@@ -47,13 +36,13 @@ urlpatterns = [
     path('projects/<slug:slug>/delete/', ProjectDeleteAPIView.as_view(), name='project_delete_api'),
 
     # Project form configuration
-    path('projects/form-config', project_form_config, name='project_form_config'),
+    # path('projects/form-config', project_form_config, name='project_form_config'),
 
     # Sitemap API
     path('sitemap/', SitemapAPIView.as_view(), name='sitemap_api'),
 
     # About Page API (Read-only)
-    path('about/', AboutAPIView.as_view(), name='about_api'),
+    path('about/', AboutPageAPIView.as_view(), name='about_api'),
     path('resume-pdf/', ResumePDFView.as_view(), name='resume_pdf_api'),
 
     # About Page Management APIs (Authenticated)

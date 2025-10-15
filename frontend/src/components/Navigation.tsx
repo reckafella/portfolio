@@ -16,7 +16,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
-    const { isStaff, canCreateProjects } = useStaffPermissions();
+    const { isStaff, canCreateProjects, canCreateBlog } = useStaffPermissions();
     const [isToggleDropdownOpen, setIsToggleDropdownOpen] = useState(false);
     const [isStaffDropdownOpen, setIsStaffDropdownOpen] = useState(false);
 
@@ -105,9 +105,21 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                                     </Link>
                                                 </li>
                                             )}
+                                            {canCreateBlog && (
+                                                <li>
+                                                    <Link to={ROUTES.BLOG.ADD}>
+                                                        <span>Add Blog Post</span>
+                                                    </Link>
+                                                </li>
+                                            )}
                                             <li>
-                                                <Link to="/admin">
+                                                <Link to="/admin/">
                                                     <span>Admin Panel</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/wagtail/admin/">
+                                                    <span>Wagtail Admin</span>
                                                 </Link>
                                             </li>
                                         </ul>

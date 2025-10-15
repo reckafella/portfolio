@@ -10,7 +10,7 @@ from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from ..models import BlogPostPage
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

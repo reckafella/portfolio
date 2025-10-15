@@ -9,7 +9,7 @@ import hashlib
 from app.views.helpers.cloudinary import CloudinaryImageHandler
 from blog.models import BlogPostPage, BlogPostComment, BlogPostImage, BlogIndexPage
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class BlogPostImageSerializer(serializers.ModelSerializer):
@@ -255,11 +255,35 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
             instance.slug = new_slug
 
     def _update_cover_image(self, instance, cover_image):
-        """Handle cover image upload"""
+        """
+        Handle cover image upload with proper Cloudinary cleanup.
+        Deletes old images from Cloudinary before database deletion.
+        """
         from app.views.helpers.cloudinary import handle_image_upload, CloudinaryImageHandler
+        import logging
+
+        logger = logging.getLogger(__name__)
 
         try:
-            # Remove any existing images first
+            # Get existing images to delete from Cloudinary
+            existing_images = list(instance.images.all())
+
+            # Delete old images from Cloudinary first (before DB deletion)
+            if existing_images:
+                uploader = CloudinaryImageHandler()
+                for old_image in existing_images:
+                    if old_image.cloudinary_image_id:
+                        try:
+                            uploader.delete_image(old_image.cloudinary_image_id)
+                            logger.info(
+                                f"Deleted old image {old_image.cloudinary_image_id} from Cloudinary"
+                            )
+                        except Exception as e:
+                            logger.warning(
+                                f"Failed to delete old image {old_image.cloudinary_image_id}: {str(e)}"
+                            )
+
+            # Now safe to delete from database (CASCADE will work now)
             instance.images.all().delete()
 
             # Upload new image using helper function
@@ -279,8 +303,19 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
                     cloudinary_image_url=response['cloudinary_image_url'],
                     optimized_image_url=response['optimized_image_url']
                 )
+                logger.info(
+                    f"Successfully uploaded new cover image for blog post '{instance.title}'"
+                )
+        except ValueError as e:
+            # Cloudinary configuration error
+            raise serializers.ValidationError({
+                'cover_image': f"Cloudinary configuration error: {str(e)}"
+            })
         except Exception as e:
-            raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
+            logger.error(f"Failed to upload cover image: {str(e)}")
+            raise serializers.ValidationError({
+                'cover_image': f"Failed to upload cover image: {str(e)}"
+            })
 
     def _update_tags(self, instance, tags):
         """Handle tags update"""

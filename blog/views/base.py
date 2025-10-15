@@ -15,7 +15,7 @@ from ..forms import BlogPostForm
 from ..models import BlogIndexPage, BlogPostImage, BlogPostPage
 from django.conf import settings
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class BasePostView(LoginRequiredMixin, UserPassesTestMixin):

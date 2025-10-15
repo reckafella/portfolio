@@ -79,7 +79,8 @@ export const NAV_ITEMS = [
 // Staff navigation items
 export const STAFF_NAV_ITEMS = [
   { path: ROUTES.PROJECTS.ADD, label: 'Add Project' },
-  { path: '/admin', label: 'Admin Panel' },
+  { path: '/admin/', label: 'Admin Panel' },
+  { path: '/wagtail/admin/', label: 'Wagtail Admin' },
 ] as const;
 
 // About management navigation items  

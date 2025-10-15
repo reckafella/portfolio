@@ -1,6 +1,6 @@
 from django.contrib import messages
 # from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import UpdateView
 from titlecase import titlecase
@@ -9,8 +9,8 @@ from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from app.views.projects.base import BaseProjectView
 
 
-class UpdateProjectView(BaseProjectView, UpdateView):
-    def form_valid(self, form):
+class UpdateProjectView(UpdateView, BaseProjectView):
+    def form_valid(self, form) -> HttpResponseRedirect | JsonResponse:
         project = form.save()
         project.title = titlecase(project.title)
         project.description = project.description.strip()

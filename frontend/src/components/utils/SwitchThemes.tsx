@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
 
 interface ThemeSwitchProps {
   className?: string;
@@ -59,7 +60,7 @@ const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ className = "" }) => {
   };
 
   // Apply theme with dramatic page-turning animation
-  const updateThemeWithAnimation = (theme: 'light' | 'dark', _clickX = 0, _clickY = 0) => {
+  const updateThemeWithAnimation = (theme: 'light' | 'dark', _clickX = 0, _clickY = 0, broadcast = true) => {
     const overlay = overlayRef.current;
     if (!overlay) return;
 
@@ -92,6 +93,11 @@ const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ className = "" }) => {
     } else {
       body.classList.add('light-theme');
       body.classList.remove('dark-theme');
+    }
+
+    // Broadcast theme change to other tabs (only if initiated by user)
+    if (broadcast) {
+      tabSyncService.broadcastThemeChange(theme);
     }
 
     // Create dramatic page-turning animation based on theme direction
@@ -132,6 +138,27 @@ const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ className = "" }) => {
     const newTheme = isDarkMode ? 'light' : 'dark';
     updateThemeWithAnimation(newTheme, e.clientX, e.clientY);
   };
+
+  // Listen for theme changes from other tabs
+  useEffect(() => {
+    const handleTabSyncMessage = (message: TabSyncMessage) => {
+      if (message.type === 'THEME_CHANGE' && message.payload.theme) {
+        const newTheme = message.payload.theme;
+        // Apply theme without broadcasting (to avoid infinite loop)
+        // Also apply without animation to sync immediately
+        setIsDarkMode(newTheme === 'dark');
+        applyThemeImmediate(newTheme === 'dark');
+      }
+    };
+
+    // Register the listener
+    tabSyncService.addListener(handleTabSyncMessage);
+
+    // Cleanup on unmount
+    return () => {
+      tabSyncService.removeListener(handleTabSyncMessage);
+    };
+  }, []);
 
   // Cleanup overlay on component unmount
   useEffect(() => {

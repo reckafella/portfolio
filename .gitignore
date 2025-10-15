@@ -181,3 +181,4 @@ cloudinary.json
 redis.json
 media/
 node_modules/
+.venv.local

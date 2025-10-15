@@ -6,7 +6,9 @@ import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
-import { PreviewModal } from './PreviewModal';
+import { DevicePreviewModal } from '@/components/blog/DevicePreviewModal';
+import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
+import { useAuth } from '@/hooks/useAuth';
 import '@/styles/blog.css';
 
 import {
@@ -33,6 +35,7 @@ export function BlogEditorPage() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const {canCreateBlog, canEditBlog } = useStaffPermissions();
+  const { user } = useAuth();
   const isEditing = !!slug;
 
   const { data: post, isLoading: isLoadingPost, error: postError } = useBlogPost(slug || '');
@@ -58,6 +61,8 @@ export function BlogEditorPage() {
     lastSaved: null,
     hasUnsavedChanges: false
   });
+  const [beingEditedBy, setBeingEditedBy] = useState<string | null>(null);
+  const [showContentUpdatedWarning, setShowContentUpdatedWarning] = useState(false);
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedContentRef = useRef<string>('');
@@ -133,6 +138,40 @@ export function BlogEditorPage() {
       setInitialDataLoaded(true);
     }
   }, [post, initialDataLoaded, isEditing]);
+
+  // Broadcast edit start when editing begins
+  useEffect(() => {
+    if (isEditing && slug && initialDataLoaded) {
+      tabSyncService.broadcastEditStart('blog', slug, user?.username);
+    }
+
+    return () => {
+      if (isEditing && slug) {
+        tabSyncService.broadcastEditEnd('blog', slug);
+      }
+    };
+  }, [isEditing, slug, initialDataLoaded, user]);
+
+  // Listen for cross-tab edit and content update events
+  useEffect(() => {
+    const handleTabSyncMessage = (message: TabSyncMessage) => {
+      if (message.type === 'EDIT_START' && message.payload.editType === 'blog' && message.payload.editSection === slug) {
+        const editor = message.payload.editUser || 'Another user';
+        setBeingEditedBy(editor);
+      } else if (message.type === 'EDIT_END' && message.payload.editType === 'blog' && message.payload.editSection === slug) {
+        setBeingEditedBy(null);
+      } else if (message.type === 'CONTENT_UPDATED' && message.payload.contentType === 'blog' && message.payload.contentId === slug) {
+        // Show warning that content was updated in another tab
+        setShowContentUpdatedWarning(true);
+      }
+    };
+
+    tabSyncService.addListener(handleTabSyncMessage);
+
+    return () => {
+      tabSyncService.removeListener(handleTabSyncMessage);
+    };
+  }, [slug]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -259,6 +298,8 @@ export function BlogEditorPage() {
           slug: slug!,
           data: formDataToSubmit
         });
+        // Broadcast content update to other tabs
+        tabSyncService.broadcastContentUpdate('blog', slug);
       } else {
         result = await createBlogPostMutation.mutateAsync(formDataToSubmit);
       }
@@ -363,6 +404,24 @@ export function BlogEditorPage() {
                       {isEditing ? `Edit: ${post?.title || 'Blog Post'}` : 'New Blog Post'}
                     </h1>
                     <div className="d-flex align-items-center gap-3 text-muted small">
+                      {beingEditedBy && (
+                        <span className="badge bg-warning text-dark">
+                          <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                          {beingEditedBy} is also editing this post
+                        </span>
+                      )}
+                      {showContentUpdatedWarning && (
+                        <span className="badge bg-info text-white">
+                          <i className="bi bi-info-circle-fill me-1"></i>
+                          Content updated in another tab
+                          <button 
+                            className="btn btn-sm btn-link text-white p-0 ms-2"
+                            onClick={() => window.location.reload()}
+                          >
+                            Reload
+                          </button>
+                        </span>
+                      )}
                       {autoSave.isAutoSaving && (
                         <span className="text-warning">
                           <i className="bi bi-clock me-1"></i>
@@ -635,13 +694,20 @@ export function BlogEditorPage() {
       </div>
     </section>
 
-    {/* Preview Modal */}
-    <PreviewModal
-      isOpen={showPreview}
-      onClose={() => setShowPreview(false)}
-      title={formData.title}
-      content={formData.content}
-    />
+      {/* Device Preview Modal */}
+      <DevicePreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        title={formData.title}
+        content={formData.content}
+        coverImage={imagePreview || post?.cover_image_url || post?.featured_image_url}
+        tags={formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []}
+        published={formData.published}
+        author={post?.author || "Ethan Wanyoike"}
+        readingTime={post?.reading_time || "5 min read"}
+        viewCount={post?.view_count || 0}
+        publishedAt={post?.first_published_at || new Date().toISOString()}
+      />
     </>
   );
 }

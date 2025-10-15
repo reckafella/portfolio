@@ -7,8 +7,7 @@ import AboutPage from './pages/about/AboutPage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
 import { ProjectEditPage } from './pages/projects/ProjectEditPage'
-/* import { ProjectDetailPage } from './pages/projects/ProjectDetailPage' */
-import { ProjectDetailPageEnhanced } from './pages/projects/ProjectDetailPageEnhanced'
+import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
 import { BlogListPage, BlogDetailPage, BlogEditPage, BlogEditorPage } from './pages/blog'
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
@@ -28,13 +27,7 @@ import ErrorBoundary from './components/errors/ErrorBoundary'
 import { LoadingProvider } from './hooks/useLoading'
 import Preloader from './components/common/Preloader'
 import RouteTransition from './components/transitions/RouteTransition'
-import { 
-    NotFoundPage, 
-    BadRequestPage, 
-    UnauthorizedPage, 
-    ForbiddenPage, 
-    ServerErrorPage 
-} from './pages/errors'
+import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerErrorPage } from './pages/errors'
 import './App.css'
 
 const queryClient = new QueryClient({
@@ -96,7 +89,7 @@ function App() {
                                                     </ProtectedRoute>
                                                 } 
                                             />
-                                            <Route path="/projects/:slug" element={<ProjectDetailPageEnhanced />} />
+                                            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
                                             
                                             {/* Blog routes */}
                                             <Route path="/blog" element={<BlogListPage />} />

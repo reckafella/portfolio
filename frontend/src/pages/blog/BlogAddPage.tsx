@@ -6,6 +6,7 @@ import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
+import { DevicePreviewModal } from '@/components/blog/DevicePreviewModal';
 
 interface BlogPostFormData {
   title: string;
@@ -15,41 +16,7 @@ interface BlogPostFormData {
   cover_image?: File;
 }
 
-interface PreviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  content: string;
-}
-
-const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, title, content }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-      <div className="modal-backdrop fade show" onClick={onClose}></div>
-      <div className="modal-dialog modal-xl">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Preview: {title}</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
-          </div>
-          <div className="modal-body">
-            <div className="preview-content">
-              <h1 className="mb-4">{title}</h1>
-              <div className="content" dangerouslySetInnerHTML={{ __html: content }}></div>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Close Preview
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+// Removed old PreviewModal - now using DevicePreviewModal
 
 export function BlogAddPage() {
   const navigate = useNavigate();
@@ -429,12 +396,19 @@ export function BlogAddPage() {
         </div>
       </section>
 
-      {/* Preview Modal */}
-      <PreviewModal
+      {/* Device Preview Modal */}
+      <DevicePreviewModal
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
         title={formData.title}
         content={formData.content}
+        coverImage={imagePreview}
+        tags={formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []}
+        published={formData.published}
+        author="Ethan Wanyoike"
+        readingTime="5 min read"
+        viewCount={0}
+        publishedAt={new Date().toISOString()}
       />
     </>
   );

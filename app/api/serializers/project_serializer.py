@@ -7,7 +7,7 @@ from app.views.helpers.cloudinary import CloudinaryImageHandler
 from app.models import Projects, Image, Video
 from app.views.helpers.helpers import guess_file_type
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class ImageSerializer(serializers.ModelSerializer):

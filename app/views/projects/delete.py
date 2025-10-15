@@ -142,8 +142,8 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         """
         Override get_success_url to redirect to the success URL
         """
-        return self.success_url
+        return str(self.success_url)

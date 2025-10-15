@@ -1,5 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import AuthService, {AuthResponse, RegisterData} from '@/services/authService';
+import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
 
 interface User {
     id: number;
@@ -39,6 +41,7 @@ interface AuthProviderProps {
 export default function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
 
     // Initialize authentication state
     useEffect(() => {
@@ -66,6 +69,40 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
         initAuth();
     }, []);
+
+    // Listen for cross-tab authentication changes
+    useEffect(() => {
+        const handleTabSyncMessage = (message: TabSyncMessage) => {
+            switch (message.type) {
+                case 'AUTH_LOGIN':
+                case 'AUTH_SIGNUP':
+                    // Another tab logged in or signed up
+                    if (message.payload.user) {
+                        setUser(message.payload.user);
+                        // Invalidate all queries to refetch with new auth state
+                        queryClient.invalidateQueries();
+                    }
+                    break;
+
+                case 'AUTH_LOGOUT':
+                    // Another tab logged out
+                    setUser(null);
+                    // Clear all cached queries on logout
+                    queryClient.clear();
+                    // Optionally reload the page to update Django context
+                    window.location.reload();
+                    break;
+            }
+        };
+
+        // Register the listener
+        tabSyncService.addListener(handleTabSyncMessage);
+
+        // Cleanup on unmount
+        return () => {
+            tabSyncService.removeListener(handleTabSyncMessage);
+        };
+    }, [queryClient]);
 
     // Fetch user data from Django session
     const fetchUserFromSession = async () => {

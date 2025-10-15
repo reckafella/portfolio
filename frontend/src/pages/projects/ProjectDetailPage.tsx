@@ -13,13 +13,13 @@ export const ProjectDetailPage: React.FC = () => {
   const { canEditProjects, canDeleteProjects } = useStaffPermissions();
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Use TanStack Query to fetch project data
   const { 
     data: project, 
     isLoading: loading, 
-    error,
-    refetch
+    error
   } = useProjectBySlug(slug || '');
 
   const deleteProjectMutation = useDeleteProject();
@@ -60,89 +60,45 @@ export const ProjectDetailPage: React.FC = () => {
     });
   };
 
-  const getBadgeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      'web': 'primary',
-      'mobile': 'success',
-      'desktop': 'info',
-      'api': 'warning',
-      'other': 'secondary'
-    };
-    return colors[type.toLowerCase()] || 'secondary';
+
+  const nextImage = () => {
+    if (project?.images && project.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % project.images.length);
+    }
   };
 
-  if (!slug) {
-    return (
-      <section className="section project">
-        <div className="container py-5">
-          <div className="row">
-            <div className="col-12">
-              <div className="section-title">
-                <h2 className="fw-bold">Project Not Found</h2>
-              </div>
-              <AlertMessage type="danger" message="No project slug provided" />
-              <Link to="/projects" className="btn btn-primary">
-                <i className="bi bi-arrow-left me-2"></i>
-                Back to Projects
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const prevImage = () => {
+    if (project?.images && project.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + project.images.length) % project.images.length);
+    }
+  };
 
   if (loading) {
     return (
-      <section className="section project">
-        <div className="section-title">
-          <h2 className="fw-bold">Project Details</h2>
-        </div>
-        <div className="container py-5">
-          <LoadingSpinner text="Loading project..." />
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
       <div className="container py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="section-title">
-              <h2 className="fw-bold">Project Not Found</h2>
-            </div>
-            <AlertMessage type="danger" message={error.message} />
-            <div className="mt-3">
-              <button className="btn btn-outline-primary me-2" onClick={() => refetch()}>
-                <i className="bi bi-sync-alt me-2"></i>
-                Try Again
-              </button>
-              <Link to="/projects" className="btn btn-primary">
-                <i className="bi bi-arrow-left me-2"></i>
-                Back to Projects
-              </Link>
-            </div>
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <LoadingSpinner text="Loading project details..." />
           </div>
         </div>
       </div>
     );
   }
 
-  if (!project) {
+  if (error || !project) {
     return (
       <div className="container py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="section-title">
-              <h2 className="fw-bold">Project Not Found</h2>
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <AlertMessage
+              type="danger"
+              message="Project not found or failed to load."
+            />
+            <div className="text-center mt-3">
+              <Link to="/projects" className="btn btn-primary">
+                Back to Projects
+              </Link>
             </div>
-            <AlertMessage type="warning" message="Project not found" />
-            <Link to="/projects" className="btn btn-primary">
-              <i className="bi bi-arrow-left me-2"></i>
-              Back to Projects
-            </Link>
           </div>
         </div>
       </div>
@@ -150,186 +106,253 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <section className="section project">
-      <div className="container py-5">
-      <div className="section-title">
-        <h2 className="fw-bold">{project.title}</h2>
-      </div>
-      {/* Navigation
-      <div className="row mb-4">
-        <div className="col-12">
-          <Link to="/projects" className="btn btn-outline-secondary">
-            <i className="bi bi-arrow-left me-2"></i>
-            Back to Projects
-          </Link>
+    <>
+      {/* Page Title with Breadcrumbs */}
+      <div className="page-title">
+        <div className="container d-lg-flex justify-content-between align-items-center">
+          <nav className="breadcrumbs">
+            <ol className="breadcrumb mb-0">
+              <li className="breadcrumb-item">
+                <Link to="/" className="text-decoration-none">Home</Link>
+              </li>
+              <li className="breadcrumb-item">
+                <Link to="/projects" className="text-decoration-none">Projects</Link>
+              </li>
+              <li className="breadcrumb-item active" aria-current="page">
+                {project.title}
+              </li>
+            </ol>
+          </nav>
         </div>
-      </div> */}
+      </div>
 
-      {/* Project Header */}
-      <div className="row mb-5">
-        <div className="col-12">
-          <div className="d-flex justify-content-between align-items-start mb-3">
-            <div>
-              <div className="d-flex flex-wrap gap-2 mt-2">
-                <span className={`badge bg-${getBadgeColor(project.project_type)} fs-6`}>
-                  {project.project_type}
-                </span>
-                <span className="badge bg-secondary fs-6">{project.category}</span>
-                {project.client && (
-                  <span className="badge bg-info fs-6">Client: {project.client}</span>
+      <section id="project" className="project project-details">
+        <div className="container">
+          <div className="section-title text-center">
+            <h2 className="mb-3">{project.title}</h2>
+          </div>
+          
+          <div className="row justify-content-center align-items-center gy-4 project-details-row pb-5 mb-5">
+            {/* Project Gallery */}
+            <div className="col-12 col-lg-8">
+              <div className="project-details-slider">
+                {project.images && project.images.length > 0 ? (
+                  <div className="position-relative">
+                    <div className="project-gallery">
+                      <img
+                        src={project.images[currentImageIndex]?.optimized_image_url || project.images[currentImageIndex]?.cloudinary_image_url}
+                        alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                        className="img-fluid rounded shadow"
+                        style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+                      />
+                      
+                      {/* Gallery Navigation */}
+                      {project.images.length > 1 && (
+                        <>
+                          <button
+                            className="btn btn-outline-light position-absolute top-50 start-0 translate-middle-y ms-3"
+                            onClick={prevImage}
+                            style={{ zIndex: 10 }}
+                          >
+                            <i className="bi bi-chevron-left"></i>
+                          </button>
+                          <button
+                            className="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y me-3"
+                            onClick={nextImage}
+                            style={{ zIndex: 10 }}
+                          >
+                            <i className="bi bi-chevron-right"></i>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    
+                    {/* Gallery Indicators */}
+                    {project.images.length > 1 && (
+                      <div className="d-flex justify-content-center mt-3 gap-2">
+                        {project.images.map((_: unknown, index: number) => (
+                          <button
+                            key={index}
+                            className={`btn btn-sm ${index === currentImageIndex ? 'btn-primary' : 'btn-outline-primary'}`}
+                            onClick={() => setCurrentImageIndex(index)}
+                            style={{ width: '12px', height: '12px', borderRadius: '50%', padding: 0 }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-5">
+                    <i className="bi bi-image display-1 text-muted"></i>
+                    <p className="text-muted mt-3">No images available for this project</p>
+                  </div>
                 )}
               </div>
             </div>
-            
-            {/* Edit/Delete Buttons */}
-            {(canEditProjects || canDeleteProjects) && (
-              <div className="btn-group" role="group">
-                {canEditProjects && (
-                  <button
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={() => navigate(`/projects/edit/${project.slug}`)}
-                  >
-                    <i className="bi bi-pencil me-1"></i>
-                    Edit
-                  </button>
-                )}
-                {canDeleteProjects && (
-                  <button
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => setShowDeleteModal(true)}
-                  >
-                    <i className="bi bi-trash me-1"></i>
-                    Delete
-                  </button>
-                )}
-              </div>
-            )}
-            {project.project_url && (
-              <a 
-                href={project.project_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                <i className="bi bi-external-link-alt me-2"></i>
-                View Live
-              </a>
-            )}
-          </div>
-          <p className="lead text-muted">{project.description}</p>
-          <div className="text-muted small">
-            <i className="bi bi-calendar me-2"></i>
-            Created: {formatDate(project.created_at)}
-            {project.updated_at !== project.created_at && (
-              <span className="ms-3">
-                <i className="bi bi-pencil me-2"></i>
-                Updated: {formatDate(project.updated_at)}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Project Images */}
-      {project.images && project.images.length > 0 && (
-        <div className="row mb-5">
-          <div className="col-12">
-            <h2 className="h3 mb-4">Project Gallery</h2>
-            <div className="row g-3">
-              {project.images.map((image: { id: number; cloudinary_image_url: string; optimized_image_url: string; live: boolean }, index: number) => (
-                <div key={image.id} className="col-md-6 col-lg-4">
-                  <div className="card h-100">
-                    <img 
-                      src={image.optimized_image_url || image.cloudinary_image_url} 
-                      alt={`${project.title} - Image ${index + 1}`}
-                      className="card-img-top"
-                      style={{ height: '250px', objectFit: 'cover' }}
-                    />
-                    <div className="card-body p-2">
-                      <small className="text-muted">
-                        Image {index + 1}
-                        {!image.live && <span className="badge bg-warning ms-2">Draft</span>}
-                      </small>
-                    </div>
+            {/* Project Information Sidebar */}
+            <div className="col-12 col-lg-4">
+              <div className="row g-4">
+                {/* Project Information Card */}
+                <div className="col-12 col-md-6 col-lg-12">
+                  <div className="project-info p-3 rounded border">
+                    <h3 className="mb-3 border-bottom pb-2">Project Information</h3>
+                    <ul className="list-group list-group-flush">
+                      <li className="list-group-item d-flex align-items-center">
+                        <i className="bi bi-tag-fill me-2 text-primary"></i>
+                        <strong>Category:</strong> 
+                        <span className="ms-2">{project.category || 'Web Development'}</span>
+                      </li>
+                      <li className="list-group-item d-flex align-items-center">
+                        <i className="bi bi-building me-2 text-primary"></i>
+                        <strong>Client:</strong> 
+                        <span className="ms-2">{project.client || 'Personal'}</span>
+                      </li>
+                      <li className="list-group-item d-flex align-items-center">
+                        <i className="bi bi-calendar-event me-2 text-primary"></i>
+                        <strong>Date:</strong> 
+                        <span className="ms-2">{formatDate(project.created_at)}</span>
+                      </li>
+                      {project.project_url && (
+                        <li className="list-group-item d-flex align-items-center">
+                          <i className="bi bi-link-45deg me-2 text-primary"></i>
+                          <strong>URL:</strong>
+                          <a 
+                            href={project.project_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="ms-2 text-decoration-none"
+                          >
+                            Visit Project <i className="bi bi-box-arrow-up-right ms-1"></i>
+                          </a>
+                        </li>
+                      )}
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        {(canEditProjects || canDeleteProjects) && (
+                          <div className="btn-group gap-3" role="group">
+                            {canEditProjects && (
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => navigate(`/projects/edit/${project.slug}`)}
+                              >
+                                <i className="bi bi-pencil me-1"></i>
+                                Edit
+                              </button>
+                            )}
+                            {canDeleteProjects && (
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => setShowDeleteModal(true)}
+                              >
+                                <i className="bi bi-trash me-1"></i>
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => {
+                            if (navigator.share) {
+                              navigator.share({
+                                title: project.title,
+                                text: project.description,
+                                url: window.location.href
+                              });
+                            } else {
+                              navigator.clipboard.writeText(window.location.href);
+                              // You could add a toast notification here
+                              alert('Project URL copied to clipboard!');
+                            }
+                          }}
+                        >
+                          <i className="bi bi-share-fill me-1"></i>
+                          Share
+                        </button>
+                      </li>
+                    </ul>
                   </div>
                 </div>
-              ))}
+                
+                {/* Project Description Card */}
+                <div className="col-12 col-md-6 col-lg-12">
+                  <div className="project-description p-3 rounded border">
+                    <h3 className="mb-3 border-bottom pb-2">Project Overview</h3>
+                    <div 
+                      className="project-description-content"
+                      dangerouslySetInnerHTML={{ __html: project.description }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Project Videos */}
-      {project.videos && project.videos.length > 0 && (
-        <div className="row mb-5">
-          <div className="col-12">
-            <h2 className="h3 mb-4">Project Videos</h2>
-            <div className="row g-3">
-              {project.videos.map((video: { id: number; youtube_url: string; thumbnail_url: string; live: boolean }, index: number) => (
-                <div key={video.id} className="col-md-6 col-lg-4">
-                  <div className="card h-100">
-                    <div className="position-relative">
-                      <img 
-                        src={video.thumbnail_url} 
-                        alt={`${project.title} - Video ${index + 1}`}
-                        className="card-img-top"
-                        style={{ height: '200px', objectFit: 'cover' }}
-                      />
-                      <div className="position-absolute top-50 start-50 translate-middle">
-                        <a 
-                          href={video.youtube_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="btn btn-danger btn-lg rounded-circle"
-                        >
-                          <i className="bi bi-youtube"></i>
-                        </a>
+          {/* Project Technologies */}
+          {project.technologies && project.technologies.length > 0 && (
+            <div className="row mb-5">
+              <div className="col-12">
+                <h3 className="text-center mb-4">Technologies Used</h3>
+                <div className="d-flex flex-wrap justify-content-center gap-2">
+                  {project.technologies.map((tech: string, index: number) => (
+                    <span key={index} className="badge bg-secondary fs-6">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Project Images Gallery */}
+          {project.images && project.images.length > 1 && (
+            <div className="row mb-5">
+              <div className="col-12">
+                <h3 className="text-center mb-4">Project Gallery</h3>
+                <div className="row g-3">
+                  {project.images.map((image: { id: string; optimized_image_url?: string; cloudinary_image_url?: string }, index: number) => (
+                    <div key={image.id} className="col-md-6 col-lg-4">
+                      <div className="card h-100">
+                        <img 
+                          src={image.optimized_image_url || image.cloudinary_image_url} 
+                          alt={`${project.title} - Image ${index + 1}`}
+                          className="card-img-top"
+                          style={{ height: '250px', objectFit: 'cover' }}
+                          onClick={() => setCurrentImageIndex(index)}
+                          role="button"
+                        />
+                        <div className="card-body d-flex flex-column">
+                          <h6 className="card-title">Image {index + 1}</h6>
+                          <button
+                            className="btn btn-outline-primary btn-sm mt-auto"
+                            onClick={() => setCurrentImageIndex(index)}
+                          >
+                            View Full Size
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="card-body p-2">
-                      <small className="text-muted">
-                        Video {index + 1}
-                        {!video.live && <span className="badge bg-warning ms-2">Draft</span>}
-                      </small>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
-
-      {/* Project Actions */}
-      <div className="row">
-        <div className="col-12">
-          <div className="d-flex gap-3 justify-content-center">
-            <Link to="/projects" className="btn btn-outline-primary">
-              <i className="bi bi-arrow-left me-2"></i>
-              Back to Projects
-            </Link>
-            {project.project_url && (
-              <a 
-                href={project.project_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                <i className="bi bi-external-link-alt me-2"></i>
-                View Live Project
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="modal show d-block" tabIndex={-1}>
+        <div className="modal show d-flex" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Confirm Delete</h5>
+                <h5
+                  className="modal-title"
+                  style={{ color: '#dc3545' }}
+                >
+                  Confirm Project Deletion!
+                </h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -337,25 +360,25 @@ export const ProjectDetailPage: React.FC = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to delete this project?</p>
-                <p className="text-muted">
-                  <strong>"{project?.title}"</strong>
-                </p>
-                <p className="text-danger">
-                  <small>This action cannot be undone.</small>
+                <p>Are you sure you want to delete "{project.title}"?</p>
+                <p
+                  className='mb-0'
+                  style={{ fontSize: '1.2rem', fontStyle: 'italic', color: '#dc3545' }}
+                >
+                  This action cannot be undone.
                 </p>
               </div>
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn btn-primary"
                   onClick={() => setShowDeleteModal(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-outline-danger"
                   onClick={handleDelete}
                   disabled={deleteProjectMutation.isPending}
                 >
@@ -373,8 +396,6 @@ export const ProjectDetailPage: React.FC = () => {
           </div>
         </div>
       )}
-      {showDeleteModal && <div className="modal-backdrop show"></div>}
-      </div>
-    </section>
+    </>
   );
 };

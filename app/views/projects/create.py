@@ -9,7 +9,7 @@ from app.views.helpers.helpers import handle_no_permissions, is_ajax
 from .base import BaseProjectView
 
 
-class CreateProjectView(BaseProjectView, CreateView):
+class CreateProjectView(BaseProjectView):
 
     def get_form_kwargs(self):
         """Pass the request object to the form"""

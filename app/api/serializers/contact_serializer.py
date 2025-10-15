@@ -4,7 +4,7 @@ from app.views.helpers.cloudinary import CloudinaryImageHandler
 
 from app.models import Message
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class MessageSerializer(serializers.ModelSerializer):

@@ -5,11 +5,13 @@ import UnifiedForm from '@/components/forms/UnifiedForm';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useProjectFormConfig, useUpdateProject, useProjectBySlug } from '@/hooks/queries/projectQueries';
+import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
+import { useAuth } from '@/hooks/useAuth';
 
 export const ProjectEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
-
+  const { user } = useAuth();
 
   // Use TanStack Query hooks
   const { 
@@ -29,6 +31,8 @@ export const ProjectEditPage: React.FC = () => {
   const updateProjectMutation = useUpdateProject();
   const [initialData, setInitialData] = useState<Record<string, string | number | boolean | File | File[]>>({});
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [beingEditedBy, setBeingEditedBy] = useState<string | null>(null);
+  const [showContentUpdatedWarning, setShowContentUpdatedWarning] = useState(false);
 
   // Populate initial data when project is loaded
   useEffect(() => {
@@ -52,11 +56,51 @@ export const ProjectEditPage: React.FC = () => {
     }
   }, [project, dataLoaded]);
 
+  // Broadcast edit start when editing begins
+  useEffect(() => {
+    if (slug && dataLoaded) {
+      tabSyncService.broadcastEditStart('project', slug, user?.username);
+    }
+
+    return () => {
+      if (slug) {
+        tabSyncService.broadcastEditEnd('project', slug);
+      }
+    };
+  }, [slug, dataLoaded, user]);
+
+  // Listen for cross-tab edit and content update events
+  useEffect(() => {
+    const handleTabSyncMessage = (message: TabSyncMessage) => {
+      if (message.type === 'EDIT_START' && message.payload.editType === 'project' && message.payload.editSection === slug) {
+        const editor = message.payload.editUser || 'Another user';
+        setBeingEditedBy(editor);
+      } else if (message.type === 'EDIT_END' && message.payload.editType === 'project' && message.payload.editSection === slug) {
+        setBeingEditedBy(null);
+      } else if (message.type === 'CONTENT_UPDATED' && message.payload.contentType === 'project' && message.payload.contentId === slug) {
+        // Show warning that content was updated in another tab
+        setShowContentUpdatedWarning(true);
+      }
+    };
+
+    tabSyncService.addListener(handleTabSyncMessage);
+
+    return () => {
+      tabSyncService.removeListener(handleTabSyncMessage);
+    };
+  }, [slug]);
+
   const handleSubmit = async (data: Record<string, string | boolean | File | File[]>) => {
     await updateProjectMutation.mutateAsync({
       slug: String(slug),
       data
     });
+    
+    // Broadcast content update to other tabs
+    if (slug) {
+      tabSyncService.broadcastContentUpdate('project', slug);
+    }
+    
     // Navigate to project detail after successful update
     navigate(`/projects/${project?.slug || slug}`);
   };
@@ -107,9 +151,27 @@ export const ProjectEditPage: React.FC = () => {
                         {/* Header */}
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <p className="lead text-muted">
+                                <p className="lead text-muted mb-2">
                                     Editing: <strong>{project.title}</strong>
                                 </p>
+                                {beingEditedBy && (
+                                    <div className="alert alert-warning py-2" role="alert">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <strong>{beingEditedBy}</strong> is also editing this project
+                                    </div>
+                                )}
+                                {showContentUpdatedWarning && (
+                                    <div className="alert alert-info py-2" role="alert">
+                                        <i className="bi bi-info-circle-fill me-2"></i>
+                                        Content updated in another tab.
+                                        <button 
+                                            className="btn btn-sm btn-link p-0 ms-2"
+                                            onClick={() => window.location.reload()}
+                                        >
+                                            Reload to see changes
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                             <div className="btn-group">
                                 <button

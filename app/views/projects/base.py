@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.urls import reverse_lazy as reverse
+from django.views.generic import CreateView
 
 from app.forms.projects import ProjectsForm
 from app.models import Image, Projects, Video
@@ -13,7 +14,7 @@ from authentication.forms.errors import CustomErrorList
 uploader = CloudinaryImageHandler()
 
 
-class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
+class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Projects
     form_class = ProjectsForm
     error_class = CustomErrorList

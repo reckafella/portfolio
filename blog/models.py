@@ -2,10 +2,13 @@
 this is the model for the blog post using wagtail cms
 """
 import hashlib
+import logging
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models import Count
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
@@ -16,6 +19,8 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
 from blog.wagtail_models import CloudinaryWagtailImage
+
+logger = logging.getLogger(__name__)
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -258,7 +263,7 @@ class ViewCountAttempt(models.Model):
 class BlogPostImage(models.Model):
     post = models.ForeignKey(
         BlogPostPage,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,  # Changed from PROTECT to allow deletion
         related_name="images"
     )
     cloudinary_image_id = models.CharField(max_length=255, blank=True,
@@ -268,6 +273,27 @@ class BlogPostImage(models.Model):
 
     def __str__(self):
         return f"{self.post.title} - Image"
+
+    def delete(self, *args, **kwargs):
+        """
+        Override delete to remove image from Cloudinary before database deletion
+        """
+        # Delete from Cloudinary first if image ID exists
+        if self.cloudinary_image_id:
+            try:
+                from app.views.helpers.cloudinary import CloudinaryImageHandler
+                uploader = CloudinaryImageHandler()
+                uploader.delete_image(self.cloudinary_image_id)
+            except Exception as e:
+                # Log error but don't fail deletion
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Failed to delete image {self.cloudinary_image_id} from Cloudinary: {str(e)}"
+                )
+
+        # Proceed with database deletion
+        super().delete(*args, **kwargs)
 
 
 class BlogPostComment(models.Model):
@@ -312,3 +338,23 @@ class BlogPostCommentReply(models.Model):
 
     def __str__(self):
         return f"{self.author.username} on {self.comment.post.title}"
+
+
+# Signal handlers for automatic Cloudinary cleanup
+@receiver(pre_delete, sender=BlogPostImage)
+def delete_blogpost_image_from_cloudinary(sender, instance, **kwargs):
+    """
+    Signal handler to ensure Cloudinary images are deleted when BlogPostImage is deleted.
+    This provides an extra layer of safety beyond the model's delete() method.
+    """
+    if instance.cloudinary_image_id:
+        try:
+            from app.views.helpers.cloudinary import CloudinaryImageHandler
+            uploader = CloudinaryImageHandler()
+            uploader.delete_image(instance.cloudinary_image_id)
+            logger.info(f"Successfully deleted image {instance.cloudinary_image_id} from Cloudinary")
+        except Exception as e:
+            logger.warning(
+                f"Signal handler failed to delete image {instance.cloudinary_image_id} "
+                f"from Cloudinary: {str(e)}"
+            )

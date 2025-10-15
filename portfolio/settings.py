@@ -18,6 +18,14 @@ import daphne.testing
 
 from app.views.helpers.helpers import get_error_files
 
+# Load environment variables from .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not installed, environment variables should be set by system
+    pass
+
 # import random
 
 
@@ -152,7 +160,7 @@ ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
 # CLOUDINARY CONFIG SETTINGS
-CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", os.environ.get("CLOUDINARY_NAME", ''))
 CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
 CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 

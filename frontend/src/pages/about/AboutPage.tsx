@@ -9,6 +9,7 @@ import ProfileEditForm from '../../components/forms/about/ProfileEditForm';
 import SkillsEditForm from '../../components/forms/about/SkillsEditForm';
 import EducationEditFormV3 from '../../components/forms/about/EducationEditFormV3';
 import ExperienceEditFormV3 from '../../components/forms/about/ExperienceEditFormV3';
+import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
 import '../../styles/about.css';
 
 interface AboutPageData {
@@ -50,7 +51,7 @@ interface EditState {
 
 
 const AboutPage: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [data, setData] = useState<AboutPageData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,9 +63,46 @@ const AboutPage: React.FC = () => {
     skills: false
   });
   const [isGlobalEditMode, setIsGlobalEditMode] = useState(false);
+  const [sectionsBeingEditedByOthers, setSectionsBeingEditedByOthers] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchAboutData();
+  }, []);
+
+  // Listen for cross-tab edit and content update events
+  useEffect(() => {
+    const handleTabSyncMessage = (message: TabSyncMessage) => {
+      if (message.type === 'EDIT_START' && message.payload.editType === 'about') {
+        const section = message.payload.editSection;
+        const editor = message.payload.editUser || 'Another user';
+        if (section) {
+          setSectionsBeingEditedByOthers(prev => ({
+            ...prev,
+            [section]: editor
+          }));
+        }
+      } else if (message.type === 'EDIT_END' && message.payload.editType === 'about') {
+        const section = message.payload.editSection;
+        if (section) {
+          setSectionsBeingEditedByOthers(prev => {
+            const newState = { ...prev };
+            delete newState[section];
+            return newState;
+          });
+        }
+      } else if (message.type === 'CONTENT_UPDATED' && message.payload.contentType === 'about') {
+        // Refresh about data when content is updated in another tab
+        fetchAboutData();
+        setSuccessMessage('Content updated in another tab. Page refreshed.');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      }
+    };
+
+    tabSyncService.addListener(handleTabSyncMessage);
+
+    return () => {
+      tabSyncService.removeListener(handleTabSyncMessage);
+    };
   }, []);
 
   const fetchAboutData = async () => {
@@ -87,10 +125,20 @@ const AboutPage: React.FC = () => {
 
 
   const toggleEditMode = (section: keyof EditState) => {
+    const willBeEditing = !editMode[section];
+    
     setEditMode(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: willBeEditing
     }));
+    
+    // Broadcast edit state to other tabs
+    if (willBeEditing) {
+      tabSyncService.broadcastEditStart('about', section, user?.username);
+    } else {
+      tabSyncService.broadcastEditEnd('about', section);
+    }
+    
     setError(null);
     setSuccessMessage('');
   };
@@ -98,6 +146,8 @@ const AboutPage: React.FC = () => {
   const toggleGlobalEditMode = () => {
     const newGlobalEdit = !isGlobalEditMode;
     setIsGlobalEditMode(newGlobalEdit);
+    
+    const sections: (keyof EditState)[] = ['profile', 'education', 'experience', 'skills'];
     
     if (newGlobalEdit) {
       // Enable editing for all sections
@@ -107,6 +157,11 @@ const AboutPage: React.FC = () => {
         experience: true,
         skills: true
       });
+      
+      // Broadcast edit start for all sections
+      sections.forEach(section => {
+        tabSyncService.broadcastEditStart('about', section, user?.username);
+      });
     } else {
       // Disable editing for all sections
       setEditMode({
@@ -114,6 +169,11 @@ const AboutPage: React.FC = () => {
         education: false,
         experience: false,
         skills: false
+      });
+      
+      // Broadcast edit end for all sections
+      sections.forEach(section => {
+        tabSyncService.broadcastEditEnd('about', section);
       });
     }
     
@@ -129,7 +189,12 @@ const AboutPage: React.FC = () => {
       // Otherwise, just close the individual section
       if (!isGlobalEditMode) {
         setEditMode(prev => ({ ...prev, [section]: false }));
+        // Broadcast edit end for this section
+        tabSyncService.broadcastEditEnd('about', section);
       }
+      
+      // Broadcast content update to other tabs
+      tabSyncService.broadcastContentUpdate('about');
       
       setSuccessMessage(`${section.charAt(0).toUpperCase() + section.slice(1)} updated successfully!`);
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -266,13 +331,21 @@ const AboutPage: React.FC = () => {
               <div className="d-flex align-items-center mb-3">
                 <h3 className="resume-title mb-0">Summary</h3>
                 {isAuthenticated && (
-                  <button
-                    onClick={() => toggleEditMode('profile')}
-                    className="edit-icon-btn text-primary"
-                    title={editMode.profile ? 'Cancel editing' : 'Edit profile'}
-                  >
-                    {editMode.profile ? <BsX size={18} /> : <BsPencilSquare size={16} />}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => toggleEditMode('profile')}
+                      className="edit-icon-btn text-primary"
+                      title={editMode.profile ? 'Cancel editing' : 'Edit profile'}
+                    >
+                      {editMode.profile ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                    </button>
+                    {sectionsBeingEditedByOthers['profile'] && (
+                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['profile']}`}>
+                        <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                        {sectionsBeingEditedByOthers['profile']} is editing
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
               
@@ -304,13 +377,21 @@ const AboutPage: React.FC = () => {
               <div className="d-flex align-items-center mb-3">
                 <h3 className="resume-title mb-0">Education</h3>
                 {isAuthenticated && (
-                  <button
-                    onClick={() => toggleEditMode('education')}
-                    className="edit-icon-btn text-primary"
-                    title={editMode.education ? 'Cancel editing' : 'Edit education'}
-                  >
-                    {editMode.education ? <BsX size={18} /> : <BsPencilSquare size={16} />}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => toggleEditMode('education')}
+                      className="edit-icon-btn text-primary"
+                      title={editMode.education ? 'Cancel editing' : 'Edit education'}
+                    >
+                      {editMode.education ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                    </button>
+                    {sectionsBeingEditedByOthers['education'] && (
+                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['education']}`}>
+                        <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                        {sectionsBeingEditedByOthers['education']} is editing
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -338,13 +419,21 @@ const AboutPage: React.FC = () => {
               <div className="d-flex align-items-center mb-3">
                 <h3 className="resume-title mb-0">Skills</h3>
                 {isAuthenticated && (
-                  <button
-                    onClick={() => toggleEditMode('skills')}
-                    className="edit-icon-btn text-primary"
-                    title={editMode.skills ? 'Cancel editing' : 'Edit skills'}
-                  >
-                    {editMode.skills ? <BsX size={18} /> : <BsPencilSquare size={16} />}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => toggleEditMode('skills')}
+                      className="edit-icon-btn text-primary"
+                      title={editMode.skills ? 'Cancel editing' : 'Edit skills'}
+                    >
+                      {editMode.skills ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                    </button>
+                    {sectionsBeingEditedByOthers['skills'] && (
+                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['skills']}`}>
+                        <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                        {sectionsBeingEditedByOthers['skills']} is editing
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -374,13 +463,21 @@ const AboutPage: React.FC = () => {
               <div className="d-flex align-items-center mb-3">
                 <h3 className="resume-title mb-0">Professional Experience</h3>
                 {isAuthenticated && (
-                  <button
-                    onClick={() => toggleEditMode('experience')}
-                    className="edit-icon-btn text-primary"
-                    title={editMode.experience ? 'Cancel editing' : 'Edit experience'}
-                  >
-                    {editMode.experience ? <BsX size={18} /> : <BsPencilSquare size={16} />}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => toggleEditMode('experience')}
+                      className="edit-icon-btn text-primary"
+                      title={editMode.experience ? 'Cancel editing' : 'Edit experience'}
+                    >
+                      {editMode.experience ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                    </button>
+                    {sectionsBeingEditedByOthers['experience'] && (
+                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['experience']}`}>
+                        <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                        {sectionsBeingEditedByOthers['experience']} is editing
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
 

@@ -136,7 +136,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                 </li>
                             </ul>
                         </nav>
-                        <i className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'}`}
+                        <i className={`mobile-nav-toggle d-lg-none bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'}`}
                             onClick={toggleMobileMenu}></i>
                     </div>
                 </div>

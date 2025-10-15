@@ -18,7 +18,7 @@ from authentication.models import SocialLinks, UserProfileImage, UserSettings
 
 from .base import BaseProfileView
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class ProfileView(BaseProfileView):

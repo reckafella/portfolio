@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
+import logging
 
 from blog.models import BlogPostPage, BlogPostComment
 from blog.api.serializers.serializers import (
@@ -17,6 +18,9 @@ from blog.api.serializers.serializers import (
 )
 from rest_framework.permissions import IsAuthenticated
 from app.permissions import IsAuthenticatedStaff, IsStaffOrReadOnly
+from app.utils.error_responses import error_response, cloudinary_error_response, validation_error_response
+
+logger = logging.getLogger(__name__)
 
 
 class BlogPostPagination(PageNumberPagination):
@@ -173,9 +177,10 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
         # Ensure we're getting a content type that includes files
         content_type = request.content_type or ''
         if not content_type.startswith('multipart/form-data'):
-            return Response({
-                'error': 'Content-Type must be multipart/form-data'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return validation_error_response(
+                message='Content-Type must be multipart/form-data',
+                field_errors={'content_type': ['Invalid content type']}
+            )
 
         # Convert string 'true'/'false' to boolean for published field
         data = request.data.copy()
@@ -185,26 +190,44 @@ class BlogPostCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=data)
 
         if not serializer.is_valid():
-            return Response({
-                'error': 'Validation failed',
-                'details': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return validation_error_response(
+                message='Please correct the errors below',
+                field_errors=serializer.errors
+            )
 
         try:
             post = serializer.save()
             return Response({
+                'success': True,
                 'message': 'Blog post created successfully',
-                'post': BlogPostPageSerializer(post).data
+                'data': {'post': BlogPostPageSerializer(post).data}
             }, status=status.HTTP_201_CREATED)
+        except ValueError as e:
+            # Cloudinary configuration errors
+            logger.error(f'Cloudinary configuration error: {str(e)}')
+            return cloudinary_error_response(
+                message='Failed to upload image. Please check server configuration.',
+                details=str(e)
+            )
         except Exception as e:
             # Log the full error for debugging
             import traceback
-            print('Blog post creation error:', str(e))
-            print(traceback.format_exc())
-            return Response({
-                'error': 'Failed to create blog post',
-                'details': str(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f'Blog post creation error: {str(e)}')
+            logger.debug(traceback.format_exc())
+
+            # Check if it's a Cloudinary-related error
+            if 'cloudinary' in str(e).lower() or 'api_key' in str(e).lower():
+                return cloudinary_error_response(
+                    message='Failed to upload cover image. Please try again or contact support.',
+                    details=str(e)
+                )
+
+            return error_response(
+                message='Failed to create blog post. Please try again.',
+                error_type='server',
+                details={'error': str(e)},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def perform_create(self, serializer):
         serializer.save()
@@ -227,18 +250,41 @@ class BlogPostUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return validation_error_response(
+                message='Please correct the errors below',
+                field_errors=serializer.errors
+            )
 
         try:
             post = serializer.save()
             return Response({
+                'success': True,
                 'message': 'Blog post updated successfully',
-                'post': BlogPostPageSerializer(post).data
+                'data': {'post': BlogPostPageSerializer(post).data}
             }, status=status.HTTP_200_OK)
+        except ValueError as e:
+            # Cloudinary configuration errors
+            logger.error(f'Cloudinary configuration error during update: {str(e)}')
+            return cloudinary_error_response(
+                message='Failed to upload image. Please check server configuration.',
+                details=str(e)
+            )
         except Exception as e:
-            return Response({
-                'error': str(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f'Blog post update error: {str(e)}')
+
+            # Check if it's a Cloudinary-related error
+            if 'cloudinary' in str(e).lower() or 'api_key' in str(e).lower():
+                return cloudinary_error_response(
+                    message='Failed to upload cover image. Please try again or contact support.',
+                    details=str(e)
+                )
+
+            return error_response(
+                message='Failed to update blog post. Please try again.',
+                error_type='server',
+                details={'error': str(e)},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlogPostDeleteAPIView(generics.DestroyAPIView):

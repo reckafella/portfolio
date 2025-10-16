@@ -12,7 +12,7 @@ from app.views.project_api import (
 )
 from app.views.views import ResumePDFView, SitemapAPIView
 from app.views.api.about_view import AboutAPIView
-from app.views.api.about_update_views import (
+from app.api.views.about_update_views import (
     ProfileUpdateView,
     EducationListCreateView,
     EducationDetailView,

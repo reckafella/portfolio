@@ -13,7 +13,7 @@ from app.api.views.about.about_page import (
     SkillsListCreateView, SkillDetailView, BulkSkillsView, reorder_items
 )
 from app.api.views.about.captcha import CaptchaRefreshAPIView
-from app.api.views.search.search_api import search_api, search_suggestions_api
+from app.api.views.search.search_api import SearchAPIView, SearchSuggestionsAPIView, PopularSearchesAPIView
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -68,8 +68,9 @@ urlpatterns = [
     path('captcha/refresh/', CaptchaRefreshAPIView.as_view(), name='captcha_refresh_api'),
 
     # Search APIs
-    path('search/', search_api, name='search_api'),
-    path('search/suggestions/', search_suggestions_api, name='search_suggestions_api'),
+    path('search/', SearchAPIView.as_view(), name='search_api'),
+    path('search/suggestions/', SearchSuggestionsAPIView.as_view(), name='search_suggestions_api'),
+    path('search/popular/', PopularSearchesAPIView.as_view(), name='search_popular_api'),
 
     # Include router URLs (ViewSet-based)
     path('', include(router.urls)),

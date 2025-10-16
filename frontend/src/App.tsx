@@ -16,7 +16,7 @@ import SitemapPage from './pages/sitemap/SitemapPage'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/utils/ScrollToTop'
-import SearchOverlay from './components/search/SearchOverlay'
+import SearchModal from './components/search/SearchModal'
 import LoginForm from './components/forms/auth/LoginForm'
 import SignupForm from './components/forms/auth/SignupForm'
 import LogoutPage from './pages/auth/LogoutPage'
@@ -29,6 +29,7 @@ import Preloader from './components/common/Preloader'
 import RouteTransition from './components/transitions/RouteTransition'
 import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerErrorPage } from './pages/errors'
 import './App.css'
+import './styles/search.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -146,7 +147,7 @@ function App() {
                                 </main>
                                 <Footer />
                                 <ScrollToTop />
-                                <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+                                <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
                                 <ReactQueryDevtools initialIsOpen={false} />
                             </div>
                         </AuthProvider>

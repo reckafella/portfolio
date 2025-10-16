@@ -5,8 +5,9 @@ from titlecase import titlecase
 from django.db import transaction
 from django.utils import timezone
 import hashlib
+import logging
 
-from app.views.helpers.cloudinary import CloudinaryImageHandler
+from app.views.helpers.cloudinary import CloudinaryImageHandler, handle_image_upload
 from blog.models import BlogPostPage, BlogPostComment, BlogPostImage, BlogIndexPage
 
 # Note: CloudinaryImageHandler should be instantiated when needed, not at module level
@@ -259,9 +260,6 @@ class BlogPostCreateSerializer(serializers.ModelSerializer):
         Handle cover image upload with proper Cloudinary cleanup.
         Deletes old images from Cloudinary before database deletion.
         """
-        from app.views.helpers.cloudinary import handle_image_upload, CloudinaryImageHandler
-        import logging
-
         logger = logging.getLogger(__name__)
 
         try:

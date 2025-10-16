@@ -5,7 +5,6 @@
 // Main navigation routes
 export const ROUTES = {
   // Core pages
-  HOME: '/',
   ABOUT: '/about',
   SERVICES: '/services',
   CONTACT: '/contact',
@@ -54,6 +53,12 @@ export const ROUTES = {
     NOT_FOUND: '/error/404',
     SERVER_ERROR: '/error/500',
   },
+  DJANGO_ADMIN: {
+    ROUTES: '/admin/',
+  },
+  WAGTAIL: {
+    ROUTES: '/wagtail/admin/',
+  },
 
   // Legacy authentication redirects (for backward compatibility)
   LEGACY_AUTH: {
@@ -68,20 +73,22 @@ export const ROUTES = {
 
 // Navigation items for the main navigation component
 export const NAV_ITEMS = [
-  { path: ROUTES.HOME, label: 'Home' },
   { path: ROUTES.ABOUT, label: 'About' },
   { path: ROUTES.SERVICES, label: 'Services' },
-  { path: ROUTES.PROJECTS.LIST, label: 'Projects' },
   { path: ROUTES.BLOG.LIST, label: 'Blog' },
-  { path: ROUTES.CONTACT, label: 'Contact' },
+  { path: ROUTES.PROJECTS.LIST, label: 'Projects' },
+  { path: ROUTES.CONTACT, label: 'Contact' }
+] as const;
+
+export const ADMIN_NAV_ITEMS = [
+  { path: ROUTES.DJANGO_ADMIN.ROUTES, label: 'Admin Panel' },
+  { path: ROUTES.WAGTAIL.ROUTES, label: 'Wagtail Admin' },
 ] as const;
 
 // Staff navigation items
 export const STAFF_NAV_ITEMS = [
   { path: ROUTES.PROJECTS.ADD, label: 'Add Project' },
   { path: ROUTES.BLOG.ADD, label: 'Add Blog Post' },
-  { path: '/admin/', label: 'Admin Panel' },
-  { path: '/wagtail/admin/', label: 'Wagtail Admin' },
 ] as const;
 
 // About management navigation items  

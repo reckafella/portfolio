@@ -116,8 +116,13 @@ class BaseSearchAPIView(APIView):
                 'content': post.content[:200] + '...' if len(post.content) > 200 else post.content,
                 'first_published_at': post.first_published_at.isoformat() if post.first_published_at else None,
                 'url': f'/blog/article/{post.slug}',
-                'author_name': post.author.first_name + ' ' + post.author.last_name,
-                'featured_image_url': post.cover_image_url,
+                'author': {
+                    'username': post.author.username if post.author else 'anonymous',
+                    'full_name': f"{post.author.first_name} {post.author.last_name}".strip() if post.author else 'Anonymous'
+                } if post.author else {'username': 'anonymous', 'full_name': 'Anonymous'},
+                'first_image': {
+                    'optimized_image_url': post.cover_image_url
+                } if post.cover_image_url else None,
                 'type': 'blog_post',
                 'tags': [tag.name for tag in post.tags.all()],
                 'view_count': getattr(post, 'view_count', 0)

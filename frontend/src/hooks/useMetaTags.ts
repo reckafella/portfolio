@@ -141,8 +141,8 @@ export const useMetaTags = (config: MetaTagConfig) => {
       
       // Restore default Twitter tags
       updateMetaTag('twitter:card', 'summary_large_image', true);
-      updateMetaTag('twitter:site', '@devrohn', true);
-      updateMetaTag('twitter:creator', '@devrohn', true);
+      updateMetaTag('twitter:site', '@frmundu', true);
+      updateMetaTag('twitter:creator', '@frmundu', true);
     };
   }, [config]);
 };

@@ -1,7 +1,10 @@
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
+import { ShareButton } from '@/components/share';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 interface SearchResult {
   id: string | number;
@@ -36,7 +39,7 @@ interface SearchResultsData {
 }
 
 const SearchResults: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const category = searchParams.get('category') || 'all';
   const sort = searchParams.get('sort') || 'relevance';
@@ -50,12 +53,43 @@ const SearchResults: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [totalResults, setTotalResults] = useState(0);
   const [activeTab, setActiveTab] = useState<'posts' | 'projects' | 'actions'>('posts');
+  const [searchInput, setSearchInput] = useState(query);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showSortModal, setShowSortModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(category);
+  const [selectedSort, setSelectedSort] = useState(sort);
+
+  usePageTitle(`Search Results for "${query}"`);
+  useMetaTags({
+    title: `Search Results for "${query}"`,
+    description: `Search results for "${query}"`,
+    keywords: `search, results, ${query}`,
+    author: 'Ethan Wanyoike',
+    ogTitle: `Search Results for "${query}"`,
+    ogDescription: `Search results for "${query}"`,
+    ogType: 'website',
+    ogUrl: `${window.location.origin}/search?q=${query}`,
+    ogImage: '/static/assets/images/logo-og.png',
+    twitterCard: 'summary_large_image',
+    twitterTitle: `Search Results for "${query}"`,
+    twitterDescription: `Search results for "${query}"`,
+    twitterImage: '/static/assets/images/logo-og.png',
+    twitterSite: '@frmundu',
+    twitterCreator: '@frmundu',
+    canonical: `${window.location.origin}/search?q=${query}`,
+  });
 
   useEffect(() => {
     if (query) {
       performSearch(query, category, sort);
+      setSearchInput(query);
     }
   }, [query, category, sort]);
+
+  useEffect(() => {
+    setSelectedCategory(category);
+    setSelectedSort(sort);
+  }, [category, sort]);
 
   const performSearch = async (searchQuery: string, searchCategory: string, searchSort: string) => {
     setLoading(true);
@@ -101,7 +135,7 @@ const SearchResults: React.FC = () => {
 
   const renderBlogPost = (post: SearchResult) => (
     <div key={`post-${post.id}`} className="col">
-      <article className="card entry shadow-sm rounded p-2 h-100">
+      <article className="card entry shadow-sm rounded p-1 h-100">
         <h2 className="entry-title">
           <Link to={post.url} className="text-decoration-none">
             {post.title}
@@ -109,7 +143,7 @@ const SearchResults: React.FC = () => {
         </h2>
 
         {post.first_image?.optimized_image_url && (
-          <div className="entry-img my-3">
+          <div className="entry-img my-1">
             <img 
               src={post.first_image.optimized_image_url} 
               alt={post.title || 'Post image'}
@@ -138,13 +172,15 @@ const SearchResults: React.FC = () => {
               </li>
             )}
             <li className="d-flex justify-content-between align-items-center">
-              <button 
-                type="button"
-                className="btn btn-sm special-btn share-link bg-transparent"
-                onClick={() => navigator.share?.({ url: post.url, title: post.title })}
-              >
-                <i className="bi bi-share-fill"></i>
-              </button>
+              <ShareButton
+                url={post.url}
+                title={post.title}
+                variant="icon"
+                size="sm"
+                imageUrl={post.first_image?.optimized_image_url}
+                description={post.description}
+                className="btn-sm special-btn bg-transparent"
+              />
             </li>
           </ul>
         </div>
@@ -237,10 +273,57 @@ const SearchResults: React.FC = () => {
     }
   }, [results]);
 
+  // Handle search form submission
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchInput.trim()) {
+      setSearchParams({
+        q: searchInput.trim(),
+        category: selectedCategory,
+        sort: selectedSort
+      });
+    }
+  };
+
+  // Handle filter apply
+  const handleFilterApply = () => {
+    setSearchParams({
+      q: query,
+      category: selectedCategory,
+      sort: selectedSort
+    });
+    setShowFilterModal(false);
+  };
+
+  // Handle sort apply
+  const handleSortApply = () => {
+    setSearchParams({
+      q: query,
+      category: selectedCategory,
+      sort: selectedSort
+    });
+    setShowSortModal(false);
+  };
+
+  const filterOptions = {
+    'all': 'All Results',
+    'posts': 'Blog Posts',
+    'projects': 'Projects',
+    'actions': 'Actions'
+  };
+
+  const sortOptions = {
+    'relevance': 'Relevance',
+    'date_desc': 'Date (Newest First)',
+    'date_asc': 'Date (Oldest First)',
+    'title_asc': 'Title (A-Z)',
+    'title_desc': 'Title (Z-A)'
+  };
+
   return (
     <div className="min-vh-100">
       {/* Breadcrumb */}
-      <div className="page-title py-3">
+      <div className="page-title py-1">
         <div className="container">
           <nav className="breadcrumbs" aria-label="breadcrumb">
             <ol className="breadcrumb mb-0">
@@ -253,28 +336,31 @@ const SearchResults: React.FC = () => {
         </div>
       </div>
 
-      <section className="section search py-4">
+      <section id="section-search" className="section py-1">
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-lg-11">
-              <div className="card row justify-content-center mb-4">
-                <div className="card-header">
-                  <h2 className="fw-bold mt-3 text-center section-title">Search Results</h2>
+            <div className="col-lg-12">
+              <div className="card bg-transparent row justify-content-center mb-4">
+                <div className="card-header border-0">
+                  <h1 className="fw-bold mt-3 text-center section-title">
+                    {totalResults > 0 ? `Search Results for "${query}"` : 'Search Results'}
+                  </h1>
                   
                   {/* Search Form */}
                   <div className="row g-3 mb-3">
                     <div className="search-widget col-md-8 col-lg-7 mx-auto">
-                      <form className="position-relative">
+                      <form className="position-relative" onSubmit={handleSearchSubmit}>
                         <input 
                           type="search" 
                           className="form-control form-control-sm form-control-lg rounded-pill ps-4"
                           placeholder="Type to Search..." 
                           aria-label="Search" 
-                          value={query}
-                          readOnly
+                          value={searchInput}
+                          onChange={(e) => setSearchInput(e.target.value)}
+                          required
                         />
                         <button 
-                          type="button" 
+                          type="submit" 
                           className="btn btn-primary btn-sm btn-lg position-absolute top-50 end-0 translate-middle-y rounded-pill px-3"
                           aria-label="Search"
                         >
@@ -285,19 +371,29 @@ const SearchResults: React.FC = () => {
                   </div>
 
                   {/* Filter and Sort Controls */}
-                  <div className="d-flex flex-wrap justify-content-center gap-2 mb-2">
-                    <button type="button" className="btn btn-success rounded-pill px-4">
+                  {totalResults > 0 && (
+                    <div className="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                      <button
+                        type="button"
+                        className="btn btn-success rounded-pill px-4"
+                      onClick={() => setShowSortModal(true)}
+                    >
                       <i className="bi bi-sort-down me-2"></i>
                       <span>Sort Results</span>
                     </button>
-                    <button type="button" className="btn btn-primary rounded-pill px-4">
+                    <button 
+                      type="button" 
+                      className="btn btn-primary rounded-pill px-4"
+                      onClick={() => setShowFilterModal(true)}
+                    >
                       <i className="bi bi-funnel me-2"></i>
                       <span>Filter Results</span>
                     </button>
-                  </div>
+                    </div>
+                    )}
                 </div>
 
-                <div className="card-body pt-3">
+                <div className="card-body bg-transparent border-0 py-0">
                   {loading ? (
                     <div className="text-center py-5">
                       <LoadingSpinner text={`Searching for "${query}"`} />
@@ -308,15 +404,18 @@ const SearchResults: React.FC = () => {
                       {error}
                     </div>
                   ) : totalResults === 0 ? (
-                    <div className="text-center py-5">
-                      <i className="bi bi-search fs-1 text-secondary mb-3 d-block"></i>
-                      <h4>No results found</h4>
-                      <p className="text-muted">Try adjusting your search terms or filters.</p>
-                      <Link to="/" className="btn btn-primary mt-3">
-                        <i className="bi bi-house me-2"></i>Return to Home
-                      </Link>
-                    </div>
-                  ) : (
+                        <div className="text-center py-5">
+                          <h1 className='d-flex align-items-center justify-content-center'>No results found
+                            <span className="text-muted">
+                              <i className="bi bi-search ms-2 fs-3"></i>
+                            </span>
+                          </h1>
+                          <p className="text-muted">Try adjusting your search terms or filters.</p>
+                          <Link to="/" className="btn btn-primary mt-3">
+                            <i className="bi bi-house me-2"></i>Return to Home
+                          </Link>
+                        </div>
+                      ) : (
                     <>
                       {/* Tabs */}
                       {(results.posts.length > 0 || results.projects.length > 0) && (
@@ -339,7 +438,7 @@ const SearchResults: React.FC = () => {
                                 onClick={() => setActiveTab('posts')}
                                 type="button"
                               >
-                                Blog Posts <span className="ms-1">({results.posts.length})</span>
+                                Blog Articles <span className="ms-1">({results.posts.length})</span>
                               </button>
                             </li>
                           )}
@@ -358,7 +457,7 @@ const SearchResults: React.FC = () => {
                       )}
 
                       {/* Tab Content */}
-                      <div className="blog tab-content pt-2">
+                      <div className="blog bg-transparent border-0 tab-content pt-2">
                         {/* Actions Tab */}
                         {results.actions.length > 0 && (
                           <div className={`tab-pane fade ${activeTab === 'actions' ? 'show active' : ''}`}>
@@ -394,6 +493,106 @@ const SearchResults: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Filter Modal */}
+      {showFilterModal && (
+        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered modal-sm">
+            <div className="modal-content">
+              <div className="modal-header py-2">
+                <h5 className="modal-title">Filtering Options</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setShowFilterModal(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-3">
+                  <div className="col-12 p-2">
+                    <select 
+                      className="form-select form-select-sm" 
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      {Object.entries(filterOptions).map(([key, value]) => (
+                        <option key={key} value={key}>{value}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer py-2">
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-secondary" 
+                  onClick={() => setShowFilterModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-primary"
+                  onClick={handleFilterApply}
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sort Modal */}
+      {showSortModal && (
+        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered modal-sm">
+            <div className="modal-content">
+              <div className="modal-header py-2">
+                <h5 className="modal-title">Sorting Options</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setShowSortModal(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-3">
+                  <div className="col-12 p-2">
+                    <select 
+                      className="form-select form-select-sm" 
+                      value={selectedSort}
+                      onChange={(e) => setSelectedSort(e.target.value)}
+                    >
+                      {Object.entries(sortOptions).map(([key, value]) => (
+                        <option key={key} value={key}>{value}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer py-2">
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-secondary" 
+                  onClick={() => setShowSortModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-primary"
+                  onClick={handleSortApply}
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

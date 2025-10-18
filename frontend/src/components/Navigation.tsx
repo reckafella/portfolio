@@ -74,7 +74,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         <>
             <header id="header" className="header d-flex align-items-center sticky-top">
                 <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
-                    <Link to="/" className="logo d-flex align-items-center">
+                    <Link to="/" className="logo d-flex align-items-center me-auto me-xl-0 order-1 order-xl-1">
                         <SVGLogoComponent />
                     </Link>
                     <div className='search-nav-wrapper d-flex justify-content-center align-items-center'>

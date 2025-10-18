@@ -1628,15 +1628,10 @@ Cards
 --------------------------------------------------------------*/
 .card {
   background-color: var(--card-background-color);
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 20%);
   border-radius: 5px;
   overflow: hidden;
   color: var(--default-color);
   transition: all 0.3s ease-in-out;
-}
-
-.card:hover {
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .card .card-img {

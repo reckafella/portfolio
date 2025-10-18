@@ -183,5 +183,5 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 - **Email:** [Ethan](mailto:ethanmuthoni@gmail.com)
 - **LinkedIn:** [Ethan Wanyoike](https://www.linkedin.com/in/ethanwanyoike)
 - **GitHub:** [reckafella](https://github.com/reckafella)
-- **Facebook:** [@reckafella](https://facebook.com/reckafella)
-- **Twitter/X:** [@devrohn](https://x.com/devrohn)
+- **Facebook:** [@frmundu](https://facebook.com/frmundu)
+- **Twitter/X:** [@frmundu](https://x.com/frmundu)

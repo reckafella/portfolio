@@ -2,13 +2,20 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { getLoginUrlWithNext } from '@/utils/authUtils';
 import { usePageTitle } from '@/hooks/usePageTitle';
-
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 const ForbiddenPage: React.FC = () => {
     const location = useLocation();
     const currentPath = location.pathname + location.search;
     usePageTitle('403 - Forbidden');
-
+    useMetaTags({
+        title: '403 - Forbidden',
+        description: 'You are not authorized to access this resource. This could be because you\'re not logged in or don\'t have the required privileges.',
+        keywords: '403, forbidden, error, unauthorized',
+        ogTitle: '403 - Forbidden',
+        ogDescription: 'You are not authorized to access this resource. This could be because you\'re not logged in or don\'t have the required privileges.',
+        ogType: 'website',
+    });
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
             <div className="container">

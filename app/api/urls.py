@@ -14,6 +14,11 @@ from app.api.views.about.about_page import (
 )
 from app.api.views.about.captcha import CaptchaRefreshAPIView
 from app.api.views.search.search_api import SearchAPIView, SearchSuggestionsAPIView, PopularSearchesAPIView
+from app.api.views.messages import (
+    MessageListAPIView, MessageDetailAPIView, MessageStatsAPIView,
+    MarkMessageReadAPIView, MarkMessageUnreadAPIView,
+    DeleteMessageAPIView, BulkMessageActionsAPIView
+)
 
 # Setup DRF router for ViewSets
 router = DefaultRouter()
@@ -71,6 +76,15 @@ urlpatterns = [
     path('search/', SearchAPIView.as_view(), name='search_api'),
     path('search/suggestions/', SearchSuggestionsAPIView.as_view(), name='search_suggestions_api'),
     path('search/popular/', PopularSearchesAPIView.as_view(), name='search_popular_api'),
+
+    # Message APIs
+    path('messages/', MessageListAPIView.as_view(), name='message_list_api'),
+    path('messages/stats/', MessageStatsAPIView.as_view(), name='message_stats_api'),
+    path('messages/<int:message_id>/', MessageDetailAPIView.as_view(), name='message_detail_api'),
+    path('messages/<int:message_id>/mark-read/', MarkMessageReadAPIView.as_view(), name='mark_message_read_api'),
+    path('messages/<int:message_id>/mark-unread/', MarkMessageUnreadAPIView.as_view(), name='mark_message_unread_api'),
+    path('messages/<int:message_id>/delete/', DeleteMessageAPIView.as_view(), name='delete_message_api'),
+    path('messages/bulk-actions/', BulkMessageActionsAPIView.as_view(), name='bulk_message_actions_api'),
 
     # Include router URLs (ViewSet-based)
     path('', include(router.urls)),

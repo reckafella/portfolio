@@ -28,7 +28,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
     const getAuthItems = () => {
         if (isAuthenticated) {
             return [
-                { path: ROUTES.AUTH.PROFILE, label: `Welcome, ${user?.first_name || user?.username || 'User'}` },
+                { path: ROUTES.AUTH.PROFILE, label: 'My Profile' },
                 ...adminNavItems,
                 { path: ROUTES.AUTH.LOGOUT, label: 'Logout' }
             ];
@@ -164,6 +164,15 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         <i className={`bi ${isToggleDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                                     </a>
                                     <ul className={isToggleDropdownOpen ? 'dropdown-active' : ''}>
+                                        {/* Staff-only inbox link */}
+                                        {isStaff && (
+                                            <li>
+                                                <Link to={ROUTES.MESSAGES.INBOX} className='d-flex align-items-center justify-content-start gap-1'>
+                                                    <i className="bi bi-inbox"></i>
+                                                    <span>Inbox</span>
+                                                </Link>
+                                            </li>
+                                        )}
                                         {getAuthItems().map((item) => (
                                             <li key={item.path}>
                                                 <Link to={item.path}>

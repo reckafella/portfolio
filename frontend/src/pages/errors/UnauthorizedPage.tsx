@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { getLoginUrlWithNext, getSignupUrlWithNext } from '@/utils/authUtils';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { AuthService } from '@/services/authService';
-
+import { useMetaTags } from '@/hooks/useMetaTags';
 // check if a user is logged in && authorized
 const isLoggedIn = AuthService.isAuthenticated();
 const isAuthorized = AuthService.getCurrentUser()?.is_staff;
@@ -15,6 +15,15 @@ const UnauthorizedPage: React.FC = () => {
   const location = useLocation();
   const currentPath = location.pathname + location.search;
   usePageTitle('401 - Unauthorized');
+  useMetaTags({
+    title: '401 - Unauthorized',
+    description: 'You are not authorized to access this resource. This could be because you\'re not logged in or don\'t have the required privileges.',
+    keywords: '401, unauthorized, error, unauthorized',
+    ogTitle: '401 - Unauthorized',
+    ogDescription: 'You are not authorized to access this resource. This could be because you\'re not logged in or don\'t have the required privileges.',
+    ogType: 'website',
+  });
+
 
   if (isLoggedIn && isAuthorized) {
     return <Navigate to="/" replace />;

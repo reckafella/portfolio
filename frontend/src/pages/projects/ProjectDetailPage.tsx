@@ -150,14 +150,14 @@ export const ProjectDetailPage: React.FC = () => {
                       {project.images.length > 1 && (
                         <>
                           <button
-                            className="btn btn-outline-light position-absolute top-50 start-0 translate-middle-y ms-3"
+                            className="btn btn-outline-primary position-absolute top-50 start-0 translate-middle-y ms-3"
                             onClick={prevImage}
                             style={{ zIndex: 10 }}
                           >
                             <i className="bi bi-chevron-left"></i>
                           </button>
                           <button
-                            className="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y me-3"
+                            className="btn btn-outline-primary position-absolute top-50 end-0 translate-middle-y me-3"
                             onClick={nextImage}
                             style={{ zIndex: 10 }}
                           >

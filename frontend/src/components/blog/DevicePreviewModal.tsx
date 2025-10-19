@@ -121,7 +121,7 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                 Preview: {title || 'Untitled'}
               </h5>
               {!published && (
-                <span className="badge bg-warning text-dark">
+                <span className="badge bg-warning">
                   <i className="bi bi-eye-slash me-1"></i>
                   Draft
                 </span>

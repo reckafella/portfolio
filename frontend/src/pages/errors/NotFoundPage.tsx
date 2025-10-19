@@ -1,10 +1,18 @@
 import { usePageTitle } from '@/hooks/usePageTitle';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 const NotFoundPage: React.FC = () => {
     usePageTitle('404 - Not Found');
+    useMetaTags({
+        title: '404 - Not Found',
+        description: 'The page you are looking for does not exist.',
+        keywords: '404, not found, error, page not found',
+        ogTitle: '404 - Not Found',
+        ogDescription: 'The page you are looking for does not exist.',
+        ogType: 'website',
+    });
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
             <div className="container">

@@ -47,7 +47,7 @@ const LogoutPage: React.FC = () => {
             <div className="card">
               <div className="card-body text-center">
                 <div className="alert alert-danger" role="alert">
-                  <h4 className="alert-heading">Logout Error</h4>
+                  <h1 className="alert-heading">Logout Error</h1>
                   <p>{error}</p>
                 </div>
                 <button 
@@ -73,16 +73,16 @@ const LogoutPage: React.FC = () => {
               <div className="mb-4">
                 {isLoggingOut ? (
                   <>
-                    <LoadingSpinner size="md" text="Logging out..." />
-                    <h4>Logging you out...</h4>
+                    <h1 className="fw-bold">Log out</h1>
+                    <LoadingSpinner size="md" text="Logging you out..." />
                     <p className="text-muted">Please wait while we sign you out securely.</p>
                   </>
                 ) : (
                   <>
+                    <h1 className="fw-bold">Successfully logged out!</h1>
                     <div className="text-success mb-3">
                       <i className="bi bi-check-circle" style={{ fontSize: '3rem' }}></i>
                     </div>
-                    <h4>Successfully logged out!</h4>
                     <p className="text-muted">You have been signed out. Redirecting to home page...</p>
                   </>
                 )}

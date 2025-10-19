@@ -5,8 +5,8 @@ const ServicesSection: React.FC = () => {
         <section id="services" className="section services py-2 py-md-3 py-lg-4">
         <div className="container">
           <div className="section-title">
-            <h2>Services</h2>
-            <p className="">What I Can Do For You</p>
+            <h1 className="display-4 fw-bold">Services</h1>
+            <p className="lead text-muted">What I Can Do For You</p>
           </div>
 
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">

@@ -17,7 +17,7 @@ interface SitemapData {
   blog_posts: SitemapItem[];
 }
 
-export default function SitemapPage() {
+const SitemapPage: React.FC = () => {
   const [sitemapData, setSitemapData] = useState<SitemapData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +42,9 @@ export default function SitemapPage() {
       try {
         setLoading(true);
         const response = await apiRequest('/api/v1/sitemap/');
-        setSitemapData(response);
+        setSitemapData((await response.json()) as SitemapData);
       } catch (err) {
-        setError('Failed to load sitemap data');
-        console.error('Error fetching sitemap:', err);
+        setError(`Failed to load sitemap data: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -222,3 +221,5 @@ export default function SitemapPage() {
     </div>
   );
 }
+
+export default SitemapPage;

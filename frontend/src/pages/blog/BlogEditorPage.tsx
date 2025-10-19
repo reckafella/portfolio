@@ -405,17 +405,17 @@ export function BlogEditorPage() {
                     </h1>
                     <div className="d-flex align-items-center gap-3 text-muted small">
                       {beingEditedBy && (
-                        <span className="badge bg-warning text-dark">
+                        <span className="badge bg-warning">
                           <i className="bi bi-exclamation-triangle-fill me-1"></i>
                           {beingEditedBy} is also editing this post
                         </span>
                       )}
                       {showContentUpdatedWarning && (
-                        <span className="badge bg-info text-white">
+                        <span className="badge bg-info">
                           <i className="bi bi-info-circle-fill me-1"></i>
                           Content updated in another tab
                           <button 
-                            className="btn btn-sm btn-link text-white p-0 ms-2"
+                            className="btn btn-sm btn-link p-0 ms-2"
                             onClick={() => window.location.reload()}
                           >
                             Reload

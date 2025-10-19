@@ -1,10 +1,18 @@
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ServerErrorPage: React.FC = () => {
   usePageTitle('500 - Server Error');
-
+  useMetaTags({
+    title: '500 - Server Error',
+    description: 'Something went wrong on our end. We\'re working to fix this issue as quickly as possible.',
+    keywords: '500, server error, error, server',
+    ogTitle: '500 - Server Error',
+    ogDescription: 'Something went wrong on our end. We\'re working to fix this issue as quickly as possible.',
+    ogType: 'website',
+  });
   return (
     <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
       <div className="container">

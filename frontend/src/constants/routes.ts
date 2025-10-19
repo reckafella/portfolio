@@ -45,6 +45,11 @@ export const ROUTES = {
     PROFILE: '/profile',
   },
 
+  // Message routes
+  MESSAGES: {
+    INBOX: '/messages/inbox',
+  },
+
   // Error routes
   ERROR: {
     BAD_REQUEST: '/error/400',

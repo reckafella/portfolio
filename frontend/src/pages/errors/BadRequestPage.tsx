@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 const BadRequestPage: React.FC = () => {
     usePageTitle('400 - Bad Request');
-
+    useMetaTags({
+        title: '400 - Bad Request',
+        description: 'The request could not be understood by the server. This might be due to malformed syntax or invalid parameters.',
+        keywords: '400, bad request, error, server',
+        ogTitle: '400 - Bad Request',
+        ogDescription: 'The request could not be understood by the server. This might be due to malformed syntax or invalid parameters.',
+        ogType: 'website',
+    });
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
             <div className="container">

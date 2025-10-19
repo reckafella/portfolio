@@ -222,7 +222,7 @@ const SearchResults: React.FC = () => {
                   <span key={index} className="badge bg-secondary">{tag}</span>
                 ))}
                 {project.tags.length > 3 && (
-                  <span className="badge bg-light text-dark">+{project.tags.length - 3} more</span>
+                  <span className="badge">+{project.tags.length - 3} more</span>
                 )}
               </div>
             </div>

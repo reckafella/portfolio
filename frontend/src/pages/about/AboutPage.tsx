@@ -10,6 +10,8 @@ import SkillsEditForm from '../../components/forms/about/SkillsEditForm';
 import EducationEditFormV3 from '../../components/forms/about/EducationEditFormV3';
 import ExperienceEditFormV3 from '../../components/forms/about/ExperienceEditFormV3';
 import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import '../../styles/about.css';
 
 interface AboutPageData {
@@ -64,6 +66,24 @@ const AboutPage: React.FC = () => {
   });
   const [isGlobalEditMode, setIsGlobalEditMode] = useState(false);
   const [sectionsBeingEditedByOthers, setSectionsBeingEditedByOthers] = useState<Record<string, string>>({});
+
+  usePageTitle('About Me');
+  useMetaTags({
+    title: 'About Me',
+    description: 'My professional journey and experiences',
+    keywords: 'about me, professional journey, experiences',
+    ogTitle: 'About Me',
+    ogDescription: 'My professional journey and experiences',
+    ogType: 'website',
+    ogUrl: window.location.origin,
+    ogImage: '/static/assets/images/logo-og.png',
+    twitterTitle: 'About Me',
+    twitterDescription: 'My professional journey and experiences',
+    twitterImage: '/static/assets/images/logo-og.png',
+    twitterSite: '@frmundu',
+    twitterCreator: '@frmundu',
+    canonical: window.location.origin,
+  });
 
   useEffect(() => {
     fetchAboutData();
@@ -340,7 +360,7 @@ const AboutPage: React.FC = () => {
                       {editMode.profile ? <BsX size={18} /> : <BsPencilSquare size={16} />}
                     </button>
                     {sectionsBeingEditedByOthers['profile'] && (
-                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['profile']}`}>
+                      <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['profile']}`}>
                         <i className="bi bi-exclamation-triangle-fill me-1"></i>
                         {sectionsBeingEditedByOthers['profile']} is editing
                       </span>
@@ -386,7 +406,7 @@ const AboutPage: React.FC = () => {
                       {editMode.education ? <BsX size={18} /> : <BsPencilSquare size={16} />}
                     </button>
                     {sectionsBeingEditedByOthers['education'] && (
-                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['education']}`}>
+                      <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['education']}`}>
                         <i className="bi bi-exclamation-triangle-fill me-1"></i>
                         {sectionsBeingEditedByOthers['education']} is editing
                       </span>
@@ -428,7 +448,7 @@ const AboutPage: React.FC = () => {
                       {editMode.skills ? <BsX size={18} /> : <BsPencilSquare size={16} />}
                     </button>
                     {sectionsBeingEditedByOthers['skills'] && (
-                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['skills']}`}>
+                      <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['skills']}`}>
                         <i className="bi bi-exclamation-triangle-fill me-1"></i>
                         {sectionsBeingEditedByOthers['skills']} is editing
                       </span>
@@ -472,7 +492,7 @@ const AboutPage: React.FC = () => {
                       {editMode.experience ? <BsX size={18} /> : <BsPencilSquare size={16} />}
                     </button>
                     {sectionsBeingEditedByOthers['experience'] && (
-                      <span className="badge bg-warning text-dark ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['experience']}`}>
+                      <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['experience']}`}>
                         <i className="bi bi-exclamation-triangle-fill me-1"></i>
                         {sectionsBeingEditedByOthers['experience']} is editing
                       </span>

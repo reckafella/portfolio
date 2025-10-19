@@ -60,7 +60,7 @@ export const BlogPreviewContent: React.FC<BlogPreviewContentProps> = ({
               <div>
                 <strong>Preview Mode:</strong> This is how your blog post will appear to readers.
                 {!published && (
-                  <span className="ms-2 badge bg-warning text-dark">
+                  <span className="ms-2 badge bg-warning">
                     <i className="bi bi-eye-slash me-1"></i>
                     Draft
                   </span>

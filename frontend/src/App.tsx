@@ -13,6 +13,8 @@ import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
 import SearchResults from './pages/search/SearchResults'
 import SitemapPage from './pages/sitemap/SitemapPage'
+import SitemapPageXML from './pages/sitemap/SitemapPageXML'
+import { MessageInbox } from './pages/messages/MessageInbox'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/utils/ScrollToTop'
@@ -30,6 +32,7 @@ import RouteTransition from './components/transitions/RouteTransition'
 import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerErrorPage } from './pages/errors'
 import './App.css'
 import './styles/search.css'
+import './styles/messages.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -67,6 +70,7 @@ function App() {
                                             
                                             {/* Sitemap route */}
                                             <Route path="/sitemap" element={<SitemapPage />} />
+                                            <Route path="/sitemap.xml" element={<SitemapPageXML />} />
                                             
                                             {/* Project routes */}
                                             {/* About route */}
@@ -123,6 +127,16 @@ function App() {
                                             <Route path="/contact" element={<ContactPage />} />
                                             <Route path="/services" element={<ServicesPage />} />
                                             <Route path="/search" element={<SearchResults />} />
+                                            
+                                            {/* Message inbox - Staff only */}
+                                            <Route 
+                                                path="/messages/inbox" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <MessageInbox />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
 
                                             {/* Authentication routes - organized under /auth for consistency */}
                                             <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />

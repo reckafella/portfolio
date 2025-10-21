@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import './RichTextEditor.css';
+import '@/styles/RichTextEditor.css';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
@@ -67,7 +67,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   // Update editor content when content prop changes
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content, false);
+      editor.commands.setContent(content, { emitUpdate: false });
     }
   }, [editor, content]);
 

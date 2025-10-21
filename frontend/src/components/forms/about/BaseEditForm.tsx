@@ -3,7 +3,7 @@ import { FormActions } from '../../common/FormActions';
 import { FormField } from '../../common/FormField';
 import { useFormSubmission } from '../../../hooks/useFormSubmission';
 import { useValidation } from '../../../hooks/useValidation';
-import { sanitizeText, sanitizeEmail } from '../../../utils/inputSanitization';
+import { sanitizeTextDuringInput, sanitizeEmail } from '../../../utils/inputSanitization';
 
 interface BaseEditFormProps<T> {
   data: T;
@@ -11,6 +11,7 @@ interface BaseEditFormProps<T> {
   onError: (_error: string) => void;
   onCancel: () => void;
   submitFunction: () => Promise<Response>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validationRules: Record<string, any>;
   errorMessage?: string;
 }
@@ -19,6 +20,7 @@ interface BaseEditFormProps<T> {
  * Base edit form component that provides common functionality for all edit forms
  * Significantly reduces code duplication and provides consistent behavior
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function BaseEditForm<T extends Record<string, any>>({
   data,
   onUpdate,
@@ -47,7 +49,7 @@ export function BaseEditForm<T extends Record<string, any>>({
       // Handle arrays separately
       return;
     } else {
-      sanitizedValue = sanitizeText(value);
+      sanitizedValue = sanitizeTextDuringInput(value);
     }
 
     setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
@@ -85,7 +87,7 @@ export function BaseEditForm<T extends Record<string, any>>({
     FormField: (props: React.ComponentProps<typeof FormField>) => (
       <FormField
         {...props}
-        value={formData[props.name] || ''}
+        value={String(formData[props.name] || '')}
         onChange={(value: string) => handleChange(props.name, value)}
         error={errors[props.name]}
       />

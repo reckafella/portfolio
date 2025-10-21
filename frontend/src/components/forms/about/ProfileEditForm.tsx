@@ -95,7 +95,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   };
 
   return (
-    <div className="profile-edit-form p-3 rounded border-start border-primary border-3">
+    <div className="profile-edit-form p-3 rounded border-start border-top border-warning border-2">
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6 mb-3">

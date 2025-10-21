@@ -213,7 +213,7 @@ export const projectApi = {
    * Get project form configuration
    */
   getFormConfig: async (): Promise<Response> => {
-    return apiRequest('/api/v1/projects/form-config');
+    return apiRequest('/api/v1/projects/create/');
   },
 
   /**

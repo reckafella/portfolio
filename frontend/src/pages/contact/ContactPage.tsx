@@ -3,9 +3,24 @@ import { Link } from 'react-router-dom';
 import ContactForm from '@/components/forms/contact/ContactForm';
 import { useSendMessage } from '@/hooks/queries/contactQueries';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 const ContactPage: React.FC = () => {
-    usePageTitle('Contact');
+    usePageTitle('Contact Us');
+    useMetaTags({
+        title: 'Contact Us',
+        description: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
+        keywords: 'contact, project, hello, message',
+        ogTitle: 'Contact Us - Ethan Wanyoike',
+        ogDescription: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
+        ogType: 'website',
+        ogUrl: window.location.origin,
+        ogImage: '/static/assets/images/og-default.jpeg',
+        twitterTitle: 'Contact Us - Ethan Wanyoike',
+        twitterDescription: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
+        twitterImage: '/static/assets/images/og-default.jpeg',
+        canonical: window.location.origin
+    });
 
     const sendMessageMutation = useSendMessage();
 
@@ -16,7 +31,7 @@ const ContactPage: React.FC = () => {
     return (
         <section id="contact" className="section contact py-3">
             <div className="container">
-                <div className="info-wrap card col-12 col-md-11 col-lg-10 mx-auto">
+                <div className="info-wrap card bg-transparent border-0 col-12 col-md-11 col-lg-10 mx-auto">
                     <div className="text-center">
                         <div className="section-title">
                             <h1 className="">Contact me</h1>
@@ -56,15 +71,13 @@ const ContactPage: React.FC = () => {
                         </Link>
                     </div>
                     <hr className="my-5" />
-                    <div className="card-body">
-                        <div className="col-12 col-md-10 mx-auto">
-                            <ContactForm 
-                                onSubmit={handleSubmit}
-                                isSubmitting={sendMessageMutation.isPending}
-                                error={sendMessageMutation.error?.message}
-                                success={sendMessageMutation.isSuccess}
-                            />
-                        </div>
+                    <div className="col-12 col-md-10 mx-auto">
+                        <ContactForm 
+                            onSubmit={handleSubmit}
+                            isSubmitting={sendMessageMutation.isPending}
+                            error={sendMessageMutation.error?.message}
+                            success={sendMessageMutation.isSuccess}
+                        />
                     </div>
                 </div>
             </div>

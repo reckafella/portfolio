@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BsSave, BsX, BsPlus, BsTrash } from 'react-icons/bs';
 import { aboutApi } from '../../../utils/aboutApi';
 import { handleApiError } from '../../../utils/api';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 interface SkillsEditFormProps {
   data: string[];
@@ -40,6 +41,7 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
   };
 
   const handleSkillChange = (index: number, value: string) => {
+    // Note: No sanitization here to allow natural typing with spaces
     setSkills(prev => prev.map((skill, i) => i === index ? value : skill));
   };
 
@@ -105,7 +107,7 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
   };
 
   return (
-    <div className="skills-edit-form p-3 rounded border-start border-primary border-3">
+    <div className="skills-edit-form p-3 rounded border-start border-top border-warning border-3">
       <form onSubmit={handleSubmit}>
         {/* Add new skill */}
         <div className="mb-3">
@@ -115,20 +117,20 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
           <div className="d-flex gap-2">
             <input
               type="text"
-              className="form-control"
+              className="form-control form-control-sm"
               value={newSkill}
               onChange={(e) => setNewSkill(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="e.g., React, Python, AWS"
+              placeholder="e.g., React, Python, AWS, Docker, Kubernetes, etc."
               disabled={isLoading}
             />
             <button
               type="button"
-              className="btn btn-success"
+              className="btn btn-success btn-sm"
               onClick={handleAddSkill}
               disabled={isLoading || !newSkill.trim()}
             >
-              <BsPlus />
+              <BsPlus size={24} />
             </button>
           </div>
         </div>
@@ -138,10 +140,10 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
           <label className="form-label">
             <strong>Current Skills ({skills.length})</strong>
           </label>
-          <div className="row g-2">
+          <div className="row g-1">
             {skills.map((skill, index) => (
               <div key={index} className="col-md-6">
-                <div className="d-flex gap-1">
+                <div className="d-flex gap-1 align-items-center">
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -178,29 +180,28 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
         <div className="d-flex gap-2">
           <button
             type="submit"
-            className="btn btn-success btn-sm"
+            className="btn btn-primary btn-sm"
             disabled={isLoading || skills.length === 0}
           >
             {isLoading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+              <div className="d-flex align-items-center gap-1">
+                <LoadingSpinner size="sm" />
                 Saving...
-              </>
+              </div>
             ) : (
               <>
-                <BsSave className="me-2" />
-                Save
+                <BsSave className="me-2" /> Save
               </>
             )}
           </button>
           
           <button
             type="button"
-            className="btn btn-secondary btn-sm"
+            className="btn btn-outline-secondary btn-sm"
             onClick={onCancel}
             disabled={isLoading}
           >
-            <BsX className="me-2" />
+            <BsX size={20} />
             Cancel
           </button>
         </div>

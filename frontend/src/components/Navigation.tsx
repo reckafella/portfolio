@@ -13,9 +13,9 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
-  const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user } = useAuth();
+    const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isAuthenticated } = useAuth();
     const { isStaff, canCreateProjects, canCreateBlog } = useStaffPermissions();
     const [isToggleDropdownOpen, setIsToggleDropdownOpen] = useState(false);
     const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
@@ -74,10 +74,10 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         <>
             <header id="header" className="header d-flex align-items-center sticky-top">
                 <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
-                    <Link to="/" className="logo d-flex align-items-center me-auto me-xl-0 order-1 order-xl-1">
+                    <Link to="/" className="logo d-flex justify-content-start align-items-center">
                         <SVGLogoComponent />
                     </Link>
-                    <div className='search-nav-wrapper d-flex justify-content-center align-items-center'>
+                    <div className='search-nav-wrapper d-flex justify-content-center align-items-center gap-0'>
                         <Search onToggleSearch={onToggleSearch} />
                         <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">

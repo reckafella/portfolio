@@ -5,7 +5,7 @@ interface FormFieldProps {
   name: string;
   type?: 'text' | 'email' | 'textarea' | 'select';
   value: string;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   error?: string;
   required?: boolean;
   disabled?: boolean;

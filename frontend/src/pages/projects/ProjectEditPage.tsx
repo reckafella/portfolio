@@ -95,8 +95,7 @@ export const ProjectEditPage: React.FC = () => {
       slug: String(slug),
       data
     });
-    
-    // Broadcast content update to other tabs
+
     if (slug) {
       tabSyncService.broadcastContentUpdate('project', slug);
     }

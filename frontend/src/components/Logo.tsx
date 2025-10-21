@@ -5,7 +5,7 @@ const SVGComponent = (props: React.SVGProps<SVGSVGElement>) => (
     xmlSpace="preserve"
     xmlns="http://www.w3.org/2000/svg"
     style={{
-      width: "80px",
+      width: "60px",
       height: "auto",
       position: "absolute",
       top: "35%",

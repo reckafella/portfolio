@@ -32,6 +32,20 @@ export function sanitizeText(input: string): string {
 }
 
 /**
+ * Sanitizes text input during typing without trimming spaces
+ * Use this for onChange events to allow natural typing with spaces
+ */
+export function sanitizeTextDuringInput(input: string): string {
+  if (typeof input !== 'string') return '';
+  
+  return input
+    // Don't trim - allow spaces during typing
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+    .replace(/[<>]/g, ''); // Remove potential HTML tags
+}
+
+/**
  * Sanitizes email input
  */
 export function sanitizeEmail(input: string): string {
@@ -56,6 +70,7 @@ export function sanitizePhone(input: string): string {
 
 /**
  * Sanitizes array of strings (for skills, responsibilities, etc.)
+ * Filters out empty items - use for final submission
  */
 export function sanitizeStringArray(input: string[]): string[] {
   if (!Array.isArray(input)) return [];
@@ -63,6 +78,16 @@ export function sanitizeStringArray(input: string[]): string[] {
   return input
     .map(item => sanitizeText(item))
     .filter(item => item.length > 0); // Remove empty items
+}
+
+/**
+ * Sanitizes array of strings during input without filtering empty items
+ * Use this for onChange events to allow adding empty items that users will fill in
+ */
+export function sanitizeStringArrayDuringInput(input: string[]): string[] {
+  if (!Array.isArray(input)) return [];
+  
+  return input.map(item => sanitizeTextDuringInput(item));
 }
 
 /**

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { BsPlus, BsTrash } from 'react-icons/bs';
+import { BsPlus } from 'react-icons/bs';
 import { FormActions } from '../../common/FormActions';
-import { FormField } from '../../common/FormField';
+// import { FormField } from '../../common/FormField';
 import { useFormSubmission } from '../../../hooks/useFormSubmission';
-import { sanitizeText, sanitizeStringArray } from '../../../utils/inputSanitization';
+import { sanitizeText, sanitizeTextDuringInput, sanitizeStringArrayDuringInput } from '../../../utils/inputSanitization';
 
 interface ArrayEditFormProps<T> {
   data: T[];
-  onUpdate: (data: T[]) => void;
-  onError: (error: string) => void;
+  onUpdate: (_data: T[]) => void;
+  onError: (_error: string) => void;
   onCancel: () => void;
-  submitFunction: (entries: T[]) => Promise<Response>;
+  submitFunction: (_entries: T[]) => Promise<Response>;
   createNewEntry: () => T;
-  renderEntry: (entry: T, index: number, onChange: (field: keyof T, value: string) => void, onRemove: () => void, isLoading: boolean) => React.ReactNode;
-  validationFunction?: (entries: T[]) => string | null;
+  renderEntry: (_entry: T, _index: number, _onChange: (_field: keyof T, _value: string | boolean | string[]) => void, _onRemove: () => void, _isLoading: boolean) => React.ReactNode;
+  validationFunction?: (_entries: T[]) => string | null;
   errorMessage?: string;
   sectionTitle: string;
 }
@@ -22,6 +22,7 @@ interface ArrayEditFormProps<T> {
  * Generic array edit form component for Education and Experience
  * Handles arrays of objects with create/update logic
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ArrayEditForm<T extends Record<string, any>>({
   data,
   onUpdate,
@@ -47,7 +48,10 @@ export function ArrayEditForm<T extends Record<string, any>>({
           if (Array.isArray(value)) {
             return value.some(item => sanitizeText(item).trim() !== '');
           }
-          return sanitizeText(String(value)).trim() !== '';
+          if (typeof value === 'string') {
+            return sanitizeText(value).trim() !== '';
+          }
+          return value != null;
         });
       });
 
@@ -56,14 +60,15 @@ export function ArrayEditForm<T extends Record<string, any>>({
     errorMessage
   });
 
-  const handleChange = (index: number, field: keyof T, value: string) => {
-    let sanitizedValue = value;
+  const handleChange = (index: number, field: keyof T, value: string | boolean | string[]) => {
+    let sanitizedValue: string | boolean | string[];
     
-    if (Array.isArray(entries[index][field])) {
-      // Handle array fields (like responsibilities)
-      return;
+    if (typeof value === 'boolean') {
+      sanitizedValue = value;
+    } else if (Array.isArray(value)) {
+      sanitizedValue = sanitizeStringArrayDuringInput(value);
     } else {
-      sanitizedValue = sanitizeText(value);
+      sanitizedValue = sanitizeTextDuringInput(value);
     }
 
     setEntries(prev => prev.map((entry, i) => 
@@ -74,13 +79,6 @@ export function ArrayEditForm<T extends Record<string, any>>({
     if (validationError) {
       setValidationError('');
     }
-  };
-
-  const handleArrayChange = (index: number, field: keyof T, values: string[]) => {
-    const sanitizedValues = sanitizeStringArray(values);
-    setEntries(prev => prev.map((entry, i) => 
-      i === index ? { ...entry, [field]: sanitizedValues } : entry
-    ));
   };
 
   const addNewEntry = () => {
@@ -113,7 +111,7 @@ export function ArrayEditForm<T extends Record<string, any>>({
   };
 
   return (
-    <div className="array-edit-form p-3 rounded border-start border-primary border-3">
+    <div className="array-edit-form p-3 rounded border-start border-top border-warning border-2">
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
@@ -136,7 +134,7 @@ export function ArrayEditForm<T extends Record<string, any>>({
         </div>
 
         {entries.map((entry, index) => (
-          <div key={index} className="mb-4 p-3 bg-white rounded border">
+          <div key={index} className="mb-4 p-3 rounded border">
             {renderEntry(
               entry, 
               index, 

@@ -7,127 +7,119 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
-  --about-background-color: #0a0a0a; /* rich black */
-  --blog-background-color: #242526; /* black olive */
-  --projects-background-color: #212121; /* midnight blue */
-  --skills-background-color: #1d1f21; /* gunmetal */
-  --resume-background-color: #0c0c0c; /* oil black */
-  --contact-background-color: #212124; /* Charleston green */
-  --header-background-color: #0b1215; /* obsidian */
-  --services-background-color: #212121; /* midnight blue */
+  --about-background-color: rgb(10, 10, 10); /* #0a0a0a rich black */
+  --blog-background-color: rgb(36, 37, 38); /* #242526 black olive */
+  --projects-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
+  --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
+  --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
+  --header-background-color: rgb(11, 18, 21); /* #0b1215 obsidian */
+  --services-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: #101720; /* smoky black */
-  --accordion-button-background: #181818; /* iridium */
-  --breadcrumbs-background-color: #252525; /* outer space */
-  --footer-background-color: #181818; /* iridium */
-  --card-background-color: #11181c; /* arsenic */
-  --background-color: #161618; /* jet black */
+  --special-background-color: rgb(16, 23, 32); /*#101720 smoky black  */
+  --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
+  --breadcrumbs-background-color: rgb(37, 37, 37); /* #252525 outer space */
+  --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
+  --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
+  --background-color: rgb(22, 22, 24); /* #161618 jet black */
   --search-background-color: rgba(0, 0, 0, 0.98);
-  --project-info-color: #fff; /* white */
-  --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
-  --nav-dropdown-background-color:  #191919; /* dark slate gray */
-  --default-color: #ffffff;
-  --scroll-top-background-color:var(--default-color); /* white */
-  --scroll-top-color: #1f1f1f; /* charcoal */
+  --project-info-color: rgb(255, 255, 255); /* #ffffff */
+  --project-info-background-color: rgba(22, 22, 24, 0.9); /* #161618 jet black */
+  --nav-dropdown-background-color:  rgb(25, 25, 25); /* #191919 dark slate gray */
+  --default-color: rgb(255, 255, 255); /* #ffffff */
+  --scroll-top-background-color:var(--default-color);
+  --scroll-top-color: rgb(31, 31, 31); /* #1f1f1f charcoal */
   --heading-color: var(--default-color);
-  --surface-color: #252525;
+  --surface-color: rgb(37, 37, 37); /* #252525 */
   --contrast-color: var(--default-color);
   --search-bar-background-color: var(--special-background-color);
-  --accent-color:#e07d04;
-  --text-error-color: #e6182c;
-  --text-success-color: #0b9152;
-  --text-warning-color: #ffbf00;
+  --accent-color:rgb(224, 125, 4); /* #e07d04 */
+  --text-error-color: rgb(230, 24, 44); /* #e6182c */
+  --text-success-color: rgb(11, 145, 82); /* #0b9152 */
+  --text-warning-color: rgb(255, 191, 0); /* #ffbf00 */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
-  --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
-}
-
-/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
-:root {
-  --preloader-background-color: #090701; /* black chocolate */
-  --nav-color: #121010;  /* The default color of the main navmenu links */
-  --nav-hover-color: #1e044d; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-mobile-background-color: #cccbc8; /* Used as the background color for mobile navigation menu */
-  --nav-dropdown-background-color: #e0d8d8; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #181717; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #4834b7; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-dropdown-hover-color: var(--accent-color);
+  --preloader-background-color: rgb(22, 22, 21); /* #161615 */
+  --nav-mobile-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --header-background-color: #fffff0; /* marble */
-  --blog-background-color: #f4f1f8; /* lavender */
-  --projects-background-color: #fbf5df; /* parachment */
-  --skills-background-color: #d1d1ca; /* pearl */
-  --about-background-color: #fdfdfd; /* egg white */
-  --contact-background-color: #f0f8ff; /* alice blue */
-  --resume-background-color: #f0f8ff; /* alice blue */
-  --nav-mobile-background-color: #dde7f2;
-  --nav-dropdown-background-color: #f8f9fa;
-  --accordion-button-background: #f0f8ff; /* alice blue */
-  --breadcrumbs-background-color: #f8f9fa;
-  --footer-background-color: beige; /*#F5F5F7 ghost white */
-  --card-background-color: #f2f8fc;
-  --special-background-color: #f0f8ff; /* alice blue */
-  --scroll-top-background-color: #000000; /* alice blue */
-  --scroll-top-color: #f0f8ff; /* black */
+  --accent-color: rgb(39, 13, 62); /* #3a0369 */
+  --header-background-color: rgb(255, 255, 240); /* #fffff0 marble */
+  --blog-background-color: rgb(244, 241, 248); /* #f4f1f8 lavender */
+  --projects-background-color: rgb(251, 245, 223); /* #fbf5df parachment */
+  --skills-background-color: rgb(209, 209, 202); /* #d1d1ca pearl */
+  --about-background-color: rgb(253, 253, 253); /* #fdfdfd egg white */
+  --contact-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --resume-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --nav-mobile-background-color: rgb(221, 231, 242); /* #dde7f2 */
+  --nav-dropdown-background-color: rgb(248, 249, 250); /* #f8f9fa */
+  --accordion-button-background: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --breadcrumbs-background-color: rgb(248, 249, 250); /* #f8f9fa */
+  --footer-background-color: rgb(245, 245, 247); /* #F5F5F7 ghost white */
+  --card-background-color: rgb(242, 248, 252); /* #f2f8fc */
+  --special-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --scroll-top-background-color: rgb(0, 0, 0); /* #000000 black */
+  --scroll-top-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --search-background-color: rgba(255, 255, 255, 0.95);
   --project-info-background-color: rgba(255, 255, 255, 0.7); /*#fffff0 ivory rgba(255, 255, 255, 0.8) */
-  --services-background-color: #f0f8ff; /* alice blue */
-  --project-info-color: #000; /* black */
-  --nav-color: #444444;
+  --services-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --project-info-color: rgb(0, 0, 0); /* #000000 black */
+  --nav-color: rgb(68, 68, 68); /* #444444 */
   --nav-hover-color: var(--accent-color);
-  --nav-dropdown-background-color: #e9e8e6;
-  --nav-dropdown-color: #444444;
-  --contrast-color: #000;
-  --search-bar-background-color: #1d0723;
+  --nav-dropdown-background-color: rgb(233, 232, 230); /* #e9e8e6 */
+  --nav-dropdown-color: rgb(68, 68, 68); /* #444444 */
+  --contrast-color: rgb(0, 0, 0); /* #000000 black */
+  --search-bar-background-color: rgb(29, 7, 35); /* #1d0723 */
   --nav-dropdown-hover-color: var(--accent-color);
-  --background-color: #e8e7e4; /* Background color for the entire website, including individual sections */
-  --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #3a0369; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --text-error-color: #dc3545;
-  --text-success-color: #198754;
-  --text-warning-color: #ffc107;
-  --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --background-color: rgb(232, 231, 228); /* #e8e7e4 */
+  --default-color: rgb(0, 0, 0); /* #000000 */
+  --heading-color: rgb(34, 34, 34); /* #222222 */
+  --accent-color: rgb(58, 3, 105); /* #3a0369 */
+  --text-error-color: rgb(220, 53, 69); /* #dc3545 */
+  --text-success-color: rgb(25, 135, 84); /* #198754 */
+  --text-warning-color: rgb(255, 193, 7); /* #ffc107 */
+  --surface-color: rgb(225, 222, 222); /* #e1dede */
 }
 
 [data-bs-theme="dark"] {
-  --about-background-color: #0a0a0a; /* rich black */
-  --blog-background-color: #242526; /* black olive */
-  --projects-background-color: #212121; /* midnight blue */
-  --skills-background-color: #1d1f21; /* gunmetal */
-  --resume-background-color: #0c0c0c; /* oil black */
-  --contact-background-color: #212124; /* Charleston green */
-  --header-background-color: #0b1215; /* obsidian */
-  --services-background-color: #212121; /* midnight blue */
+  --about-background-color: rgb(10, 10, 10); /* #0a0a0a rich black */
+  --blog-background-color: rgb(36, 37, 38); /* #242526 black olive */
+  --projects-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
+  --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
+  --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
+  --header-background-color: rgb(11, 18, 21); /* #0b1215 obsidian */
+  --services-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: #101720; /* smoky black */
-  --accordion-button-background: #181818; /* iridium */
-  --breadcrumbs-background-color: #252525; /* outer space */
-  --footer-background-color: #181818; /* iridium */
-  --card-background-color: #11181c; /* arsenic */
-  --background-color: #161618; /* jet black */
+  --special-background-color: rgb(16, 23, 32); /* #101720 smoky black */
+  --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
+  --breadcrumbs-background-color: rgb(37, 37, 37); /* #252525 outer space */
+  --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
+  --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
+  --background-color: rgb(22, 22, 24); /* #161618 jet black */
   --search-background-color: rgba(0, 0, 0, 0.98);
-  --project-info-color: #fff; /* white */
+  --project-info-color: rgb(255, 255, 255); /* #ffffff */
   --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
-  --nav-dropdown-background-color:  #191919; /* dark slate gray */
-  --default-color: #ffffff;
+  --nav-dropdown-background-color:  rgb(25, 25, 25); /* #191919 dark slate gray */
+  --default-color: rgb(255, 255, 255); /* #ffffff */
   --scroll-top-background-color:var(--default-color); /* white */
-  --scroll-top-color: #1f1f1f; /* charcoal */
+  --scroll-top-color: rgb(31, 31, 31); /* #1f1f1f charcoal */
   /* --card-background-color: #13151a; */
   --heading-color: var(--default-color);
-  --surface-color: #252525;
+  --surface-color: rgb(37, 37, 37); /* #252525 */
   --contrast-color: var(--default-color);
   /* search bar background should have dim color like Twitter */
   --search-bar-background-color: var(--special-background-color);
-  --accent-color:#fe8c00;
+  --accent-color:rgb(254, 140, 0); /* #fe8c00 golden orange */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
-  --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
+  --nav-dropdown-hover-color: var(--accent-color);
 }
 
 /* theme-transition.css */
@@ -201,7 +193,7 @@ h6 {
   line-height: 1;
 }
 
-.header .logo img {
+.header .logo img, .header .logo svg {
   max-height: 60px;
   margin: auto;
   margin-right: 8px;

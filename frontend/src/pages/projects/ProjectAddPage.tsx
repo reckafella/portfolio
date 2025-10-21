@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import UnifiedForm from '@/components/forms/UnifiedForm';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { useProjectFormConfig, useCreateProject } from '@/hooks/queries/projectQueries';
 
 export const ProjectAddPage: React.FC = () => {
@@ -20,9 +20,8 @@ export const ProjectAddPage: React.FC = () => {
 
   const createProjectMutation = useCreateProject();
 
-  const handleSubmit = async (data: Record<string, string>) => {
+  const handleSubmit = async (data: Record<string, string | boolean | File | File[]>) => {
     await createProjectMutation.mutateAsync(data);
-    // Navigate to project list after successful creation
     navigate('/projects');
   };
 
@@ -76,7 +75,7 @@ export const ProjectAddPage: React.FC = () => {
             <div className="card shadow-sm">
               <div className="card-body">
                 <UnifiedForm
-                  formType="add_project"
+                  formType="create_project"
                   onSubmit={handleSubmit}
                   isSubmitting={createProjectMutation.isPending}
                   error={createProjectMutation.error?.message}

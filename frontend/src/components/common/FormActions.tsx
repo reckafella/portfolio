@@ -1,5 +1,6 @@
 import React from 'react';
 import { BsSave, BsX } from 'react-icons/bs';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface FormActionsProps {
   isLoading: boolean;
@@ -24,29 +25,29 @@ export const FormActions: React.FC<FormActionsProps> = ({
     <div className={`d-flex gap-2 ${className}`}>
       <button
         type="submit"
-        className="btn btn-success btn-sm"
+        className="btn btn-primary btn-sm"
         disabled={isLoading}
       >
         {isLoading ? (
-          <>
-            <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+          <div className="d-flex align-items-center gap-1">
+            <LoadingSpinner size="sm" text="Saving..." />
             Saving...
-          </>
+          </div>
         ) : (
-          <>
+          <div className="d-flex align-items-center gap-1">
             <BsSave className="me-2" />
             {submitText}
-          </>
+          </div>
         )}
       </button>
-      
+
       <button
         type="button"
-        className="btn btn-secondary btn-sm"
+        className="btn btn-outline-secondary btn-sm"
         onClick={onCancel}
         disabled={isLoading}
       >
-        <BsX className="me-2" />
+        <BsX size={20} />
         {cancelText}
       </button>
     </div>

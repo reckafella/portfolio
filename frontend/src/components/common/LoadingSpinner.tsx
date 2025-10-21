@@ -14,8 +14,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <div className={`text-center ${className}`}>
       <div className="gap-2 d-flex align-items-center justify-content-center">
-        <div className="spinner-grow text-danger"
-          role="status" style={{width: '20px', height: '20px'}}>
+        <div className={`spinner-grow spinner-grow-${size}`}
+          role="status" style={{color: '#fea100'}}>
           <span className="visually-hidden">{text}</span>
         </div>
         {text && size !== 'sm' && (

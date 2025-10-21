@@ -56,7 +56,7 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async createProject(data: Record<string, string | number | boolean>) {
+  async createProject(data: Record<string, string | boolean | File | File[]>) {
     const response = await projectApi.create(data);
     if (!response.ok) {
       const errorData = await response.json();
@@ -135,7 +135,6 @@ export const useCreateProject = () => {
   return useMutation({
     mutationFn: projectApiFunctions.createProject,
     onSuccess: () => {
-      // Invalidate projects list to refetch
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
     },
   });

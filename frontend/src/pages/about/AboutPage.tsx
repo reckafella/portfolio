@@ -3,12 +3,12 @@ import { BsDownload, BsGeoAlt, BsEnvelope, BsPencilSquare, BsX } from 'react-ico
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { AlertMessage } from '../../components/common/AlertMessage';
-import { aboutApi } from '../../utils/aboutApi';
+import { aboutApi, ExperienceEntry } from '../../utils/aboutApi';
 import { handleApiError } from '../../utils/api';
 import ProfileEditForm from '../../components/forms/about/ProfileEditForm';
 import SkillsEditForm from '../../components/forms/about/SkillsEditForm';
-import EducationEditFormV3 from '../../components/forms/about/EducationEditFormV3';
-import ExperienceEditFormV3 from '../../components/forms/about/ExperienceEditFormV3';
+import EducationEditForm from '../../components/forms/about/EducationEditForm';
+import ExperienceEditForm from '../../components/forms/about/ExperienceEditForm';
 import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useMetaTags } from '@/hooks/useMetaTags';
@@ -333,7 +333,7 @@ const AboutPage: React.FC = () => {
         {/* Global Edit Mode Indicator */}
         {isAuthenticated && isGlobalEditMode && (
           <div className="global-edit-mode">
-            <div className="alert alert-warning mb-0" role="alert">
+            <div className="alert alert-warning mb-0" role="alert" style={{ color: '#000' }}>
               <i className="bi bi-pencil-fill me-2"></i>
               <strong>Global Edit Mode Active</strong> - All sections are now editable. 
               Make your changes and click "Exit Edit Mode" when finished.
@@ -341,23 +341,21 @@ const AboutPage: React.FC = () => {
           </div>
         )}
 
-
-
         <div className="container">
           <div className="row">
             {/* Left Column */}
             <div className="col-lg-6">
               {/* Profile Section */}
-              <div className="d-flex align-items-center mb-3">
-                <h3 className="resume-title mb-0">Summary</h3>
+              <div className="d-flex align-items-center mb-1">
+                <h3 className="resume-title mb-0 text-start">Summary</h3>
                 {isAuthenticated && (
                   <>
                     <button
                       onClick={() => toggleEditMode('profile')}
-                      className="edit-icon-btn text-primary"
+                      className="d-flex edit-icon-btn align-items-center"
                       title={editMode.profile ? 'Cancel editing' : 'Edit profile'}
                     >
-                      {editMode.profile ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                      {editMode.profile ? <BsX size={27} /> : <BsPencilSquare size={27} />}
                     </button>
                     {sectionsBeingEditedByOthers['profile'] && (
                       <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['profile']}`}>
@@ -394,16 +392,16 @@ const AboutPage: React.FC = () => {
               )}
 
               {/* Education Section */}
-              <div className="d-flex align-items-center mb-3">
+              <div className="d-flex align-items-center mb-1">
                 <h3 className="resume-title mb-0">Education</h3>
                 {isAuthenticated && (
                   <>
                     <button
                       onClick={() => toggleEditMode('education')}
-                      className="edit-icon-btn text-primary"
+                      className="edit-icon-btn"
                       title={editMode.education ? 'Cancel editing' : 'Edit education'}
                     >
-                      {editMode.education ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                      {editMode.education ? <BsX size={27} /> : <BsPencilSquare size={27} />}
                     </button>
                     {sectionsBeingEditedByOthers['education'] && (
                       <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['education']}`}>
@@ -416,7 +414,7 @@ const AboutPage: React.FC = () => {
               </div>
 
               {editMode.education ? (
-                <EducationEditFormV3
+                <EducationEditForm
                   data={data.education}
                   onUpdate={(updatedData) => handleUpdate('education', { education: updatedData })}
                   onError={handleError}
@@ -436,16 +434,16 @@ const AboutPage: React.FC = () => {
               )}
 
               {/* Skills Section */}
-              <div className="d-flex align-items-center mb-3">
+              <div className="d-flex align-items-center mb-1">
                 <h3 className="resume-title mb-0">Skills</h3>
                 {isAuthenticated && (
                   <>
                     <button
                       onClick={() => toggleEditMode('skills')}
-                      className="edit-icon-btn text-primary"
+                      className="edit-icon-btn"
                       title={editMode.skills ? 'Cancel editing' : 'Edit skills'}
                     >
-                      {editMode.skills ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                      {editMode.skills ? <BsX size={27} /> : <BsPencilSquare size={27} />}
                     </button>
                     {sectionsBeingEditedByOthers['skills'] && (
                       <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['skills']}`}>
@@ -480,16 +478,16 @@ const AboutPage: React.FC = () => {
 
             {/* Right Column */}
             <div className="col-lg-6">
-              <div className="d-flex align-items-center mb-3">
+              <div className="d-flex align-items-center mb-1">
                 <h3 className="resume-title mb-0">Professional Experience</h3>
                 {isAuthenticated && (
                   <>
                     <button
                       onClick={() => toggleEditMode('experience')}
-                      className="edit-icon-btn text-primary"
+                      className="edit-icon-btn"
                       title={editMode.experience ? 'Cancel editing' : 'Edit experience'}
                     >
-                      {editMode.experience ? <BsX size={18} /> : <BsPencilSquare size={16} />}
+                      {editMode.experience ? <BsX size={27} /> : <BsPencilSquare size={27} />}
                     </button>
                     {sectionsBeingEditedByOthers['experience'] && (
                       <span className="badge bg-warning ms-2" title={`Being edited by ${sectionsBeingEditedByOthers['experience']}`}>
@@ -502,12 +500,12 @@ const AboutPage: React.FC = () => {
               </div>
 
               {editMode.experience ? (
-                <ExperienceEditFormV3
+                <ExperienceEditForm
                   data={data.experience.map(exp => ({
                     ...exp,
                     icon_type: exp.type
                   }))}
-                  onUpdate={(updatedData) => handleUpdate('experience', { experience: updatedData })}
+                  onUpdate={(updatedData: ExperienceEntry[]) => handleUpdate('experience', { experience: updatedData })}
                   onError={handleError}
                   onCancel={() => toggleEditMode('experience')}
                 />

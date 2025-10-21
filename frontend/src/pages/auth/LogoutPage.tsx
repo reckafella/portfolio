@@ -74,8 +74,8 @@ const LogoutPage: React.FC = () => {
                 {isLoggingOut ? (
                   <>
                     <h1 className="fw-bold">Log out</h1>
-                    <LoadingSpinner size="md" text="Logging you out..." />
                     <p className="text-muted">Please wait while we sign you out securely.</p>
+                    <LoadingSpinner size="md" text="Logging you out..." />
                   </>
                 ) : (
                   <>

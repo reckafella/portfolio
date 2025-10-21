@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCreateBlogComment } from '@/hooks/mutations/useBlogCommentMutation';
-import UnifiedForm from '../UnifiedForm';
+import UnifiedForm from '../.xUnifiedForm';
 import { AlertMessage } from '@/components/common/AlertMessage';
 
 interface CommentFormProps {

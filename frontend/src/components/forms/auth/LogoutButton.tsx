@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 interface LogoutButtonProps {
   className?: string;
@@ -10,11 +10,11 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   className = 'btn btn-outline-danger',
   buttonText = 'Logout'
 }) => {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { logout } = useAuth();
 
   const handleLogout = async () => {
-    setIsLoggingOut(true);
+    setIsLoading(true);
     try {
       await logout();
       // Force a full page reload to ensure all authentication state is cleared
@@ -25,17 +25,17 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
       localStorage.removeItem('user');
       window.location.href = '/';
     } finally {
-      setIsLoggingOut(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <button
       onClick={handleLogout}
-      disabled={isLoggingOut}
+      disabled={isLoading}
       className={className}
     >
-      {isLoggingOut ? (
+      {isLoading ? (
         <>
           <div className="d-flex justify-content-center align-items-center me-2">
             <div className="spinner-grow spinner-grow-sm text-danger" role="status">

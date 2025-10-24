@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy as reverse
@@ -13,9 +13,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 
-from ..forms.contact import ContactForm
-from ..models import Message
-from ..views.helpers.helpers import is_ajax
+from app.forms.contact import ContactForm
+from app.models import Message
+from app.views.helpers.helpers import is_ajax
 
 
 class ContactFormConfigView(View):
@@ -89,8 +89,8 @@ class ContactView(FormView):
         })
         return context
 
-    def form_valid(self, form):
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+    def form_valid(self, form) -> HttpResponse:
+        if is_ajax(self.request):
             try:
                 form.save()
                 message_data = {

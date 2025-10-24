@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# Update and upgrade system packages
+# sudo apt update
+# sudo apt upgrade -y
+
 # Update pip && install dependencies
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
@@ -28,7 +32,6 @@ chmod -R 755 frontend/build/
 
 # Collect static files
 python3 manage.py collectstatic --no-input --clear
-
 
 # Apply database migrations
 python3 manage.py makemigrations

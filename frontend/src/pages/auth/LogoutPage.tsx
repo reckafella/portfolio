@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 const LogoutPage: React.FC = () => {
-  const [isLoggingOut, setIsLoggingOut] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const { logout, isAuthenticated } = useAuth();
 
@@ -21,7 +22,7 @@ const LogoutPage: React.FC = () => {
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Logout failed';
           setError(errorMessage);
-          setIsLoggingOut(false);
+          setIsLoading(false);
         }
       } else {
         // User is already logged out
@@ -46,7 +47,7 @@ const LogoutPage: React.FC = () => {
             <div className="card">
               <div className="card-body text-center">
                 <div className="alert alert-danger" role="alert">
-                  <h4 className="alert-heading">Logout Error</h4>
+                  <h1 className="alert-heading">Logout Error</h1>
                   <p>{error}</p>
                 </div>
                 <button 
@@ -70,28 +71,18 @@ const LogoutPage: React.FC = () => {
           <div className="card">
             <div className="card-body text-center">
               <div className="mb-4">
-                {isLoggingOut ? (
+                {isLoading ? (
                   <>
-                    <div className="d-flex justify-content-center align-items-center mb-3">
-                      <div className="spinner-grow spinner-grow-sm text-danger" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <div className="spinner-grow text-info">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                      <div className="spinner-grow spinner-grow-lg text-success">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
-                    <h4>Logging you out...</h4>
+                    <h1 className="fw-bold">Log out</h1>
                     <p className="text-muted">Please wait while we sign you out securely.</p>
+                    <LoadingSpinner size="md" text="Logging you out..." />
                   </>
                 ) : (
                   <>
+                    <h1 className="fw-bold">Successfully logged out!</h1>
                     <div className="text-success mb-3">
                       <i className="bi bi-check-circle" style={{ fontSize: '3rem' }}></i>
                     </div>
-                    <h4>Successfully logged out!</h4>
                     <p className="text-muted">You have been signed out. Redirecting to home page...</p>
                   </>
                 )}
@@ -100,7 +91,7 @@ const LogoutPage: React.FC = () => {
               <button 
                 className="btn btn-outline-primary"
                 onClick={handleManualRedirect}
-                disabled={isLoggingOut}
+                disabled={isLoading}
               >
                 Go to Home
               </button>

@@ -118,18 +118,10 @@ export const ProjectListPage: React.FC = () => {
       {/* Header */}
       <div className="row">
         <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <p className="lead text-muted">
-                Browse through our portfolio of {totalCount} project{totalCount !== 1 ? 's' : ''}
-              </p>
-            </div>
-            {canCreateProjects && (
-              <Link to="/projects/new" className="btn btn-primary btn-lg">
-                <i className="bi bi-plus me-2"></i>
-                Add Project
-              </Link>
-            )}
+          <div className="text-center">
+            <p className="lead text-muted">
+              Browse through our portfolio of {totalCount} project{totalCount !== 1 ? 's' : ''}
+            </p>
           </div>
         </div>
       </div>
@@ -175,6 +167,18 @@ export const ProjectListPage: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {/* Add Project Button */}
+          {canCreateProjects && (
+            <div className="row mt-4">
+              <div className="col-12 text-center">
+                <Link to="/projects/new" className="btn btn-primary btn-lg">
+                  <i className="bi bi-plus me-2"></i>
+                  Add New Project
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Pagination */}
           {totalCount > 12 && (

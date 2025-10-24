@@ -109,6 +109,6 @@ def get_redis_creds() -> Tuple[str, str]:
             redis_url: str = data.get("URL", "")
             redis_password: str = data.get("PASSWORD", "")
     except FileNotFoundError:
-        raise FileNotFoundError("redis.json file not found")
+        return "", ""
 
     return redis_url, redis_password

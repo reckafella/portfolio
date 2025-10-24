@@ -11,11 +11,11 @@ from app.views.helpers.cloudinary import (
     handle_image_upload
 )
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.forms import BlogPostForm
-from blog.models import BlogIndexPage, BlogPostImage, BlogPostPage
-from portfolio import settings
+from ..forms import BlogPostForm
+from ..models import BlogIndexPage, BlogPostImage, BlogPostPage
+from django.conf import settings
 
-uploader = CloudinaryImageHandler()
+# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
 
 class BasePostView(LoginRequiredMixin, UserPassesTestMixin):

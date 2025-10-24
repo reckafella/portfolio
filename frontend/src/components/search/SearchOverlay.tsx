@@ -99,7 +99,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
             placeholder="Search projects, blog posts..." 
             required 
           />
-          
+
           <button 
             type="submit" 
             className="btn btn-success fw-bold"

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView
 from taggit.models import Tag
 
-from blog.models import BlogPostPage
+from ..models import BlogPostPage
 
 
 class BasePostListView(ListView):

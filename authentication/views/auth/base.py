@@ -54,7 +54,7 @@ class BaseAuthentication(FormView):
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if is_ajax(request):
             return self.render_to_response({"form": self.get_form()})
         return super().get(request, *args, **kwargs)
 

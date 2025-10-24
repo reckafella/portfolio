@@ -25,18 +25,20 @@ export const AlertMessage: React.FC<AlertMessageProps> = ({
   };
 
   return (
-    <div className={alertClass} role="alert">
-      <i className={`${iconMap[type]} me-2`}></i>
-      {message}
-      {dismissible && (
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-          onClick={onDismiss}
-        ></button>
-      )}
+    <div className='d-flex flex-column my-5 justify-content-center align-items-center'>
+      <div className={alertClass} role="alert">
+        <i className={`${iconMap[type]} me-2`}></i>
+        {message}
+        {dismissible && (
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={onDismiss}
+          ></button>
+        )}
+      </div>
     </div>
   );
 };

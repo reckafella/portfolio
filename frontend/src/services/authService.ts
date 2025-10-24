@@ -1,4 +1,5 @@
 import { handleApiError } from '@/utils/errorUtils';
+import { tabSyncService } from './tabSyncService';
 
 // API Configuration
 // const API_BASE_URL = 'http://127.0.0.1:8000/api/v1'; // || 'http://127.0.0.1:8001/api/v1';
@@ -102,6 +103,9 @@ export class AuthService {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
+        // Broadcast login event to other tabs
+        tabSyncService.broadcastLogin(data.user);
+        
         return data;
     }
 
@@ -122,6 +126,9 @@ export class AuthService {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
+        // Broadcast signup event to other tabs
+        tabSyncService.broadcastSignup(data.user);
+        
         return data;
     }
 
@@ -138,6 +145,9 @@ export class AuthService {
             // Always clear local storage
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user');
+            
+            // Broadcast logout event to other tabs
+            tabSyncService.broadcastLogout();
         }
     }
 

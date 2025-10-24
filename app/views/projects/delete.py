@@ -92,7 +92,8 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         except ProtectedError as pe:
             protected_objects = list(pe.protected_objects)
             protected_details = [
-                f"{obj.__class__.__name__} (ID: {obj.pk})" for obj in protected_objects]
+                f"{obj.__class__.__name__} (ID: {obj.pk})"
+                for obj in protected_objects]
             error_message = (
                 f"Failed. Project still referenced by {len(protected_objects)} objects: "
                 f"{', '.join(protected_details)}"
@@ -141,8 +142,8 @@ class DeleteProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         """
         Override get_success_url to redirect to the success URL
         """
-        return self.success_url
+        return str(self.success_url)

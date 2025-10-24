@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 
 const BadRequestPage: React.FC = () => {
     usePageTitle('400 - Bad Request');
-
+    useMetaTags({
+        title: '400 - Bad Request',
+        description: 'The request could not be understood by the server. This might be due to malformed syntax or invalid parameters.',
+        keywords: '400, bad request, error, server',
+        ogTitle: '400 - Bad Request',
+        ogDescription: 'The request could not be understood by the server. This might be due to malformed syntax or invalid parameters.',
+        ogType: 'website',
+    });
     return (
         <section className="section http-errors min-vh-100 d-flex align-items-center justify-content-center">
             <div className="container">
@@ -13,8 +21,8 @@ const BadRequestPage: React.FC = () => {
                         <div className="error-content">
                             {/* Error Code */}
                             <div className="error-code mb-4">
-                                <h1 className="display-1 fw-bold text-danger mb-0">400</h1>
-                                <div className="error-divider mx-auto my-3" style={{ width: '100px', height: '4px', backgroundColor: '#dc3545' }}></div>
+                                <h1 className="fw-bold mb-0" style={{ color: 'var(--text-error-color)' }}>400</h1>
+                                <div className="error-divider mx-auto my-3" style={{ width: '100px', height: '4px', backgroundColor: 'var(--text-error-color)' }}></div>
                             </div>
                             {/* Error Message */}
                             <div className="error-message mb-4">

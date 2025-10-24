@@ -11,6 +11,7 @@ export interface BlogPost {
   intro?: string;
   date: string;
   featured_image_url?: string;
+  cover_image_url?: string;
   tags_list: string[];
   reading_time: string;
   view_count: number;
@@ -92,8 +93,8 @@ export function useBlogPost(slug: string) {
       const response = await apiRequest(`/api/v1/blog/article/${slug}/`);
       return response.json() as Promise<BlogPost>;
     },
-    enabled: !!slug,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !slug.match('undefined') && !!slug,
+    staleTime: 20 * 60 * 1000, // 20 minutes
   });
 }
 
@@ -146,60 +147,27 @@ export function useBlogPostFormConfig() {
 }
 
 // Blog mutations
-export function useCreateBlogComment() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (data: { 
-      post: BlogPost; 
-      name: string; 
-      email: string; 
-      website?: string; 
-      comment: string 
-    }) => {
-      const response = await apiRequest(`/api/v1/blog/article/${data.post.slug}/comments/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          website: data.website || '',
-          comment: data.comment
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || errorData.message || 'Failed to create comment'
-        );
-      }
-
-      return response.json();
-    },
-    onSuccess: (_, data) => {
-      // Invalidate comments for this blog post
-      queryClient.invalidateQueries({ queryKey: blogKeys.comments(data.post.slug) });
-      // Invalidate the blog post to update comment count
-      queryClient.invalidateQueries({ queryKey: blogKeys.post(data.post.slug) });
-    },
-  });
-}
-
 export function useCreateBlogPost() {
   const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await apiRequest('/api/blog/article/create/', {
+      const response = await apiRequest('/api/v1/blog/article/create/', {
         method: 'POST',
         body: data,
         headers: {
           // Don't set Content-Type for FormData - browser will set it with boundary
         },
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('Blog post creation failed') as any;
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
+      }
+
       return response.json();
     },
     onSuccess: () => {
@@ -213,16 +181,25 @@ export function useCreateBlogPost() {
 
 export function useUpdateBlogPost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ slug, data }: { slug: string; data: FormData }) => {
-      const response = await apiRequest(`/api/blog/article/${slug}/`, {
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/update/`, {
         method: 'PUT',
         body: data,
         headers: {
           // Don't set Content-Type for FormData - browser will set it with boundary
         },
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const error = new Error('Blog post update failed') as any;
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
+      }
+
       return response.json();
     },
     onSuccess: (_, { slug }) => {
@@ -236,10 +213,10 @@ export function useUpdateBlogPost() {
 
 export function useDeleteBlogPost() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (slug: string) => {
-      const response = await apiRequest(`/api/blog/article/${slug}/`, {
+      const response = await apiRequest(`/api/v1/blog/article/${slug}/delete/`, {
         method: 'DELETE',
       });
       return response.ok;

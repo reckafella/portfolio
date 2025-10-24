@@ -1,190 +1,77 @@
 from rest_framework import serializers
-from wagtail.api import APIField
-from wagtail.images.api.fields import ImageRenditionField
+from wagtail.images.models import Image
 from .models import BlogPostPage, BlogPostComment, BlogPostImage
-from django.contrib.auth.models import User
-
-
-class BlogPostImageSerializer(serializers.ModelSerializer):
-    """Serializer for blog post images"""
-    image_url = serializers.SerializerMethodField()
-    optimized_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = BlogPostImage
-        fields = ['id', 'cloudinary_image_id', 'cloudinary_image_url', 'optimized_image_url', 'image_url', 'optimized_url']
-
-    def get_image_url(self, obj):
-        return obj.cloudinary_image_url or None
-
-    def get_optimized_url(self, obj):
-        return obj.optimized_image_url or obj.cloudinary_image_url
-
-
-class BlogPostCommentSerializer(serializers.ModelSerializer):
-    """Serializer for blog post comments"""
-    author_name = serializers.CharField(source='author.username', read_only=True)
-    created_at_formatted = serializers.SerializerMethodField()
-
-    class Meta:
-        model = BlogPostComment
-        fields = [
-            'id', 'content', 'created_at', 'created_at_formatted',
-            'author_name', 'updated_at'
-        ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'author_name']
-
-    def get_created_at_formatted(self, obj):
-        return obj.created_at.strftime('%B %d, %Y at %I:%M %p')
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
 
 
 class BlogPostPageSerializer(serializers.ModelSerializer):
-    """Serializer for blog posts"""
-    images = BlogPostImageSerializer(many=True, read_only=True)
-    comments = BlogPostCommentSerializer(many=True, read_only=True)
-    comments_count = serializers.SerializerMethodField()
-    reading_time = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
     excerpt = serializers.SerializerMethodField()
     featured_image_url = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
     tags_list = serializers.SerializerMethodField()
+    reading_time = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
-    first_published_at = serializers.DateTimeField()
-    content = serializers.CharField()
-    intro = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPostPage
         fields = [
-            'id', 'title', 'slug', 'intro', 'content', 'featured_image_url',
-            'tags_list', 'excerpt', 'reading_time', 'view_count', 'images',
-            'comments', 'comments_count', 'first_published_at', 'last_published_at',
-            'author', 'published'
+            'id', 'title', 'slug', 'content', 'excerpt', 'date',
+            'featured_image_url', 'cover_image_url', 'tags_list',
+            'reading_time', 'view_count', 'comments_count',
+            'first_published_at', 'last_published_at', 'author', 'intro'
         ]
-        read_only_fields = ['id', 'slug', 'view_count', 'first_published_at', 'last_published_at']
 
-    def get_author(self, obj):
-        """Get the full name if available, otherwise username"""
-        if obj.author:
-            full_name = f"{obj.author.first_name} {obj.author.last_name}".strip()
-            if full_name:
-                return full_name
-            return obj.author.username
-        return "Anonymous"
-
-    def get_comments_count(self, obj):
-        return obj.comments.count()
-
-    def get_reading_time(self, obj):
-        # Calculate reading time (approximately 200 words per minute)
-        content = obj.content or ''
-        if hasattr(obj, 'stream_content') and obj.stream_content:
-            content += str(obj.stream_content)
-
-        word_count = len(content.split()) if content else 0
-        reading_time = max(1, round(word_count / 200))
-        return f"{reading_time} min read"
+    def get_content(self, obj):
+        """Get the rendered content of the blog post"""
+        if hasattr(obj, 'body'):
+            return obj.body
+        return obj.content
 
     def get_excerpt(self, obj):
-        content = obj.content or ''
-        if len(content) > 200:
-            return f"{content[:200]}..."
-        return content
-
-    def get_intro(self, obj):
-        # Return first paragraph as intro
-        content = obj.content or ''
-        if content:
-            paragraphs = content.split('\n')
-            return paragraphs[0] if paragraphs else ''
-        return ''
+        """Get a short excerpt of the blog post"""
+        if hasattr(obj, 'excerpt'):
+            return obj.excerpt
+        # Default to first 150 characters of content if no excerpt
+        return obj.content[:150] + '...' if len(obj.content) > 150 else obj.content
 
     def get_featured_image_url(self, obj):
-        if obj.cover_image_url:
-            return obj.cover_image_url
+        """Get the URL of the featured image"""
+        if obj.featured_image:
+            return obj.featured_image.url
+        return None
+
+    def get_cover_image_url(self, obj):
+        """Get the URL of the cover image"""
+        if obj.cover_image:
+            return obj.cover_image.url
         return None
 
     def get_tags_list(self, obj):
+        """Get list of tag names"""
         return [tag.name for tag in obj.tags.all()]
 
+    def get_reading_time(self, obj):
+        """Calculate estimated reading time"""
+        return obj.reading_time
 
-class BlogPostCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating blog posts"""
-    tags_input = serializers.CharField(write_only=True, required=False, help_text="Comma-separated tags")
-    cover_image = serializers.FileField(
-        write_only=True,
-        required=False,
-        help_text="Cover image for the blog post"
-    )
+    def get_comments_count(self, obj):
+        """Get number of comments"""
+        return obj.comments.count()
 
+    def get_author(self, obj):
+        """Get author name"""
+        if obj.author:
+            return obj.author.get_full_name() or obj.author.username
+        return "Anonymous"
+
+
+class BlogPostCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BlogPostPage
-        fields = ['title', 'content', 'published', 'tags_input', 'cover_image']
-
-    def create(self, validated_data):
-        from blog.models import BlogIndexPage
-        from django.utils.text import slugify
-        from titlecase import titlecase
-        from django.db import transaction
-        from app.views.helpers.cloudinary import CloudinaryImageHandler
-
-        # Extract data from validated_data
-        tags_input = validated_data.pop('tags_input', '')
-        cover_image = validated_data.pop('cover_image', None)
-
-        # Get the blog index page (parent)
-        blog_index = BlogIndexPage.objects.first()
-        if not blog_index:
-            raise serializers.ValidationError("Blog index page not found")
-
-        # Initialize Cloudinary uploader
-        uploader = CloudinaryImageHandler()
-
-        # Create the blog post page
-        with transaction.atomic():
-            post = BlogPostPage(
-                title=titlecase(validated_data['title']),
-                slug=slugify(validated_data['title']),
-                content=validated_data.get('content', ''),
-                published=validated_data.get('published', False),
-                author=self.context['request'].user,
-                seo_title=titlecase(validated_data['title']),
-                seo_description=validated_data.get('content', '')[:160],
-            )
-
-            # Add to parent page
-            blog_index.add_child(instance=post)
-            post.save()
-
-            # Handle cover image
-            if cover_image:
-                try:
-                    response = uploader.upload_image(
-                        cover_image,
-                        folder=f"portfolio/blog/{post.slug}"
-                    )
-                    post.cloudinary_image_id = response.get('cloudinary_image_id')
-                    post.cloudinary_image_url = response.get('cloudinary_image_url')
-                    post.optimized_image_url = response.get('optimized_image_url')
-                    post.save()
-                except Exception as e:
-                    raise serializers.ValidationError(f"Failed to upload cover image: {str(e)}")
-
-            # Handle tags
-            if tags_input:
-                tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
-                post.tags.set(*tag_names)
-
-            # Create a revision
-            revision = post.save_revision(
-                user=self.context['request'].user,
-                approved_go_live_at=None
-            )
-
-            # Publish if requested
-            if validated_data.get('published', False):
-                revision.publish()
-
-        return post
+        model = BlogPostComment
+        fields = ['id', 'author_name', 'content', 'created_at']
 
 
 class BlogCommentCreateSerializer(serializers.ModelSerializer):
@@ -193,169 +80,99 @@ class BlogCommentCreateSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(help_text="Your email address")
     website = serializers.URLField(required=False, allow_blank=True, help_text="Your website (optional)")
     comment = serializers.CharField(help_text="Your comment")
+    captcha_0 = serializers.CharField(required=True, write_only=True)
+    captcha_1 = serializers.CharField(required=True, write_only=True)
 
     class Meta:
         model = BlogPostComment
-        fields = ['name', 'email', 'website', 'comment']
+        fields = ['name', 'email', 'website', 'comment', 'captcha_0', 'captcha_1']
 
     def validate_comment(self, value):
+        """
+        Validate comment content length and format.
+        """
         if len(value.strip()) < 10:
-            raise serializers.ValidationError("Comment must be at least 10 characters long")
-        return value.strip()
+            raise serializers.ValidationError(
+                "Comment must be at least 10 characters long."
+            )
+        return value
+
+    def validate(self, attrs):
+        """
+        Validate CAPTCHA.
+        """
+        captcha_0 = attrs.get('captcha_0')
+        captcha_1 = attrs.get('captcha_1')
+
+        if not captcha_0 or not captcha_1:
+            raise serializers.ValidationError(
+                {'captcha': 'CAPTCHA is required'}
+            )
+
+        # Clean expired captchas
+        CaptchaStore.objects.remove_expired()
+
+        try:
+            captcha = CaptchaStore.objects.get(hashkey=captcha_0)
+            if captcha_1.upper() != captcha.response:
+                raise serializers.ValidationError(
+                    {'captcha': 'Invalid CAPTCHA. Please try again.'}
+                )
+            # Delete used CAPTCHA after successful validation
+            captcha.delete()
+        except CaptchaStore.DoesNotExist:
+            raise serializers.ValidationError(
+                {'captcha': 'CAPTCHA has expired. Please refresh and try again.'}
+            )
+
+        return attrs
 
     def create(self, validated_data):
-        # Extract the post from validated_data
-        post = validated_data.get('post')
-        if not post:
-            raise serializers.ValidationError("Post is required")
+        """
+        Create the comment.
+        """
+        # Remove CAPTCHA data before creating comment
+        validated_data.pop('captcha_0', None)
+        validated_data.pop('captcha_1', None)
 
-        # Generate a unique anonymous username based on name and timestamp
-        from django.utils import timezone
-        import hashlib
+        # Map fields to model fields
+        comment_data = {
+            'author_name': validated_data['name'],
+            'author_email': validated_data['email'],
+            'website': validated_data.get('website', ''),
+            'content': validated_data['comment'],
+            'post': validated_data['post']
+        }
 
-        name = validated_data.get('name', '').strip()
-        email = validated_data.get('email', '').strip().lower()
-        timestamp = timezone.now().timestamp()
-        unique_string = f"{name}_{email}_{timestamp}"
-        hashed = hashlib.md5(unique_string.encode()).hexdigest()[:10]
-        username = f"anonymous_{hashed}"
-
-        # Create a new user for this comment
-        author = User.objects.create_user(
-            username=username,
-            email=email,
-            password=None,
-            first_name=name,
-            is_active=False
-        )
-
-        # Create the comment
-        comment = BlogPostComment.objects.create(
-            post=post,
-            author=author,
-            content=validated_data.get('comment', '').strip()
-        )
-
-        return comment
+        return BlogPostComment.objects.create(**comment_data)
 
     def to_representation(self, instance):
         """
         Convert the comment instance to a JSON-serializable format
         """
-        return {
-            'id': instance.id,
-            'author_name': instance.author.first_name or instance.author.username,
-            'content': instance.content,
-            'created_at': instance.created_at.isoformat(),
-            'created_at_formatted': instance.created_at.strftime('%B %d, %Y at %I:%M %p')
-        }
+        ret = super().to_representation(instance)
+        ret['created_at'] = instance.created_at.isoformat()
+        ret['id'] = instance.id
+        ret['author_name'] = instance.author_name
+        return ret
+
+
+class BlogPostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPostImage
+        fields = ['id', 'image', 'alt_text', 'caption']
+
+
+class BlogPostCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPostPage
+        fields = [
+            'title', 'intro', 'content', 'featured_image',
+            'cover_image', 'published', 'tags'
+        ]
 
 
 class BlogPostDeleteSerializer(serializers.ModelSerializer):
-    """Serializer for deleting blog posts with proper cleanup"""
-
     class Meta:
         model = BlogPostPage
-        fields = []  # No fields needed for deletion
-
-    def validate(self, attrs):
-        # Check if user has permission to delete
-        request = self.context.get('request')
-        if not request or not (request.user.is_staff or self.instance.author == request.user):
-            raise serializers.ValidationError("You do not have permission to delete this post.")
-        return attrs
-
-    def delete_images(self, post):
-        """Delete all post images from Cloudinary and database"""
-        from app.views.helpers.cloudinary import CloudinaryImageHandler
-        uploader = CloudinaryImageHandler()
-
-        success_messages = []
-        error_messages = []
-
-        # Delete cover image if exists
-        if post.cloudinary_image_id:
-            try:
-                uploader.delete_image(post.cloudinary_image_id)
-                success_messages.append("Successfully deleted cover image.")
-            except Exception as e:
-                error_messages.append(f"Failed to delete cover image: {str(e)}")
-
-        # Delete all blog post images
-        images = list(post.images.all())
-        for image in images:
-            try:
-                if image.cloudinary_image_id:
-                    uploader.delete_image(image.cloudinary_image_id)
-                image.delete()
-                success_messages.append("Successfully deleted post image.")
-            except Exception as e:
-                error_messages.append(f"Failed to delete post image: {str(e)}")
-
-        if error_messages:
-            raise serializers.ValidationError(error_messages)
-
-        return success_messages
-
-    def delete_comments(self, post):
-        """Delete all comments and their associated anonymous users"""
-        success_messages = []
-        error_messages = []
-
-        comments = list(post.comments.all())
-        for comment in comments:
-            try:
-                # Delete the anonymous user if they have no other comments
-                author = comment.author
-                comment.delete()
-                if author and author.is_active is False:  # Anonymous user
-                    if not author.blog_post_comments.exists():
-                        author.delete()
-                success_messages.append("Successfully deleted comment.")
-            except Exception as e:
-                error_messages.append(f"Failed to delete comment: {str(e)}")
-
-        if error_messages:
-            raise serializers.ValidationError(error_messages)
-
-        return success_messages
-
-    def delete_post(self, post):
-        """Delete the blog post after cleaning up related objects"""
-        try:
-            post_title = post.title
-
-            # Delete all revisions
-            post.revisions.all().delete()
-
-            # Delete the page
-            post.delete()
-
-            return [f"Blog post '{post_title}' deleted successfully!"]
-        except Exception as e:
-            raise serializers.ValidationError(f"Blog post deletion failed: {str(e)}")
-
-    def delete(self, instance):
-        """Handle the complete deletion process with rollback on failure"""
-        from django.db import transaction
-
-        success_messages = []
-
-        try:
-            with transaction.atomic():
-                # Delete in order: images, comments, then the post
-                success_messages.extend(self.delete_images(instance))
-                success_messages.extend(self.delete_comments(instance))
-                success_messages.extend(self.delete_post(instance))
-
-                return {
-                    "success": True,
-                    "messages": success_messages,
-                    "errors": []
-                }
-
-        except serializers.ValidationError as e:
-            # Re-raise validation errors
-            raise serializers.ValidationError(str(e))
-        except Exception as e:
-            raise Exception(str(e))
+        fields = ['slug']

@@ -3,35 +3,36 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import HomePage from './pages/home/HomePage'
+import AboutPage from './pages/about/AboutPage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
 import { ProjectAddPage } from './pages/projects/ProjectAddPage'
 import { ProjectEditPage } from './pages/projects/ProjectEditPage'
 import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
-import { BlogListPage, BlogDetailPage, BlogAddPage, BlogEditPage } from './pages/blog'
+import { BlogListPage, BlogDetailPage, BlogEditPage, BlogEditorPage } from './pages/blog'
 import ContactPage from './pages/contact/ContactPage'
 import ServicesPage from './pages/services/ServicesPage'
 import SearchResults from './pages/search/SearchResults'
+import SitemapPage from './pages/sitemap/SitemapPage'
+import SitemapPageXML from './pages/sitemap/SitemapPageXML'
+import { MessageInbox } from './pages/messages/MessageInbox'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import ScrollToTop from './components/utils/ScrollToTop'
-import SearchOverlay from './components/search/SearchOverlay'
+import SearchModal from './components/search/SearchModal'
 import LoginForm from './components/forms/auth/LoginForm'
 import SignupForm from './components/forms/auth/SignupForm'
 import LogoutPage from './pages/auth/LogoutPage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { PublicRoute } from './components/auth/PublicRoute'
 import AuthProvider from './hooks/useAuth'
 import ErrorBoundary from './components/errors/ErrorBoundary'
 import { LoadingProvider } from './hooks/useLoading'
 import Preloader from './components/common/Preloader'
 import RouteTransition from './components/transitions/RouteTransition'
-import { 
-    NotFoundPage, 
-    BadRequestPage, 
-    UnauthorizedPage, 
-    ForbiddenPage, 
-    ServerErrorPage 
-} from './pages/errors'
+import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerErrorPage } from './pages/errors'
 import './App.css'
+import './styles/search.css'
+import './styles/messages.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -67,6 +68,14 @@ function App() {
                                         <Routes>
                                             <Route path="/" element={<HomePage />} />
                                             
+                                            {/* Sitemap route */}
+                                            <Route path="/sitemap" element={<SitemapPage />} />
+                                            <Route path="/sitemap.xml" element={<SitemapPageXML />} />
+                                            
+                                            {/* Project routes */}
+                                            {/* About route */}
+                                            <Route path="/about" element={<AboutPage />} />
+                                            
                                             {/* Project routes */}
                                             <Route path="/projects" element={<ProjectListPage />} />
                                             <Route 
@@ -93,7 +102,7 @@ function App() {
                                                 path="/blog/new" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
-                                                        <BlogAddPage />
+                                                        <BlogEditorPage />
                                                     </ProtectedRoute>
                                                 } 
                                             />
@@ -101,28 +110,42 @@ function App() {
                                                 path="/blog/edit/:slug" 
                                                 element={
                                                     <ProtectedRoute requireStaff={true}>
+                                                        <BlogEditorPage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
+                                            <Route 
+                                                path="/blog/editor/:slug?" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
                                                         <BlogEditPage />
                                                     </ProtectedRoute>
                                                 } 
                                             />
-                                            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+                                            <Route path="/blog/article/:slug" element={<BlogDetailPage />} />
                                             
                                             <Route path="/contact" element={<ContactPage />} />
                                             <Route path="/services" element={<ServicesPage />} />
                                             <Route path="/search" element={<SearchResults />} />
+                                            
+                                            {/* Message inbox - Staff only */}
+                                            <Route 
+                                                path="/messages/inbox" 
+                                                element={
+                                                    <ProtectedRoute requireStaff={true}>
+                                                        <MessageInbox />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
 
                                             {/* Authentication routes - organized under /auth for consistency */}
-                                            <Route path="/login" element={<LoginForm />} />
-                                            <Route path="/signup" element={<SignupForm />} />
+                                            <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />
+                                            <Route path="/signup" element={<PublicRoute><SignupForm /></PublicRoute>} />
                                             <Route path="/logout" element={<LogoutPage />} />
                                             
                                             {/* Legacy authentication route redirects for backward compatibility */}
-                                            <Route path="/login" element={<Navigate to="/login" replace />} />
                                             <Route path="/signin" element={<Navigate to="/login" replace />} />
-                                            <Route path="/signup" element={<Navigate to="/signup" replace />} />
                                             <Route path="/register" element={<Navigate to="/signup" replace />} />
-                                            <Route path="/logout" element={<Navigate to="/logout" replace />} />
-                                            <Route path="/signout" element={<Navigate to="/logout" replace />} />
 
                                             {/* Error routes */}
                                             <Route path="/error/400" element={<BadRequestPage />} />
@@ -138,7 +161,7 @@ function App() {
                                 </main>
                                 <Footer />
                                 <ScrollToTop />
-                                <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+                                <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
                                 <ReactQueryDevtools initialIsOpen={false} />
                             </div>
                         </AuthProvider>

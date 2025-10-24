@@ -5,17 +5,27 @@
 // Main navigation routes
 export const ROUTES = {
   // Core pages
-  HOME: '/',
+  ABOUT: '/about',
   SERVICES: '/services',
   CONTACT: '/contact',
   SEARCH: '/search',
+  SITEMAP: '/sitemap',
+
+  // About page management routes
+  ABOUT_MANAGE: {
+    OVERVIEW: '/about/edit',
+    PROFILE: '/about/edit/profile',
+    EDUCATION: '/about/edit/education',
+    EXPERIENCE: '/about/edit/experience',
+    SKILLS: '/about/edit/skills',
+  },
 
   // Blog routes
   BLOG: {
     LIST: '/blog',
-    DETAIL: (slug: string) => `/blog/${slug}`,
+    DETAIL: (slug: string) => `/blog/article/${slug}`,
     ADD: '/blog/new',
-    EDIT: (slug: string) => `/blog/edit/${slug}`,
+    EDIT: (slug: string) => `/blog/article/${slug}/edit`,
     TAG: (tag: string) => `/blog?tag=${encodeURIComponent(tag)}`,
   },
 
@@ -24,7 +34,7 @@ export const ROUTES = {
     LIST: '/projects',
     DETAIL: (slug: string) => `/projects/${slug}`,
     ADD: '/projects/new',
-    EDIT: (slug: string) => `/projects/edit/${slug}`,
+    EDIT: (slug: string) => `/projects/${slug}/edit`,
   },
 
   // Authentication routes
@@ -35,6 +45,11 @@ export const ROUTES = {
     PROFILE: '/profile',
   },
 
+  // Message routes
+  MESSAGES: {
+    INBOX: '/messages/inbox',
+  },
+
   // Error routes
   ERROR: {
     BAD_REQUEST: '/error/400',
@@ -42,6 +57,12 @@ export const ROUTES = {
     FORBIDDEN: '/error/403',
     NOT_FOUND: '/error/404',
     SERVER_ERROR: '/error/500',
+  },
+  DJANGO_ADMIN: {
+    ROUTES: '/admin/',
+  },
+  WAGTAIL: {
+    ROUTES: '/wagtail/admin/',
   },
 
   // Legacy authentication redirects (for backward compatibility)
@@ -57,17 +78,31 @@ export const ROUTES = {
 
 // Navigation items for the main navigation component
 export const NAV_ITEMS = [
-  { path: ROUTES.HOME, label: 'Home' },
+  { path: ROUTES.ABOUT, label: 'About' },
   { path: ROUTES.SERVICES, label: 'Services' },
-  { path: ROUTES.PROJECTS.LIST, label: 'Projects' },
   { path: ROUTES.BLOG.LIST, label: 'Blog' },
-  { path: ROUTES.CONTACT, label: 'Contact' },
+  { path: ROUTES.PROJECTS.LIST, label: 'Projects' },
+  { path: ROUTES.CONTACT, label: 'Contact' }
+] as const;
+
+export const ADMIN_NAV_ITEMS = [
+  { path: ROUTES.DJANGO_ADMIN.ROUTES, label: 'Admin Panel' },
+  { path: ROUTES.WAGTAIL.ROUTES, label: 'Wagtail Admin' },
 ] as const;
 
 // Staff navigation items
 export const STAFF_NAV_ITEMS = [
   { path: ROUTES.PROJECTS.ADD, label: 'Add Project' },
-  { path: '/admin', label: 'Admin Panel' },
+  { path: ROUTES.BLOG.ADD, label: 'Add Blog Post' },
+] as const;
+
+// About management navigation items  
+export const ABOUT_MANAGE_NAV_ITEMS = [
+  { path: ROUTES.ABOUT_MANAGE.OVERVIEW, label: 'Edit Overview', icon: 'bi-pencil-square' },
+  { path: ROUTES.ABOUT_MANAGE.PROFILE, label: 'Edit Profile', icon: 'bi-person-gear' },
+  { path: ROUTES.ABOUT_MANAGE.EDUCATION, label: 'Manage Education', icon: 'bi-mortarboard' },
+  { path: ROUTES.ABOUT_MANAGE.EXPERIENCE, label: 'Manage Experience', icon: 'bi-briefcase' },
+  { path: ROUTES.ABOUT_MANAGE.SKILLS, label: 'Manage Skills', icon: 'bi-gear-wide-connected' },
 ] as const;
 
 /**

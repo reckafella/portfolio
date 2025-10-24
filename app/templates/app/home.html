@@ -5,7 +5,7 @@
 {% block keywords %}portfolio, software engineer, web development, projects, blog, contact{% endblock %}
 
 {% block content %}
-<section id="hero" class="section hero py-5">
+<section id="hero" class="section hero py-5" aria-labelledby="hero-heading">
     <div class="hero-background" data-aos="fade-in">
         <img src="https://res.cloudinary.com/dg4sl9jhw/image/upload/image_2025-07-10_at_15.55.17_wwo7tj"
         alt="Hero Background" type="image/png" class="img-fluid" loading="lazy">
@@ -14,7 +14,7 @@
     <div class="container text-center" data-aos="fade-in" data-aos-delay="200">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h2 class="stix-two-text-bold">{{ admin_profile.name|default:"Ethan Wanyoike" }}</h2>
+                <h1 id="hero-heading" class="stix-two-text-bold">{{ admin_profile.name|default:"Ethan Wanyoike" }}</h1>
                 <div>
                     <p>A Software Engineer specializing in:</p>
                     <p>
@@ -40,9 +40,9 @@
         </div>
     </div>
 </section>
-<section id="about" class="section about py-4">
+<section id="about" class="section about py-4" aria-labelledby="about-heading">
     <div class="container section-title">
-        <h2>About Me</h2>
+        <h2 id="about-heading">About Me</h2>
         <p>Get to Know Me Better</p>
     </div>
 
@@ -59,19 +59,19 @@
                     {% if admin_socials %}
                     {% with social=admin_socials %}
                     {% if social.linkedin %}
-                    <a href="{{ social.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                    <a href="{{ social.linkedin }}" class="linkedin" title="Connect with me on LinkedIn" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
                     {% endif %}
                     {% if social.github %}
-                    <a href="{{ social.github }}" class="github"><i class="bi bi-github"></i></a>
+                    <a href="{{ social.github }}" class="github" title="View my GitHub profile" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i></a>
                     {% endif %}
                     {% if social.twitter_x %}
-                    <a href="{{ social.twitter_x }}" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="{{ social.twitter_x }}" class="twitter" title="Follow me on X (Twitter)" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter-x"></i></a>
                     {% endif %}
                     {% if social.facebook %}
-                    <a href="{{ social.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="{{ social.facebook }}" class="facebook" title="Connect with me on Facebook" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
                     {% endif %}
                     {% if social.instagram %}
-                    <a href="{{ social.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="{{ social.instagram }}" class="instagram" title="Follow me on Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
                     {% endif %}
                     {% endwith %}
                     {% endif %}
@@ -114,9 +114,9 @@
                 </div>
                 <p class="py-2">I thrive in collaborative environments and am committed to continuous learning and professional growth. My approach combines technical expertise with effective communication skills to deliver solutions that exceed expectations. Whether working on complex backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable, and maintainable code.</p>
                 <div class="mt-4 d-flex justify-content-center">
-                    <a href="{% url 'app:resume' %}" class="btn btn-secondary me-3"><i
+                    <a href="{% url 'app:resume' %}" class="btn btn-secondary me-3" title="View my resume and professional experience"><i
                             class="bi bi-file-earmark-text me-1"></i> View Resume</a>
-                    <a href="{% url 'app:contact' %}" class="btn btn-success"><i class="bi bi-envelope me-1"></i>
+                    <a href="{% url 'app:contact' %}" class="btn btn-success" title="Get in touch with me"><i class="bi bi-envelope me-1"></i>
                         Contact Me</a>
                 </div>
             </div>
@@ -126,11 +126,11 @@
 <!-- End About Section -->
 
 <!-- Skills Section -->
-<section id="skills" class="section skills py-5">
+<section id="skills" class="section skills py-5" aria-labelledby="skills-heading">
     <div class="container">
         <!-- Section Title -->
         <div class="section-title text-center mb-1">
-            <h2>Skills & Expertise</h2>
+            <h2 id="skills-heading">Skills & Expertise</h2>
             <p class="text-muted">My Technical Toolkit</p>
         </div>
 
@@ -314,13 +314,13 @@
                         <h4 class="mb-3 fw-bold">Want to see my skills in action?</h4>
                         <p class="mb-4 text-muted">Explore my portfolio projects or check out my technical articles.</p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
-                            <a href="{% url 'app:projects' %}" class="btn btn-warning btn-lg px-4 py-2">
+                            <a href="{% url 'app:projects' %}" class="btn btn-warning btn-lg px-4 py-2" title="Explore my portfolio projects">
                                 <i class="bi bi-code-slash me-2"></i>View Projects
                             </a>
-                            <a href="{% url 'blog:list_articles' %}" class="btn btn-info btn-lg px-4 py-2">
+                            <a href="{% url 'blog:list_articles' %}" class="btn btn-info btn-lg px-4 py-2" title="Read my latest blog posts">
                                 <i class="bi bi-journal-text me-2"></i>Read Blog
                             </a>
-                            <a href="{% url 'app:resume' %}" class="btn btn-success btn-lg px-4 py-2">
+                            <a href="{% url 'app:resume' %}" class="btn btn-success btn-lg px-4 py-2" title="Download my resume">
                                 <i class="bi bi-file-earmark-person me-2"></i>See Resume
                             </a>
                         </div>

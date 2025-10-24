@@ -4,13 +4,26 @@ import os
 from django.conf import settings
 from django.http import (FileResponse, Http404, HttpResponseRedirect,
                          JsonResponse)
+from django.utils.decorators import method_decorator
 from django.views.generic.base import RedirectView, TemplateView, View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from wagtail.models import Page
 
+from app.utils.cache import cache_page_with_prefix
 from app.models import Projects
 from blog.models import BlogPostPage as BlogPost
 
 
+def get_view_cache_key(request, prefix, key_prefix=None):
+    """Helper function to get a cache key for a view."""
+    if not key_prefix:
+        key_prefix = getattr(request, '_cache_prefix', '') or ''
+    user_prefix = getattr(request, '_cache_user', '') or ''
+    return f"{prefix}:{user_prefix}:{key_prefix}:{request.build_absolute_uri()}"
+
+
+@method_decorator(cache_page_with_prefix('home', 300), name='dispatch')
 class HomeView(TemplateView):
     """Class-based view to render the home page"""
     template_name = "app/home.html"
@@ -29,12 +42,18 @@ class HomeView(TemplateView):
         return context
 
 
+@method_decorator(cache_page_with_prefix('about', 3600), name='dispatch')
 class AboutView(TemplateView):
     """Class-based view to render the about page"""
     template_name = "app/about.html"
     status = 200
 
+    def dispatch(self, request, *args, **kwargs):
+        # Allow unauthenticated access to the about page
+        return super().dispatch(request, *args, **kwargs)
 
+
+@method_decorator(cache_page_with_prefix('services', 3600), name='dispatch')
 class ServicesView(TemplateView):
     """Class-based view to render the services page"""
     template_name = "app/services/services.html"
@@ -46,6 +65,7 @@ class ServicesView(TemplateView):
         return context
 
 
+@method_decorator(cache_page_with_prefix('resume', 3600), name='dispatch')
 class ResumeView(TemplateView):
     """Class-based view to render the resume page"""
     template_name = "app/resume.html"
@@ -82,6 +102,7 @@ class ResumePDFView(View):
         )
 
 
+@method_decorator(cache_page_with_prefix('sitemap', 3600), name='dispatch')
 class SitemapView(TemplateView):
     """Class-based view to render the sitemap"""
     template_name = "app/sitemaps/sitemap.html"
@@ -96,6 +117,48 @@ class SitemapView(TemplateView):
         context['blog_posts'] = blog_posts
         context['page_title'] = "Sitemap"
         return context
+
+
+@method_decorator(cache_page_with_prefix('sitemap-api', 3600), name='get')
+class SitemapAPIView(APIView):
+    """API view to provide sitemap data for React frontend"""
+
+    def get(self, request):
+        pages = Page.objects.live().specific().order_by('-first_published_at')
+        projects = Projects.objects.filter(live=True).order_by('-created_at')
+        blog_posts = BlogPost.objects.live().order_by('-first_published_at')
+
+        # Serialize the data
+        sitemap_data = {
+            'pages': [
+                {
+                    'title': page.title,
+                    'url': page.url,
+                    'last_modified': page.last_published_at.isoformat() if page.last_published_at else None,
+                }
+                for page in pages
+            ],
+            'projects': [
+                {
+                    'title': project.title,
+                    'slug': project.slug,
+                    'url': f'/projects/{project.slug}',
+                    'last_modified': project.updated_at.isoformat() if project.updated_at else None,
+                }
+                for project in projects
+            ],
+            'blog_posts': [
+                {
+                    'title': post.title,
+                    'slug': post.slug,
+                    'url': f'/blog/article/{post.slug}',
+                    'last_modified': post.first_published_at.isoformat() if post.first_published_at else None,
+                }
+                for post in blog_posts
+            ]
+        }
+
+        return Response(sitemap_data)
 
 
 class CustomRedirectView(RedirectView):

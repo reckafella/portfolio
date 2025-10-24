@@ -15,7 +15,7 @@
     <div class="container d-lg-flex justify-content-between align-items-center">
         <nav class="breadcrumbs">
             <ol>
-                <li><a href="{% url 'app:home' %}">Home</a></li>
+                <li><a href="{% url 'app:home' %}" title="Go to Home Page">Home</a></li>
                 <li class="active">{{ title }}</li>
             </ol>
         </nav>
@@ -25,7 +25,7 @@
 <section class="section project">
     <div class="container col-lg-11">
         <div class="section-title text-center mb-4">
-            <h2 class="display-2 fw-bold mb-2">{{ title }}</h2>
+            <h1 class="display-2 fw-bold mb-2">{{ title }}</h1>
             <p class="lead">
                 {% if projects %}
                     Personal & professional projects I have worked on.
@@ -168,14 +168,14 @@
             <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
                 <ul id="project-filters" class="project-filters isotope-filters">
                     <li data-filter="*" class="{% if current_category == 'all' %}filter-active{% endif %}">
-                        <a href="?{% if project_type %}project_type={{ project_type }}&{% endif %}{% if client %}client={{ client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}{% endif %}">
+                        <a href="?{% if project_type %}project_type={{ project_type }}&{% endif %}{% if client %}client={{ client }}&{% endif %}{% if q %}q={{ q }}&{% endif %}{% if sort_by %}sort-by={{ sort_by }}{% endif %}" title="Show all projects">
                             All
                         </a>
                     </li>
                     {% for category in categories %}
                     <li data-filter=".filter-{{ category }}"
                         class="{% if current_category == category %}filter-active{% endif %}">
-                        <a href="?category={{ category }}{% if project_type %}&project_type={{ project_type }}{% endif %}{% if client %}&client={{ client }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort_by %}&sort-by={{ sort_by }}{% endif %}">
+                        <a href="?category={{ category }}{% if project_type %}&project_type={{ project_type }}{% endif %}{% if client %}&client={{ client }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort_by %}&sort-by={{ sort_by }}{% endif %}" title="Filter projects by {{ category }} category">
                             {{ category }}
                         </a>
                     </li>
@@ -193,13 +193,13 @@
             <!-- No Projects Found -->
             <div class="text-center">
                 <p>Check back later or explore other sections of the site.</p>
-                <a href="{% url 'app:home' %}" class="btn btn-subtle-primary">Go to Home</a>
+                <a href="{% url 'app:home' %}" class="btn btn-subtle-primary" title="Return to the home page">Go to Home</a>
             </div>
             <div class="text-center mt-4">
-                <p>Need help with a project? <a href="{% url 'app:contact' %}">Contact me</a> for assistance!</p>
+                <p>Need help with a project? <a href="{% url 'app:contact' %}" title="Get in touch for project assistance">Contact me</a> for assistance!</p>
             </div>
             <div class="text-center mt-4">
-                <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}">blog</a> for updates!</p>
+                <p>Want to see more? Check out my <a href="{% url 'blog:list_articles' %}" title="Read my latest blog posts">blog</a> for updates!</p>
             </div>
         {% endif %}
     </div>

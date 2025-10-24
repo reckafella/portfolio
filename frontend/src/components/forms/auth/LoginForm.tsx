@@ -12,7 +12,7 @@ const LoginForm: React.FC = () => {
   const { showLoader, hideLoader } = usePreloader();
   usePageTitle('Login');
 
-  const handleSubmit = async (formData: Record<string, string | File | File[]>) => {
+  const handleSubmit = async (formData: Record<string, string | boolean | File | File[]>) => {
     showLoader(); // Show global preloader during authentication
 
     try {
@@ -30,7 +30,7 @@ const LoginForm: React.FC = () => {
         
         // Force a full page reload to ensure all authentication state is properly updated
         window.location.href = nextUrl;
-      }, 500);
+      }, 1500);
     } catch (error) {
       hideLoader(); // Hide loader on error
       throw error; // Re-throw to let UnifiedForm handle the error display

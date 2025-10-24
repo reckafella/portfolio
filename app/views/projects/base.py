@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.urls import reverse_lazy as reverse
+from django.views.generic import CreateView
 
 from app.forms.projects import ProjectsForm
 from app.models import Image, Projects, Video
@@ -13,14 +14,14 @@ from authentication.forms.errors import CustomErrorList
 uploader = CloudinaryImageHandler()
 
 
-class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
+class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Projects
     form_class = ProjectsForm
     error_class = CustomErrorList
     template_name = "app/projects/create_or_update.html"
     context_object_name = "view"
 
-    def form_invalid(self, form):
+    def form_invalid(self, form, *args, **kwargs):
         """Handle form validation errors, especially for AJAX requests"""
         if is_ajax(self.request):
             # Collect all form errors
@@ -48,7 +49,7 @@ class BaseProjectView(LoginRequiredMixin, UserPassesTestMixin):
             }, status=400)
 
         # For non-AJAX requests, use default behavior
-        return super().form_invalid(form)
+        return super().form_invalid(form, *args, **kwargs)
 
     def test_func(self):
         """ Allow only staff members/superusers to create projects """

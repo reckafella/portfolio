@@ -7,122 +7,119 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
-  --about-background-color: #0a0a0a; /* rich black */
-  --blog-background-color: #242526; /* black olive */
-  --projects-background-color: #212121; /* midnight blue */
-  --skills-background-color: #1d1f21; /* gunmetal */
-  --resume-background-color: #0c0c0c; /* oil black */
-  --contact-background-color: #212124; /* Charleston green */
-  --header-background-color: #0b1215; /* obsidian */
-  --services-background-color: #212121; /* midnight blue */
+  --about-background-color: rgb(10, 10, 10); /* #0a0a0a rich black */
+  --blog-background-color: rgb(36, 37, 38); /* #242526 black olive */
+  --projects-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
+  --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
+  --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
+  --header-background-color: rgb(11, 18, 21); /* #0b1215 obsidian */
+  --services-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: #101720; /* smoky black */
-  --accordion-button-background: #181818; /* iridium */
-  --breadcrumbs-background-color: #252525; /* outer space */
-  --footer-background-color: #181818; /* iridium */
-  --card-background-color: #11181c; /* arsenic */
-  --background-color: #161618; /* jet black */
+  --special-background-color: rgb(16, 23, 32); /*#101720 smoky black  */
+  --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
+  --breadcrumbs-background-color: rgb(37, 37, 37); /* #252525 outer space */
+  --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
+  --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
+  --background-color: rgb(22, 22, 24); /* #161618 jet black */
   --search-background-color: rgba(0, 0, 0, 0.98);
-  --project-info-color: #fff; /* white */
-  --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
-  --nav-dropdown-background-color:  #191919; /* dark slate gray */
-  --default-color: #ffffff;
-  --scroll-top-background-color:var(--default-color); /* white */
-  --scroll-top-color: #1f1f1f; /* charcoal */
+  --project-info-color: rgb(255, 255, 255); /* #ffffff */
+  --project-info-background-color: rgba(22, 22, 24, 0.9); /* #161618 jet black */
+  --nav-dropdown-background-color:  rgb(25, 25, 25); /* #191919 dark slate gray */
+  --default-color: rgb(255, 255, 255); /* #ffffff */
+  --scroll-top-background-color:var(--default-color);
+  --scroll-top-color: rgb(31, 31, 31); /* #1f1f1f charcoal */
   --heading-color: var(--default-color);
-  --surface-color: #252525;
+  --surface-color: rgb(37, 37, 37); /* #252525 */
   --contrast-color: var(--default-color);
   --search-bar-background-color: var(--special-background-color);
-  --accent-color:#fe8c00;
-  --logo-color: var(--accent-color);
+  --accent-color:rgb(224, 125, 4); /* #e07d04 */
+  --text-error-color: rgb(230, 24, 44); /* #e6182c */
+  --text-success-color: rgb(11, 145, 82); /* #0b9152 */
+  --text-warning-color: rgb(255, 191, 0); /* #ffbf00 */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
-  --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
-}
-
-/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
-:root {
-  --preloader-background-color: #090701; /* black chocolate */
-  --nav-color: #121010;  /* The default color of the main navmenu links */
-  --nav-hover-color: #1e044d; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-mobile-background-color: #cccbc8; /* Used as the background color for mobile navigation menu */
-  --nav-dropdown-background-color: #e0d8d8; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #181717; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #4834b7; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-dropdown-hover-color: var(--accent-color);
+  --preloader-background-color: rgb(22, 22, 21); /* #161615 */
+  --nav-mobile-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --blog-background-color: #fffff0; /* marble */
-  --header-background-color: #f4f1f8; /* lavender */
-  --projects-background-color: #fbf5df; /* parachment */
-  --skills-background-color: #d1d1ca; /* pearl */
-  --about-background-color: #fdfdfd; /* egg white */
-  --contact-background-color: #f0f8ff; /* alice blue */
-  --resume-background-color: #f0f8ff; /* alice blue */
-  --nav-mobile-background-color: #dde7f2;
-  --nav-dropdown-background-color: #f8f9fa;
-  --accordion-button-background: #f0f8ff; /* alice blue */
-  --breadcrumbs-background-color: #f8f9fa;
-  --footer-background-color: beige; /*#F5F5F7 ghost white */
-  --card-background-color: #f2f8fc;
-  --special-background-color: #f0f8ff; /* alice blue */
-  --scroll-top-background-color: #000000; /* alice blue */
-  --scroll-top-color: #f0f8ff; /* black */
+  --accent-color: rgb(39, 13, 62); /* #3a0369 */
+  --header-background-color: rgb(255, 255, 240); /* #fffff0 marble */
+  --blog-background-color: rgb(244, 241, 248); /* #f4f1f8 lavender */
+  --projects-background-color: rgb(251, 245, 223); /* #fbf5df parachment */
+  --skills-background-color: rgb(209, 209, 202); /* #d1d1ca pearl */
+  --about-background-color: rgb(253, 253, 253); /* #fdfdfd egg white */
+  --contact-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --resume-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --nav-mobile-background-color: rgb(221, 231, 242); /* #dde7f2 */
+  --nav-dropdown-background-color: rgb(248, 249, 250); /* #f8f9fa */
+  --accordion-button-background: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --breadcrumbs-background-color: rgb(248, 249, 250); /* #f8f9fa */
+  --footer-background-color: rgb(245, 245, 247); /* #F5F5F7 ghost white */
+  --card-background-color: rgb(242, 248, 252); /* #f2f8fc */
+  --special-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --scroll-top-background-color: rgb(0, 0, 0); /* #000000 black */
+  --scroll-top-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --search-background-color: rgba(255, 255, 255, 0.95);
   --project-info-background-color: rgba(255, 255, 255, 0.7); /*#fffff0 ivory rgba(255, 255, 255, 0.8) */
-  --services-background-color: #f0f8ff; /* alice blue */
-  --project-info-color: #000; /* black */
-  --nav-color: #444444;
+  --services-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --project-info-color: rgb(0, 0, 0); /* #000000 black */
+  --nav-color: rgb(68, 68, 68); /* #444444 */
   --nav-hover-color: var(--accent-color);
-  --nav-dropdown-background-color: #e9e8e6;
-  --nav-dropdown-color: #444444;
-  --contrast-color: #000;
-  --search-bar-background-color: #1d0723;
+  --nav-dropdown-background-color: rgb(233, 232, 230); /* #e9e8e6 */
+  --nav-dropdown-color: rgb(68, 68, 68); /* #444444 */
+  --contrast-color: rgb(0, 0, 0); /* #000000 black */
+  --search-bar-background-color: rgb(29, 7, 35); /* #1d0723 */
   --nav-dropdown-hover-color: var(--accent-color);
-  --background-color: #e8e7e4; /* Background color for the entire website, including individual sections */
-  --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #6008ad; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --background-color: rgb(232, 231, 228); /* #e8e7e4 */
+  --default-color: rgb(0, 0, 0); /* #000000 */
+  --heading-color: rgb(34, 34, 34); /* #222222 */
+  --accent-color: rgb(58, 3, 105); /* #3a0369 */
+  --text-error-color: rgb(220, 53, 69); /* #dc3545 */
+  --text-success-color: rgb(25, 135, 84); /* #198754 */
+  --text-warning-color: rgb(255, 193, 7); /* #ffc107 */
+  --surface-color: rgb(225, 222, 222); /* #e1dede */
 }
 
 [data-bs-theme="dark"] {
-  --about-background-color: #0a0a0a; /* rich black */
-  --blog-background-color: #242526; /* black olive */
-  --projects-background-color: #212121; /* midnight blue */
-  --skills-background-color: #1d1f21; /* gunmetal */
-  --resume-background-color: #0c0c0c; /* oil black */
-  --contact-background-color: #212124; /* Charleston green */
-  --header-background-color: #0b1215; /* obsidian */
-  --services-background-color: #212121; /* midnight blue */
+  --about-background-color: rgb(10, 10, 10); /* #0a0a0a rich black */
+  --blog-background-color: rgb(36, 37, 38); /* #242526 black olive */
+  --projects-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
+  --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
+  --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
+  --header-background-color: rgb(11, 18, 21); /* #0b1215 obsidian */
+  --services-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: #101720; /* smoky black */
-  --accordion-button-background: #181818; /* iridium */
-  --breadcrumbs-background-color: #252525; /* outer space */
-  --footer-background-color: #181818; /* iridium */
-  --card-background-color: #11181c; /* arsenic */
-  --background-color: #161618; /* jet black */
+  --special-background-color: rgb(16, 23, 32); /* #101720 smoky black */
+  --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
+  --breadcrumbs-background-color: rgb(37, 37, 37); /* #252525 outer space */
+  --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
+  --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
+  --background-color: rgb(22, 22, 24); /* #161618 jet black */
   --search-background-color: rgba(0, 0, 0, 0.98);
-  --project-info-color: #fff; /* white */
+  --project-info-color: rgb(255, 255, 255); /* #ffffff */
   --project-info-background-color: rgba(22, 22, 24, 0.9); /* jet black #161618 */
-  --nav-dropdown-background-color:  #191919; /* dark slate gray */
-  --default-color: #ffffff;
+  --nav-dropdown-background-color:  rgb(25, 25, 25); /* #191919 dark slate gray */
+  --default-color: rgb(255, 255, 255); /* #ffffff */
   --scroll-top-background-color:var(--default-color); /* white */
-  --scroll-top-color: #1f1f1f; /* charcoal */
+  --scroll-top-color: rgb(31, 31, 31); /* #1f1f1f charcoal */
   /* --card-background-color: #13151a; */
   --heading-color: var(--default-color);
-  --surface-color: #252525;
+  --surface-color: rgb(37, 37, 37); /* #252525 */
   --contrast-color: var(--default-color);
   /* search bar background should have dim color like Twitter */
   --search-bar-background-color: var(--special-background-color);
-  --accent-color:#fe8c00;
+  --accent-color:rgb(254, 140, 0); /* #fe8c00 golden orange */
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
-  --nav-dropdown-hover-color: var(--accent-color); /* #06ceb7 */
+  --nav-dropdown-hover-color: var(--accent-color);
 }
 
 /* theme-transition.css */
@@ -196,11 +193,7 @@ h6 {
   line-height: 1;
 }
 
-.header .logo img,
-.header .logo svg,
-.copyright svg {
-  height: auto;
-  width: 100%;
+.header .logo img, .header .logo svg {
   max-height: 60px;
   margin: auto;
   margin-right: 8px;
@@ -235,8 +228,7 @@ h6 {
   min-width: 100px;
 }
 
-.header .search-nav-wrapper .search-icon,
-.header .search-nav-wrapper .theme-switcher i {
+.header .search-nav-wrapper .search-icon, .header .search-nav-wrapper .theme-switcher i {
   color: var(--nav-color);
   cursor: pointer;
   font-size: 20px;
@@ -245,14 +237,6 @@ h6 {
   display: flex;
   line-height: 0;
   align-items: center;
-}
-.header .search-nav-wrapper button[type='button'],
-.header .search-nav-wrapper .search-icon button {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--default-color);
-  cursor: pointer;
 }
 
 .header .search-nav-wrapper .search-icon i:hover {
@@ -353,9 +337,7 @@ h6 {
   }
 
   .navmenu a,
-  .navmenu .nav-link,
-  .navmenu a:focus,
-  .navmenu .nav-link:focus {
+  .navmenu a:focus {
     color: var(--nav-color);
     font-size: 15px;
     padding: 0 2px;
@@ -370,17 +352,14 @@ h6 {
   }
 
   .navmenu a i,
-  .navmenu .nav-link i,
-  .navmenu a:focus i,
-  .navmenu .nav-link:focus i {
+  .navmenu a:focus i {
     font-size: 12px;
     line-height: 0;
     margin-left: 5px;
     transition: 0.3s;
   }
 
-  .navmenu>ul>li>a:before,
-  .navmenu>ul>li>.nav-link:before {
+  .navmenu>ul>li>a:before {
     content: "";
     position: absolute;
     width: 0;
@@ -393,16 +372,13 @@ h6 {
   }
 
   .navmenu a:hover:before,
-  .navmenu .nav-link:hover:before,
   .navmenu li:hover>a:before,
-  .navmenu li:hover>.nav-link:before,
   .navmenu .active:before {
     visibility: visible;
     width: 100%;
   }
 
   .navmenu li:hover>a,
-  .navmenu li:hover>.nav-link,
   .navmenu .active,
   .navmenu .active:focus {
     color: var(--nav-hover-color);
@@ -429,24 +405,20 @@ h6 {
     min-width: 200px;
   }
 
-  .navmenu .dropdown ul a,
-  .navmenu .dropdown ul .nav-link {
+  .navmenu .dropdown ul a {
     padding: 10px 20px;
     font-size: 18px;
     text-transform: none;
     color: var(--nav-dropdown-color);
   }
 
-  .navmenu .dropdown ul a i,
-  .navmenu .dropdown ul .nav-link i {
+  .navmenu .dropdown ul a i {
     font-size: 12px;
   }
 
   .navmenu .dropdown ul a:hover,
-  .navmenu .dropdown ul .nav-link:hover,
   .navmenu .dropdown ul .active:hover,
-  .navmenu .dropdown ul li:hover>a,
-  .navmenu .dropdown ul li:hover>.nav-link {
+  .navmenu .dropdown ul li:hover>a {
     color: var(--nav-dropdown-hover-color);
   }
 
@@ -530,9 +502,7 @@ h6 {
   }
 
   .navmenu a,
-  .navmenu .nav-link,
-  .navmenu a:focus,
-  .navmenu .nav-link:focus {
+  .navmenu a:focus {
     color: var(--nav-dropdown-color);
     padding: 15px 25px;
     font-family: var(--nav-font);
@@ -547,8 +517,7 @@ h6 {
     position: relative;
   }
 
-  .navmenu a::before,
-  .navmenu .nav-link::before {
+  .navmenu a::before {
     content: '';
     position: absolute;
     left: 0;
@@ -561,22 +530,18 @@ h6 {
   }
 
   .navmenu a:hover::before,
-  .navmenu .nav-link:hover::before,
   .navmenu .active::before {
     width: 4px;
   }
 
   .navmenu a:hover,
-  .navmenu .nav-link:hover,
   .navmenu .active {
     color: var(--accent-color);
     background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
   }
 
   .navmenu a i,
-  .navmenu .nav-link i,
-  .navmenu a:focus i,
-  .navmenu .nav-link:focus i {
+  .navmenu a:focus i {
     font-size: 14px;
     line-height: 0;
     margin-left: 10px;
@@ -592,17 +557,13 @@ h6 {
   }
 
   .navmenu a i:hover,
-  .navmenu .nav-link i:hover,
-  .navmenu a:focus i:hover,
-  .navmenu .nav-link:focus i:hover {
+  .navmenu a:focus i:hover {
     background-color: var(--accent-color);
     color: var(--contrast-color);
   }
 
   .navmenu a:hover i,
-  .navmenu .nav-link:hover i,
-  .navmenu a:focus i:hover,
-  .navmenu .nav-link:focus i:hover {
+  .navmenu .active i {
     background-color: var(--accent-color);
     color: var(--contrast-color);
   }
@@ -671,8 +632,8 @@ h6 {
   .mobile-nav-toggle.bi-x {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    padding: 5px;
-    backdrop-filter: blur(10px);
+    padding: 2px;
+    backdrop-filter: blur(7px);
   }
 }
 
@@ -952,7 +913,7 @@ h6 {
 section,
 .section {
   color: var(--default-color);
-  background-color: var(--background-color);
+  /* background-color: var(--background-color); */
   padding: 60px 0;
   scroll-margin-top: 100px;
   overflow: clip;
@@ -975,8 +936,29 @@ section,
   position: relative;
 }
 
-.section-title h2 {
+.section-title h1 {
   font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.section-title h1:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--accent-color);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.section-title h2 {
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 20px;
   padding-bottom: 20px;
@@ -1638,7 +1620,7 @@ Cards
 --------------------------------------------------------------*/
 .card {
   background-color: var(--card-background-color);
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 20%);
+ /*  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 20%); */
   border-radius: 5px;
   overflow: hidden;
   color: var(--default-color);
@@ -1715,21 +1697,21 @@ Cards
   padding: 20px;
 }
 
-.card .card-body form {
+form {
   padding: 0;
 }
 
-.card .card-body form input[type=text],
-.card .card-body form input[type=email],
-.card .card-body form input[type=password],
-.card .card-body form input[type=tel],
-.card .card-body form input[type=number],
-.card .card-body form input[type=date],
-.card .card-body form input[type=time],
-.card .card-body form input[type=url],
-.card .card-body form input[type=search],
-.card .card-body form input[type=file],
-.card .card-body form textarea {
+form input[type=text],
+form input[type=email],
+form input[type=password],
+form input[type=tel],
+form input[type=number],
+form input[type=date],
+form input[type=time],
+form input[type=url],
+form input[type=search],
+form input[type=file],
+form textarea {
   font-size: 14px;
   padding: 10px 12px;
   box-shadow: none;
@@ -1739,41 +1721,41 @@ Cards
   border-color: color-mix(in srgb, var(--default-color), transparent 60%);
 }
 
-.card .card-body form input[type=text]:focus,
-.card .card-body form input[type=email]:focus,
-.card .card-body form input[type=password]:focus,
-.card .card-body form input[type=tel]:focus,
-.card .card-body form input[type=number]:focus,
-.card .card-body form input[type=date]:focus,
-.card .card-body form input[type=time]:focus,
-.card .card-body form input[type=url]:focus,
-.card .card-body form input[type=search]:focus,
-.card .card-body form input[type=file]:focus,
-.card .card-body form textarea:focus {
+form input[type=text]:focus,
+form input[type=email]:focus,
+form input[type=password]:focus,
+form input[type=tel]:focus,
+form input[type=number]:focus,
+form input[type=date]:focus,
+form input[type=time]:focus,
+form input[type=url]:focus,
+form input[type=search]:focus,
+form input[type=file]:focus,
+form textarea:focus {
   border-color: var(--accent-color);
 }
 
 /* placeholder */
-.card .card-body form input[type=text]::placeholder,
-.card .card-body form input[type=email]::placeholder,
-.card .card-body form input[type=password]::placeholder,
-.card .card-body form input[type=tel]::placeholder,
-.card .card-body form input[type=number]::placeholder,
-.card .card-body form input[type=date]::placeholder,
-.card .card-body form input[type=time]::placeholder,
-.card .card-body form input[type=url]::placeholder,
-.card .card-body form input[type=search]::placeholder,
-.card .card-body form input[type=file]::placeholder,
-.card .card-body form textarea::placeholder {
+form input[type=text]::placeholder,
+form input[type=email]::placeholder,
+form input[type=password]::placeholder,
+form input[type=tel]::placeholder,
+form input[type=number]::placeholder,
+form input[type=date]::placeholder,
+form input[type=time]::placeholder,
+form input[type=url]::placeholder,
+form input[type=search]::placeholder,
+form input[type=file]::placeholder,
+form textarea::placeholder {
   color: color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
-.card .card-body form .form-switch input {
+form .form-switch input {
   padding: 5px 20px;
 }
 
-.card .card-header button[type=button],
-.card .card-body button[type=button]
+button[type=button],
+button[type=button]
  {
   border-radius: 10px;
   /* background-color: transparent; */

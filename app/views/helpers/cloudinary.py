@@ -13,14 +13,26 @@ class CloudinaryImageHandler:
     """
 
     def __init__(self) -> None:
+        # Ensure configuration is properly loaded from settings
+        cloud_name = settings.CLOUDINARY_CLOUD_NAME
+        api_key = settings.CLOUDINARY_API_KEY
+        api_secret = settings.CLOUDINARY_API_SECRET
+
+        if not all([cloud_name, api_key, api_secret]):
+            raise ValueError(
+                "Cloudinary credentials not configured. Please set CLOUDINARY_CLOUD_NAME, "
+                "CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your environment variables."
+            )
+
         cloudinary.config(
-            cloud_name=settings.CLOUDINARY_CLOUD_NAME,
-            api_key=settings.CLOUDINARY_API_KEY,
-            api_secret=settings.CLOUDINARY_API_SECRET,
+            cloud_name=cloud_name,
+            api_key=api_key,
+            api_secret=api_secret,
+            secure=True
         )
 
+    @staticmethod
     def upload_image(
-        self,
         image,
         folder=None,
         public_id=None,
@@ -70,7 +82,8 @@ class CloudinaryImageHandler:
             raise Exception(f"{str(e)}")
         return response
 
-    def delete_image(self, public_id: str) -> dict:
+    @staticmethod
+    def delete_image(public_id: str) -> dict:
         """
         Delete an image from Cloudinary and return the result.
         """
@@ -80,7 +93,8 @@ class CloudinaryImageHandler:
             raise Exception(f"Error deleting image from Cloudinary: {str(e)}")
         return response
 
-    def get_optim_url(self, image_id: str) -> str:
+    @staticmethod
+    def get_optim_url(image_id: str) -> str:
         """
         Generate an optimized image URL for Cloudinary.
         """
@@ -89,7 +103,8 @@ class CloudinaryImageHandler:
             "http://", "https://"
         )
 
-    def get_public_id(self) -> str:
+    @staticmethod
+    def get_public_id() -> str:
         """
         Generate a public ID for the image uploaded to Cloudinary.
         """

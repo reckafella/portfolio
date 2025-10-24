@@ -5,6 +5,8 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AlertMessage } from '@/components/common/AlertMessage';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { RichTextEditor } from '@/components/editor/RichTextEditor';
+import { DevicePreviewModal } from '@/components/blog/DevicePreviewModal';
 
 interface BlogPostFormData {
   title: string;
@@ -13,6 +15,8 @@ interface BlogPostFormData {
   published: boolean;
   cover_image?: File;
 }
+
+// Removed old PreviewModal - now using DevicePreviewModal
 
 export function BlogEditPage() {
   const navigate = useNavigate();
@@ -33,6 +37,8 @@ export function BlogEditPage() {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Populate form with existing post data
   useEffect(() => {
@@ -53,7 +59,7 @@ export function BlogEditPage() {
       <div className="container my-5">
         <AlertMessage 
           type="danger" 
-          message="You don't have permission to edit blog posts." 
+          message={`You don't have permission to edit blog posts. ${postError}`} 
         />
       </div>
     );
@@ -68,7 +74,7 @@ export function BlogEditPage() {
       <div className="container my-5">
         <AlertMessage 
           type="danger" 
-          message="Blog post not found or you don't have permission to edit it." 
+          message={`Blog post not found or You don't have permission to edit it. ${postError}`} 
         />
       </div>
     );
@@ -89,10 +95,29 @@ export function BlogEditPage() {
     }
   };
 
+  const handleContentChange = (content: string) => {
+    setFormData(prev => ({ ...prev, content }));
+    
+    // Clear error for content field
+    if (errors.content) {
+      setErrors(prev => ({ ...prev, content: [] }));
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFormData(prev => ({ ...prev, cover_image: file }));
+      
+      // Create image preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({ ...prev, cover_image: undefined }));
+      setImagePreview(null);
     }
   };
 
@@ -107,22 +132,78 @@ export function BlogEditPage() {
       formDataToSubmit.append('content', formData.content);
       formDataToSubmit.append('tags', formData.tags);
       formDataToSubmit.append('published', formData.published.toString());
-      
+
       if (formData.cover_image) {
         formDataToSubmit.append('cover_image', formData.cover_image);
       }
 
-      const updatedPost = await updateBlogPostMutation.mutateAsync({
+      const result = await updateBlogPostMutation.mutateAsync({
         slug: slug!,
         data: formDataToSubmit
       });
       
       // Navigate to the updated post
-      navigate(`/blog/${updatedPost.slug}`);
+      // The backend returns: { message: '...', post: { ...post data with slug } }
+      const postSlug = result?.post?.slug;
+      if (postSlug) {
+        navigate(`/blog/article/${postSlug}`);
+      } else {
+        // If no slug is available, stay on the edit page and show success message
+        setErrors({ general: ['Post updated successfully! You can continue editing or go back to the blog list.'] });
+      }
     } catch (error: unknown) {
-      const errorData = error as { status?: number; data?: Record<string, string[]> };
-      if (errorData.status === 400 && errorData.data) {
-        setErrors(errorData.data);
+      // eslint-disable-next-line no-console
+      console.error('Blog post update error:', error);
+      
+      if (error && typeof error === 'object') {
+        const errorObj = error as {
+          status?: number;
+          data?: Record<string, string[]>;
+          response?: {
+            data?: {
+              error?: string;
+              non_field_errors?: string[];
+            };
+          };
+          message?: string;
+        };
+        
+        // Check for validation errors (400 status with field-specific errors)
+        if (errorObj.status === 400 && errorObj.data && typeof errorObj.data === 'object') {
+          // Handle validation errors from the backend
+          const validationErrors: Record<string, string[]> = {};
+          Object.keys(errorObj?.data).forEach(key => {
+            const value = errorObj?.data?.[key];
+            if (Array.isArray(value)) {
+              validationErrors[key] = value;
+            } else if (typeof value === 'string') {
+              validationErrors[key] = [value];
+            }
+          });
+          setErrors(validationErrors);
+        }
+        // Check for duplicate title error or other API response errors
+        else if (errorObj.response?.data) {
+          if (errorObj.response.data.error) {
+            // Check if it's a duplicate title error
+            if (errorObj.response.data.error.includes('title') || errorObj.response.data.error.includes('slug')) {
+              setErrors({ title: ['A blog post with this title already exists. Please choose a different title.'] });
+            } else {
+              setErrors({ general: [errorObj.response.data.error] });
+            }
+          } else if (errorObj.response.data.non_field_errors) {
+            setErrors({ general: errorObj.response.data.non_field_errors });
+          } else {
+            setErrors({ general: ['Failed to update blog post. Please try again.'] });
+          }
+        }
+        // Check for network or other errors
+        else if (errorObj.message) {
+          setErrors({ general: [errorObj.message] });
+        }
+        else {
+          setErrors({ general: ['Failed to update blog post. Please try again.'] });
+        }
       } else {
         setErrors({ general: ['Failed to update blog post. Please try again.'] });
       }
@@ -132,200 +213,273 @@ export function BlogEditPage() {
   };
 
   return (
-    <section className="section blog">
-      <div className="container my-5">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="section-title card-header">
-              <h2 className="mb-0">Edit Blog Post</h2>
-              <small className="text-muted">
-                Editing: {post.title}
-              </small>
-            </div>
-            <div className="card-body">
-              {errors.general && (
-                <AlertMessage 
-                  type="danger" 
-                  message={errors.general.join(', ')} 
-                  className="mb-4"
-                />
-              )}
-
-              <form onSubmit={handleSubmit}>
-                {/* Title */}
-                <div className="mb-3">
-                  <label htmlFor="title" className="form-label">
-                    Title <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Enter blog post title"
-                  />
-                  {errors.title && (
-                    <div className="invalid-feedback">
-                      {errors.title.join(', ')}
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="mb-3">
-                  <label htmlFor="content" className="form-label">
-                    Content <span className="text-danger">*</span>
-                  </label>
-                  <textarea
-                    className={`form-control ${errors.content ? 'is-invalid' : ''}`}
-                    id="content"
-                    name="content"
-                    rows={12}
-                    value={formData.content}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Write your blog post content here..."
-                  />
-                  {errors.content && (
-                    <div className="invalid-feedback">
-                      {errors.content.join(', ')}
-                    </div>
-                  )}
-                  <div className="form-text">
-                    You can use HTML formatting in your content.
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="mb-3">
-                  <label htmlFor="tags" className="form-label">
-                    Tags
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.tags ? 'is-invalid' : ''}`}
-                    id="tags"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleInputChange}
-                    placeholder="technology, programming, web development"
-                  />
-                  {errors.tags && (
-                    <div className="invalid-feedback">
-                      {errors.tags.join(', ')}
-                    </div>
-                  )}
-                  <div className="form-text">
-                    Separate tags with commas.
-                  </div>
-                </div>
-
-                {/* Current Cover Image */}
-                {post.featured_image_url && (
-                  <div className="mb-3">
-                    <label className="form-label">Current Cover Image</label>
-                    <div className="d-flex align-items-center gap-3">
-                      <img
-                        src={post.featured_image_url}
-                        alt="Current cover"
-                        className="rounded"
-                        style={{ width: '100px', height: '60px', objectFit: 'cover' }}
-                      />
+    <>
+      <section className="section blog">
+        <div className="container my-5">
+          <div className="row justify-content-center">
+            <div className="col-lg-10">
+              <div className="card">
+                <div className="card-header">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h2 className="mb-0">Edit Blog Post</h2>
                       <small className="text-muted">
-                        Upload a new image below to replace this one.
+                        Editing: {post?.title || 'Untitled'}
                       </small>
                     </div>
-                  </div>
-                )}
-
-                {/* Cover Image */}
-                <div className="mb-3">
-                  <label htmlFor="cover_image" className="form-label">
-                    {post.featured_image_url ? 'New Cover Image' : 'Cover Image'}
-                  </label>
-                  <input
-                    type="file"
-                    className={`form-control ${errors.cover_image ? 'is-invalid' : ''}`}
-                    id="cover_image"
-                    name="cover_image"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  {errors.cover_image && (
-                    <div className="invalid-feedback">
-                      {errors.cover_image.join(', ')}
+                    <div className="d-flex gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => navigate('/blog')}
+                      >
+                        <i className="bi bi-arrow-left me-1"></i>
+                        Back to Blog
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={() => setShowPreview(true)}
+                        disabled={!formData.title || !formData.content}
+                      >
+                        <i className="bi bi-eye me-1"></i>
+                        Preview
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-info"
+                        onClick={() => navigate(`/blog/article/${post.slug}`)}
+                        disabled={isSubmitting}
+                      >
+                        <i className="bi bi-eye-fill me-1"></i>
+                        View Live
+                      </button>
                     </div>
-                  )}
-                  <div className="form-text">
-                    Upload a new cover image to replace the current one (optional).
                   </div>
                 </div>
-
-                {/* Published */}
-                <div className="mb-4">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="published"
-                      name="published"
-                      checked={formData.published}
-                      onChange={handleInputChange}
+                <div className="card-body">
+                  {errors.general && (
+                    <AlertMessage 
+                      type="danger" 
+                      message={errors.general.join(', ')} 
+                      className="mb-4"
                     />
-                    <label className="form-check-label" htmlFor="published">
-                      Published
-                    </label>
-                  </div>
-                  <div className="form-text">
-                    Uncheck to save as draft.
-                  </div>
-                </div>
+                  )}
 
-                {/* Submit Buttons */}
-                <div className="d-flex gap-2">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <LoadingSpinner size="sm" className="me-2" />
-                        Updating...
-                      </>
-                    ) : (
-                      'Update Post'
-                    )}
-                  </button>
-                  
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </button>
-                  
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
-                    disabled={isSubmitting}
-                  >
-                    View Post
-                  </button>
+                  <form onSubmit={handleSubmit}>
+                    {/* Title */}
+                    <div className="mb-4">
+                      <label htmlFor="title" className="form-label">
+                        Title <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className={`form-control form-control-lg ${errors.title ? 'is-invalid' : ''}`}
+                        id="title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Enter your blog post title..."
+                        style={{ fontSize: '1.5rem', fontWeight: '600' }}
+                      />
+                      {errors.title && (
+                        <div className="invalid-feedback">
+                          {errors.title.join(', ')}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content Editor */}
+                    <div className="mb-4">
+                      <label className="form-label">
+                        Content <span className="text-danger">*</span>
+                      </label>
+                      <RichTextEditor
+                        content={formData.content}
+                        onChange={handleContentChange}
+                        placeholder="Start writing your blog post content..."
+                        error={!!errors.content}
+                      />
+                      {errors.content && (
+                        <div className="text-danger small mt-2">
+                          {errors.content.join(', ')}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md-6">
+                        {/* Tags */}
+                        <div className="mb-3">
+                          <label htmlFor="tags" className="form-label">
+                            Tags
+                          </label>
+                          <input
+                            type="text"
+                            className={`form-control ${errors.tags ? 'is-invalid' : ''}`}
+                            id="tags"
+                            name="tags"
+                            value={formData.tags}
+                            onChange={handleInputChange}
+                            placeholder="technology, programming, web development"
+                          />
+                          {errors.tags && (
+                            <div className="invalid-feedback">
+                              {errors.tags.join(', ')}
+                            </div>
+                          )}
+                          <div className="form-text">
+                            Separate tags with commas.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-md-6">
+                        {/* Current Cover Image */}
+                        {post.featured_image_url && !imagePreview && (
+                          <div className="mb-3">
+                            <label className="form-label">Current Cover Image</label>
+                            <div className="position-relative">
+                              <img
+                                src={post.featured_image_url}
+                                alt="Current cover"
+                                className="img-fluid rounded"
+                                style={{ maxHeight: '200px', width: '100%', objectFit: 'cover' }}
+                              />
+                            </div>
+                            <small className="text-muted">
+                              Upload a new image below to replace this one.
+                            </small>
+                          </div>
+                        )}
+
+                        {/* Cover Image */}
+                        <div className="mb-3">
+                          <label htmlFor="cover_image" className="form-label">
+                            {post.featured_image_url ? 'New Cover Image' : 'Cover Image'}
+                          </label>
+                          <input
+                            type="file"
+                            className={`form-control ${errors.cover_image ? 'is-invalid' : ''}`}
+                            id="cover_image"
+                            name="cover_image"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                          />
+                          {errors.cover_image && (
+                            <div className="invalid-feedback">
+                              {errors.cover_image.join(', ')}
+                            </div>
+                          )}
+                          <div className="form-text">
+                            Upload a new cover image to replace the current one (optional).
+                          </div>
+                        </div>
+
+                        {/* New Image Preview */}
+                        {imagePreview && (
+                          <div className="mb-3">
+                            <label className="form-label">New Cover Preview</label>
+                            <div className="position-relative">
+                              <img
+                                src={imagePreview}
+                                alt="New cover preview"
+                                className="img-fluid rounded"
+                                style={{ maxHeight: '200px', width: '100%', objectFit: 'cover' }}
+                              />
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                onClick={() => {
+                                  setImagePreview(null);
+                                  setFormData(prev => ({ ...prev, cover_image: undefined }));
+                                  const fileInput = document.getElementById('cover_image') as HTMLInputElement;
+                                  if (fileInput) fileInput.value = '';
+                                }}
+                              >
+                                <i className="bi bi-x"></i>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Published Status */}
+                    <div className="mb-4">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="published"
+                          name="published"
+                          checked={formData.published}
+                          onChange={handleInputChange}
+                        />
+                        <label className="form-check-label" htmlFor="published">
+                          Published
+                        </label>
+                      </div>
+                      <div className="form-text">
+                        {formData.published 
+                          ? 'This post is visible to all visitors.' 
+                          : 'This post is saved as a draft.'
+                        }
+                      </div>
+                    </div>
+
+                    {/* Submit Buttons */}
+                    <div className="d-flex gap-2">
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={isSubmitting || !formData.title || !formData.content}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <LoadingSpinner size="sm" className="me-2" />
+                            Updating...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-check-lg me-1"></i>
+                            Update Post
+                          </>
+                        )}
+                      </button>
+                      
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => navigate('/blog')}
+                        disabled={isSubmitting}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Device Preview Modal */}
+      <DevicePreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        title={formData.title}
+        content={formData.content}
+        coverImage={imagePreview || post?.cover_image_url || post?.featured_image_url}
+        tags={formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []}
+        published={formData.published}
+        author={post?.author || "Ethan Wanyoike"}
+        readingTime={post?.reading_time || "5 min read"}
+        viewCount={post?.view_count || 0}
+        publishedAt={post?.first_published_at || new Date().toISOString()}
+      />
+    </>
   );
 }

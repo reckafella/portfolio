@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
                         <div className="d-flex flex-column mt-3">
                             <p>Let's bring your project to life!</p>
                             <p>
-                                <button type="button" className="btn btn-lg btn-light-dark py-2 fw-bold" onClick={() => location.href = '/contact'}>
+                                <button type="button" className="btn btn-lg bg-success text-light py-2 fw-bold" onClick={() => location.href = '/contact'}>
                                     Get in Touch <i className="bi bi-arrow-right"></i>
                                 </button>
                             </p>

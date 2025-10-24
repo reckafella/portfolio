@@ -1,4 +1,6 @@
-# Byte-compiled / optimized / DLL files
+ media/
+ video*$/
+ # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -123,6 +125,7 @@ celerybeat.pid
 
 # Environments
 *.env
+.env.local
 .venv
 env/
 venv/
@@ -131,6 +134,10 @@ env.bak/
 venv.bak/
 .env/
 staticfiles/
+
+.vscode/settings.json
+.vscode/
+main.py
 
 # Spyder project settings
 .spyderproject
@@ -172,6 +179,6 @@ cython_debug/
 cloudinary.json
 .vercel.json
 redis.json
-copilot-instructions.md
 media/
 node_modules/
+.venv.local

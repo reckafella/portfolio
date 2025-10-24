@@ -1,0 +1,91 @@
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from app.api.views.contact.contact_api import ContactPageAPIView
+from app.api.views.projects.project_api import (
+    ProjectListAPIView, ProjectDetailAPIView, ProjectCreateAPIView,
+    ProjectUpdateAPIView, ProjectDeleteAPIView, ProjectViewSet,
+)
+from app.views.views import ResumePDFView, SitemapAPIView
+from app.api.views.about.about_page import (
+    AboutPageAPIView, ProfileUpdateView, EducationListCreateView,
+    EducationDetailView, ExperienceListCreateView, ExperienceDetailView,
+    SkillsListCreateView, SkillDetailView, BulkSkillsView, reorder_items
+)
+from app.api.views.about.captcha import CaptchaRefreshAPIView
+from app.api.views.search.search_api import SearchAPIView, SearchSuggestionsAPIView, PopularSearchesAPIView
+from app.api.views.messages import (
+    MessageListAPIView, MessageDetailAPIView, MessageStatsAPIView,
+    MarkMessageReadAPIView, MarkMessageUnreadAPIView,
+    DeleteMessageAPIView, BulkMessageActionsAPIView
+)
+
+# Setup DRF router for ViewSets
+router = DefaultRouter()
+router.register(r'projects', ProjectViewSet, basename='project')
+
+urlpatterns = [
+    # Contact API
+    path('contact/', ContactPageAPIView.as_view(), name='contact_api'),
+    path("auth", include("rest_framework.urls")),
+    path("auth/", include("authentication.api.urls")),
+
+    # Blog API
+    path('blog/', include('blog.api.urls')),
+
+    # Project APIs URLs
+    path('projects/list', ProjectListAPIView.as_view(), name='project_list_api'),
+    path('projects/create/', ProjectCreateAPIView.as_view(), name='project_create_api'),
+    path('projects/<slug:slug>/', ProjectDetailAPIView.as_view(), name='project_detail_api'),
+    path('projects/<slug:slug>/update/', ProjectUpdateAPIView.as_view(), name='project_update_api'),
+    path('projects/<slug:slug>/delete/', ProjectDeleteAPIView.as_view(), name='project_delete_api'),
+
+    # Project form configuration
+    # path('projects/form-config', project_form_config, name='project_form_config'),
+
+    # Sitemap API
+    path('sitemap/', SitemapAPIView.as_view(), name='sitemap_api'),
+
+    # About Page API (Read-only)
+    path('about/', AboutPageAPIView.as_view(), name='about_api'),
+    path('resume-pdf/', ResumePDFView.as_view(), name='resume_pdf_api'),
+
+    # About Page Management APIs (Authenticated)
+    path('about/profile/', ProfileUpdateView.as_view(), name='profile_update_api'),
+
+    # Education APIs
+    path('about/education/', EducationListCreateView.as_view(), name='education_list_create_api'),
+    path('about/education/<int:education_id>/', EducationDetailView.as_view(), name='education_detail_api'),
+
+    # Experience APIs
+    path('about/experience/', ExperienceListCreateView.as_view(), name='experience_list_create_api'),
+    path('about/experience/<int:experience_id>/', ExperienceDetailView.as_view(), name='experience_detail_api'),
+
+    # Skills APIs
+    path('about/skills/', SkillsListCreateView.as_view(), name='skills_list_create_api'),
+    path('about/skills/<int:skill_id>/', SkillDetailView.as_view(), name='skill_detail_api'),
+    path('about/skills/bulk/', BulkSkillsView.as_view(), name='bulk_skills_api'),
+
+    # Reorder API
+    path('about/reorder/', reorder_items, name='reorder_items_api'),
+
+    # Captcha API
+    path('captcha/refresh/', CaptchaRefreshAPIView.as_view(), name='captcha_refresh_api'),
+
+    # Search APIs
+    path('search/', SearchAPIView.as_view(), name='search_api'),
+    path('search/suggestions/', SearchSuggestionsAPIView.as_view(), name='search_suggestions_api'),
+    path('search/popular/', PopularSearchesAPIView.as_view(), name='search_popular_api'),
+
+    # Message APIs
+    path('messages/', MessageListAPIView.as_view(), name='message_list_api'),
+    path('messages/stats/', MessageStatsAPIView.as_view(), name='message_stats_api'),
+    path('messages/<int:message_id>/', MessageDetailAPIView.as_view(), name='message_detail_api'),
+    path('messages/<int:message_id>/mark-read/', MarkMessageReadAPIView.as_view(), name='mark_message_read_api'),
+    path('messages/<int:message_id>/mark-unread/', MarkMessageUnreadAPIView.as_view(), name='mark_message_unread_api'),
+    path('messages/<int:message_id>/delete/', DeleteMessageAPIView.as_view(), name='delete_message_api'),
+    path('messages/bulk-actions/', BulkMessageActionsAPIView.as_view(), name='bulk_message_actions_api'),
+
+    # Include router URLs (ViewSet-based)
+    path('', include(router.urls)),
+]

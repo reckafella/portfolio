@@ -2,22 +2,25 @@
 this is the model for the blog post using wagtail cms
 """
 import hashlib
-
+import logging
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models import Count
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from taggit.managers import TaggableManager
-from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin
-from wagtail.fields import RichTextField, StreamField
+from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
-from .blocks import BlogStreamBlock
-from .wagtail_models import CloudinaryWagtailImage
+from blog.wagtail_models import CloudinaryWagtailImage
+
+logger = logging.getLogger(__name__)
 
 
 class BlogIndexPage(RoutablePageMixin, Page):
@@ -59,18 +62,6 @@ class BlogPostPage(Page):
     # Current RichTextField (to be converted to StreamField)
     content = RichTextField(blank=True, null=True)
 
-    # Legacy RichTextField (to be deprecated after migration)
-    legacy_content = RichTextField(
-        blank=True, null=True,
-        help_text="Legacy content field - will be migrated to new format"
-    )
-
-    stream_content = StreamField(
-        BlogStreamBlock(), use_json_field=True,
-        null=True, blank=True,
-        help_text="New content format with inline images"
-    )
-
     published = models.BooleanField(default=False)
     post_created_at = models.DateTimeField(auto_now_add=True, null=True)
     post_updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -92,13 +83,7 @@ class BlogPostPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("author"),
         FieldPanel("content", heading="Current Content (RichText)"),
-        FieldPanel("stream_content", heading="New Content (StreamField)",
-                   help_text="Use this for new posts with inline images"),
-        FieldPanel("legacy_content", heading="Legacy Content (Read-only)",
-                   read_only=True),
         FieldPanel("tags"),
-        InlinePanel("gallery_images", label="Legacy Gallery Images",
-                    help_text="Use inline images in content instead"),
         MultiFieldPanel(
             [
                 FieldPanel("cloudinary_image_id", read_only=True),
@@ -113,7 +98,7 @@ class BlogPostPage(Page):
         FieldPanel("published"),
     ]
 
-    class Meta:
+    class Meta(Page.Meta):
         managed = True
 
     def save(self, *args, **kwargs):
@@ -144,7 +129,11 @@ class BlogPostPage(Page):
         return self.optimized_image_url or None
 
     def __str__(self):
-        return self.title + " by " + self.author.username
+        return (
+            f"{self.title} by {self.author.username}"
+            if self.author and self.author.username
+            else "Anonymous"
+        )
 
     def increment_view_count(self, request):
         """Increment the view count for this post"""
@@ -274,7 +263,7 @@ class ViewCountAttempt(models.Model):
 class BlogPostImage(models.Model):
     post = models.ForeignKey(
         BlogPostPage,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,  # Changed from PROTECT to allow deletion
         related_name="images"
     )
     cloudinary_image_id = models.CharField(max_length=255, blank=True,
@@ -284,6 +273,27 @@ class BlogPostImage(models.Model):
 
     def __str__(self):
         return f"{self.post.title} - Image"
+
+    def delete(self, *args, **kwargs):
+        """
+        Override delete to remove image from Cloudinary before database deletion
+        """
+        # Delete from Cloudinary first if image ID exists
+        if self.cloudinary_image_id:
+            try:
+                from app.views.helpers.cloudinary import CloudinaryImageHandler
+                uploader = CloudinaryImageHandler()
+                uploader.delete_image(self.cloudinary_image_id)
+            except Exception as e:
+                # Log error but don't fail deletion
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Failed to delete image {self.cloudinary_image_id} from Cloudinary: {str(e)}"
+                )
+
+        # Proceed with database deletion
+        super().delete(*args, **kwargs)
 
 
 class BlogPostComment(models.Model):
@@ -328,3 +338,23 @@ class BlogPostCommentReply(models.Model):
 
     def __str__(self):
         return f"{self.author.username} on {self.comment.post.title}"
+
+
+# Signal handlers for automatic Cloudinary cleanup
+@receiver(pre_delete, sender=BlogPostImage)
+def delete_blogpost_image_from_cloudinary(sender, instance, **kwargs):
+    """
+    Signal handler to ensure Cloudinary images are deleted when BlogPostImage is deleted.
+    This provides an extra layer of safety beyond the model's delete() method.
+    """
+    if instance.cloudinary_image_id:
+        try:
+            from app.views.helpers.cloudinary import CloudinaryImageHandler
+            uploader = CloudinaryImageHandler()
+            uploader.delete_image(instance.cloudinary_image_id)
+            logger.info(f"Successfully deleted image {instance.cloudinary_image_id} from Cloudinary")
+        except Exception as e:
+            logger.warning(
+                f"Signal handler failed to delete image {instance.cloudinary_image_id} "
+                f"from Cloudinary: {str(e)}"
+            )

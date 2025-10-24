@@ -33,7 +33,10 @@
   --surface-color: #252525;
   --contrast-color: var(--default-color);
   --search-bar-background-color: var(--special-background-color);
-  --accent-color:#fe8c00;
+  --accent-color:#e07d04;
+  --text-error-color: #e6182c;
+  --text-success-color: #0b9152;
+  --text-warning-color: #ffbf00;
   --nav-color: var(--default-color);
   --nav-hover-color: var(--accent-color);
   --nav-dropdown-color: var(--default-color);
@@ -84,7 +87,10 @@
   --background-color: #e8e7e4; /* Background color for the entire website, including individual sections */
   --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #6008ad; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --accent-color: #3a0369; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --text-error-color: #dc3545;
+  --text-success-color: #198754;
+  --text-warning-color: #ffc107;
   --surface-color: #e1dede; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
 }
 
@@ -634,8 +640,8 @@ h6 {
   .mobile-nav-toggle.bi-x {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    padding: 5px;
-    backdrop-filter: blur(10px);
+    padding: 2px;
+    backdrop-filter: blur(7px);
   }
 }
 
@@ -938,8 +944,29 @@ section,
   position: relative;
 }
 
-.section-title h2 {
+.section-title h1 {
   font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.section-title h1:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--accent-color);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.section-title h2 {
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 20px;
   padding-bottom: 20px;
@@ -1601,15 +1628,10 @@ Cards
 --------------------------------------------------------------*/
 .card {
   background-color: var(--card-background-color);
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 20%);
   border-radius: 5px;
   overflow: hidden;
   color: var(--default-color);
   transition: all 0.3s ease-in-out;
-}
-
-.card:hover {
-  box-shadow: 0px 0px 5px color-mix(in srgb, var(--default-color), transparent 10%);
 }
 
 .card .card-img {

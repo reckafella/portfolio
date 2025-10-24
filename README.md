@@ -69,7 +69,7 @@ This project is a personal portfolio website that highlights my skills, projects
     ```sh
     pip install -r requirements.txt
     ```
-   
+
 4. Create a cloudinary account (used for image hosting)
    - Copy the required details: name, api key and api secret into a file named "cloudinary.json"
      - "CLOUDINARY_CLOUD_NAME": "your cloudinary name",
@@ -183,5 +183,5 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 - **Email:** [Ethan](mailto:ethanmuthoni@gmail.com)
 - **LinkedIn:** [Ethan Wanyoike](https://www.linkedin.com/in/ethanwanyoike)
 - **GitHub:** [reckafella](https://github.com/reckafella)
-- **Facebook:** [@reckafella](https://facebook.com/reckafella)
-- **Twitter/X:** [@devrohn](https://x.com/devrohn)
+- **Facebook:** [@frmundu](https://facebook.com/frmundu)
+- **Twitter/X:** [@frmundu](https://x.com/frmundu)

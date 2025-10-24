@@ -6,20 +6,30 @@ CloudinaryWagtailImage and BlogPostPageGalleryImage models.
 """
 
 import logging
-
+from typing import TypedDict, NotRequired, Unpack
 from django.core.management.base import BaseCommand
+from django.core.management.base import CommandParser
 from django.db import transaction
+from django.db.models import QuerySet
 
 from blog.models import BlogPostImage, BlogPostPage, BlogPostPageGalleryImage
 from blog.wagtail_models import CloudinaryWagtailImage
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
+
+
+class RequiredOptions(TypedDict):
+    post_id: int | None
+
+
+class CommandOptions(RequiredOptions, total=False):
+    dry_run: bool
 
 
 class Command(BaseCommand):
     help = "Migrate existing BlogPostImage data to Wagtail image system"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             '--dry-run',
             action='store_true',
@@ -31,16 +41,16 @@ class Command(BaseCommand):
             help='Migrate images for a specific post ID only',
         )
 
-    def handle(self, **options):
-        dry_run = options['dry_run']
-        post_id = options.get('post_id')
+    def handle(self, **options: Unpack[CommandOptions]) -> None:
+        dry_run: bool = options.get('dry_run', False)
+        post_id: int | None = options.get('post_id')
 
         if dry_run:
             self.stdout.write(
                 self.style.WARNING('DRY RUN MODE - No changes will be made')
             )
 
-        blog_posts = self._get_blog_posts(post_id)
+        blog_posts: QuerySet[BlogPostPage] | None = self._get_blog_posts(post_id)
         if blog_posts is None:
             return
 
@@ -50,7 +60,7 @@ class Command(BaseCommand):
         migrated_images, errors = self._process_blog_posts(blog_posts, dry_run)
         self._print_summary(total_posts, migrated_images, errors, dry_run)
 
-    def _get_blog_posts(self, post_id):
+    def _get_blog_posts(self, post_id: int | None) -> QuerySet[BlogPostPage] | None:
         """Get blog posts to migrate based on post_id filter"""
         if post_id:
             blog_posts = BlogPostPage.objects.filter(id=post_id)
@@ -63,7 +73,7 @@ class Command(BaseCommand):
             blog_posts = BlogPostPage.objects.all()
         return blog_posts
 
-    def _process_blog_posts(self, blog_posts, dry_run):
+    def _process_blog_posts(self, blog_posts: QuerySet[BlogPostPage], dry_run: bool) -> tuple[int, int]:
         """Process all blog posts and migrate their images"""
         migrated_images = 0
         errors = 0
@@ -76,7 +86,7 @@ class Command(BaseCommand):
 
         return migrated_images, errors
 
-    def _process_single_post(self, post, dry_run):
+    def _process_single_post(self, post: BlogPostPage, dry_run: bool) -> tuple[int, int]:
         """Process images for a single blog post"""
         self.stdout.write(f'\nProcessing post: {post.title}')
 
@@ -115,7 +125,7 @@ class Command(BaseCommand):
 
         return migrated_images, errors
 
-    def _print_summary(self, total_posts, migrated_images, errors, dry_run):
+    def _print_summary(self, total_posts: int, migrated_images: int, errors: int, dry_run: bool) -> None:
         """Print migration summary"""
         self.stdout.write('\nMigration Summary:')
         self.stdout.write(f'  Posts processed: {total_posts}')
@@ -133,7 +143,7 @@ class Command(BaseCommand):
             )
 
     @transaction.atomic
-    def _migrate_image(self, legacy_image, post):
+    def _migrate_image(self, legacy_image: BlogPostImage, post: BlogPostPage) -> bool:
         """Migrate a single BlogPostImage to the new system"""
         try:
             # Check if this image was already migrated
@@ -192,9 +202,9 @@ class Command(BaseCommand):
             logger.error(f"Failed to migrate image {legacy_image.id}: {e}")
             raise  # Re-raise to trigger transaction rollback
 
-    def _update_cover_image(self, post):
+    def _update_cover_image(self, post: BlogPostPage) -> None:
         """Update the post's cover image to use the first gallery image"""
-        first_gallery_image = post.gallery_images.first()
+        first_gallery_image = post.images.first()
         if first_gallery_image and first_gallery_image.image:
             # Update legacy fields for backward compatibility
             image = first_gallery_image.image

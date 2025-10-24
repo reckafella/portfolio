@@ -1,12 +1,12 @@
 /* Project Card Styles */
 .project-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba(var(--default-color), 0.125);
 }
 
 .project-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 15px rgba(var(--default-color), 0.1) !important;
 }
 
 .project-card .card-img-top {
@@ -22,12 +22,12 @@
 }
 
 .project-card .card-title a:hover {
-  color: var(--bs-primary) !important;
+  color: var(--accent-color) !important;
 }
 
 /* Project Filters */
 .project-filters {
-  background: var(--bs-light);
+  background: var(--surface-color);
   border-radius: 0.375rem;
   padding: 1rem;
   margin-bottom: 2rem;
@@ -35,8 +35,8 @@
 
 .project-filters .form-control:focus,
 .project-filters .form-select:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(var(--accent-color), 0.25);
 }
 
 /* Filter badges */
@@ -86,24 +86,24 @@
 /* Project form styles */
 .project-form .form-control:focus,
 .project-form .form-select:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(var(--accent-color), 0.25);
 }
 
 .project-form .form-text {
   font-size: 0.875rem;
-  color: var(--bs-secondary);
+  color: var(--default-color);
 }
 
 .project-form .required-field::after {
   content: " *";
-  color: var(--bs-danger);
+  color: var(--text-error-color);
 }
 
 /* Guidelines card */
 .guidelines-card {
-  background: var(--bs-light);
-  border: 1px solid var(--bs-border-color);
+  background: var(--surface-color);
+  border: 1px solid var(--default-color);
 }
 
 .guidelines-card .card-body {
@@ -121,7 +121,7 @@
 /* Form buttons */
 .form-actions {
   padding: 1.5rem 0;
-  border-top: 1px solid var(--bs-border-color);
+  border-top: 1px solid var(--surface-color);
   margin-top: 2rem;
 }
 
@@ -136,21 +136,21 @@
 }
 
 .alert-success {
-  background-color: rgba(25, 135, 84, 0.1);
-  color: var(--bs-success);
+  background-color: rgba(var(--default-color), 0.1);
+  color: var(--text-success-color);
 }
 
 .alert-danger {
-  background-color: rgba(220, 53, 69, 0.1);
-  color: var(--bs-danger);
+  background-color: rgba(var(--default-color), 0.1);
+  color: var(--text-error-color);
 }
 
 .alert-warning {
-  background-color: rgba(255, 193, 7, 0.1);
-  color: var(--bs-warning);
+  background-color: rgba(var(--default-color), 0.1);
+  color: var(--text-warning-color);
 }
 
 .alert-info {
-  background-color: rgba(13, 202, 240, 0.1);
-  color: var(--bs-info);
+  background-color: rgba(var(--accent-color), 0.1);
+  color: var(--text-info-color);
 }

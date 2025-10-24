@@ -7,8 +7,8 @@ from django.views.generic import CreateView
 from titlecase import titlecase
 
 from app.views.helpers.helpers import handle_no_permissions, is_ajax
-from blog.models import BlogIndexPage
-from blog.views.base import BasePostView
+from ..models import BlogIndexPage
+from ..views.base import BasePostView
 
 
 class CreatePostView(BasePostView, CreateView):

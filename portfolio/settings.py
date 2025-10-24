@@ -14,7 +14,17 @@ import os
 import os.path
 from pathlib import Path
 
+import daphne.testing
+
 from app.views.helpers.helpers import get_error_files
+
+# Load environment variables from .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not installed, environment variables should be set by system
+    pass
 
 # import random
 
@@ -38,55 +48,27 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default=FALLBACK_SECRET_KEY)
 
 """ All environment variables """
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "True")
-DEBUG = False if DEBUG == "False" else True
-# DEBUG = True
-
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0"
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,rohn.live,portfolio-ot66.onrender.com"
 if ENVIRONMENT == 'production':
     # Allowed hosts
-    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=DEFAULT_HOSTS).split(",")
     # Installed Apps
     INSTALLED_APPS = []
-
-    # Supabase settings
-    SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
-    SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
-    SUPABASE_DB_PW = os.environ.get("SUPABASE_DB_PW", default="")
-    SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
-    SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
-
-    # Redis settings
-    REDIS_URL = os.environ.get("REDIS_URL", default="")
-    REDIS_PASSWORD = os.environ.get("REDIS_PW", default="")
-
-    # CLOUDINARY CONFIG SETTINGS
-    CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_NAME", '')
-    CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
-    CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
 else:
     ALLOWED_HOSTS = DEFAULT_HOSTS.split(",")
-    ALLOWED_HOSTS += ["organic-xylophone-vg4q9r9gw573wjpp-8000.app.github.dev"]
-    INSTALLED_APPS = []  # Remove daphne for local development
+    ALLOWED_HOSTS += [".github.dev"]
+    INSTALLED_APPS = []
     try:
         import daphne
+        daphne.testing
         INSTALLED_APPS.insert(0, 'daphne')
-    except Exception:
-        pass
-    from app.views.helpers.helpers import get_redis_creds
-    REDIS_URL = get_redis_creds()[0]
-    REDIS_PASSWORD = get_redis_creds()[1]
-
-    # CLOUDINARY CONFIG SETTINGS
-    from app.views.helpers.helpers import get_cloudinary_creds
-    CLOUDINARY_CLOUD_NAME = get_cloudinary_creds()[0]
-    CLOUDINARY_API_KEY = get_cloudinary_creds()[1]
-    CLOUDINARY_API_SECRET = get_cloudinary_creds()[2]
-
+    except ImportError:
+        pass  # daphne not available, skip it
 
 INSTALLED_APPS += [
     "django.contrib.admin", "django.contrib.auth", "rest_framework",
@@ -129,18 +111,6 @@ REST_FRAMEWORK = {
     },
 }
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://ethanmuthoni.me",
-    "https://rohn.live",
-    "https://portfolio-ot66.onrender.com",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:4173",
-]
-
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -154,6 +124,8 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "portfolio.middlewares.rate_limit.RateLimitMiddleware",
     "blog.middlewares.security.ViewCountSecurityMiddleware",
+    # Intelligent Cache Middleware - Masterpiece Solution
+    "portfolio.middlewares.intelligent_cache.IntelligentFetchFromCacheMiddleware",
 ]
 
 # portfolio.middlewares.remove_trailing_slashes.RemoveTrailingSlashMiddleware,
@@ -187,6 +159,33 @@ TEMPLATES = [
 ASGI_APPLICATION = "portfolio.asgi.application"
 WSGI_APPLICATION = "portfolio.wsgi.application"
 
+# CLOUDINARY CONFIG SETTINGS
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", os.environ.get("CLOUDINARY_NAME", ''))
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", '')
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", '')
+
+
+# --------------- DATABASE CONFIGURATION -----------------
+# Supabase settings
+SUPABASE_DB_NAME = os.environ.get("SUPABASE_DB_NAME", default="")
+SUPABASE_USER = os.environ.get("SUPABASE_USER", default="")
+SUPABASE_PASSWORD = os.environ.get("SUPABASE_DB_PASSWORD", default="")
+SUPABASE_HOST = os.environ.get("SUPABASE_HOST", default="")
+SUPABASE_PORT = os.environ.get("SUPABASE_PORT", default="")
+
+# Redis settings
+REDIS_URL = os.environ.get("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
+
+# Ensure Redis URL is properly formatted
+if ENVIRONMENT == 'production':
+    # For production, use the full Redis URL from environment
+    if not REDIS_URL.startswith(('redis://', 'rediss://')):
+        REDIS_URL = f"redis://{REDIS_URL}"
+else:
+    # For development, use localhost
+    REDIS_URL = "redis://localhost:6379/0"
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -196,9 +195,14 @@ if (ENVIRONMENT == 'production' and not DEBUG):
             "ENGINE": "django.db.backends.postgresql",
             "NAME": SUPABASE_DB_NAME,
             "USER": SUPABASE_USER,
-            "PASSWORD": SUPABASE_DB_PW,
+            "PASSWORD": SUPABASE_PASSWORD,
             "HOST": SUPABASE_HOST,
             "PORT": SUPABASE_PORT,
+            "OPTIONS": {
+                "connect_timeout": 30,
+                "options": "-c statement_timeout=300000",  # 5 minutes
+            },
+            "CONN_MAX_AGE": 600,  # 10 minutes connection pooling
         }
     }
 
@@ -218,36 +222,67 @@ else:
     POSTS_FOLDER = "portfolio/posts/dev"
     PROFILE_FOLDER = "portfolio/profiles/dev"
 
+# Cache settings
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
+CACHE_MIDDLEWARE_KEY_PREFIX = 'portfolio'
+USE_CACHE = True
+
+# Cache configuration
+CACHE_DYNAMIC_PAGES = 300  # 5 minutes
+CACHE_STATIC_PAGES = 3600  # 1 hour
+CACHE_API_PAGES = 15  # 15 seconds
+
+# Don't cache pages for authenticated users or POST requests
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+
+# Don't cache responses with these status codes
+CACHE_MIDDLEWARE_SKIP_STATUSES = (400, 401, 403, 404, 500)
+
 # sessions
 SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 if ENVIRONMENT == 'production':
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-
+    try:
+        CACHES = {
+            "default": {
+                "BACKEND": "django_redis.cache.RedisCache",
+                "LOCATION": REDIS_URL,
+                "OPTIONS": {
+                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                    "PASSWORD": REDIS_PASSWORD if REDIS_PASSWORD else None,
+                    "SOCKET_TIMEOUT": 5,
+                    "RETRY_ON_TIMEOUT": True,
+                    "CONNECTION_POOL_KWARGS": {
+                        "max_connections": 20,
+                        "retry_on_timeout": True
+                    }
+                }
+            }
+        }
+        # Use cache for sessions
+        SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+        SESSION_CACHE_ALIAS = "default"
+    except Exception as e:
+        print(f"Error configuring Redis cache: {e}")
+        # Fallback to database sessions if Redis fails
+        SESSION_ENGINE = "django.contrib.sessions.backends.db"
+        CACHES = {
+            "default": {
+                "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+                "LOCATION": "fallback-cache"
+            }
+        }
+else:
+    # Development environment - use local memory cache and database sessions
+    SESSION_ENGINE = "django.contrib.sessions.backends.db"
     CACHES = {
         "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://" + REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "PASSWORD": REDIS_PASSWORD,
-                "SOCKET_CONNECT_TIMEOUT": 5,
-                "SOCKET_TIMEOUT": 5,
-                "SOCKET_KEEPALIVE": True,
-                "SOCKET_KEEPALIVE_OPTIONS": {
-                    "TCP_KEEPIDLE": 1,
-                    "TCP_KEEPINTVL": 1,
-                    "TCP_KEEPCNT": 5,
-                },
-                "CONNECTION_POOL_KWARGS": {
-                    "max_connections": 10,
-                    "retry_on_timeout": True,
-                },
-            },
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake"
         }
     }
-else:
-    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -297,10 +332,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    # React build directory
+    # React build directory (contains both React and Django static assets)
     os.path.join(BASE_DIR, 'frontend/build'),
-    # App static files
-    os.path.join(BASE_DIR, 'app/static'),
 ]
 
 STATICFILES_FINDERS = [
@@ -335,47 +368,42 @@ WAGTAILIMAGES_IMAGE_MODEL = 'blog.CloudinaryWagtailImage'
 
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
 
-WAGTAILADMIN_BASE_URL = 'https://ethanmuthoni.me'
+WAGTAILADMIN_BASE_URL = 'https://rohn.live'
 
-WAGTAILDOCS_EXTENSIONS = [
-    'csv',
-    'docx',
-    'key',
-    'odt',
-    'pdf',
-    'pptx',
-    'rtf',
-    'txt',
-    'xlsx',
-    'zip'
-]
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx',
+                          'rtf', 'txt', 'xlsx', 'zip']
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
-                         'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image', 'embed']
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
     'full': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
-                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image', 'embed']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
     'minimal': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
-            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold',
-                         'italic', 'ol', 'ul', 'link', 'hr', 'code',
-                         'document-link', 'blockquote', 'image']
+            'features': ['h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic',
+                         'ol', 'ul', 'link', 'hr', 'code', 'image',
+                         'document-link', 'blockquote', 'embed']
         }
     },
 }
+
+# Wagtail-specific timeout and session settings
+WAGTAILADMIN_TIMEOUT = 300  # 5 minutes timeout for admin operations
+WAGTAILADMIN_SESSION_TIMEOUT = 3600  # 1 hour session timeout for admin
+WAGTAILADMIN_AUTO_SAVE_INTERVAL = 30  # Auto-save every 30 seconds
 
 
 # Default primary key field type
@@ -398,8 +426,20 @@ if (ENVIRONMENT == 'production' and not DEBUG):
     SECURE_PROXY_SSL_HEADER: tuple = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_REF: str = "no-referrer"
     SECURE_REF_POLICY: str = "strict-origin-when-cross-origin"
+else:
+    # Development settings - allow cookies over HTTP
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
 
 CSRF_FAILURE_VIEW = csrf_failure_view
+
+# In development, be more lenient with CSRF checks for API endpoints
+if ENVIRONMENT != 'production':
+    # Allow CSRF cookie to be read by JavaScript for debugging
+    CSRF_COOKIE_HTTPONLY = False
+    # Use a simple cookie name
+    CSRF_COOKIE_NAME = 'csrftoken'
+    SESSION_COOKIE_NAME = 'sessionid'
 
 # Maximum upload size for images in bytes
 MAX_UPLOAD_SIZE: int = 15 * 1024 * 1024  # 15MB or 15 * 1024 * 1024 bytes
@@ -422,24 +462,18 @@ ERROR_500: str = get_error_files()[3]
 
 
 # captcha settings
-""" CAPTCHA_CHOICES = (
-    'captcha.helpers.math_challenge',
-    'captcha.helpers.random_char_challenge',
-)
-
-CAPTCHA_CHALLENGE_FUNCT = random.choice(CAPTCHA_CHOICES)
- """
-
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-CAPTCHA_TIMEOUT = 10  # Increased to 10 minutes
-# CAPTCHA_IMAGE_SIZE = (100, 50)
-CAPTCHA_LENGTH = 6
-CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',
-                           'captcha.helpers.noise_arcs')
-# CAPTCHA_LETTER_ROTATION = (-30, 30)
-# CAPTCHA_FOREGROUND_COLOR = '#333'
-# CAPTCHA_BACKGROUND_COLOR = '#fff'
-CAPTCHA_FONT_SIZE = 30
+CAPTCHA_TIMEOUT = 5  # 5 minutes timeout
+CAPTCHA_LENGTH = 6  # 6 characters
+CAPTCHA_NOISE_FUNCTIONS = (
+    'captcha.helpers.noise_dots',
+    'captcha.helpers.noise_arcs',
+)
+CAPTCHA_IMAGE_SIZE = (150, 50)  # Larger image for better readability
+CAPTCHA_LETTER_ROTATION = (-10, 10)  # Less rotation for better readability
+CAPTCHA_FOREGROUND_COLOR = '#001F3F'  # Dark blue for better contrast
+CAPTCHA_BACKGROUND_COLOR = '#FFFFFF'  # White background
+CAPTCHA_FONT_SIZE = 32  # Larger font
 CAPTCHA_OUTPUT_FORMAT = 'png'
 CAPTCHA_IMAGE_BEFORE_FIELD = True
 CAPTCHA_REFRESH_CHALLENGE = True
@@ -448,11 +482,31 @@ CAPTCHA_REFRESH_CHALLENGE = True
 # Browser session timeout (when user closes browser)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Inactivity timeout in seconds (e.g. 1 hour = 3600 seconds)
-SESSION_COOKIE_AGE = 18400
+# Inactivity timeout in seconds (8 hours = 28800 seconds)
+SESSION_COOKIE_AGE = 28800
+CSRF_COOKIE_AGE = 28800
 
-# Optional but recommended - update session on activity
+# Update session on every request to prevent timeout during editing
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Additional session settings for long editing sessions
+SESSION_COOKIE_HTTPONLY = True
+
+# Environment-specific cookie settings
+if ENVIRONMENT == 'production':
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+else:
+    # For development, use 'Lax' which works with HTTP
+    # Note: Cookies will be domain-specific (localhost vs 127.0.0.1)
+    # For consistent behavior, use the same domain throughout development
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    # Don't set a specific domain, allowing cookies to work on whichever domain is accessed
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
+
+SESSION_ENGINE_TIMEOUT = 3600  # 1 hour timeout for session engine operations
 
 PROJECT_TYPES = [
     ('personal', 'Personal'),
@@ -484,49 +538,63 @@ SITE_ID = 1
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:4173",
+    "http://localhost:5173",
+    "http://localhost:8000",
     "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Vite default port
+    "http://127.0.0.1:4173",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://rohn.live",
+    "https://portfolio-ot66.onrender.com",
 ]
 
-if ENVIRONMENT == 'production':
-    CORS_ALLOWED_ORIGINS += [
-        "https://ethanmuthoni.me",
-        "https://www.ethanmuthoni.me",
-        "https://portfolio-ot66.onrender.com",
-        "https://rohn.live"
-    ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = False if ENVIRONMENT == 'production' else True
 
 # ============================
+# CSRF CONFIGURATION
+# ============================
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:4173",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:4173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://rohn.live",
+    "https://portfolio-ot66.onrender.com",
+]
+
+# ============================
 # RATE LIMITING CONFIGURATION
 # ============================
 
 # General rate limit value from environment variable, default == 1000
-RATELIMIT = os.environ.get("RATELIMIT", default=10000)
+try:
+    RATE_LIMIT = int(os.environ.get("RATE_LIMIT", "10000"))
+except (ValueError, TypeError):
+    RATE_LIMIT = 1000
+
 LEGITIMATE_BOTS = os.environ.get("LEGITIMATE_BOTS",
                                  default="googlebot,bravebot").split(",")
 SUSPICIOUS_BOTS = os.environ.get("SUSPICIOUS_PATTERNS",
                                  default="crawler,spider,scraper").split(",")
 
-# if RATELIMIT is not an integer, set it to 1000
-try:
-    RATELIMIT = int(RATELIMIT)
-except (ValueError, TypeError, Exception):
-    RATELIMIT = 1000
-
-# if RATELIMIT is less than 1000, set it to 1000
-if RATELIMIT < 1000:
-    RATELIMIT = 1000
+# if RATE_LIMIT is less than 1000, set it to 1000
+if RATE_LIMIT < 1000:
+    RATE_LIMIT = 1000
 
 # Comprehensive Rate Limiting Settings
 RATE_LIMITING = {
     # Global rate limiting (requests per hour per IP)
     'GLOBAL': {
-        'REQUESTS': RATELIMIT,  # requests per hour
+        'REQUESTS': RATE_LIMIT,  # requests per hour
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'global_rate_limit',
     },
@@ -548,7 +616,7 @@ RATE_LIMITING = {
 
     # API rate limiting (if you have APIs)
     'API': {
-        'REQUESTS': RATELIMIT,  # max 100 API calls per hour per IP
+        'REQUESTS': RATE_LIMIT,  # max 100 API calls per hour per IP
         'WINDOW': 3600,  # 1 hour in seconds
         'CACHE_KEY_PREFIX': 'api_rate_limit',
     },

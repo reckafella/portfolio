@@ -15,9 +15,9 @@ const Footer: React.FC = () => {
                             <h4>Social Links</h4>
                             <p>Connect with me on:</p>
                             <div className="social-links d-flex flex-wrap gap-2">
-                                <Link to="https://github.com/reckafella" target='_blank' className="github"><i className="bi bi-github"></i></Link>
-                                <Link to="https://www.linkedin.com/in/ethanmuthoni/" target='_blank' className="linkedin"><i className="bi bi-linkedin"></i></Link>
-                                <Link to="https://twitter.com/frmundu" target='_blank' className="twitter"><i className="bi bi-twitter-x"></i></Link>
+                                <Link to="https://github.com/reckafella" target='_blank' rel="noopener noreferrer" className="github" title="View my GitHub profile"><i className="bi bi-github"></i></Link>
+                                <Link to="https://www.linkedin.com/in/ethanmuthoni/" target='_blank' rel="noopener noreferrer" className="linkedin" title="Connect with me on LinkedIn"><i className="bi bi-linkedin"></i></Link>
+                                <Link to="https://twitter.com/frmundu" target='_blank' rel="noopener noreferrer" className="twitter" title="Follow me on X (Twitter)"><i className="bi bi-twitter-x"></i></Link>
                             </div>
                         </div>
 
@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
                             <h4>Contact Me</h4>
                             <ul>
                             <li>
-                                <Link to="mailto:ethanmuthoni@mail.com">
+                                <Link to="mailto:ethanmuthoni@mail.com" title="Send me an email">
                                 <i className="bi bi-envelope me-2"></i>Send Email
                                 </Link>
                             </li>
@@ -43,8 +43,8 @@ const Footer: React.FC = () => {
                             <li><Link to="/projects">Projects</Link></li>
                             <li><Link to="/services">Services</Link></li>
                             <li>
-                                <Link to="/sitemap" target="_blank" rel="noopener noreferrer">
-                                Sitemaps <i className="bi bi-box-arrow-up-right ms-1"></i>
+                                <Link to="/sitemap" title="View website sitemap">
+                                Sitemap
                                 </Link>
                             </li>
                             </ul>

@@ -1,0 +1,134 @@
+/* File Upload Component Styles */
+.image-upload-container,
+.file-upload-container {
+  position: relative;
+}
+
+/* Captcha Refresh Animation */
+@keyframes captcha-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.captcha-refresh-spin {
+  animation: captcha-spin 1s linear infinite;
+  display: inline-block;
+}
+
+.drag-drop-area {
+  transition: all 0.3s ease;
+  border: 2px dashed var(--surface-color);
+  background-color: var(--background-color);
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-drop-area:hover {
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
+}
+
+.drag-drop-area.drag-hover {
+  border-color: var(--accent-color);
+  background-color: var(--background-color);
+  transform: scale(1.02);
+}
+
+.image-preview-container .card {
+  transition: transform 0.2s ease;
+}
+
+.image-preview-container .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(var(--default-color), 0.1);
+}
+
+.image-preview-container .card img {
+  transition: opacity 0.2s ease;
+}
+
+.image-preview-container .card img:hover {
+  opacity: 0.9;
+}
+
+/* Progress bar styling */
+.progress {
+  background-color: var(--spedial-background-color);
+}
+
+.progress-bar.bg-success {
+  background-color: var(--text-success-color) !important;
+}
+
+.progress-bar.bg-danger {
+  background-color: var(--text-error-color) !important;
+}
+
+/* Remove button styling */
+.btn-danger.position-absolute {
+  box-shadow: 0 2px 4px rgba(var(--default-color), 0.2);
+}
+
+.btn-danger.position-absolute:hover {
+  transform: scale(1.1);
+}
+
+/* Modal styling for lightbox */
+.modal .modal-dialog {
+  max-width: 90vw;
+}
+
+.modal .modal-body img {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(var(--default-color), 0.15);
+}
+
+/* File list styling */
+.list-group-item {
+  border: 1px solid var(--surface-color);
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: var(--background-color);
+}
+
+.list-group-item .btn-outline-danger:hover {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .drag-drop-area {
+    min-height: 100px;
+    padding: 1rem;
+  }
+  
+  .drag-drop-area i {
+    font-size: 2rem !important;
+  }
+  
+  .drag-drop-area p {
+    font-size: 0.9rem;
+  }
+  
+  .image-preview-container .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 576px) {
+  .image-preview-container .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,226 @@
+from typing import Never
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from django.db.models import Q
+from django.core.paginator import Paginator
+
+
+from app.api.serializers.project_serializer import (
+    ProjectSerializer, ProjectCreateSerializer, ProjectDeleteSerializer,
+)
+from app.models import Projects
+from app.forms.projects import ProjectsForm
+
+from app.permissions import IsStaffOrReadOnly, IsAuthenticatedStaff
+
+
+class ProjectListAPIView(generics.ListAPIView):
+    """
+    API endpoint for listing projects with filtering and pagination
+    """
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Projects.objects.filter(live=True).select_related().prefetch_related('images', 'videos')
+
+        # Filtering
+        category = self.request.query_params.get('category', None)
+        project_type = self.request.query_params.get('project_type', None)
+        client = self.request.query_params.get('client', None)
+        search = self.request.query_params.get('search', None) or self.request.query_params.get('q', None)
+
+        if category and category != 'all':
+            queryset = queryset.filter(category=category)
+
+        if project_type and project_type != 'all':
+            queryset = queryset.filter(project_type=project_type)
+
+        if client and client != 'all':
+            queryset = queryset.filter(client=client)
+
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(client__icontains=search)
+            )
+
+        # Sorting
+        sort_by = self.request.query_params.get('sort_by', '-created_at') or\
+            self.request.query_params.get('ordering', '-created_at')
+        allowed_sort_fields = [
+            '-created_at', 'created_at', 'title', 'category', 'client',
+            '-category', '-client', 'project_type', '-project_type', '-title'
+        ]
+        if sort_by in allowed_sort_fields:
+            queryset = queryset.order_by(sort_by)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs) -> Response:
+        queryset = self.get_queryset()
+
+        # Pagination
+        page_size = int(request.query_params.get('page_size', 12))
+        paginator = Paginator(queryset, page_size)
+        page_number = request.query_params.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        serializer = self.get_serializer(page_obj, many=True)
+
+        return Response({
+            'results': serializer.data,
+            'count': paginator.count,
+            'next': f"?page={page_obj.next_page_number()}" if page_obj.has_next() else None,
+            'previous': f"?page={page_obj.previous_page_number()}" if page_obj.has_previous() else None,
+            'pagination': {
+                'count': paginator.count,
+                'num_pages': paginator.num_pages,
+                'current_page': page_obj.number,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
+                'previous_page_number': page_obj.previous_page_number() if page_obj.has_previous() else None,
+            },
+            'filters': {
+                'categories': list(Projects.objects.values_list('category', flat=True).distinct()),
+                'project_types': [choice[0] for choice in Projects.PROJECT_TYPES],
+                'clients': list(Projects.objects.values_list('client', flat=True).distinct()),
+            }
+        })
+
+
+class ProjectDetailAPIView(generics.RetrieveAPIView):
+    """
+    API endpoint for retrieving a single project
+    """
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return Projects.objects.filter(live=True).select_related().prefetch_related('images', 'videos')
+
+
+class ProjectCreateAPIView(generics.CreateAPIView):
+    """
+    API endpoint for creating new projects (Staff only)
+    """
+    serializer_class = ProjectCreateSerializer
+    permission_classes = [IsAuthenticatedStaff]
+
+    def get(self, request, *args, **kwargs):
+        """ Returns the form fields for creating a project """
+        form = ProjectsForm()
+        return Response({"fields": self.get_form_fields(form)},
+                        status=status.HTTP_200_OK)
+
+    def get_form_fields(self, form):
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": "ImageInput" if name == "images" else field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "widget": field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+
+            # Add choices for ChoiceField widgets
+            if hasattr(field, 'choices') and field.choices:
+                field_data["choices"] = list(field.choices)
+
+            # Update image field to use FileInput & type = "file"
+            if name == "images":
+                field_data["widget"] = "FileInput"
+                field_data["type"] = "ImageInput"
+                field_data["multiple"] = True
+
+            fields[name] = field_data
+        return fields
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class ProjectUpdateAPIView(generics.UpdateAPIView):
+    """
+    API endpoint for updating projects (Staff only)
+    """
+    serializer_class = ProjectCreateSerializer
+    permission_classes = [IsAuthenticatedStaff]
+    lookup_field = 'slug'
+
+    def get(self, request, *args, **kwargs) -> Response:
+        """ Returns the form fields for updating a project """
+        form = ProjectsForm(instance=self.get_object())
+        return Response({"fields": self.get_form_fields(form)},
+                        status=status.HTTP_200_OK)
+
+    def get_form_fields(self, form):
+        fields = {}
+        for name, field in form.fields.items():
+            field_data = {
+                "label": field.label,
+                "type": "ImageInput" if name == "images" else field.widget.__class__.__name__,
+                "required": field.required,
+                "help_text": field.help_text,
+                "disabled": field.disabled,
+                "multiple": True if name == "images" else False,
+                "widget": "ImageInput" if name == "images" else field.widget.__class__.__name__,
+                "max_length": field.max_length if hasattr(field, 'max_length') else None,
+                "min_length": field.min_length if hasattr(field, 'min_length') else None,
+            }
+
+            # Add choices for ChoiceField widgets
+            if hasattr(field, 'choices') and field.choices:
+                field_data["choices"] = list(field.choices)
+
+            fields[name] = field_data
+        return fields
+
+    def get_queryset(self):
+        return Projects.objects.all()
+
+
+class ProjectDeleteAPIView(generics.DestroyAPIView):
+    """
+    API endpoint for deleting projects (Staff only)
+    """
+    permission_classes = [IsAuthenticatedStaff]
+    lookup_field = 'slug'
+    serializer_class = ProjectDeleteSerializer
+
+    def get_queryset(self):
+        return Projects.objects.all()
+
+    def perform_destroy(self, instance):
+        serializer = self.get_serializer(instance)
+        return serializer.delete(instance)
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for full CRUD operations on projects
+    """
+    queryset = Projects.objects.filter(live=True).select_related().prefetch_related('images', 'videos')
+    serializer_class = ProjectSerializer
+    permission_classes = [IsStaffOrReadOnly]
+    lookup_field = 'slug'
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return ProjectCreateSerializer
+        return ProjectSerializer
+
+    def get_queryset(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # For modification actions, allow access to all projects if authenticated
+            if self.request.user.is_authenticated:
+                return Projects.objects.all()
+        return Projects.objects.filter(live=True)

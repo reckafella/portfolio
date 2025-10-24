@@ -29,7 +29,7 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
         } catch (error) {
-            console.error('Failed to copy link:', error);
+            window.alert('Failed to copy link: ' + error);
             // Fallback for older browsers
             const textArea = document.createElement('textarea');
             textArea.value = url;
@@ -45,7 +45,7 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
     const getShareUrls = () => {
         const encodedUrl = encodeURIComponent(url);
         const encodedTitle = encodeURIComponent(title);
-        const encodedDescription = encodeURIComponent(description || '');
+        // const encodedDescription = encodeURIComponent(description || '');
 
         return {
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
@@ -76,10 +76,10 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
             {/* Share Modal */}
             {showModal && (
                 <>
-                    <div className="modal show d-block" tabIndex={-1} role="dialog">
-                        <div className="modal-dialog modal-dialog-centered modal-sm" role="document">
+                    <div className="modal show d-block" tabIndex={-1} role="dialog" style={{ maxWidth: '100px' }}>
+                        <div className="modal-dialog modal-dialog-centered modal-sm" role="document" style={{ marginTop: '100px' }}>
                             <div className="modal-content">
-                                <div className="modal-header border-bottom-0 pb-0">
+                                <div className="modal-header border-bottom-0 p-3">
                                     <h5 className="modal-title">
                                         <span className="fw-bold">Share</span> {title}
                                     </h5>
@@ -105,7 +105,7 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
                                         </div>
                                     )}
                                     
-                                    <div className="d-grid gap-2">
+                                    <div className="d-grid gap-3">
                                         {/* Copy Link */}
                                         <button
                                             className={`btn share-btn d-flex align-items-center gap-3 py-2 ${
@@ -176,7 +176,7 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
 export const useShareManager = () => {
     const share = useCallback((url: string, title: string, imageUrl?: string, description?: string) => {
         // This could be extended to trigger a global share modal
-        console.log('Share:', { url, title, imageUrl, description });
+        window.alert('Share:' + { url, title, imageUrl, description });
     }, []);
 
     return { share };

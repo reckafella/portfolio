@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Search from './search/Search';
 import ThemeSwitch from './utils/SwitchThemes';
-import SVGLogoComponent from './Logo';
+import SVGComponent from './Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
 import { getLoginUrlWithNext, getSignupUrlWithNext } from '@/utils/authUtils';
@@ -75,7 +75,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
             <header id="header" className="header d-flex align-items-center sticky-top">
                 <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
                     <Link to="/" className="logo d-flex justify-content-start align-items-center">
-                        <SVGLogoComponent />
+                        <SVGComponent />
                     </Link>
                     <div className='search-nav-wrapper d-flex justify-content-center align-items-center gap-0'>
                         <Search onToggleSearch={onToggleSearch} />

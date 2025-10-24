@@ -1,9 +1,14 @@
 /* Share Manager Styles */
 /* Matching Django template styles */
 
+.modal-dialog {
+    width: 400px;
+    max-width: 500px;
+}
+
 /* Base button styling */
 .share-btn {
-    background-color: var(--surface-color);
+    background-color: var(--card-background-color);
     /* border: 1px solid var(--default-color, #333); */
     color: var(--default-color);
     text-decoration: none;
@@ -12,7 +17,7 @@
 }
 
 .share-btn:hover {
-    background-color: var(--card-background-color);
+    background-color: var(--special-background-color);
     color: var(--accent-color);
     text-decoration: none;
 }
@@ -53,7 +58,7 @@
 
 /* Share modal styling */
 .modal-dialog.modal-sm {
-    max-width: 400px;
+    max-width: 350px;
 }
 
 .share-image-container {

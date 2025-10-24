@@ -27,7 +27,7 @@ export interface CaptchaData {
 }
 
 export interface UnifiedFormProps {
-    formType: 'contact' | 'login' | 'signup' | 'create_project' | 'update_project' | 'create_article' | 'update_article' | 'comment';
+    formType: 'contact' | 'login' | 'signup' | 'comment';
     onSubmit: (_formData: Record<string, string | File | File[] | boolean>) => Promise<void>;
     isSubmitting: boolean;
     error?: string;

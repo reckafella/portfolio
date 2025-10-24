@@ -152,7 +152,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     }
     
     return (
-        <div className="rounded-3 shadow p-4">
+        <div className="rounded-0 shadow p-4">
             <div className="section-title mb-0">
                 {title && (
                     <h2 className="fw-bold">{title}</h2>

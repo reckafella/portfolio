@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { BlogPost } from '@/hooks/queries/blogQueries';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
+import { ShareButton } from '../share/ShareButton';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -9,90 +10,98 @@ interface BlogCardProps {
 
 export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
   const { canEditProjects: canEditBlog } = useStaffPermissions();
+  const justifyClass = canEditBlog ? 'justify-content-around' : 'justify-content-center'
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-GB');
+  };
+
 
   return (
-    <div className="card h-100 shadow-sm">
-      {post.featured_image_url && (
-        <img
-          src={post.featured_image_url}
-          className="card-img-top"
-          alt={post.title}
-          style={{ height: '200px', objectFit: 'cover' }}
+    <article className="entry col-12">
+      {post.featured_image_url ? (
+        <div className="entry-img my-2">
+          <img
+            src={post.featured_image_url}
+            className="img-fluid"
+            alt={`Cover Image for the article: ${post.title}`}
+            style={{ maxHeight: '350px', width: '100%', objectFit: 'cover' }}
+            loading='lazy'
+          />
+        </div>
+      ) : (
+          <div className="bg-light-dark d-flex align-items-center justify-content-center"
+            style={{ height: '300px', maxHeight: "350px" }}>
+            <div className="d-flex flex-column justify-content-between align-items-center">
+              <i className="bi bi-image text-muted" style={{ fontSize: '3rem' }}></i>
+              <span className="text-muted text-center">No image available</span>
+            </div>
+        </div>
+      )}
+
+      <div className="entry-meta">
+        <ul className='d-flex justify-content-start justify-content-md-start'>
+          <li className="d-flex align-items-center">
+            <i className="bi bi-person me-1"></i>
+            <span>
+              {post.author}
+            </span>
+          </li>
+          <li className="d-flex align-items-center">
+            <i className="bi bi-calendar me-1"></i>
+            <span>
+              {formatDate(post.first_published_at)}
+            </span>
+          </li>
+          <li className="d-none d-lg-flex align-items-center">
+            <i className="bi bi-clock me-1"></i>
+            <span>
+              {post.reading_time}
+            </span>
+          </li>
+          <li className="d-flex align-items-center">
+            <ShareButton
+              url={window.location.href}
+              title={post.title}
+              imageUrl={post.featured_image_url || post.cover_image_url}
+              description={post.excerpt}
+              variant="icon"
+              size="sm"
+              className="btn-sm special-btn"
+            />
+          </li>
+        </ul>
+      </div>
+      <h2 className="entry-title my-2 my-lg-3">
+        <Link to={`/blog/article/${post.slug}`} className="text-decoration-none">
+          {post.title}
+        </Link>
+      </h2>
+
+      {showExcerpt && post.excerpt && (
+        <div
+          className="entry-content flex-grow-1"
+          dangerouslySetInnerHTML={{ __html: post.excerpt }}
+          style={{ lineHeight: '1.3' }}
         />
       )}
-      
-      <div className="card-body d-flex flex-column">
-        <div className="mb-2">
-          {post.tags_list?.map((tag, index) => (
-            <Link
-              key={index}
-              to={`/blog?tag=${encodeURIComponent(tag)}`}
-              className="badge bg-secondary text-decoration-none me-1"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
-        
-        <h5 className="card-title">
-          <Link to={`/blog/article/${post.slug}`} className="text-decoration-none">
-            {post.title}
+
+      <div className={`d-flex ${justifyClass} gap-2`}>
+        <Link
+          to={`/blog/article/${post.slug}`}
+          className="btn btn-success btn-sm"
+        >
+          Read Article <i className='bi bi-arrow-right'></i>
+        </Link>
+
+        {canEditBlog && (
+          <Link
+            to={`/blog/edit/${post.slug}`}
+            className="btn btn-secondary btn-sm"
+          >
+            <i className='bi bi-pen'></i> Edit Article
           </Link>
-        </h5>
-        {showExcerpt && post.excerpt && (
-                  <div
-                      className="card-text flex-grow-1"
-                      dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                      style={{ lineHeight: '1.8' }}
-                  />
         )}
-        
-        <div className="mt-auto">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <div className="d-flex align-items-center text-muted">
-              <small className="me-3">
-                <i className="bi bi-person me-1"></i>
-                {post.author}
-              </small>
-              <small className="me-3">
-                <i className="bi bi-calendar me-1"></i>
-                {new Date(post.first_published_at).toLocaleDateString()}
-              </small>
-              <small>
-                <i className="bi bi-clock me-1"></i>
-                {post.reading_time}
-              </small>
-            </div>
-          </div>
-          
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex gap-2">
-              <Link
-                to={`/blog/article/${post.slug}`}
-                className="btn btn-primary btn-sm"
-              >
-                Read More
-              </Link>
-              
-              {canEditBlog && (
-                <Link
-                  to={`/blog/edit/${post.slug}`}
-                  className="btn btn-secondary btn-sm"
-                >
-                  Edit
-                </Link>
-              )}
-            </div>
-            
-            <div className="text-muted small">
-              <span>{post.view_count} views</span>
-              {post?.comments_count > 0 && (
-                <span className="ms-2">{post?.comments_count} comments</span>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
+    </article>
   );
 }

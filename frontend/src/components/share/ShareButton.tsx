@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 import '@/styles/share.css';
 
 interface ShareButtonProps {
@@ -7,7 +8,7 @@ interface ShareButtonProps {
     imageUrl?: string;
     description?: string;
     className?: string;
-    size?: 'sm' | 'md' | 'lg';
+    size?: 'sm' | 'lg' | undefined;
     variant?: 'icon' | 'text' | 'both';
     position?: 'inline' | 'floating';
 }
@@ -24,6 +25,9 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
 }) => {
     const [showModal, setShowModal] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    const handleClose = () => setShowModal(false);
+    const handleShow = () => setShowModal(true);
 
     const handleCopyLink = useCallback(async () => {
         try {
@@ -46,7 +50,6 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     const getShareUrls = () => {
         const encodedUrl = encodeURIComponent(url);
         const encodedTitle = encodeURIComponent(title);
-        // const encodedDescription = encodeURIComponent(description || '');
 
         return {
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
@@ -59,12 +62,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     const shareUrls = getShareUrls();
 
     const getButtonClasses = () => {
-        const baseClasses = 'btn share-link';
-        const sizeClasses = {
-            sm: 'btn-sm',
-            md: '',
-            lg: 'btn-lg'
-        };
+        const baseClasses = 'share-link';
         const variantClasses = {
             icon: 'btn-outline-secondary',
             text: 'btn-outline-secondary',
@@ -72,7 +70,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
         };
         const positionClasses = position === 'floating' ? 'position-fixed' : '';
         
-        return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${positionClasses} ${className}`;
+        return `${baseClasses} ${variantClasses[variant]} ${positionClasses} ${className}`;
     };
 
     const getButtonContent = () => {
@@ -113,11 +111,11 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     return (
         <>
             {/* Share Button */}
-            <button
-                type="button"
+            <Button
+                size={size}
                 className={getButtonClasses()}
                 style={getPositionStyles()}
-                onClick={() => setShowModal(true)}
+                onClick={handleShow}
                 data-share-url={url}
                 data-share-title={title}
                 data-share-image={imageUrl}
@@ -125,102 +123,94 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
                 title={`Share: ${title}`}
             >
                 {getButtonContent()}
-            </button>
+            </Button>
 
-            {/* Share Modal */}
-            {showModal && (
-                <>
-                    <div className="modal show d-block" tabIndex={-1} role="dialog">
-                        <div className="modal-dialog modal-sm" role="document">
-                            <div className="modal-content">
-                                <div className="modal-header border-bottom-0 pb-0">
-                                    <h5 className="modal-title">
-                                        <span className="fw-bold">Share</span> {title}
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setShowModal(false)}
-                                        aria-label="Close"
-                                    >
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    {/* Image preview */}
-                                    {imageUrl && (
-                                        <div className="share-image-container mb-3 text-center">
-                                            <img
-                                                src={imageUrl}
-                                                alt={title}
-                                                className="share-image-preview img-fluid rounded"
-                                                style={{ maxHeight: '150px', objectFit: 'cover' }}
-                                            />
-                                        </div>
-                                    )}
-                                    
-                                    <div className="d-grid gap-2">
-                                        {/* Copy Link */}
-                                        <button
-                                            className={`btn share-btn d-flex align-items-center gap-3 py-2 ${
-                                                copySuccess ? 'btn-success' : 'btn-outline-secondary'
-                                            }`}
-                                            onClick={handleCopyLink}
-                                        >
-                                            <i className={`bi ${copySuccess ? 'bi-check-circle' : 'bi-copy'}`}></i>
-                                            <span>{copySuccess ? 'Link Copied!' : 'Copy link'}</span>
-                                        </button>
-
-                                        {/* Facebook */}
-                                        <a
-                                            href={shareUrls.facebook}
-                                            className="btn share-btn d-flex align-items-center gap-3 py-2 btn-outline-primary"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <i className="bi bi-facebook text-primary"></i>
-                                            <span>Share on Facebook</span>
-                                        </a>
-
-                                        {/* Twitter/X */}
-                                        <a
-                                            href={shareUrls.twitter}
-                                            className="btn share-btn d-flex align-items-center gap-3 py-2 btn-outline-info"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <i className="bi bi-twitter-x text-info"></i>
-                                            <span>Share on X</span>
-                                        </a>
-
-                                        {/* WhatsApp */}
-                                        <a
-                                            href={shareUrls.whatsapp}
-                                            className="btn share-btn d-flex align-items-center gap-3 py-2 btn-outline-success"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <i className="bi bi-whatsapp text-success"></i>
-                                            <span>Share on WhatsApp</span>
-                                        </a>
-
-                                        {/* LinkedIn */}
-                                        <a
-                                            href={shareUrls.linkedin}
-                                            className="btn share-btn d-flex align-items-center gap-3 py-2 btn-outline-primary"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <i className="bi bi-linkedin text-primary"></i>
-                                            <span>Share on LinkedIn</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+            {/* React Bootstrap Modal */}
+            <Modal show={showModal} onHide={handleClose} size={size}>
+                <Modal.Header closeButton className="border-bottom-0 pb-0">
+                    <Modal.Title>
+                        <span className="fw-bold">Share</span> {title}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Image preview */}
+                    {imageUrl && (
+                        <div className="share-image-container mb-3 text-center">
+                            <img
+                                src={imageUrl}
+                                alt={title}
+                                className="share-image-preview img-fluid rounded"
+                                style={{ maxHeight: '170px', objectFit: 'cover' }}
+                                loading='lazy'
+                            />
                         </div>
+                    )}
+                    
+                    <div className="d-grid gap-2">
+                        {/* Copy Link */}
+                        <Button
+                            variant={copySuccess ? 'success' : 'outline-secondary'}
+                            className="share-btn d-flex align-items-center gap-3 py-2"
+                            onClick={handleCopyLink}
+                        >
+                            <i className={`bi ${copySuccess ? 'bi-check-circle' : 'bi-copy'}`}></i>
+                            <span>{copySuccess ? 'Link Copied!' : 'Copy link'}</span>
+                        </Button>
+
+                        {/* Facebook */}
+                        <Button
+                            as="a"
+                            href={shareUrls.facebook}
+                            variant="outline-primary"
+                            className="share-btn d-flex align-items-center gap-3 py-2"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i className="bi bi-facebook text-primary"></i>
+                            <span>Share on Facebook</span>
+                        </Button>
+
+                        {/* Twitter/X */}
+                        <Button
+                            as="a"
+                            href={shareUrls.twitter}
+                            variant="outline-info"
+                            className="share-btn d-flex align-items-center gap-3 py-2"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i className="bi bi-twitter-x text-info"></i>
+                            <span>Share on X</span>
+                        </Button>
+
+                        {/* WhatsApp */}
+                        <Button
+                            as="a"
+                            href={shareUrls.whatsapp}
+                            variant="outline-success"
+                            className="share-btn d-flex align-items-center gap-3 py-2"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i className="bi bi-whatsapp text-success"></i>
+                            <span>Share on WhatsApp</span>
+                        </Button>
+
+                        {/* LinkedIn */}
+                        <Button
+                            as="a"
+                            href={shareUrls.linkedin}
+                            variant="outline-primary"
+                            className="share-btn d-flex align-items-center gap-3 py-2"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i className="bi bi-linkedin text-primary"></i>
+                            <span>Share on LinkedIn</span>
+                        </Button>
                     </div>
-                    <div className="modal-backdrop show" onClick={() => setShowModal(false)}></div>
-                </>
-            )}
+                </Modal.Body>
+            </Modal>
         </>
     );
 };

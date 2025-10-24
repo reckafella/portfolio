@@ -65,6 +65,7 @@
 }
 
 .blog .entry .entry-meta a,
+.blog .entry .entry-meta span,
 .blog .entry .entry-meta #view-count {
   color: var(--default-color);
   font-size: 14px;

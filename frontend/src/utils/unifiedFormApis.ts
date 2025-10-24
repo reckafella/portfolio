@@ -1,14 +1,11 @@
 import { FormValue, FormConfig, FieldConfig } from "@/types/unifiedForms";
 
-export const getApiEndpoint = (formType: string, slug?: string): string => {
+export const getApiEndpoint = (formType: string, _slug?: string): string => {
     const endpoints: Record<string, string> = {
         contact: '/api/v1/contact/',
         login: '/api/v1/auth/login/',
         signup: '/api/v1/auth/signup/',
-        create_project: '/api/v1/projects/create/',
-        update_project: `/api/v1/projects/${slug}/update/`,
-        create_article: '/api/v1/blog/article/create/',
-        update_article: `/api/v1/blog/article/${slug}/update/`,
+        comment: '/api/v1/blog/comments/',
     };
     
     return endpoints[formType] || '/api/v1/contact/';

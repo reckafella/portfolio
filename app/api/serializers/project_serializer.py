@@ -61,13 +61,25 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
         required=False,
         help_text="YouTube video URLs (one per line)"
     )
+    delete_images = serializers.CharField(
+        write_only=True,
+        required=False,
+        help_text="Comma-separated image IDs to delete"
+    )
+    delete_videos = serializers.CharField(
+        write_only=True,
+        required=False,
+        help_text="Comma-separated video IDs to delete"
+    )
 
     class Meta:
         model = Projects
         fields = (
             'title', 'description', 'project_type', 'category',
-            'client', 'project_url', 'live', 'images', 'youtube_urls'
+            'client', 'project_url', 'live', 'images', 'youtube_urls',
+            'delete_images', 'delete_videos', 'slug'
         )
+        read_only_fields = ('slug',)
         extra_kwargs = {
             'title': {'required': True, 'min_length': 5, 'max_length': 200},
             'project_url': {'required': True, 'max_length': 250},
@@ -222,6 +234,27 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
         images = validated_data.pop('images', [])
         youtube_urls = validated_data.pop('youtube_urls', [])
+        delete_images = validated_data.pop('delete_images', '')
+        delete_videos = validated_data.pop('delete_videos', '')
+
+        # Delete marked images
+        if delete_images:
+            image_ids = [int(id.strip()) for id in delete_images.split(',') if id.strip()]
+            images_to_delete = Image.objects.filter(id__in=image_ids, project=instance)
+            uploader = CloudinaryImageHandler()
+            for img in images_to_delete:
+                try:
+                    # Delete from Cloudinary
+                    uploader.delete_image(img.cloudinary_image_id)
+                except Exception as e:
+                    print(f"Error deleting image {img.cloudinary_image_id} from Cloudinary: {str(e)}")
+                # Delete from database
+                img.delete()
+
+        # Delete marked videos
+        if delete_videos:
+            video_ids = [int(id.strip()) for id in delete_videos.split(',') if id.strip()]
+            Video.objects.filter(id__in=video_ids, project=instance).delete()
 
         # Update slug if title changes
         if 'title' in validated_data and validated_data['title'] != instance.title:

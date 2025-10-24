@@ -10,11 +10,8 @@ interface BlogFiltersProps {
 
 export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCount }: BlogFiltersProps) {
   const [expandFilters, setExpandFilters] = useState(false);
-  
-  // Local state for form inputs to prevent auto-submission
   const [localFilters, setLocalFilters] = useState<BlogFilters>(filters);
 
-  // Update local filters when props change
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
@@ -27,7 +24,7 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
     e.preventDefault();
     onFiltersChange({
       ...localFilters,
-      page: 1, // Reset to first page when filtering
+      page: 1,
     });
   };
 
@@ -58,7 +55,7 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
   ];
 
     return (
-        <div className="p-0 rounded mb-2 mb-lg-3">
+        <div className="p-1 card rounded mb-2 mb-lg-3">
             <div className="d-flex justify-content-between align-items-center mb-1">
                 <h6 className="mb-0 d-flex">Filter Posts (
                     <p className="text-muted mb-1">
@@ -74,8 +71,8 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                     {expandFilters ? 'Hide Filters' : 'Show Filters'}
                 </button>
             </div>
-            <form onSubmit={handleSubmit} className='card form-control'>
-                <div className="card-body">
+            <form onSubmit={handleSubmit} className='bg-transparent form-control'>
+                <div className="card-body p-1">
                     {/* Search Input - Always Visible */}
                     <div className="mb-3">
                         <div className="input-group">
@@ -92,7 +89,7 @@ export function BlogFiltersComponent({ filters, onFiltersChange, tags, totalCoun
                         </div>
                     </div>
                 </div>
-                <div className="card-footer">
+                <div className="card-footer border-top-0 p-0 px-1">
                     {/* Collapsible Filters */}
                     <div className={`collapse ${expandFilters ? 'show' : ''}`}>
                         <div className="row g-3">

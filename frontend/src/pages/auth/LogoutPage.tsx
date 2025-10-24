@@ -4,7 +4,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 const LogoutPage: React.FC = () => {
-  const [isLoggingOut, setIsLoggingOut] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const { logout, isAuthenticated } = useAuth();
 
@@ -22,7 +22,7 @@ const LogoutPage: React.FC = () => {
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Logout failed';
           setError(errorMessage);
-          setIsLoggingOut(false);
+          setIsLoading(false);
         }
       } else {
         // User is already logged out
@@ -71,7 +71,7 @@ const LogoutPage: React.FC = () => {
           <div className="card">
             <div className="card-body text-center">
               <div className="mb-4">
-                {isLoggingOut ? (
+                {isLoading ? (
                   <>
                     <h1 className="fw-bold">Log out</h1>
                     <p className="text-muted">Please wait while we sign you out securely.</p>
@@ -91,7 +91,7 @@ const LogoutPage: React.FC = () => {
               <button 
                 className="btn btn-outline-primary"
                 onClick={handleManualRedirect}
-                disabled={isLoggingOut}
+                disabled={isLoading}
               >
                 Go to Home
               </button>

@@ -56,32 +56,58 @@ const projectApiFunctions = {
     return response.json();
   },
 
-  async createProject(data: Record<string, string | boolean | File | File[]>) {
+  async createProject(data: Record<string, string | number | boolean | File | File[]>) {
     const response = await projectApi.create(data);
     if (!response.ok) {
-      const errorData = await response.json();
-      if (response.status === 400 && errorData.errors) {
-        throw new Error(
-          Object.values(errorData.errors).flat().join(', ')
-        );
+      // Try to parse error response
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.errors) {
+          throw new Error(
+            Object.values(errorData.errors).flat().join(', ')
+          );
+        }
+        throw new Error(errorData.message || 'Failed to create project');
       }
-      throw new Error(errorData.message || 'Failed to create project');
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return response.json();
+    
+    // Check if response has content before parsing
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const text = await response.text();
+      const parsed = text ? JSON.parse(text) : {};
+      // Ensure slug field always exists in response
+      return { slug: parsed.slug || undefined, ...parsed };
+    }
+    return { slug: undefined };
   },
 
   async updateProject(slug: string, data: Record<string, string | number | boolean | File | File[]>) {
     const response = await projectApi.update(slug, data);
     if (!response.ok) {
-      const errorData = await response.json();
-      if (response.status === 400 && errorData.errors) {
-        throw new Error(
-          Object.values(errorData.errors).flat().join(', ')
-        );
+      // Try to parse error response
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.errors) {
+          throw new Error(
+            Object.values(errorData.errors).flat().join(', ')
+          );
+        }
+        throw new Error(errorData.message || 'Failed to update project');
       }
-      throw new Error(errorData.message || 'Failed to update project');
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return response.json();
+    
+    // Check if response has content before parsing
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const text = await response.text();
+      return text ? JSON.parse(text) : { slug };
+    }
+    return { slug };
   },
 
   async deleteProject(slug: string) {

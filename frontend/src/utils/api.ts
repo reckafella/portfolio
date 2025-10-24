@@ -147,14 +147,14 @@ export const projectApi = {
         }
       });
 
-      return apiRequest('/api/v1/projects/create', {
+      return apiRequest('/api/v1/projects/create/', {
         method: 'POST',
         body: formData,
         headers: {}, // Let the browser set Content-Type for FormData
       });
     } else {
       // Use JSON for regular data
-      return apiRequest('/api/v1/projects/create', {
+      return apiRequest('/api/v1/projects/create/', {
         method: 'POST',
         body: JSON.stringify(projectData),
       });
@@ -187,14 +187,14 @@ export const projectApi = {
       });
 
       return apiRequest(`/api/v1/projects/${slug}/update/`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: formData,
         headers: {}, // Let the browser set Content-Type for FormData
       });
     } else {
       // Use JSON for regular data
       return apiRequest(`/api/v1/projects/${slug}/update/`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify(projectData),
       });
     }

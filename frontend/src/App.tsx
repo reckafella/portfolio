@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import MetaTags from './components/meta/MetaTags'
 import HomePage from './pages/home/HomePage'
 import AboutPage from './pages/about/AboutPage'
 import { ProjectListPage } from './pages/projects/ProjectListPage'
@@ -161,6 +162,7 @@ function App() {
                                 </main>
                                 <Footer />
                                 <ScrollToTop />
+                                <MetaTags />
                                 <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
                                 <ReactQueryDevtools initialIsOpen={false} />
                             </div>

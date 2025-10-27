@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { useBlogPosts, useBlogStats, BlogFilters, BlogPost } from '@/hooks/queries/blogQueries';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogFiltersComponent } from '@/components/blog/BlogFilters';
@@ -13,6 +14,20 @@ import { SearchWidget } from '@/components/blog/SearchWidget';
 export function BlogListPage() {
   usePageTitle('Blog');
   const { canCreateProjects: canCreateBlog } = useStaffPermissions();
+
+  // Configure meta tags for the blog list page
+  useMetaTags({
+    title: 'Blog',
+    description: 'Explore my latest thoughts, tutorials, and insights on software development, web technologies, and more.',
+    ogTitle: 'Blog Articles | Ethan Wanyoike',
+    ogDescription: 'Discover articles about software development, web technologies, and programming insights.',
+    ogType: 'blog',
+    ogUrl: `${window.location.origin}/blog`,
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Blog Articles | Ethan Wanyoike',
+    twitterDescription: 'Discover articles about software development, web technologies, and programming insights.',
+    canonical: `${window.location.origin}/blog${window.location.search}`
+  });
   const [filters, setFilters] = useState<BlogFilters>({ page: 1, page_size: 6 });
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB');

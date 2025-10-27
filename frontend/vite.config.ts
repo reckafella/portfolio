@@ -33,9 +33,9 @@ export default defineConfig({
           // Split React Query into its own chunk
           'react-query': ['@tanstack/react-query', '@tanstack/react-query-devtools'],
           // Split React Bootstrap and icons
-          'ui-vendor': ['react-bootstrap', 'react-icons'],
+          'ui-vendor': ['react-bootstrap', 'bootstrap', 'react-icons'],
           // Split other large dependencies
-          'utils-vendor': ['axios'],
+          'utils-vendor': ['axios', ],
         },
       },
     },

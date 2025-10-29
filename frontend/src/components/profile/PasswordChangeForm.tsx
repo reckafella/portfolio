@@ -80,7 +80,7 @@ export const PasswordChangeForm: React.FC = () => {
     };
 
     return (
-        <div className="tab-pane fade pt-3" id="profile-change-password">
+        <div className="tab-pane fade show active pt-3" id="profile-change-password">
             {successMessage && (
                 <div className="alert alert-success alert-dismissible fade show" role="alert">
                     <i className="bi bi-check-circle-fill me-2"></i>

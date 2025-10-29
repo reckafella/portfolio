@@ -57,7 +57,7 @@ export const SettingsForm: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="tab-pane fade pt-3" id="profile-settings">
+            <div className="tab-pane fade show active pt-3" id="profile-settings">
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Loading settings...</span>
@@ -68,7 +68,7 @@ export const SettingsForm: React.FC = () => {
     }
 
     return (
-        <div className="tab-pane fade pt-3" id="profile-settings">
+        <div className="tab-pane fade show active pt-3" id="profile-settings">
             {successMessage && (
                 <div className="alert alert-success alert-dismissible fade show" role="alert">
                     <i className="bi bi-check-circle-fill me-2"></i>

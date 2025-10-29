@@ -5,6 +5,7 @@ import { ProfileOverview } from '@/components/profile/ProfileOverview';
 import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
 import { PasswordChangeForm } from '@/components/profile/PasswordChangeForm';
 import { SettingsForm } from '@/components/profile/SettingsForm';
+import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
 
 /**
  * ProfilePage component - Main profile management page
@@ -12,8 +13,13 @@ import { SettingsForm } from '@/components/profile/SettingsForm';
  */
 const ProfilePage: React.FC = () => {
     usePageTitle('Profile');
-    const { data: profile, isLoading, isError, error } = useProfile();
+    const { data: profile, isLoading, isError, error, refetch } = useProfile();
     const [activeTab, setActiveTab] = useState<string>('overview');
+
+    const handleImageUploadSuccess = () => {
+        // Refetch profile to get updated image
+        refetch();
+    };
 
     // Loading state
     if (isLoading) {
@@ -76,46 +82,11 @@ const ProfilePage: React.FC = () => {
                         <div className="col-xl-4 mb-4">
                             <div className="card">
                                 <div className="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                                    {/* Profile Photo */}
-                                    <div className="mb-3">
-                                        {profile.optimized_image_url ? (
-                                            <img
-                                                src={profile.optimized_image_url}
-                                                alt="Profile"
-                                                loading="lazy"
-                                                className="img-fluid rounded-circle mb-2"
-                                                style={{ width: '120px', height: '120px', objectFit: 'cover' }}
-                                            />
-                                        ) : (
-                                            <div
-                                                className="rounded-circle bg-light d-flex justify-content-center align-items-center mb-2"
-                                                style={{ width: '120px', height: '120px' }}
-                                            >
-                                                <i className="bi bi-person-circle" style={{ fontSize: '5rem', color: '#6c757d' }}></i>
-                                            </div>
-                                        )}
-                                        <div className="pt-2 text-center">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-primary me-2"
-                                                title="Upload Profile Photo"
-                                            >
-                                                <i className="bi bi-upload"></i> {profile.optimized_image_url ? 'Update' : 'Upload'}
-                                            </button>
-                                            {profile.optimized_image_url && (
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-danger"
-                                                    title="Delete Profile Photo"
-                                                >
-                                                    <i className="bi bi-trash"></i> Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                        <small className="text-muted d-block mt-2 text-center">
-                                            Min size: 500x500px, Max: 20MB
-                                        </small>
-                                    </div>
+                                    {/* Profile Photo with Upload/Delete */}
+                                    <ProfileImageUpload
+                                        currentImageUrl={profile.optimized_image_url}
+                                        onUploadSuccess={handleImageUploadSuccess}
+                                    />
 
                                     {/* User Info */}
                                     <h2 className="mb-1">

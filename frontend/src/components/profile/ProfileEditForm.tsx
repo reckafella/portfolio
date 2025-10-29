@@ -98,7 +98,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
     };
 
     return (
-        <div className="tab-pane fade profile-edit pt-3" id="profile-edit">
+        <div className="tab-pane fade show active profile-edit pt-3" id="profile-edit">
             {successMessage && (
                 <div className="alert alert-success alert-dismissible fade show" role="alert">
                     <i className="bi bi-check-circle-fill me-2"></i>

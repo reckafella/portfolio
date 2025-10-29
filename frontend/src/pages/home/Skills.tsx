@@ -194,14 +194,14 @@ const SkillsSection: React.FC = () => {
                                     <h4 className="mb-3 fw-bold">Want to see my skills in action?</h4>
                                     <p className="mb-4">Explore my portfolio projects or check out my technical articles.</p>
                                     <div className="d-flex flex-wrap justify-content-center gap-3">
-                                        <Link to="/projects" className="btn btn-warning btn-lg px-4 py-2">
-                                            <i className="bi bi-code-slash me-2"></i>View Projects
+                                        <Link to="/about" className="btn btn-success btn-lg px-1 justify-content-center align-items-center">
+                                            <i className="bi bi-file-earmark-person me-2"></i>View Resume
                                         </Link>
-                                        <Link to="/blog" className="btn btn-info btn-lg px-4 py-2">
+                                        <Link to="/projects" className="btn btn-secondary btn-lg px-1 justify-content-center align-items-center">
+                                            <i className="bi bi-code-slash me-1"></i>View Projects
+                                        </Link>
+                                        <Link to="/blog" className="btn btn-info btn-lg px-1 justify-content-center align-items-center">
                                             <i className="bi bi-journal-text me-2"></i>Read Blog
-                                        </Link>
-                                        <Link to="/resume" className="btn btn-success btn-lg px-4 py-2">
-                                            <i className="bi bi-file-earmark-person me-2"></i>See Resume
                                         </Link>
                                     </div>
                                 </div>

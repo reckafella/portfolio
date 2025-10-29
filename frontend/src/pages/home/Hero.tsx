@@ -1,5 +1,5 @@
 import React from 'react';
-//import { Link } from 'react-router-dom';
+import { ReactTyped } from 'react-typed';
 
 const HeroSection: React.FC = () => {
     return (
@@ -12,23 +12,34 @@ const HeroSection: React.FC = () => {
             <div className="container text-center" data-aos="fade-in" data-aos-delay="200">
                 <div className="row justify-content-center">
                     <div className="col-lg-8">
-                        <h2 className="stix-two-text-bold">Ethan Wanyoike</h2>
+                        <h2 className="source-serif-4-bold">Ethan Wanyoike</h2>
                         <div>
                             <p>A Software Engineer specializing in:</p>
                             <p>
-                                <span className="text-decoration-underline typed source-serif-4-bold"
-                                    data-typed-items="DevOps Engineering,
-                                    Backend Development, Frontend Development,
-                                    Technical Writing"
-                                    style={{ textDecorationThickness: '10%' }}>
-                                </span>
-                                <span className="typed-cursor typed-cursor--blink" aria-hidden="true"></span>
+                                <ReactTyped
+                                    strings={[
+                                        'Backend Development',
+                                        'Frontend Development',
+                                        'Software Testing',
+                                        'DevOps Engineering',
+                                        'Database Management',
+                                        'Cloud Computing & Security',
+                                        'Machine Learning',
+                                        'Technical Writing'
+                                    ]}
+                                    typeSpeed={100}
+                                    backSpeed={100}
+                                    backDelay={2000}
+                                    loop
+                                    className="text-decoration-underline satisfy-regular"
+                                    style={{ textDecorationThickness: '4%' }}
+                                />
                             </p>
                         </div>
                         <div className="d-flex flex-column mt-3">
                             <p>Let's bring your project to life!</p>
                             <p>
-                                <button type="button" className="btn btn-lg bg-success text-light py-2 fw-bold" onClick={() => location.href = '/contact'}>
+                                <button type="button" className="btn btn-lg bg-success text-light py-2 pacifico-regular" onClick={() => location.href = '/contact'}>
                                     Get in Touch <i className="bi bi-arrow-right"></i>
                                 </button>
                             </p>

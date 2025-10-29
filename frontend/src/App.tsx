@@ -1,7 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+// React-based library imports (replacing vanilla JS and CSS from index.html)
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'animate.css'
+import 'remixicon/fonts/remixicon.css'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/effect-fade'
 import MetaTags from './components/meta/MetaTags'
 import HomePage from './pages/home/HomePage'
 import AboutPage from './pages/about/AboutPage'
@@ -35,6 +47,8 @@ import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerEr
 import './App.css'
 import './styles/search.css'
 import './styles/messages.css'
+import './styles/main.css'
+import './styles/styles.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -47,6 +61,16 @@ const queryClient = new QueryClient({
 
 function App() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+    // Initialize AOS (Animate On Scroll)
+    useEffect(() => {
+        AOS.init({
+            duration: 1000,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false
+        });
+    }, []);
 
     const toggleSearch = () => {
         setIsSearchOpen(!isSearchOpen);

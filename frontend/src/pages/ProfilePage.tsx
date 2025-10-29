@@ -6,6 +6,7 @@ import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
 import { PasswordChangeForm } from '@/components/profile/PasswordChangeForm';
 import { SettingsForm } from '@/components/profile/SettingsForm';
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 /**
  * ProfilePage component - Main profile management page
@@ -23,18 +24,7 @@ const ProfilePage: React.FC = () => {
 
     // Loading state
     if (isLoading) {
-        return (
-            <div className="container mt-5">
-                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-                    <div className="text-center">
-                        <div className="spinner-border text-primary mb-3" role="status" style={{ width: '3rem', height: '3rem' }}>
-                            <span className="visually-hidden">Loading profile...</span>
-                        </div>
-                        <p className="text-muted">Loading your profile...</p>
-                    </div>
-                </div>
-            </div>
-        );
+        return <LoadingSpinner size='lg' text='Loading Profile...' />;
     }
 
     // Error state

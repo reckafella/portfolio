@@ -148,6 +148,7 @@ export const SettingsForm: React.FC = () => {
                                 type="checkbox"
                                 className="form-check-input"
                                 role="switch"
+                                disabled={true}
                                 id="security_notifications"
                                 name="security_notifications"
                                 checked={formData.security_notifications}

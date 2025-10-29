@@ -110,16 +110,16 @@ class SocialLinksSerializer(serializers.ModelSerializer):
     """Serializer for Social Links"""
     class Meta:
         model = SocialLinks
-        fields = '__all__'
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        exclude = ('profile', 'created_at', 'updated_at')
+        read_only_fields = ('id',)
 
 
 class UserSettingsSerializer(serializers.ModelSerializer):
     """Serializer for User Settings"""
     class Meta:
         model = UserSettings
-        fields = '__all__'
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        exclude = ('user',)
+        read_only_fields = ('id',)
 
 
 class UserProfileImageSerializer(serializers.ModelSerializer):
@@ -131,20 +131,95 @@ class UserProfileImageSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    """Serializer for Profile model"""
+    """Serializer for Profile model - Read operations"""
     user = UserSerializer(read_only=True)
-    social_links = SocialLinksSerializer(read_only=True)
-    user_settings = UserSettingsSerializer(read_only=True)
-    user_profile_image = UserProfileImageSerializer(read_only=True)
-
+    social_links = serializers.SerializerMethodField()
+    settings = serializers.SerializerMethodField()
+    
     class Meta:
         model = Profile
-        fields = '__all__'
-        read_only_fields = ('id', 'user', 'slug', 'created_at', 'updated_at')
+        fields = ('id', 'user', 'title', 'bio', 'country', 'city', 'experience',
+                  'cloudinary_image_url', 'optimized_image_url', 'social_links', 
+                  'settings', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'user', 'created_at', 'updated_at')
+    
+    def get_social_links(self, obj):
+        try:
+            social = obj.social_media.first()
+            return SocialLinksSerializer(social).data if social else {}
+        except:
+            return {}
+    
+    def get_settings(self, obj):
+        try:
+            settings = UserSettings.objects.get(user=obj.user)
+            return UserSettingsSerializer(settings).data
+        except UserSettings.DoesNotExist:
+            return {}
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating Profile model"""
+    social_links = SocialLinksSerializer(required=False)
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    email = serializers.EmailField(source='user.email', required=False, read_only=True)
+    
     class Meta:
         model = Profile
-        fields = ('bio', 'location', 'website', 'github', 'linkedin', 'twitter')
+        fields = ('title', 'bio', 'country', 'city', 'experience', 
+                  'first_name', 'last_name', 'email', 'social_links')
+    
+    def update(self, instance, validated_data):
+        # Update user fields
+        user_data = validated_data.pop('user', {})
+        if user_data:
+            for attr, value in user_data.items():
+                setattr(instance.user, attr, value)
+            instance.user.save()
+        
+        # Update social links
+        social_data = validated_data.pop('social_links', None)
+        if social_data:
+            social_links, _ = SocialLinks.objects.get_or_create(profile=instance)
+            for attr, value in social_data.items():
+                setattr(social_links, attr, value)
+            social_links.save()
+        
+        # Update profile fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        
+        return instance
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    """Serializer for changing password"""
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password1 = serializers.CharField(required=True, write_only=True, min_length=8)
+    new_password2 = serializers.CharField(required=True, write_only=True)
+    
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Current password is incorrect.")
+        return value
+    
+    def validate(self, attrs):
+        if attrs['new_password1'] != attrs['new_password2']:
+            raise serializers.ValidationError({"new_password2": "Passwords do not match."})
+        
+        # Check if new password is different from old
+        if attrs['old_password'] == attrs['new_password1']:
+            raise serializers.ValidationError(
+                {"new_password1": "New password must be different from current password."}
+            )
+        
+        return attrs
+    
+    def save(self):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password1'])
+        user.save()
+        return user

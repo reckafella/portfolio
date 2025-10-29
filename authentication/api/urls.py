@@ -14,6 +14,8 @@ from authentication.api.views.profile import (
     UserDetailView,
     ProfileListView,
     ProfileDetailView,
+    PasswordChangeView,
+    UserSettingsView,
 )
 from authentication.views.csrf import CSRFTokenView
 
@@ -53,7 +55,8 @@ urlpatterns = [
 
     # User profile endpoints
     path('profile/', UserProfileView.as_view(), name='user_profile'),
-    path('profile/update/', UserProfileView.as_view(), name='update_profile'),
+    path('profile/password/', PasswordChangeView.as_view(), name='change_password'),
+    path('profile/settings/', UserSettingsView.as_view(), name='user_settings'),
 
     # Admin endpoints
     path('users/', UserListView.as_view(), name='user_list'),

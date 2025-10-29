@@ -23,6 +23,7 @@ import SearchModal from './components/search/SearchModal'
 import LoginForm from './components/forms/auth/LoginForm'
 import SignupForm from './components/forms/auth/SignupForm'
 import LogoutPage from './pages/auth/LogoutPage'
+import ProfilePage from './pages/ProfilePage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { PublicRoute } from './components/auth/PublicRoute'
 import AuthProvider from './hooks/useAuth'
@@ -143,6 +144,16 @@ function App() {
                                             <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />
                                             <Route path="/signup" element={<PublicRoute><SignupForm /></PublicRoute>} />
                                             <Route path="/logout" element={<LogoutPage />} />
+                                            
+                                            {/* Profile route - Protected */}
+                                            <Route 
+                                                path="/profile" 
+                                                element={
+                                                    <ProtectedRoute>
+                                                        <ProfilePage />
+                                                    </ProtectedRoute>
+                                                } 
+                                            />
                                             
                                             {/* Legacy authentication route redirects for backward compatibility */}
                                             <Route path="/signin" element={<Navigate to="/login" replace />} />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ReactTyped } from 'react-typed';
 import { useNavigate } from 'react-router-dom';
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions';
 import { usePopularSearches } from '@/hooks/usePopularSearches';
@@ -172,19 +173,31 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
               <i className="bi bi-search search-input-icon"></i>
               <input 
                 ref={searchInputRef}
-                type="search" 
+                type="text" 
                 name="q" 
                 id="search-input" 
                 className="search-input"
                 value={searchQuery}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
-                placeholder="Search projects, blog posts..." 
+                placeholder=""
                 autoComplete="off"
                 aria-label="Search"
                 aria-expanded={showSuggestions}
                 aria-haspopup="listbox"
+                role="searchbox"
               />
+              {!searchQuery && (
+                <div className="search-input-placeholder">
+                  Search{' '}
+                  <ReactTyped 
+                    strings={["projects", "blog posts", "tags", "topics"]} 
+                    typeSpeed={50} 
+                    backSpeed={50} 
+                    loop 
+                  />
+                </div>
+              )}
               {searchQuery && (
                 <button 
                   type="button"

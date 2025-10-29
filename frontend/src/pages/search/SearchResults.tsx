@@ -144,10 +144,10 @@ const SearchResults: React.FC = () => {
 
         {post.first_image?.optimized_image_url && (
           <div className="entry-img my-1">
-            <img 
-              src={post.first_image.optimized_image_url} 
+            <img
+              src={post.first_image.optimized_image_url}
               alt={post.title || 'Post image'}
-              className="img-fluid rounded" 
+              className="img-fluid rounded"
               loading="lazy"
             />
           </div>
@@ -186,7 +186,7 @@ const SearchResults: React.FC = () => {
         </div>
 
         <div className="entry-content">
-          <div dangerouslySetInnerHTML={{ 
+          <div dangerouslySetInnerHTML={{
             __html: post.content ? post.content.substring(0, 200) + '...' : post.description || ''
           }} />
         </div>
@@ -214,7 +214,7 @@ const SearchResults: React.FC = () => {
           <p className="card-text text-muted">
             {project.description ? project.description.substring(0, 150) + '...' : ''}
           </p>
-          
+
           {project.tags && project.tags.length > 0 && (
             <div className="mb-3">
               <div className="d-flex gap-1 flex-wrap">
@@ -229,9 +229,9 @@ const SearchResults: React.FC = () => {
           )}
 
           {project.project_url ? (
-            <a 
-              href={project.project_url} 
-              target="_blank" 
+            <a
+              href={project.project_url}
+              target="_blank"
               rel="noopener noreferrer"
               className="btn btn-sm btn-info stretched-link"
             >
@@ -345,22 +345,22 @@ const SearchResults: React.FC = () => {
                   <h1 className="fw-bold mt-3 text-center section-title">
                     {totalResults > 0 ? `Search Results for "${query}"` : 'Search Results'}
                   </h1>
-                  
+
                   {/* Search Form */}
                   <div className="row g-3 mb-3">
                     <div className="search-widget col-md-8 col-lg-7 mx-auto">
                       <form className="position-relative" onSubmit={handleSearchSubmit}>
-                        <input 
-                          type="search" 
+                        <input
+                          type="search"
                           className="form-control form-control-sm form-control-lg rounded-pill ps-4"
-                          placeholder="Type to Search..." 
-                          aria-label="Search" 
+                          placeholder="Type to Search..."
+                          aria-label="Search"
                           value={searchInput}
                           onChange={(e) => setSearchInput(e.target.value)}
                           required
                         />
-                        <button 
-                          type="submit" 
+                        <button
+                          type="submit"
                           className="btn btn-primary btn-sm btn-lg position-absolute top-50 end-0 translate-middle-y rounded-pill px-3"
                           aria-label="Search"
                         >
@@ -381,8 +381,8 @@ const SearchResults: React.FC = () => {
                       <i className="bi bi-sort-down me-2"></i>
                       <span>Sort Results</span>
                     </button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn-primary rounded-pill px-4"
                       onClick={() => setShowFilterModal(true)}
                     >
@@ -422,7 +422,7 @@ const SearchResults: React.FC = () => {
                         <ul className="nav nav-pills nav-tabs-bordered mb-4" id="searchTabs" role="tablist">
                           {results.actions.length > 0 && (
                             <li className="nav-item" role="presentation">
-                              <button 
+                              <button
                                 className={`nav-link fw-bold py-2 px-1 px-md-3 ${activeTab === 'actions' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('actions')}
                                 type="button"
@@ -433,7 +433,7 @@ const SearchResults: React.FC = () => {
                           )}
                           {results.posts.length > 0 && (
                             <li className="nav-item" role="presentation">
-                              <button 
+                              <button
                                 className={`nav-link fw-bold py-2 px-1 px-md-3 ${activeTab === 'posts' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('posts')}
                                 type="button"
@@ -444,7 +444,7 @@ const SearchResults: React.FC = () => {
                           )}
                           {results.projects.length > 0 && (
                             <li className="nav-item" role="presentation">
-                              <button 
+                              <button
                                 className={`nav-link fw-bold py-2 px-1 px-md-3 ${activeTab === 'projects' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('projects')}
                                 type="button"
@@ -501,9 +501,9 @@ const SearchResults: React.FC = () => {
             <div className="modal-content">
               <div className="modal-header py-2">
                 <h5 className="modal-title">Filtering Options</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
+                <button
+                  type="button"
+                  className="btn-close"
                   onClick={() => setShowFilterModal(false)}
                   aria-label="Close"
                 ></button>
@@ -511,8 +511,8 @@ const SearchResults: React.FC = () => {
               <div className="modal-body">
                 <div className="row g-3">
                   <div className="col-12 p-2">
-                    <select 
-                      className="form-select form-select-sm" 
+                    <select
+                      className="form-select form-select-sm"
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                     >
@@ -524,15 +524,15 @@ const SearchResults: React.FC = () => {
                 </div>
               </div>
               <div className="modal-footer py-2">
-                <button 
-                  type="button" 
-                  className="btn btn-sm btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
                   onClick={() => setShowFilterModal(false)}
                 >
                   Cancel
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-sm btn-primary"
                   onClick={handleFilterApply}
                 >
@@ -551,9 +551,9 @@ const SearchResults: React.FC = () => {
             <div className="modal-content">
               <div className="modal-header py-2">
                 <h5 className="modal-title">Sorting Options</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
+                <button
+                  type="button"
+                  className="btn-close"
                   onClick={() => setShowSortModal(false)}
                   aria-label="Close"
                 ></button>
@@ -561,8 +561,8 @@ const SearchResults: React.FC = () => {
               <div className="modal-body">
                 <div className="row g-3">
                   <div className="col-12 p-2">
-                    <select 
-                      className="form-select form-select-sm" 
+                    <select
+                      className="form-select form-select-sm"
                       value={selectedSort}
                       onChange={(e) => setSelectedSort(e.target.value)}
                     >
@@ -574,15 +574,15 @@ const SearchResults: React.FC = () => {
                 </div>
               </div>
               <div className="modal-footer py-2">
-                <button 
-                  type="button" 
-                  className="btn btn-sm btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
                   onClick={() => setShowSortModal(false)}
                 >
                   Cancel
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-sm btn-primary"
                   onClick={handleSortApply}
                 >

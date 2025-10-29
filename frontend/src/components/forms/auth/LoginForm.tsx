@@ -5,6 +5,7 @@ import { useLogin } from '@/hooks/queries/authQueries';
 import { usePreloader } from '@/hooks/usePreloader';
 import { getSafeNextUrl } from '@/utils/authUtils';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { AUTH_SUCCESS_DELAY } from '@/config/authConfig';
 
 const LoginForm: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -30,7 +31,7 @@ const LoginForm: React.FC = () => {
         
         // Force a full page reload to ensure all authentication state is properly updated
         window.location.href = nextUrl;
-      }, 1500);
+      }, AUTH_SUCCESS_DELAY);
     } catch (error) {
       hideLoader(); // Hide loader on error
       throw error; // Re-throw to let UnifiedForm handle the error display

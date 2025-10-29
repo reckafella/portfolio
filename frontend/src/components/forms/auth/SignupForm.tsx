@@ -5,6 +5,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { useSignup } from '@/hooks/queries/authQueries';
 import { usePreloader } from '@/hooks/usePreloader';
 import { getSafeNextUrl } from '@/utils/authUtils';
+import { AUTH_SUCCESS_DELAY } from '@/config/authConfig';
 
 const SignupForm: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -34,7 +35,7 @@ const SignupForm: React.FC = () => {
         
         // Force a full page reload to ensure all authentication state is properly updated
         window.location.href = nextUrl;
-      }, 500);
+      }, AUTH_SUCCESS_DELAY);
     } catch (error) {
       hideLoader(); // Hide loader on error
       throw error; // Re-throw to let UnifiedForm handle the error display
@@ -42,12 +43,12 @@ const SignupForm: React.FC = () => {
   };
 
   return (
-    <section className='section'>
+    <section>
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-md-6">
-            <div className="card">
-              <div className="card-body">
+            <div className="card shadow">
+              <div className="card-body p-4">
                 <UnifiedForm
                   formType="signup"
                   onSubmit={handleSubmit}

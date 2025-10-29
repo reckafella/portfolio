@@ -19,7 +19,6 @@ interface AuthContextType {
     signup: (_userData: RegisterData) => Promise<AuthResponse>;
     logout: () => Promise<void>;
     isLoading: boolean;
-    testApi: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -123,8 +122,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                 localStorage.setItem('user', JSON.stringify(userData));
             }
         } catch (error) {
-            const noob = () => {}
-            if (error instanceof Error) noob();
+            // Silently fail - user may not be authenticated
+            console.error('Failed to fetch user from session:', error);
         }
     };
 
@@ -133,13 +132,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         try {
             const response = await AuthService.login({ username, password });
             setUser(response.user);
-            // Trigger a page reload to update Django template context
-            window.location.reload();
             return response;
         } catch (error) {
-            throw new Error(`Login error: ${error}`);
-        } finally {
             setIsLoading(false);
+            throw error;
         }
     };
 
@@ -148,13 +144,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         try {
             const response = await AuthService.signup(userData);
             setUser(response.user);
-            // Trigger a page reload to update Django template context
-            window.location.reload();
             return response;
         } catch (error) {
-            throw new Error(`Registration Failed: ${error}`);
-        } finally {
             setIsLoading(false);
+            throw error;
         }
     };
 
@@ -166,18 +159,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             // Trigger a page reload to update Django template context
             window.location.reload();
         } catch (error) {
-            throw new Error(`Logout error: ${error}`);
-        } finally {
             setIsLoading(false);
-        }
-    };
-
-    const testApi = async () => {
-        try {
-            const response = await AuthService.testApi();
-            throw new Error(`API Test: ${response}`);
-        } catch (error) {
-            throw new Error(`API Test failed: ${error}`);
+            throw error;
         }
     };
 
@@ -188,7 +171,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         login,
         signup,
         logout,
-        testApi,
     };
 
     return (

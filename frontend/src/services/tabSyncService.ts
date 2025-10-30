@@ -74,11 +74,11 @@ class TabSyncService {
       if (!event.key) return;
 
       // Handle auth changes
-      if (event.key === 'auth_token') {
+      // Note: With httpOnly cookies, we track auth via user data in localStorage
+      if (event.key === 'user') {
         if (event.newValue) {
           // Login or signup detected
-          const userStr = localStorage.getItem('user');
-          const user = userStr ? JSON.parse(userStr) : null;
+          const user = JSON.parse(event.newValue);
           this.notifyListeners({
             type: 'AUTH_LOGIN',
             payload: { user, timestamp: Date.now() }

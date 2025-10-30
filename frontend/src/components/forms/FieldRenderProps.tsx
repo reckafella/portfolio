@@ -1,6 +1,7 @@
 import { FieldConfig, FormValue, CaptchaData } from "@/types/unifiedForms";
 import { FileUpload, ImageUpload  } from "./FileUpload";
 import { CaptchaInput } from "./Captcha";
+import { PasswordInput } from "./PasswordInput";
 
 export interface FieldRendererProps {
     fieldName: string;
@@ -12,6 +13,7 @@ export interface FieldRendererProps {
     captchaData: CaptchaData | null;
     onRefreshCaptcha: () => void;
     isRefreshingCaptcha: boolean;
+    allFormData?: Record<string, FormValue>;
 }
 
 export const FieldRenderer: React.FC<FieldRendererProps> = ({
@@ -23,7 +25,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     isSubmitting,
     captchaData,
     onRefreshCaptcha,
-    isRefreshingCaptcha
+    isRefreshingCaptcha,
+    allFormData
 }) => {
     const { required, help_text, disabled, widget, max_length, min_length, choices, accept, multiple, max_size } = fieldConfig;
     
@@ -69,7 +72,49 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             return <input type="email" {...textBaseProps} />;
             
         case 'PasswordInput':
-            return <input type="password" {...textBaseProps} />;
+            // Determine if this is a confirmation field or if we need to compare with other passwords
+            const isConfirmField = fieldName.includes('confirm') || fieldName.includes('password2') || fieldName === 'password_confirm';
+            const isNewPasswordField = fieldName.includes('new_password') || fieldName === 'password1' || fieldName === 'password';
+            
+            // Get related password values for comparison
+            let confirmPasswordValue: string | undefined;
+            let oldPasswordValue: string | undefined;
+            
+            if (allFormData) {
+                // For primary password field, check if there's a confirmation field
+                if (isNewPasswordField && !isConfirmField) {
+                    confirmPasswordValue = (allFormData['password_confirm'] || allFormData['password2']) as string;
+                }
+                
+                // For confirmation field, get the primary password
+                if (isConfirmField) {
+                    confirmPasswordValue = (allFormData['password1'] || allFormData['password']) as string;
+                }
+                
+                // Check for old password (for password change forms)
+                if (fieldName.includes('new_password')) {
+                    oldPasswordValue = allFormData['old_password'] as string;
+                }
+            }
+            
+            return (
+                <PasswordInput
+                    fieldName={fieldName}
+                    value={typeof value === 'string' ? value : ''}
+                    onChange={(name, val) => onChange(name, val)}
+                    required={required}
+                    disabled={disabled || isSubmitting}
+                    placeholder={help_text}
+                    maxLength={max_length}
+                    minLength={min_length}
+                    showStrengthMeter={!isConfirmField}
+                    showRequirements={!isConfirmField}
+                    confirmPasswordValue={confirmPasswordValue}
+                    oldPasswordValue={oldPasswordValue}
+                    isConfirmField={isConfirmField}
+                    className={baseProps.className}
+                />
+            );
             
         case 'NumberInput':
             return <input type="number" {...textBaseProps} />;

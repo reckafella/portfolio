@@ -57,16 +57,33 @@ class RegisterUserView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             token, created = Token.objects.get_or_create(user=user)
+            
+            # Log the user in (creates session)
+            login(request, user)
+            
             messages = ['User registered successfully.']
             if created:
                 messages += [
                     'Valid authentication token created.'
                 ]
-            return Response({
+            
+            # Create response without token in body
+            response = Response({
                 'user': UserSerializer(user).data,
-                'token': token.key,
-                'messages': messages
+                'message': ' '.join(messages)
             }, status=status.HTTP_201_CREATED)
+            
+            # Set token in httpOnly cookie
+            response.set_cookie(
+                key='auth_token',
+                value=token.key,
+                httponly=True,
+                secure=request.is_secure(),  # True in production (HTTPS), False in dev
+                samesite='Lax',
+                max_age=28800,  # 8 hours, matching session age
+            )
+            
+            return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -111,13 +128,25 @@ class LoginUserView(APIView):
 
             messages = ['Login successful']
             if created:
-                messages.extend('Authentication token created.')
-
-            return Response({
+                messages.append('Authentication token created.')
+            
+            # Create response without token in body
+            response = Response({
                 'user': UserSerializer(user).data,
-                'token': token.key,
-                'messages': messages
+                'message': ' '.join(messages)
             }, status=status.HTTP_200_OK)
+            
+            # Set token in httpOnly cookie
+            response.set_cookie(
+                key='auth_token',
+                value=token.key,
+                httponly=True,
+                secure=request.is_secure(),  # True in production (HTTPS), False in dev
+                samesite='Lax',
+                max_age=28800,  # 8 hours, matching session age
+            )
+            
+            return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -132,10 +161,19 @@ class LogoutUserView(APIView):
         try:
             # Delete the user's token
             request.user.auth_token.delete()
-            self.messages.extend('Authentication token deleted successfully.')
+            self.messages.append('Authentication token deleted successfully.')
         except (AttributeError, Token.DoesNotExist):
-            self.messages.extend('No authentication token found!')
+            self.messages.append('No authentication token found!')
             pass
+        
         logout(request)
-        return Response({'messages': self.messages
-                         }, status=status.HTTP_200_OK)
+        
+        # Create response
+        response = Response({
+            'message': ' '.join(self.messages)
+        }, status=status.HTTP_200_OK)
+        
+        # Delete the auth_token cookie
+        response.delete_cookie('auth_token')
+        
+        return response

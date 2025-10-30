@@ -1,7 +1,8 @@
 import { FormValue } from "@/types/unifiedForms";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatFileSize } from "@/utils/unifiedFormApis";
 import { MAX_IMAGES, IMAGE_MIME_TYPES } from "@/types/unifiedForms";
+import { Modal } from 'react-bootstrap';
 
 
 export const FileUpload: React.FC<{
@@ -262,42 +263,11 @@ export const ImagePreview: React.FC<{
     max_size?: number;
 }> = ({ file, index, onRemove, max_size }) => {
     const imageUrl = URL.createObjectURL(file);
+    const [showModal, setShowModal] = useState(false);
     
     useEffect(() => {
         return () => URL.revokeObjectURL(imageUrl);
     }, [imageUrl]);
-    
-    const showLightbox = useCallback(() => {
-        const modal = document.createElement('div');
-        modal.className = 'modal fade';
-        modal.innerHTML = `
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">${file.name}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img src="${imageUrl}" class="img-fluid" style="max-height: 70vh;">
-                        <p class="mt-2 text-muted">${formatFileSize(file.size)}</p>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        const bootstrapModal = new (window as unknown as
-            {
-                bootstrap: {
-                    Modal: new (_modal: HTMLElement) => { show: () => void }
-                }
-            }).bootstrap.Modal(modal);
-        bootstrapModal.show();
-        
-        modal.addEventListener('hidden.bs.modal', () => {
-            document.body.removeChild(modal);
-        });
-    }, [file.name, file.size, imageUrl]);
     
     return (
         <div className="col-6 col-md-4 col-lg-3">
@@ -326,7 +296,7 @@ export const ImagePreview: React.FC<{
                         objectFit: 'cover',
                         cursor: 'pointer'
                     }}
-                    onClick={showLightbox}
+                    onClick={() => setShowModal(true)}
                 />
                 
                 <div className="card-body p-2">
@@ -346,6 +316,17 @@ export const ImagePreview: React.FC<{
                     </div>
                 </div>
             </div>
+            
+            {/* React Bootstrap Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>{file.name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-center">
+                    <img src={imageUrl} className="img-fluid" style={{ maxHeight: '70vh' }} alt={file.name} />
+                    <p className="mt-2 text-muted">{formatFileSize(file.size)}</p>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

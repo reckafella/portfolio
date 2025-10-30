@@ -67,7 +67,7 @@ const AboutSection: React.FC = () => {
                         I thrive in collaborative environments and am committed to continuous learning and professional growth. My approach combines technical expertise with effective communication skills to deliver solutions that exceed expectations. Whether working on complex backend systems or streamlining deployment processes, I'm dedicated to creating efficient, scalable, and maintainable code.
                     </p>
                     <div className="mt-4 d-flex justify-content-center">
-                        <Link to="/resume" className="btn btn-secondary me-3">
+                        <Link to="/about" className="btn btn-secondary me-3">
                         <i className="bi bi-file-earmark-text me-1"></i> View Resume
                         </Link>
                         <Link to="/contact" className="btn btn-success">

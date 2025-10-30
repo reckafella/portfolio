@@ -23,9 +23,25 @@ interface MetaTagConfig {
  * Custom hook to manage meta tags for SEO and social sharing
  * @param config - Meta tag configuration object
  */
-export const useMetaTags = (config: MetaTagConfig) => {
+export const useMetaTags = (config: MetaTagConfig): void => {
   useEffect(() => {
-    const updateMetaTag = (name: string, content: string, property?: boolean) => {
+    // Signal when meta tags are updated for prerendering
+    const signalPrerenderReady = () => {
+      if (window.document.dispatchEvent) {
+        window.document.dispatchEvent(new Event('prerender-ready'));
+      }
+    };
+    // Function to ensure URL is absolute
+    const getAbsoluteUrl = (url: string) => {
+      if (!url) return '';
+      if (url.startsWith('http')) return url;
+      const base = window.location.origin;
+      return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+    };
+
+    const updateMetaTag = (name: string, content: string | undefined, property?: boolean) => {
+      if (content === undefined) return;
+      
       const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
       let metaTag = document.querySelector(selector) as HTMLMetaElement;
       
@@ -36,7 +52,13 @@ export const useMetaTags = (config: MetaTagConfig) => {
         } else {
           metaTag.setAttribute('name', name);
         }
+        metaTag.setAttribute('data-rh', 'true');
         document.head.appendChild(metaTag);
+      }
+      
+      // Handle URL properties
+      if (name.includes('url') || name.includes('image')) {
+        content = getAbsoluteUrl(content);
       }
       
       metaTag.setAttribute('content', content);
@@ -84,9 +106,11 @@ export const useMetaTags = (config: MetaTagConfig) => {
       ? ogImageUrl 
       : `${window.location.origin}${ogImageUrl}`;
     updateMetaTag('og:image', imageUrl, true);
+    updateMetaTag('og:image:secure_url', imageUrl, true);
     updateMetaTag('og:image:width', '1200', true);
     updateMetaTag('og:image:height', '630', true);
     updateMetaTag('og:image:alt', config.ogTitle || config.title || 'Ethan Wanyoike Portfolio', true);
+    
     if (config.ogUrl) {
       updateMetaTag('og:url', config.ogUrl, true);
     }
@@ -104,13 +128,15 @@ export const useMetaTags = (config: MetaTagConfig) => {
     if (config.twitterDescription) {
       updateMetaTag('twitter:description', config.twitterDescription, true);
     }
-    // Handle Twitter image - use provided image or default to logo
+    
+    // Handle Twitter image
     const twitterImageUrl = config.twitterImage || config.ogImage || '/static/assets/images/logo-og.png';
     const twitterImgUrl = twitterImageUrl.startsWith('http') 
       ? twitterImageUrl 
       : `${window.location.origin}${twitterImageUrl}`;
     updateMetaTag('twitter:image', twitterImgUrl, true);
     updateMetaTag('twitter:image:alt', config.twitterTitle || config.title || 'Ethan Wanyoike Portfolio', true);
+    
     if (config.twitterSite) {
       updateMetaTag('twitter:site', config.twitterSite, true);
     }
@@ -123,23 +149,22 @@ export const useMetaTags = (config: MetaTagConfig) => {
       updateLinkTag('canonical', config.canonical);
     }
 
+    // Signal that all meta tags have been updated
+    signalPrerenderReady();
+
     // Cleanup function to restore default meta tags
     return () => {
-      // Restore default title
       document.title = 'Ethan Wanyoike';
       
-      // Restore default meta tags
       updateMetaTag('description', 'Welcome to my portfolio! Explore my projects, blog, and more.');
       updateMetaTag('keywords', 'portfolio, software engineer, web development, projects, blog, contact');
       updateMetaTag('author', 'Ethan Wanyoike');
       
-      // Restore default Open Graph tags
       updateMetaTag('og:title', 'Ethan Wanyoike | Portfolio', true);
       updateMetaTag('og:description', 'Welcome to my portfolio! Explore my projects, blog, and more.', true);
       updateMetaTag('og:type', 'website', true);
       updateMetaTag('og:url', window.location.origin, true);
       
-      // Restore default Twitter tags
       updateMetaTag('twitter:card', 'summary_large_image', true);
       updateMetaTag('twitter:site', '@frmundu', true);
       updateMetaTag('twitter:creator', '@frmundu', true);

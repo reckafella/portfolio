@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './ImageUpload.css';
 import '../../styles/captcha.css';
+import '../../styles/password.css';
 import { FormValue, CaptchaData, UnifiedFormProps, FieldConfig } from '../../types/unifiedForms';
 import { useCaptchaRefresh } from '../../hooks/useCaptcha';
 import {
@@ -198,6 +199,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                 captchaData={captchaData}
                                 onRefreshCaptcha={handleRefreshCaptcha}
                                 isRefreshingCaptcha={isRefreshingCaptcha}
+                                allFormData={formData}
                             />
                         </div>
                     );})}

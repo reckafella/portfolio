@@ -98,10 +98,33 @@ class FrontendAPIView(View):
                 content_type='text/plain'
             )
 
+    def remove_existing_meta_tags(self, html_content):
+        """Remove existing meta tags and title to prevent duplicates."""
+        # Remove existing title
+        html_content = re.sub(r'<title>.*?</title>', '', html_content, flags=re.DOTALL)
+        
+        # Remove existing meta tags (description, keywords, author, og:*, twitter:*)
+        meta_patterns = [
+            r'<meta\s+name="description"[^>]*>',
+            r'<meta\s+name="keywords"[^>]*>',
+            r'<meta\s+name="author"[^>]*>',
+            r'<meta\s+property="og:[^"]+"[^>]*>',
+            r'<meta\s+property="twitter:[^"]+"[^>]*>',
+            r'<link\s+rel="canonical"[^>]*>',
+        ]
+        
+        for pattern in meta_patterns:
+            html_content = re.sub(pattern, '', html_content, flags=re.IGNORECASE)
+        
+        return html_content
+
     def inject_meta_tags(self, html_content):
         """Inject dynamic meta tags based on the current route."""
         path = self.request.path
         base_url = self.request.build_absolute_uri('/').rstrip('/')
+        
+        # Remove existing meta tags first to prevent duplicates
+        html_content = self.remove_existing_meta_tags(html_content)
 
         # Check if this is a blog post detail page
         blog_match = re.match(r'^/blog/article/([^/]+)/?$', path)
@@ -147,35 +170,35 @@ class FrontendAPIView(View):
 
             # Build meta tags HTML
             meta_tags = f'''
-                <title>Ethan Wanyoike | {title}</title>
-                <meta name="description" content="{excerpt}">
-                <meta name="author" content="{author}">
+    <title>Ethan Wanyoike | {title}</title>
+    <meta name="description" content="{excerpt}">
+    <meta name="author" content="{author}">
 
-                <!-- Open Graph / Facebook -->
-                <meta property="og:type" content="article">
-                <meta property="og:url" content="{page_url}">
-                <meta property="og:title" content="{title} - Ethan Wanyoike">
-                <meta property="og:description" content="{excerpt}">
-                <meta property="og:image" content="{cover_image}">
-                <meta property="og:image:secure_url" content="{cover_image}">
-                <meta property="og:image:width" content="1200">
-                <meta property="og:image:height" content="630">
-                <meta property="og:image:alt" content="{title}">
-                <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
-                <meta property="article:author" content="{author}">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{page_url}">
+    <meta property="og:title" content="{title} - Ethan Wanyoike">
+    <meta property="og:description" content="{excerpt}">
+    <meta property="og:image" content="{cover_image}">
+    <meta property="og:image:secure_url" content="{cover_image}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{title}">
+    <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
+    <meta property="article:author" content="{author}">
 
-                <!-- Twitter -->
-                <meta name="twitter:card" content="summary_large_image">
-                <meta name="twitter:url" content="{page_url}">
-                <meta name="twitter:title" content="{title} - Ethan Wanyoike">
-                <meta name="twitter:description" content="{excerpt}">
-                <meta name="twitter:image" content="{cover_image}">
-                <meta name="twitter:image:alt" content="{title}">
-                <meta name="twitter:site" content="@frmundu">
-                <meta name="twitter:creator" content="@frmundu">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{page_url}">
+    <meta name="twitter:title" content="{title} - Ethan Wanyoike">
+    <meta name="twitter:description" content="{excerpt}">
+    <meta name="twitter:image" content="{cover_image}">
+    <meta name="twitter:image:alt" content="{title}">
+    <meta name="twitter:site" content="@frmundu">
+    <meta name="twitter:creator" content="@frmundu">
 
-                <!-- Canonical -->
-                <link rel="canonical" href="{page_url}">
+    <!-- Canonical -->
+    <link rel="canonical" href="{page_url}">
             '''
 
             # Replace the closing </head> tag with meta tags + </head>

@@ -1,54 +1,70 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useState, useEffect } from "react";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // React-based library imports (replacing vanilla JS and CSS from index.html)
-import AOS from 'aos'
-import 'aos/dist/aos.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'animate.css'
-import 'remixicon/fonts/remixicon.css'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-import 'swiper/css/effect-fade'
-import MetaTags from './components/meta/MetaTags'
-import HomePage from './pages/home/HomePage'
-import AboutPage from './pages/about/AboutPage'
-import { ProjectListPage } from './pages/projects/ProjectListPage'
-import { ProjectAddPage } from './pages/projects/ProjectAddPage'
-import { ProjectEditPage } from './pages/projects/ProjectEditPage'
-import { ProjectDetailPage } from './pages/projects/ProjectDetailPage'
-import { BlogListPage, BlogDetailPage, BlogEditPage, BlogEditorPage } from './pages/blog'
-import ContactPage from './pages/contact/ContactPage'
-import ServicesPage from './pages/services/ServicesPage'
-import SearchResults from './pages/search/SearchResults'
-import SitemapPage from './pages/sitemap/SitemapPage'
-import SitemapPageXML from './pages/sitemap/SitemapPageXML'
-import { MessageInbox } from './pages/messages/MessageInbox'
-import Navigation from './components/Navigation'
-import Footer from './components/Footer'
-import ScrollToTop from './components/utils/ScrollToTop'
-import SearchModal from './components/search/SearchModal'
-import LoginForm from './components/forms/auth/LoginForm'
-import SignupForm from './components/forms/auth/SignupForm'
-import LogoutPage from './pages/auth/LogoutPage'
-import ProfilePage from './pages/ProfilePage'
-import { ProtectedRoute } from './components/auth/ProtectedRoute'
-import { PublicRoute } from './components/auth/PublicRoute'
-import AuthProvider from './hooks/useAuth'
-import ErrorBoundary from './components/errors/ErrorBoundary'
-import { LoadingProvider } from './hooks/useLoading'
-import Preloader from './components/common/Preloader'
-import RouteTransition from './components/transitions/RouteTransition'
-import { NotFoundPage, BadRequestPage, UnauthorizedPage, ForbiddenPage, ServerErrorPage } from './pages/errors'
-import './App.css'
-import './styles/search.css'
-import './styles/messages.css'
-import './styles/main.css'
-import './styles/styles.css'
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "animate.css";
+import "remixicon/fonts/remixicon.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import MetaTags from "./components/meta/MetaTags";
+import HomePage from "./pages/home/HomePage";
+import AboutPage from "./pages/about/AboutPage";
+import { ProjectListPage } from "./pages/projects/ProjectListPage";
+import { ProjectAddPage } from "./pages/projects/ProjectAddPage";
+import { ProjectEditPage } from "./pages/projects/ProjectEditPage";
+import { ProjectDetailPage } from "./pages/projects/ProjectDetailPage";
+import {
+    BlogListPage,
+    BlogDetailPage,
+    BlogEditPage,
+    BlogEditorPage,
+} from "./pages/blog";
+import ContactPage from "./pages/contact/ContactPage";
+import ServicesPage from "./pages/services/ServicesPage";
+import SearchResults from "./pages/search/SearchResults";
+import SitemapPage from "./pages/sitemap/SitemapPage";
+import SitemapPageXML from "./pages/sitemap/SitemapPageXML";
+import { MessageInbox } from "./pages/messages/MessageInbox";
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import ScrollToTop from "./components/utils/ScrollToTop";
+import SearchModal from "./components/search/SearchModal";
+import LoginForm from "./components/forms/auth/LoginForm";
+import SignupForm from "./components/forms/auth/SignupForm";
+import LogoutPage from "./pages/auth/LogoutPage";
+import ProfilePage from "./pages/ProfilePage";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { PublicRoute } from "./components/auth/PublicRoute";
+import AuthProvider from "./hooks/useAuth";
+import ErrorBoundary from "./components/errors/ErrorBoundary";
+import { LoadingProvider } from "./hooks/useLoading";
+import Preloader from "./components/common/Preloader";
+import RouteTransition from "./components/transitions/RouteTransition";
+import {
+    NotFoundPage,
+    BadRequestPage,
+    UnauthorizedPage,
+    ForbiddenPage,
+    ServerErrorPage,
+} from "./pages/errors";
+import "./App.css";
+import "./styles/search.css";
+import "./styles/messages.css";
+import "./styles/main.css";
+import "./styles/styles.css";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -56,7 +72,7 @@ const queryClient = new QueryClient({
             staleTime: 1000 * 60 * 5, // 5 minutes
             gcTime: 1000 * 60 * 6, // 6 minutes
         },
-    }
+    },
 });
 
 function App() {
@@ -66,9 +82,9 @@ function App() {
     useEffect(() => {
         AOS.init({
             duration: 1000,
-            easing: 'ease-in-out',
+            easing: "ease-in-out",
             once: true,
-            mirror: false
+            mirror: false,
         });
     }, []);
 
@@ -92,113 +108,212 @@ function App() {
                                 <main className="flex-grow-1">
                                     <RouteTransition>
                                         <Routes>
-                                            <Route path="/" element={<HomePage />} />
-                                            
+                                            <Route
+                                                path="/"
+                                                element={<HomePage />}
+                                            />
+
                                             {/* Sitemap route */}
-                                            <Route path="/sitemap" element={<SitemapPage />} />
-                                            <Route path="/sitemap.xml" element={<SitemapPageXML />} />
-                                            
+                                            <Route
+                                                path="/sitemap"
+                                                element={<SitemapPage />}
+                                            />
+                                            <Route
+                                                path="/sitemap.xml"
+                                                element={<SitemapPageXML />}
+                                            />
+
                                             {/* Project routes */}
                                             {/* About route */}
-                                            <Route path="/about" element={<AboutPage />} />
-                                            
+                                            <Route
+                                                path="/about"
+                                                element={<AboutPage />}
+                                            />
+
                                             {/* Project routes */}
-                                            <Route path="/projects" element={<ProjectListPage />} />
-                                            <Route 
-                                                path="/projects/new" 
+                                            <Route
+                                                path="/projects"
+                                                element={<ProjectListPage />}
+                                            />
+                                            <Route
+                                                path="/projects/new"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <ProjectAddPage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            <Route 
-                                                path="/projects/edit/:slug" 
+                                            <Route
+                                                path="/projects/edit/:slug"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <ProjectEditPage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-                                            
+                                            <Route
+                                                path="/projects/:slug"
+                                                element={<ProjectDetailPage />}
+                                            />
+
                                             {/* Blog routes */}
-                                            <Route path="/blog" element={<BlogListPage />} />
-                                            <Route 
-                                                path="/blog/new" 
+                                            <Route
+                                                path="/blog"
+                                                element={<BlogListPage />}
+                                            />
+                                            <Route
+                                                path="/blog/new"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <BlogEditorPage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            <Route 
-                                                path="/blog/edit/:slug" 
+                                            <Route
+                                                path="/blog/edit/:slug"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <BlogEditorPage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            <Route 
-                                                path="/blog/editor/:slug?" 
+                                            <Route
+                                                path="/blog/editor/:slug?"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <BlogEditPage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            <Route path="/blog/article/:slug" element={<BlogDetailPage />} />
-                                            
-                                            <Route path="/contact" element={<ContactPage />} />
-                                            <Route path="/services" element={<ServicesPage />} />
-                                            <Route path="/search" element={<SearchResults />} />
-                                            
+                                            <Route
+                                                path="/blog/article/:slug"
+                                                element={<BlogDetailPage />}
+                                            />
+
+                                            <Route
+                                                path="/contact"
+                                                element={<ContactPage />}
+                                            />
+                                            <Route
+                                                path="/services"
+                                                element={<ServicesPage />}
+                                            />
+                                            <Route
+                                                path="/search"
+                                                element={<SearchResults />}
+                                            />
+
                                             {/* Message inbox - Staff only */}
-                                            <Route 
-                                                path="/messages/inbox" 
+                                            <Route
+                                                path="/messages/inbox"
                                                 element={
-                                                    <ProtectedRoute requireStaff={true}>
+                                                    <ProtectedRoute
+                                                        requireStaff={true}
+                                                    >
                                                         <MessageInbox />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
 
                                             {/* Authentication routes - organized under /auth for consistency */}
-                                            <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />
-                                            <Route path="/signup" element={<PublicRoute><SignupForm /></PublicRoute>} />
-                                            <Route path="/logout" element={<LogoutPage />} />
-                                            
+                                            <Route
+                                                path="/login"
+                                                element={
+                                                    <PublicRoute>
+                                                        <LoginForm />
+                                                    </PublicRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="/signup"
+                                                element={
+                                                    <PublicRoute>
+                                                        <SignupForm />
+                                                    </PublicRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="/logout"
+                                                element={<LogoutPage />}
+                                            />
+
                                             {/* Profile route - Protected */}
-                                            <Route 
-                                                path="/profile" 
+                                            <Route
+                                                path="/profile"
                                                 element={
                                                     <ProtectedRoute>
                                                         <ProfilePage />
                                                     </ProtectedRoute>
-                                                } 
+                                                }
                                             />
-                                            
+
                                             {/* Legacy authentication route redirects for backward compatibility */}
-                                            <Route path="/signin" element={<Navigate to="/login" replace />} />
-                                            <Route path="/register" element={<Navigate to="/signup" replace />} />
+                                            <Route
+                                                path="/signin"
+                                                element={
+                                                    <Navigate
+                                                        to="/login"
+                                                        replace
+                                                    />
+                                                }
+                                            />
+                                            <Route
+                                                path="/register"
+                                                element={
+                                                    <Navigate
+                                                        to="/signup"
+                                                        replace
+                                                    />
+                                                }
+                                            />
 
                                             {/* Error routes */}
-                                            <Route path="/error/400" element={<BadRequestPage />} />
-                                            <Route path="/error/401" element={<UnauthorizedPage />} />
-                                            <Route path="/error/403" element={<ForbiddenPage />} />
-                                            <Route path="/error/404" element={<NotFoundPage />} />
-                                            <Route path="/error/500" element={<ServerErrorPage />} />
+                                            <Route
+                                                path="/error/400"
+                                                element={<BadRequestPage />}
+                                            />
+                                            <Route
+                                                path="/error/401"
+                                                element={<UnauthorizedPage />}
+                                            />
+                                            <Route
+                                                path="/error/403"
+                                                element={<ForbiddenPage />}
+                                            />
+                                            <Route
+                                                path="/error/404"
+                                                element={<NotFoundPage />}
+                                            />
+                                            <Route
+                                                path="/error/500"
+                                                element={<ServerErrorPage />}
+                                            />
 
                                             {/* Catch-all route for 404 */}
-                                            <Route path="*" element={<NotFoundPage />} />
+                                            <Route
+                                                path="*"
+                                                element={<NotFoundPage />}
+                                            />
                                         </Routes>
                                     </RouteTransition>
                                 </main>
                                 <Footer />
                                 <ScrollToTop />
                                 <MetaTags />
-                                <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
+                                <SearchModal
+                                    isOpen={isSearchOpen}
+                                    onClose={closeSearch}
+                                />
                                 <ReactQueryDevtools initialIsOpen={false} />
                             </div>
                         </AuthProvider>
@@ -206,7 +321,7 @@ function App() {
                 </QueryClientProvider>
             </Router>
         </ErrorBoundary>
-    )
+    );
 }
 
 export default App;

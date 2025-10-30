@@ -1,17 +1,20 @@
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 
-from app.api.serializers.contact_serializer import (
-    MessageSerializer
-)
+from app.api.serializers.contact_serializer import ContactFormSerializer
 from app.forms.contact import ContactForm
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(ratelimit(key='ip', rate='5/h', method='POST', block=False), name='post')
 class ContactPageAPIView(APIView):
-    """ API View for handling contact form submissions """
+    """ API View for handling contact form submissions with rate limiting """
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
@@ -43,7 +46,13 @@ class ContactPageAPIView(APIView):
         return Response({"fields": fields}, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = MessageSerializer(data=request.data)
+        # Check if rate limited
+        if getattr(request, 'limited', False):
+            return Response({
+                'error': 'Too many contact form submissions. Please try again later.'
+            }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+        serializer = ContactFormSerializer(data=request.data)
 
         if serializer.is_valid():
             message = serializer.save()

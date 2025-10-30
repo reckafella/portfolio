@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import Search from './search/Search';
-import ThemeSwitch from './utils/SwitchThemes';
-import SVGComponent from './Logo';
-import { useAuth } from '@/hooks/useAuth';
-import { useStaffPermissions } from '@/hooks/useStaffPermissions';
-import { getLoginUrlWithNext, getSignupUrlWithNext } from '@/utils/authUtils';
-import { NAV_ITEMS, ROUTES, ADMIN_NAV_ITEMS } from '@/constants/routes';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Search from "./search/Search";
+import ThemeSwitch from "./utils/SwitchThemes";
+import SVGComponent from "./Logo";
+import { useAuth } from "@/hooks/useAuth";
+import { useStaffPermissions } from "@/hooks/useStaffPermissions";
+import { getLoginUrlWithNext, getSignupUrlWithNext } from "@/utils/authUtils";
+import { NAV_ITEMS, ROUTES, ADMIN_NAV_ITEMS } from "@/constants/routes";
 
 interface NavigationProps {
-  onToggleSearch: () => void;
+    onToggleSearch: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
@@ -28,16 +28,16 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
     const getAuthItems = () => {
         if (isAuthenticated) {
             return [
-                { path: ROUTES.AUTH.PROFILE, label: 'My Profile' },
+                { path: ROUTES.AUTH.PROFILE, label: "My Profile" },
                 ...adminNavItems,
-                { path: ROUTES.AUTH.LOGOUT, label: 'Logout' }
+                { path: ROUTES.AUTH.LOGOUT, label: "Logout" },
             ];
         } else {
             // Include current page as next parameter for login/signup
             const currentPath = location.pathname + location.search;
             return [
-                { path: getLoginUrlWithNext(currentPath), label: 'Login' },
-                { path: getSignupUrlWithNext(currentPath), label: 'Signup' }
+                { path: getLoginUrlWithNext(currentPath), label: "Login" },
+                { path: getSignupUrlWithNext(currentPath), label: "Signup" },
             ];
         }
     };
@@ -45,7 +45,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         // Toggle body class for mobile menu
-        document.body.classList.toggle('mobile-nav-active', !isMobileMenuOpen);
+        document.body.classList.toggle("mobile-nav-active", !isMobileMenuOpen);
     };
 
     const toggleAccountDropdown = () => {
@@ -60,93 +60,171 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         setIsProjectsDropdownOpen(!isProjectsDropdownOpen);
     };
 
-
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
         setIsToggleDropdownOpen(false);
         setIsBlogDropdownOpen(false);
         setIsProjectsDropdownOpen(false);
-        document.body.classList.remove('mobile-nav-active');
+        document.body.classList.remove("mobile-nav-active");
     }, [location]);
 
     return (
         <>
-            <header id="header" className="header d-flex align-items-center sticky-top">
+            <header
+                id="header"
+                className="header d-flex align-items-center sticky-top"
+            >
                 <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
-                    <Link to="/" className="logo d-flex justify-content-start align-items-center">
+                    <Link
+                        to="/"
+                        className="logo d-flex justify-content-start align-items-center"
+                    >
                         <SVGComponent />
                     </Link>
-                    <div className='search-nav-wrapper d-flex justify-content-center align-items-center gap-0'>
+                    <div className="search-nav-wrapper d-flex justify-content-center align-items-center gap-0">
                         <Search onToggleSearch={onToggleSearch} />
                         <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">
                             <ul>
                                 {navItems.map((item) => {
                                     // Handle Blog dropdown for staff users
-                                    if (item.path === ROUTES.BLOG.LIST && isStaff && canCreateBlog) {
+                                    if (
+                                        item.path === ROUTES.BLOG.LIST &&
+                                        isStaff &&
+                                        canCreateBlog
+                                    ) {
                                         return (
-                                            <li key={item.path} className={`dropdown ${isBlogDropdownOpen ? 'dropdown-active' : ''}`}>
+                                            <li
+                                                key={item.path}
+                                                className={`dropdown ${isBlogDropdownOpen ? "dropdown-active" : ""}`}
+                                            >
                                                 <a
                                                     role="button"
                                                     className="toggle-dropdown"
                                                     onClick={toggleBlogDropdown}
-                                                    aria-expanded={isBlogDropdownOpen}
+                                                    aria-expanded={
+                                                        isBlogDropdownOpen
+                                                    }
                                                 >
                                                     <span>{item.label}</span>
-                                                    <i className={`bi ${isBlogDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'} toggle-dropdown`}></i>
+                                                    <i
+                                                        className={`bi ${isBlogDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"} toggle-dropdown`}
+                                                    ></i>
                                                 </a>
-                                                <ul className={isBlogDropdownOpen ? 'dropdown-active' : ''}>
+                                                <ul
+                                                    className={
+                                                        isBlogDropdownOpen
+                                                            ? "dropdown-active"
+                                                            : ""
+                                                    }
+                                                >
                                                     <li>
-                                                        <Link to={item.path} className={location.pathname === item.path ? 'active' : ''}>
-                                                            <span>View All Posts</span>
+                                                        <Link
+                                                            to={item.path}
+                                                            className={
+                                                                location.pathname ===
+                                                                item.path
+                                                                    ? "active"
+                                                                    : ""
+                                                            }
+                                                        >
+                                                            <span>
+                                                                View All Posts
+                                                            </span>
                                                         </Link>
                                                     </li>
                                                     <li>
-                                                        <Link to={ROUTES.BLOG.ADD}>
-                                                            <span>Add Blog Post</span>
+                                                        <Link
+                                                            to={ROUTES.BLOG.ADD}
+                                                        >
+                                                            <span>
+                                                                Add Blog Post
+                                                            </span>
                                                         </Link>
                                                     </li>
                                                 </ul>
                                             </li>
                                         );
                                     }
-                                    
+
                                     // Handle Projects dropdown for staff users
-                                    if (item.path === ROUTES.PROJECTS.LIST && isStaff && canCreateProjects) {
+                                    if (
+                                        item.path === ROUTES.PROJECTS.LIST &&
+                                        isStaff &&
+                                        canCreateProjects
+                                    ) {
                                         return (
-                                            <li key={item.path} className={`dropdown ${isProjectsDropdownOpen ? 'dropdown-active' : ''}`}>
+                                            <li
+                                                key={item.path}
+                                                className={`dropdown ${isProjectsDropdownOpen ? "dropdown-active" : ""}`}
+                                            >
                                                 <a
                                                     role="button"
                                                     className="toggle-dropdown"
-                                                    onClick={toggleProjectsDropdown}
-                                                    aria-expanded={isProjectsDropdownOpen}
+                                                    onClick={
+                                                        toggleProjectsDropdown
+                                                    }
+                                                    aria-expanded={
+                                                        isProjectsDropdownOpen
+                                                    }
                                                 >
                                                     <span>{item.label}</span>
-                                                    <i className={`bi ${isProjectsDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'} toggle-dropdown`}></i>
+                                                    <i
+                                                        className={`bi ${isProjectsDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"} toggle-dropdown`}
+                                                    ></i>
                                                 </a>
-                                                <ul className={isProjectsDropdownOpen ? 'dropdown-active' : ''}>
+                                                <ul
+                                                    className={
+                                                        isProjectsDropdownOpen
+                                                            ? "dropdown-active"
+                                                            : ""
+                                                    }
+                                                >
                                                     <li>
-                                                        <Link to={item.path} className={location.pathname === item.path ? 'active' : ''}>
-                                                            <span>View All Projects</span>
+                                                        <Link
+                                                            to={item.path}
+                                                            className={
+                                                                location.pathname ===
+                                                                item.path
+                                                                    ? "active"
+                                                                    : ""
+                                                            }
+                                                        >
+                                                            <span>
+                                                                View All
+                                                                Projects
+                                                            </span>
                                                         </Link>
                                                     </li>
                                                     <li>
-                                                        <Link to={ROUTES.PROJECTS.ADD}>
-                                                            <span>Add Project</span>
+                                                        <Link
+                                                            to={
+                                                                ROUTES.PROJECTS
+                                                                    .ADD
+                                                            }
+                                                        >
+                                                            <span>
+                                                                Add Project
+                                                            </span>
                                                         </Link>
                                                     </li>
                                                 </ul>
                                             </li>
                                         );
                                     }
-                                    
+
                                     // Regular nav items
                                     return (
                                         <li key={item.path}>
                                             <Link
                                                 to={item.path}
-                                                className={location.pathname === item.path ? 'active' : ''}
+                                                className={
+                                                    location.pathname ===
+                                                    item.path
+                                                        ? "active"
+                                                        : ""
+                                                }
                                             >
                                                 <span>{item.label}</span>
                                             </Link>
@@ -154,20 +232,34 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                     );
                                 })}
 
-                                <li className={`dropdown ${isToggleDropdownOpen ? 'active' : ''}`}>
-                                    <a role="button"
+                                <li
+                                    className={`dropdown ${isToggleDropdownOpen ? "active" : ""}`}
+                                >
+                                    <a
+                                        role="button"
                                         className="toggle-dropdown"
                                         onClick={toggleAccountDropdown}
                                         aria-expanded={isToggleDropdownOpen}
                                     >
                                         <span>Account</span>
-                                        <i className={`bi ${isToggleDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                                        <i
+                                            className={`bi ${isToggleDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                                        ></i>
                                     </a>
-                                    <ul className={isToggleDropdownOpen ? 'dropdown-active' : ''}>
+                                    <ul
+                                        className={
+                                            isToggleDropdownOpen
+                                                ? "dropdown-active"
+                                                : ""
+                                        }
+                                    >
                                         {/* Staff-only inbox link */}
                                         {isStaff && (
                                             <li>
-                                                <Link to={ROUTES.MESSAGES.INBOX} className='d-flex align-items-center justify-content-start gap-1'>
+                                                <Link
+                                                    to={ROUTES.MESSAGES.INBOX}
+                                                    className="d-flex align-items-center justify-content-start gap-1"
+                                                >
                                                     <i className="bi bi-inbox"></i>
                                                     <span>Inbox</span>
                                                 </Link>
@@ -184,8 +276,10 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                 </li>
                             </ul>
                         </nav>
-                        <i className={`mobile-nav-toggle d-lg-none bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'}`}
-                            onClick={toggleMobileMenu}></i>
+                        <i
+                            className={`mobile-nav-toggle d-lg-none bi ${isMobileMenuOpen ? "bi-x" : "bi-list"}`}
+                            onClick={toggleMobileMenu}
+                        ></i>
                     </div>
                 </div>
             </header>

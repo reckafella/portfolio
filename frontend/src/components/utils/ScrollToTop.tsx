@@ -1,6 +1,6 @@
 // src/components/ScrollToTop.tsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -14,24 +14,24 @@ const ScrollToTop = () => {
             }
         };
 
-        window.addEventListener('scroll', toggleVisibility);
+        window.addEventListener("scroll", toggleVisibility);
 
         return () => {
-            window.removeEventListener('scroll', toggleVisibility);
+            window.removeEventListener("scroll", toggleVisibility);
         };
     }, []);
 
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior: "smooth",
         });
     };
 
     return (
-        <Link 
-            to="#" 
-            className={`scroll-top d-flex justify-content-center align-items-center ${isVisible ? 'active' : ''}`}
+        <Link
+            to="#"
+            className={`scroll-top d-flex justify-content-center align-items-center ${isVisible ? "active" : ""}`}
             onClick={(e) => {
                 e.preventDefault();
                 scrollToTop();

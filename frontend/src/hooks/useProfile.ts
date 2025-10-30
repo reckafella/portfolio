@@ -1,16 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ProfileService, {
     ProfileData,
     ProfileUpdateData,
     PasswordChangeData,
     SettingsData,
-} from '@/services/profileService';
+} from "@/services/profileService";
 
 // Query keys
 export const profileKeys = {
-    all: ['profile'] as const,
-    detail: () => [...profileKeys.all, 'detail'] as const,
-    settings: () => [...profileKeys.all, 'settings'] as const,
+    all: ["profile"] as const,
+    detail: () => [...profileKeys.all, "detail"] as const,
+    settings: () => [...profileKeys.all, "settings"] as const,
 };
 
 /**
@@ -32,12 +32,13 @@ export const useUpdateProfile = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: ProfileUpdateData) => ProfileService.updateProfile(data),
+        mutationFn: (data: ProfileUpdateData) =>
+            ProfileService.updateProfile(data),
         onSuccess: (response) => {
             // Update the profile cache with new data
             queryClient.setQueryData(profileKeys.detail(), response.profile);
             // Also update user data in localStorage
-            const currentUser = localStorage.getItem('user');
+            const currentUser = localStorage.getItem("user");
             if (currentUser) {
                 const user = JSON.parse(currentUser);
                 const updatedUser = {
@@ -45,7 +46,7 @@ export const useUpdateProfile = () => {
                     first_name: response.profile.user.first_name,
                     last_name: response.profile.user.last_name,
                 };
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                localStorage.setItem("user", JSON.stringify(updatedUser));
             }
         },
     });
@@ -56,7 +57,8 @@ export const useUpdateProfile = () => {
  */
 export const useChangePassword = () => {
     return useMutation({
-        mutationFn: (data: PasswordChangeData) => ProfileService.changePassword(data),
+        mutationFn: (data: PasswordChangeData) =>
+            ProfileService.changePassword(data),
     });
 };
 

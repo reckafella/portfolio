@@ -1,25 +1,25 @@
-import React from 'react';
+import React from "react";
 interface SearchProps {
-  className?: string;
-  onToggleSearch: () => void;
+    className?: string;
+    onToggleSearch: () => void;
 }
 
 const Search: React.FC<SearchProps> = ({ className = "", onToggleSearch }) => {
-  return (
-    <div className={`d-block search-icon ${className}`}>
-      <a
-        href="#"
-        type="button" 
-        role="button" 
-        className="search-bar-toggle"
-        onClick={onToggleSearch}
-        aria-label="Open search"
-        title="Search"
-      >
-        <i className="bi bi-search"></i>
-      </a>
-    </div>
-  );
+    return (
+        <div className={`d-block search-icon ${className}`}>
+            <a
+                href="#"
+                type="button"
+                role="button"
+                className="search-bar-toggle"
+                onClick={onToggleSearch}
+                aria-label="Open search"
+                title="Search"
+            >
+                <i className="bi bi-search"></i>
+            </a>
+        </div>
+    );
 };
 
 export default Search;

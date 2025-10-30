@@ -1,5 +1,5 @@
 import { FieldConfig, FormValue, CaptchaData } from "@/types/unifiedForms";
-import { FileUpload, ImageUpload  } from "./FileUpload";
+import { FileUpload, ImageUpload } from "./FileUpload";
 import { CaptchaInput } from "./Captcha";
 import { PasswordInput } from "./PasswordInput";
 
@@ -8,7 +8,11 @@ export interface FieldRendererProps {
     fieldConfig: FieldConfig;
     value: FormValue;
     onChange: (_fieldName: string, _value: FormValue) => void;
-    onFileChange: (_fieldName: string, _files: FileList | File[] | null, _multiple: boolean) => void;
+    onFileChange: (
+        _fieldName: string,
+        _files: FileList | File[] | null,
+        _multiple: boolean,
+    ) => void;
     isSubmitting: boolean;
     captchaData: CaptchaData | null;
     onRefreshCaptcha: () => void;
@@ -26,81 +30,103 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     captchaData,
     onRefreshCaptcha,
     isRefreshingCaptcha,
-    allFormData
+    allFormData,
 }) => {
-    const { required, help_text, disabled, widget, max_length, min_length, choices, accept, multiple, max_size } = fieldConfig;
-    
+    const {
+        required,
+        help_text,
+        disabled,
+        widget,
+        max_length,
+        min_length,
+        choices,
+        accept,
+        multiple,
+        max_size,
+    } = fieldConfig;
+
     const baseProps = {
         id: fieldName,
         name: fieldName,
         required,
         disabled: disabled || isSubmitting,
-        className: "form-control"
+        className: "form-control",
     };
-    
+
     const textBaseProps = {
         ...baseProps,
-        value: typeof value === 'string' ? value : '',
-        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-            onChange(fieldName, e.target.value),
+        value: typeof value === "string" ? value : "",
+        onChange: (
+            e: React.ChangeEvent<
+                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >,
+        ) => onChange(fieldName, e.target.value),
         placeholder: help_text,
         maxLength: max_length,
-        minLength: min_length
+        minLength: min_length,
     };
-    
+
     const booleanBaseProps = {
         ...baseProps,
         className: "form-check-input",
         checked: Boolean(value),
         onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-            onChange(fieldName, e.target.checked)
+            onChange(fieldName, e.target.checked),
     };
-    
+
     const fileBaseProps = {
         ...baseProps,
         onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
             onFileChange(fieldName, e.target.files, multiple ?? false),
         accept,
-        multiple
+        multiple,
     };
-    
+
     switch (widget) {
-        case 'TextInput':
+        case "TextInput":
             return <input type="text" {...textBaseProps} />;
-            
-        case 'EmailInput':
+
+        case "EmailInput":
             return <input type="email" {...textBaseProps} />;
-            
-        case 'PasswordInput':
+
+        case "PasswordInput":
             // Determine if this is a confirmation field or if we need to compare with other passwords
-            const isConfirmField = fieldName.includes('confirm') || fieldName.includes('password2') || fieldName === 'password_confirm';
-            const isNewPasswordField = fieldName.includes('new_password') || fieldName === 'password1' || fieldName === 'password';
-            
+            const isConfirmField =
+                fieldName.includes("confirm") ||
+                fieldName.includes("password2") ||
+                fieldName === "password_confirm";
+            const isNewPasswordField =
+                fieldName.includes("new_password") ||
+                fieldName === "password1" ||
+                fieldName === "password";
+
             // Get related password values for comparison
             let confirmPasswordValue: string | undefined;
             let oldPasswordValue: string | undefined;
-            
+
             if (allFormData) {
                 // For primary password field, check if there's a confirmation field
                 if (isNewPasswordField && !isConfirmField) {
-                    confirmPasswordValue = (allFormData['password_confirm'] || allFormData['password2']) as string;
+                    confirmPasswordValue = (allFormData["password_confirm"] ||
+                        allFormData["password2"]) as string;
                 }
-                
+
                 // For confirmation field, get the primary password
                 if (isConfirmField) {
-                    confirmPasswordValue = (allFormData['password1'] || allFormData['password']) as string;
+                    confirmPasswordValue = (allFormData["password1"] ||
+                        allFormData["password"]) as string;
                 }
-                
+
                 // Check for old password (for password change forms)
-                if (fieldName.includes('new_password')) {
-                    oldPasswordValue = allFormData['old_password'] as string;
+                if (fieldName.includes("new_password")) {
+                    oldPasswordValue = allFormData["old_password"] as string;
                 }
             }
-            
+
             return (
                 <PasswordInput
                     fieldName={fieldName}
-                    value={typeof value === 'string' ? value : ''}
+                    value={typeof value === "string" ? value : ""}
                     onChange={(name, val) => onChange(name, val)}
                     required={required}
                     disabled={disabled || isSubmitting}
@@ -115,27 +141,35 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
                     className={baseProps.className}
                 />
             );
-            
-        case 'NumberInput':
+
+        case "NumberInput":
             return <input type="number" {...textBaseProps} />;
-            
-        case 'URLInput':
+
+        case "URLInput":
             return <input type="url" {...textBaseProps} />;
-            
-        case 'Textarea':
-            return <textarea {...textBaseProps} rows={5} style={{ resize: 'vertical' }} />;
-            
-        case 'Select':
+
+        case "Textarea":
+            return (
+                <textarea
+                    {...textBaseProps}
+                    rows={5}
+                    style={{ resize: "vertical" }}
+                />
+            );
+
+        case "Select":
             return (
                 <select {...textBaseProps}>
                     <option value="">Choose...</option>
                     {choices?.map(([val, label]) => (
-                        <option key={val} value={val}>{label}</option>
+                        <option key={val} value={val}>
+                            {label}
+                        </option>
                     ))}
                 </select>
             );
-            
-        case 'FileInput':
+
+        case "FileInput":
             return (
                 <FileUpload
                     fieldName={fieldName}
@@ -147,8 +181,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
                     max_size={max_size}
                 />
             );
-            
-        case 'ImageInput':
+
+        case "ImageInput":
             return (
                 <ImageUpload
                     fieldName={fieldName}
@@ -160,8 +194,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
                     max_size={max_size}
                 />
             );
-            
-        case 'CaptchaTextInput':
+
+        case "CaptchaTextInput":
             return (
                 <CaptchaInput
                     fieldName={fieldName}
@@ -172,17 +206,26 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
                     isSubmitting={isSubmitting}
                 />
             );
-            
-        case 'CheckboxInput':
+
+        case "CheckboxInput":
             return (
                 <div className="form-check">
-                    <input type="checkbox" role="switch" {...booleanBaseProps} />
-                    <label htmlFor={fieldName} className="form-check-label ms-2">
-                        {fieldConfig.label || fieldConfig.help_text || 'Enable this option'}
+                    <input
+                        type="checkbox"
+                        role="switch"
+                        {...booleanBaseProps}
+                    />
+                    <label
+                        htmlFor={fieldName}
+                        className="form-check-label ms-2"
+                    >
+                        {fieldConfig.label ||
+                            fieldConfig.help_text ||
+                            "Enable this option"}
                     </label>
                 </div>
             );
-            
+
         default:
             return <input type="text" {...textBaseProps} />;
     }

@@ -279,3 +279,95 @@ class Skill(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class SearchQuery(models.Model):
+    """Track search queries and their popularity"""
+    query = models.CharField(
+        max_length=200,
+        unique=True,
+        db_index=True,
+        help_text="The search query text"
+    )
+    query_normalized = models.CharField(
+        max_length=200,
+        db_index=True,
+        help_text="Normalized version of the query (lowercase, trimmed)"
+    )
+    count = models.PositiveIntegerField(
+        default=1,
+        help_text="Number of times this query has been searched"
+    )
+    first_searched_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="When this query was first searched"
+    )
+    last_searched_at = models.DateTimeField(
+        auto_now=True,
+        help_text="When this query was last searched"
+    )
+    result_count = models.IntegerField(
+        default=0,
+        help_text="Number of results returned for this query (last search)"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether to include this query in popular searches"
+    )
+
+    class Meta:
+        ordering = ['-count', '-last_searched_at']
+        verbose_name = "Search Query"
+        verbose_name_plural = "Search Queries"
+        managed = True
+        indexes = [
+            models.Index(fields=['-count', '-last_searched_at']),
+            models.Index(fields=['query_normalized']),
+        ]
+
+    def __str__(self):
+        return f"{self.query} ({self.count} searches)"
+
+    def save(self, *args, **kwargs):
+        # Normalize query for consistent storage
+        if not self.query_normalized:
+            self.query_normalized = self.query.lower().strip()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def record_search(cls, query, result_count=0):
+        """
+        Record a search query, incrementing count if it exists
+        Returns the SearchQuery instance
+        """
+        query = query.strip()
+        query_normalized = query.lower().strip()
+        
+        # Get or create the search query
+        search_query, created = cls.objects.get_or_create(
+            query_normalized=query_normalized,
+            defaults={
+                'query': query,
+                'result_count': result_count
+            }
+        )
+        
+        # If it already exists, increment count and update result_count
+        if not created:
+            search_query.count += 1
+            search_query.result_count = result_count
+            # Update the query text to the latest version (in case of case differences)
+            search_query.query = query
+            search_query.save(update_fields=['count', 'result_count', 'query', 'last_searched_at'])
+        
+        return search_query
+
+    @classmethod
+    def get_popular_searches(cls, limit=10):
+        """
+        Get the most popular search queries
+        """
+        return cls.objects.filter(
+            is_active=True,
+            count__gte=1
+        ).order_by('-count', '-last_searched_at')[:limit]

@@ -11,7 +11,7 @@ from rest_framework import status
 from django_ratelimit.decorators import ratelimit
 from django_ratelimit.exceptions import Ratelimited
 
-from app.models import Projects
+from app.models import Projects, SearchQuery
 from blog.models import BlogPostPage as BlogPost
 
 
@@ -86,12 +86,23 @@ class BaseSearchAPIView(APIView):
         return f"search:{key_hash}"
 
     def search_blog_posts(self, query, sort, page, page_size):
-        """Search and return blog posts with optimized queries"""
+        """Search and return blog posts with optimized queries and multi-word support"""
+        # Build multi-word query filter
+        words = query.split()
+        q_filter = Q()
+
+        # If multi-word query, search for any word match
+        if len(words) > 1:
+            for word in words:
+                word = word.strip()
+                if len(word) >= 2:
+                    q_filter |= Q(title__icontains=word) | Q(content__icontains=word) | Q(tags__name__icontains=word)
+        else:
+            # Single word or phrase search
+            q_filter = Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+
         # Use select_related and prefetch_related for better performance
-        post_queryset = BlogPost.objects.filter(
-            Q(title__icontains=query) | Q(content__icontains=query) |
-            Q(tags__name__icontains=query)
-        ).select_related().prefetch_related('tags').distinct()
+        post_queryset = BlogPost.objects.filter(q_filter).select_related().prefetch_related('tags').distinct()
 
         # Apply sorting
         if sort == 'date_desc':
@@ -131,12 +142,30 @@ class BaseSearchAPIView(APIView):
         ]
 
     def search_projects(self, query, sort, page, page_size):
-        """Search and return projects with optimized queries"""
-        project_queryset = Projects.objects.filter(
-            Q(title__icontains=query) | Q(description__icontains=query) |
-            Q(project_url__icontains=query) | Q(category__icontains=query) |
-            Q(project_type__icontains=query) | Q(client__icontains=query)
-        ).filter(live=True)
+        """Search and return projects with optimized queries and multi-word support"""
+        # Build multi-word query filter
+        words = query.split()
+        q_filter = Q()
+
+        # If multi-word query, search for any word match
+        if len(words) > 1:
+            for word in words:
+                word = word.strip()
+                if len(word) >= 2:
+                    q_filter |= (
+                        Q(title__icontains=word) | Q(description__icontains=word) |
+                        Q(category__icontains=word) | Q(project_type__icontains=word) |
+                        Q(client__icontains=word)
+                    )
+        else:
+            # Single word or phrase search
+            q_filter = (
+                Q(title__icontains=query) | Q(description__icontains=query) |
+                Q(project_url__icontains=query) | Q(category__icontains=query) |
+                Q(project_type__icontains=query) | Q(client__icontains=query)
+            )
+
+        project_queryset = Projects.objects.filter(q_filter).filter(live=True)
 
         # Apply sorting
         if sort == 'date_desc':
@@ -329,6 +358,26 @@ class SearchAPIView(BaseSearchAPIView):
             'total_results': 0
         }, status=status_code)
 
+    def _record_search_query(self, query, total_results):
+        """
+        Record the search query and split multi-word queries
+        """
+        try:
+            # Record the full query
+            SearchQuery.record_search(query, result_count=total_results)
+
+            # Split multi-word queries and record individual words
+            words = query.split()
+            if len(words) > 1:
+                for word in words:
+                    # Only record words that are at least 2 characters
+                    word = word.strip()
+                    if len(word) >= 2:
+                        SearchQuery.record_search(word, result_count=0)
+        except Exception as e:
+            # Don't fail the search if recording fails
+            print(f"Error recording search query: {e}")
+
     def get(self, request):
         try:
             query, category, sort, page, page_size = self._get_search_params(request)
@@ -352,6 +401,9 @@ class SearchAPIView(BaseSearchAPIView):
                 post_results, project_results, action_results
             )
 
+            # Record the search query
+            self._record_search_query(query, response_data['total_results'])
+
             cache.set(cache_key, response_data, 120)
             return Response(response_data)
 
@@ -369,6 +421,21 @@ class SearchSuggestionsAPIView(BaseSearchAPIView):
     @method_decorator(ratelimit(key='ip', rate='60/m', method='GET', block=True))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    def _build_multi_word_query(self, query):
+        """
+        Build Q objects for multi-word queries
+        Returns a Q object that matches any word in the query
+        """
+        words = query.split()
+        q_objects = Q()
+
+        for word in words:
+            word = word.strip()
+            if len(word) >= 2:
+                q_objects |= Q(title__icontains=word)
+
+        return q_objects if q_objects else Q(title__icontains=query)
 
     def get(self, request):
         try:
@@ -390,24 +457,53 @@ class SearchSuggestionsAPIView(BaseSearchAPIView):
 
             suggestions = []
 
-            # Get blog post titles with optimized query
+            # Build multi-word query filter
+            multi_word_filter = self._build_multi_word_query(query)
+
+            # Get blog post titles with multi-word support
             blog_posts = BlogPost.objects.filter(
-                title__icontains=query
-            ).values_list('title', flat=True)[:5]
+                multi_word_filter
+            ).values_list('title', flat=True).distinct()[:5]
 
-            # Get project titles with optimized query
+            # Get project titles with multi-word support
+            project_filter = self._build_multi_word_query(query)
+            # Update Q object to use correct field names for Projects
+            project_filter = Q()
+            words = query.split()
+            for word in words:
+                word = word.strip()
+                if len(word) >= 2:
+                    project_filter |= Q(title__icontains=word) | Q(description__icontains=word)
+
+            if not project_filter:
+                project_filter = Q(title__icontains=query)
+
             projects = Projects.objects.filter(
-                title__icontains=query
-            ).filter(live=True).values_list('title', flat=True)[:5]
+                project_filter
+            ).filter(live=True).values_list('title', flat=True).distinct()[:5]
 
-            # Get tags with optimized query
+            # Get tags with proper filtering and multi-word support
             from taggit.models import Tag
+
+            # Build tag filter for multi-word queries
+            tag_filter = Q()
+            words = query.split()
+            for word in words:
+                word = word.strip()
+                if len(word) >= 2:
+                    tag_filter |= Q(name__icontains=word)
+
+            if not tag_filter:
+                tag_filter = Q(name__icontains=query)
+
             tags = (
                 Tag.objects
+                .filter(tag_filter)
                 .filter(taggit_taggeditem_items__content_type__model='blogpostpage')
                 .annotate(article_count=Count('taggit_taggeditem_items', distinct=True))
-                .order_by('name')
+                .order_by('-article_count', 'name')
                 .values_list('name', flat=True)
+                .distinct()[:5]
             )
 
             # Combine and format suggestions
@@ -473,23 +569,20 @@ class PopularSearchesAPIView(BaseSearchAPIView):
                     'popular_searches': cached_popular
                 })
 
-            # For now, return some default popular searches
-            # In a real implementation, you would track search queries in a database
+            # Fetch popular searches from database (top 5)
+            popular_queries = SearchQuery.get_popular_searches(limit=5)
+
             popular_searches = [
-                {'text': 'React', 'count': 45, 'last_searched': '2024-01-15T10:30:00Z'},
-                {'text': 'Django', 'count': 38, 'last_searched': '2024-01-15T09:15:00Z'},
-                {'text': 'Python', 'count': 32, 'last_searched': '2024-01-15T08:45:00Z'},
-                {'text': 'JavaScript', 'count': 28, 'last_searched': '2024-01-15T07:20:00Z'},
-                {'text': 'Web Development', 'count': 25, 'last_searched': '2024-01-15T06:30:00Z'},
-                {'text': 'API', 'count': 22, 'last_searched': '2024-01-15T05:45:00Z'},
-                {'text': 'Database', 'count': 19, 'last_searched': '2024-01-15T04:15:00Z'},
-                {'text': 'Frontend', 'count': 16, 'last_searched': '2024-01-15T03:30:00Z'},
-                {'text': 'Backend', 'count': 14, 'last_searched': '2024-01-15T02:45:00Z'},
-                {'text': 'Tutorial', 'count': 12, 'last_searched': '2024-01-15T01:20:00Z'},
+                {
+                    'text': query.query,
+                    'count': query.count,
+                    'last_searched': query.last_searched_at.isoformat()
+                }
+                for query in popular_queries
             ]
 
-            # Cache popular searches for 1 hour
-            cache.set(cache_key, popular_searches, 3600)
+            # Cache popular searches for 5 minutes (shorter cache for more real-time data)
+            cache.set(cache_key, popular_searches, 300)
 
             return Response({
                 'popular_searches': popular_searches
@@ -500,7 +593,8 @@ class PopularSearchesAPIView(BaseSearchAPIView):
                 'popular_searches': []
             }, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-        except Exception:
+        except Exception as e:
+            print(f"Error fetching popular searches: {e}")
             return Response({
                 'popular_searches': []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

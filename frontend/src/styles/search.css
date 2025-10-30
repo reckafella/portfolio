@@ -295,6 +295,42 @@
   border-color: var(--accent-color);
 }
 
+.search-section-item-dismissible {
+  position: relative;
+  padding-right: 2.5rem;
+}
+
+.search-section-item-dismiss {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--default-color);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.2s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.search-section-item-dismissible:hover .search-section-item-dismiss {
+  opacity: 0.6;
+}
+
+.search-section-item-dismiss:hover {
+  opacity: 1 !important;
+  background: var(--accent-color);
+  color: var(--background-color);
+}
+
 .search-popular-count {
   margin-left: auto;
   font-size: 0.8rem;

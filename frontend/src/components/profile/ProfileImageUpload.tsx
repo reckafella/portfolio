@@ -1,7 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
-import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import { useUploadProfileImage, useDeleteProfileImage } from '@/hooks/useProfile';
+import React, { useState, useRef, useCallback } from "react";
+import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import {
+    useUploadProfileImage,
+    useDeleteProfileImage,
+} from "@/hooks/useProfile";
 
 interface ProfileImageUploadProps {
     currentImageUrl: string | null;
@@ -20,9 +23,9 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [imageSrc, setImageSrc] = useState<string>('');
+    const [imageSrc, setImageSrc] = useState<string>("");
     const [crop, setCrop] = useState<Crop>({
-        unit: '%',
+        unit: "%",
         width: 90,
         height: 90,
         x: 5,
@@ -31,39 +34,42 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
     const [rotation, setRotation] = useState(0);
     const [scale, setScale] = useState(1);
-    
+
     const imgRef = useRef<HTMLImageElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    
+
     const uploadMutation = useUploadProfileImage();
     const deleteMutation = useDeleteProfileImage();
 
     // Handle file selection
-    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const handleFileSelect = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
 
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
-            return;
-        }
+            // Validate file type
+            if (!file.type.startsWith("image/")) {
+                alert("Please select an image file");
+                return;
+            }
 
-        // Validate file size (20MB max)
-        if (file.size > 20 * 1024 * 1024) {
-            alert('File size must be less than 20MB');
-            return;
-        }
+            // Validate file size (20MB max)
+            if (file.size > 20 * 1024 * 1024) {
+                alert("File size must be less than 20MB");
+                return;
+            }
 
-        setSelectedFile(file);
+            setSelectedFile(file);
 
-        // Read file and create preview
-        const reader = new FileReader();
-        reader.onload = () => {
-            setImageSrc(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-    }, []);
+            // Read file and create preview
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageSrc(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        },
+        [],
+    );
 
     // Handle crop completion
     const handleCropComplete = useCallback((crop: PixelCrop) => {
@@ -75,8 +81,8 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
         if (!imgRef.current || !completedCrop) return null;
 
         const image = imgRef.current;
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
         if (!ctx) return null;
 
@@ -104,7 +110,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
             0,
             0,
             canvas.width,
-            canvas.height
+            canvas.height,
         );
 
         ctx.restore();
@@ -114,8 +120,8 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                 (blob) => {
                     resolve(blob);
                 },
-                'image/jpeg',
-                0.95
+                "image/jpeg",
+                0.95,
             );
         });
     }, [completedCrop, rotation, scale]);
@@ -127,30 +133,30 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
         try {
             const croppedBlob = await getCroppedImg();
             if (!croppedBlob) {
-                alert('Failed to crop image');
+                alert("Failed to crop image");
                 return;
             }
 
             // Create file from blob
             const croppedFile = new File([croppedBlob], selectedFile.name, {
-                type: 'image/jpeg',
+                type: "image/jpeg",
             });
 
             await uploadMutation.mutateAsync(croppedFile);
-            
+
             // Close modal and reset
             setShowModal(false);
             setSelectedFile(null);
-            setImageSrc('');
-            setCrop({ unit: '%', width: 90, height: 90, x: 5, y: 5 });
+            setImageSrc("");
+            setCrop({ unit: "%", width: 90, height: 90, x: 5, y: 5 });
             setRotation(0);
             setScale(1);
-            
+
             if (onUploadSuccess) {
                 onUploadSuccess();
             }
         } catch (error: any) {
-            alert(error.message || 'Failed to upload image');
+            alert(error.message || "Failed to upload image");
         }
     };
 
@@ -163,7 +169,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                 onUploadSuccess();
             }
         } catch (error: any) {
-            alert(error.message || 'Failed to delete image');
+            alert(error.message || "Failed to delete image");
         }
     };
 
@@ -171,12 +177,12 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedFile(null);
-        setImageSrc('');
-        setCrop({ unit: '%', width: 90, height: 90, x: 5, y: 5 });
+        setImageSrc("");
+        setCrop({ unit: "%", width: 90, height: 90, x: 5, y: 5 });
         setRotation(0);
         setScale(1);
         if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+            fileInputRef.current.value = "";
         }
     };
 
@@ -190,14 +196,21 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                         alt="Profile"
                         loading="lazy"
                         className="img-fluid rounded-circle mb-2"
-                        style={{ width: '120px', height: '120px', objectFit: 'cover' }}
+                        style={{
+                            width: "120px",
+                            height: "120px",
+                            objectFit: "cover",
+                        }}
                     />
                 ) : (
                     <div
                         className="rounded-circle bg-light d-flex justify-content-center align-items-center mb-2"
-                        style={{ width: '120px', height: '120px' }}
+                        style={{ width: "120px", height: "120px" }}
                     >
-                        <i className="bi bi-person-circle" style={{ fontSize: '5rem', color: '#6c757d' }}></i>
+                        <i
+                            className="bi bi-person-circle"
+                            style={{ fontSize: "5rem", color: "#6c757d" }}
+                        ></i>
                     </div>
                 )}
                 <div className="pt-2 text-center">
@@ -205,9 +218,14 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                         type="button"
                         className="btn btn-sm btn-primary me-2"
                         onClick={() => setShowModal(true)}
-                        title={currentImageUrl ? 'Update Profile Photo' : 'Upload Profile Photo'}
+                        title={
+                            currentImageUrl
+                                ? "Update Profile Photo"
+                                : "Upload Profile Photo"
+                        }
                     >
-                        <i className="bi bi-upload"></i> {currentImageUrl ? 'Update' : 'Upload'}
+                        <i className="bi bi-upload"></i>{" "}
+                        {currentImageUrl ? "Update" : "Upload"}
                     </button>
                     {currentImageUrl && (
                         <button
@@ -227,12 +245,22 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
 
             {/* Upload Modal */}
             {showModal && (
-                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
+                <div
+                    className="modal fade show d-block"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                    tabIndex={-1}
+                >
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Crop Profile Image</h5>
-                                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
+                                <h5 className="modal-title">
+                                    Crop Profile Image
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={handleCloseModal}
+                                ></button>
                             </div>
                             <div className="modal-body">
                                 {!imageSrc ? (
@@ -240,12 +268,19 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                     <div>
                                         <div
                                             className="file-drop-zone border border-2 border-dashed rounded p-5 text-center"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => fileInputRef.current?.click()}
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
                                         >
                                             <i className="bi bi-cloud-upload display-4 text-muted"></i>
-                                            <p className="mb-2">Click to select an image</p>
-                                            <small className="text-muted">JPG, PNG, GIF up to 20MB • Minimum 500x500px</small>
+                                            <p className="mb-2">
+                                                Click to select an image
+                                            </p>
+                                            <small className="text-muted">
+                                                JPG, PNG, GIF up to 20MB •
+                                                Minimum 500x500px
+                                            </small>
                                         </div>
                                         <input
                                             ref={fileInputRef}
@@ -271,37 +306,54 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                                     src={imageSrc}
                                                     alt="Crop preview"
                                                     style={{
-                                                        maxWidth: '100%',
+                                                        maxWidth: "100%",
                                                         transform: `scale(${scale}) rotate(${rotation}deg)`,
                                                     }}
                                                 />
                                             </ReactCrop>
                                         </div>
                                         <div className="col-md-5">
-                                            <h6 className="text-center mb-3">Controls</h6>
-                                            
+                                            <h6 className="text-center mb-3">
+                                                Controls
+                                            </h6>
+
                                             {/* Rotation */}
                                             <div className="mb-3">
-                                                <label className="form-label">Rotation</label>
-                                                <div className="btn-group w-100" role="group">
+                                                <label className="form-label">
+                                                    Rotation
+                                                </label>
+                                                <div
+                                                    className="btn-group w-100"
+                                                    role="group"
+                                                >
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-secondary"
-                                                        onClick={() => setRotation(r => r - 90)}
+                                                        onClick={() =>
+                                                            setRotation(
+                                                                (r) => r - 90,
+                                                            )
+                                                        }
                                                     >
                                                         <i className="bi bi-arrow-counterclockwise"></i>
                                                     </button>
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-secondary"
-                                                        onClick={() => setRotation(0)}
+                                                        onClick={() =>
+                                                            setRotation(0)
+                                                        }
                                                     >
                                                         Reset
                                                     </button>
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-secondary"
-                                                        onClick={() => setRotation(r => r + 90)}
+                                                        onClick={() =>
+                                                            setRotation(
+                                                                (r) => r + 90,
+                                                            )
+                                                        }
                                                     >
                                                         <i className="bi bi-arrow-clockwise"></i>
                                                     </button>
@@ -310,7 +362,9 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
 
                                             {/* Zoom */}
                                             <div className="mb-3">
-                                                <label className="form-label">Zoom: {scale.toFixed(1)}x</label>
+                                                <label className="form-label">
+                                                    Zoom: {scale.toFixed(1)}x
+                                                </label>
                                                 <input
                                                     type="range"
                                                     className="form-range"
@@ -318,7 +372,13 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                                     max="3"
                                                     step="0.1"
                                                     value={scale}
-                                                    onChange={(e) => setScale(parseFloat(e.target.value))}
+                                                    onChange={(e) =>
+                                                        setScale(
+                                                            parseFloat(
+                                                                e.target.value,
+                                                            ),
+                                                        )
+                                                    }
                                                 />
                                             </div>
 
@@ -327,7 +387,13 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                                 type="button"
                                                 className="btn btn-sm btn-outline-secondary w-100"
                                                 onClick={() => {
-                                                    setCrop({ unit: '%', width: 90, height: 90, x: 5, y: 5 });
+                                                    setCrop({
+                                                        unit: "%",
+                                                        width: 90,
+                                                        height: 90,
+                                                        x: 5,
+                                                        y: 5,
+                                                    });
                                                     setRotation(0);
                                                     setScale(1);
                                                 }}
@@ -340,7 +406,11 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                 )}
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleCloseModal}
+                                >
                                     Cancel
                                 </button>
                                 {imageSrc && (
@@ -348,7 +418,10 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                         type="button"
                                         className="btn btn-primary"
                                         onClick={handleUpload}
-                                        disabled={!completedCrop || uploadMutation.isPending}
+                                        disabled={
+                                            !completedCrop ||
+                                            uploadMutation.isPending
+                                        }
                                     >
                                         {uploadMutation.isPending ? (
                                             <>
@@ -356,7 +429,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                                 Uploading...
                                             </>
                                         ) : (
-                                            'Crop & Upload'
+                                            "Crop & Upload"
                                         )}
                                     </button>
                                 )}
@@ -368,18 +441,35 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
 
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
-                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
+                <div
+                    className="modal fade show d-block"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                    tabIndex={-1}
+                >
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Delete Profile Picture</h5>
-                                <button type="button" className="btn-close" onClick={() => setShowDeleteModal(false)}></button>
+                                <h5 className="modal-title">
+                                    Delete Profile Picture
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setShowDeleteModal(false)}
+                                ></button>
                             </div>
                             <div className="modal-body">
-                                <p>Are you sure you want to delete your profile picture?</p>
+                                <p>
+                                    Are you sure you want to delete your profile
+                                    picture?
+                                </p>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => setShowDeleteModal(false)}
+                                >
                                     Cancel
                                 </button>
                                 <button
@@ -394,7 +484,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                                             Deleting...
                                         </>
                                     ) : (
-                                        'Delete'
+                                        "Delete"
                                     )}
                                 </button>
                             </div>

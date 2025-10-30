@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface FieldConfig {
     label: string;
@@ -27,8 +27,10 @@ export interface CaptchaData {
 }
 
 export interface UnifiedFormProps {
-    formType: 'contact' | 'login' | 'signup' | 'comment';
-    onSubmit: (_formData: Record<string, string | File | File[] | boolean>) => Promise<void>;
+    formType: "contact" | "login" | "signup" | "comment";
+    onSubmit: (
+        _formData: Record<string, string | File | File[] | boolean>,
+    ) => Promise<void>;
     isSubmitting: boolean;
     error?: string;
     success?: boolean;
@@ -45,4 +47,11 @@ export interface UnifiedFormProps {
 export type FormValue = string | File | File[] | boolean;
 
 export const MAX_IMAGES: number = 5;
-export const IMAGE_MIME_TYPES: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/svg+xml'];
+export const IMAGE_MIME_TYPES: string[] = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/bmp",
+    "image/svg+xml",
+];

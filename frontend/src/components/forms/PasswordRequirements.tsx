@@ -1,5 +1,5 @@
-import React from 'react';
-import { PasswordAnalysis } from '@/utils/passwordStrength';
+import React from "react";
+import { PasswordAnalysis } from "@/utils/passwordStrength";
 
 interface PasswordRequirementsProps {
     analysis: PasswordAnalysis;
@@ -18,50 +18,50 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
     showMatchRequirement = false,
     showDifferentRequirement = false,
     isExpanded = false,
-    uniqueId
+    uniqueId,
 }) => {
     const requirements = [
         {
-            type: 'length',
-            label: 'At least 8 characters',
-            isMet: analysis.length
+            type: "length",
+            label: "At least 8 characters",
+            isMet: analysis.length,
         },
         {
-            type: 'uppercase',
-            label: 'Uppercase letters (A-Z)',
-            isMet: analysis.hasUpperCase
+            type: "uppercase",
+            label: "Uppercase letters (A-Z)",
+            isMet: analysis.hasUpperCase,
         },
         {
-            type: 'lowercase',
-            label: 'Lowercase letters (a-z)',
-            isMet: analysis.hasLowerCase
+            type: "lowercase",
+            label: "Lowercase letters (a-z)",
+            isMet: analysis.hasLowerCase,
         },
         {
-            type: 'numbers',
-            label: 'Numbers (0-9)',
-            isMet: analysis.hasNumbers
+            type: "numbers",
+            label: "Numbers (0-9)",
+            isMet: analysis.hasNumbers,
         },
         {
-            type: 'special',
-            label: 'Special characters (!@#$%^&*)',
-            isMet: analysis.hasSpecialChar
-        }
+            type: "special",
+            label: "Special characters (!@#$%^&*)",
+            isMet: analysis.hasSpecialChar,
+        },
     ];
 
     // Add conditional requirements
     if (showMatchRequirement) {
         requirements.push({
-            type: 'match',
-            label: 'Both passwords match',
-            isMet: analysis.match ?? false
+            type: "match",
+            label: "Both passwords match",
+            isMet: analysis.match ?? false,
         });
     }
 
     if (showDifferentRequirement) {
         requirements.push({
-            type: 'different',
-            label: 'New password is different from old password',
-            isMet: analysis.different ?? false
+            type: "different",
+            label: "New password is different from old password",
+            isMet: analysis.different ?? false,
         });
     }
 
@@ -70,7 +70,7 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
             <div className="accordion-item">
                 <h4 className="accordion-header">
                     <button
-                        className={`accordion-button ${isExpanded ? '' : 'collapsed'}`}
+                        className={`accordion-button ${isExpanded ? "" : "collapsed"}`}
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target={`#${uniqueId}`}
@@ -82,18 +82,18 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
                 </h4>
                 <div
                     id={uniqueId}
-                    className={`accordion-collapse collapse ${isExpanded ? 'show' : ''}`}
+                    className={`accordion-collapse collapse ${isExpanded ? "show" : ""}`}
                 >
                     <div className="accordion-body strength-requirements">
                         {requirements.map((req) => (
                             <div
                                 key={req.type}
-                                className={`requirement ${req.isMet ? 'met' : ''}`}
+                                className={`requirement ${req.isMet ? "met" : ""}`}
                                 data-type={req.type}
                             >
                                 <span className="requirement-icon">
-                                    {req.isMet ? '✓' : '○'}
-                                </span>{' '}
+                                    {req.isMet ? "✓" : "○"}
+                                </span>{" "}
                                 {req.label}
                             </div>
                         ))}

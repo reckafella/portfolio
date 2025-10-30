@@ -1,3 +1,3 @@
-export { ShareManager } from './ShareManager';
-export { ShareButton } from './ShareButton';
-export { useShareManager } from './ShareManager';
+export { ShareManager } from "./ShareManager";
+export { ShareButton } from "./ShareButton";
+export { useShareManager } from "./ShareManager";

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSettings, useUpdateSettings } from '@/hooks/useProfile';
+import React, { useState, useEffect } from "react";
+import { useSettings, useUpdateSettings } from "@/hooks/useProfile";
 
 /**
  * SettingsForm component for managing notification settings
@@ -8,7 +8,7 @@ import { useSettings, useUpdateSettings } from '@/hooks/useProfile';
 export const SettingsForm: React.FC = () => {
     const { data: settings, isLoading } = useSettings();
     const updateSettingsMutation = useUpdateSettings();
-    
+
     const [formData, setFormData] = useState({
         changes_notifications: false,
         new_products_notifications: false,
@@ -16,24 +16,27 @@ export const SettingsForm: React.FC = () => {
         security_notifications: false,
     });
 
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     // Update form when settings load
     useEffect(() => {
         if (settings) {
             setFormData({
                 changes_notifications: settings.changes_notifications ?? false,
-                new_products_notifications: settings.new_products_notifications ?? false,
-                marketing_notifications: settings.marketing_notifications ?? false,
-                security_notifications: settings.security_notifications ?? false,
+                new_products_notifications:
+                    settings.new_products_notifications ?? false,
+                marketing_notifications:
+                    settings.marketing_notifications ?? false,
+                security_notifications:
+                    settings.security_notifications ?? false,
             });
         }
     }, [settings]);
 
     const handleToggleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = e.target;
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             [name]: checked,
         }));
@@ -41,26 +44,36 @@ export const SettingsForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccessMessage('');
-        setErrorMessage('');
+        setSuccessMessage("");
+        setErrorMessage("");
 
         try {
             const response = await updateSettingsMutation.mutateAsync(formData);
-            setSuccessMessage(response.message || 'Settings updated successfully!');
-            
+            setSuccessMessage(
+                response.message || "Settings updated successfully!",
+            );
+
             // Clear success message after 5 seconds
-            setTimeout(() => setSuccessMessage(''), 5000);
+            setTimeout(() => setSuccessMessage(""), 5000);
         } catch (error: any) {
-            setErrorMessage(error.message || 'Failed to update settings');
+            setErrorMessage(error.message || "Failed to update settings");
         }
     };
 
     if (isLoading) {
         return (
-            <div className="tab-pane fade show active pt-3" id="profile-settings">
-                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+            <div
+                className="tab-pane fade show active pt-3"
+                id="profile-settings"
+            >
+                <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "200px" }}
+                >
                     <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading settings...</span>
+                        <span className="visually-hidden">
+                            Loading settings...
+                        </span>
                     </div>
                 </div>
             </div>
@@ -70,24 +83,40 @@ export const SettingsForm: React.FC = () => {
     return (
         <div className="tab-pane fade show active pt-3" id="profile-settings">
             {successMessage && (
-                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-check-circle-fill me-2"></i>
                     {successMessage}
-                    <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setSuccessMessage("")}
+                    ></button>
                 </div>
             )}
 
             {errorMessage && (
-                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {errorMessage}
-                    <button type="button" className="btn-close" onClick={() => setErrorMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setErrorMessage("")}
+                    ></button>
                 </div>
             )}
 
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
-                    <label className="col-md-4 col-lg-3 col-form-label fw-bold">Email Notifications</label>
+                    <label className="col-md-4 col-lg-3 col-form-label fw-bold">
+                        Email Notifications
+                    </label>
                     <div className="col-md-8 col-lg-9">
                         <div className="form-switch form-check mb-3">
                             <input
@@ -99,11 +128,15 @@ export const SettingsForm: React.FC = () => {
                                 checked={formData.changes_notifications}
                                 onChange={handleToggleChange}
                             />
-                            <label htmlFor="changes_notifications" className="form-check-label">
+                            <label
+                                htmlFor="changes_notifications"
+                                className="form-check-label"
+                            >
                                 Changes Notifications
                             </label>
                             <div className="form-text">
-                                Receive notifications when changes are made to your account
+                                Receive notifications when changes are made to
+                                your account
                             </div>
                         </div>
 
@@ -117,7 +150,10 @@ export const SettingsForm: React.FC = () => {
                                 checked={formData.new_products_notifications}
                                 onChange={handleToggleChange}
                             />
-                            <label htmlFor="new_products_notifications" className="form-check-label">
+                            <label
+                                htmlFor="new_products_notifications"
+                                className="form-check-label"
+                            >
                                 New Products Notifications
                             </label>
                             <div className="form-text">
@@ -135,7 +171,10 @@ export const SettingsForm: React.FC = () => {
                                 checked={formData.marketing_notifications}
                                 onChange={handleToggleChange}
                             />
-                            <label htmlFor="marketing_notifications" className="form-check-label">
+                            <label
+                                htmlFor="marketing_notifications"
+                                className="form-check-label"
+                            >
                                 Marketing Notifications
                             </label>
                             <div className="form-text">
@@ -154,11 +193,15 @@ export const SettingsForm: React.FC = () => {
                                 checked={formData.security_notifications}
                                 onChange={handleToggleChange}
                             />
-                            <label htmlFor="security_notifications" className="form-check-label">
+                            <label
+                                htmlFor="security_notifications"
+                                className="form-check-label"
+                            >
                                 Security Notifications
                             </label>
                             <div className="form-text">
-                                Important security alerts and updates (recommended)
+                                Important security alerts and updates
+                                (recommended)
                             </div>
                         </div>
                     </div>
@@ -172,11 +215,15 @@ export const SettingsForm: React.FC = () => {
                     >
                         {updateSettingsMutation.isPending ? (
                             <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
                                 Saving...
                             </>
                         ) : (
-                            'Save Changes'
+                            "Save Changes"
                         )}
                     </button>
                 </div>

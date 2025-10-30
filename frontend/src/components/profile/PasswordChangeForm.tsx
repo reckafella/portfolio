@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useChangePassword } from '@/hooks/useProfile';
-import { PasswordInput } from '@/components/forms/PasswordInput';
+import React, { useState } from "react";
+import { useChangePassword } from "@/hooks/useProfile";
+import { PasswordInput } from "@/components/forms/PasswordInput";
 
 /**
  * PasswordChangeForm component for changing user password
@@ -9,18 +9,18 @@ import { PasswordInput } from '@/components/forms/PasswordInput';
  */
 export const PasswordChangeForm: React.FC = () => {
     const changePasswordMutation = useChangePassword();
-    
+
     const [formData, setFormData] = useState({
-        old_password: '',
-        new_password1: '',
-        new_password2: '',
+        old_password: "",
+        new_password1: "",
+        new_password2: "",
     });
 
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const handleInputChange = (fieldName: string, value: string) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             [fieldName]: value,
         }));
@@ -28,72 +28,102 @@ export const PasswordChangeForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccessMessage('');
-        setErrorMessage('');
+        setSuccessMessage("");
+        setErrorMessage("");
 
         // Client-side validation
         if (formData.new_password1 !== formData.new_password2) {
-            setErrorMessage('New passwords do not match');
+            setErrorMessage("New passwords do not match");
             return;
         }
 
         if (formData.new_password1.length < 8) {
-            setErrorMessage('New password must be at least 8 characters long');
+            setErrorMessage("New password must be at least 8 characters long");
             return;
         }
 
         if (formData.old_password === formData.new_password1) {
-            setErrorMessage('New password must be different from current password');
+            setErrorMessage(
+                "New password must be different from current password",
+            );
             return;
         }
 
         try {
             const response = await changePasswordMutation.mutateAsync(formData);
-            setSuccessMessage(response.message || 'Password changed successfully!');
-            
+            setSuccessMessage(
+                response.message || "Password changed successfully!",
+            );
+
             // Clear form
             setFormData({
-                old_password: '',
-                new_password1: '',
-                new_password2: '',
+                old_password: "",
+                new_password1: "",
+                new_password2: "",
             });
-            
+
             // Clear success message after 5 seconds
-            setTimeout(() => setSuccessMessage(''), 5000);
+            setTimeout(() => setSuccessMessage(""), 5000);
         } catch (error: any) {
             // Handle specific error messages from backend
             if (error.response?.data) {
                 const errors = error.response.data;
                 if (errors.old_password) {
-                    setErrorMessage(errors.old_password[0] || 'Current password is incorrect');
+                    setErrorMessage(
+                        errors.old_password[0] ||
+                            "Current password is incorrect",
+                    );
                 } else if (errors.new_password1) {
-                    setErrorMessage(errors.new_password1[0] || 'Invalid new password');
+                    setErrorMessage(
+                        errors.new_password1[0] || "Invalid new password",
+                    );
                 } else if (errors.new_password2) {
-                    setErrorMessage(errors.new_password2[0] || 'Passwords do not match');
+                    setErrorMessage(
+                        errors.new_password2[0] || "Passwords do not match",
+                    );
                 } else {
-                    setErrorMessage(error.message || 'Failed to change password');
+                    setErrorMessage(
+                        error.message || "Failed to change password",
+                    );
                 }
             } else {
-                setErrorMessage(error.message || 'Failed to change password');
+                setErrorMessage(error.message || "Failed to change password");
             }
         }
     };
 
     return (
-        <div className="tab-pane fade show active pt-3" id="profile-change-password">
+        <div
+            className="tab-pane fade show active pt-3"
+            id="profile-change-password"
+        >
             {successMessage && (
-                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-check-circle-fill me-2"></i>
                     {successMessage}
-                    <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setSuccessMessage("")}
+                    ></button>
                 </div>
             )}
 
             {errorMessage && (
-                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {errorMessage}
-                    <button type="button" className="btn-close" onClick={() => setErrorMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setErrorMessage("")}
+                    ></button>
                 </div>
             )}
 
@@ -133,7 +163,8 @@ export const PasswordChangeForm: React.FC = () => {
 
                 <div className="form-group mb-3">
                     <label htmlFor="new_password2" className="form-label">
-                        Confirm New Password <span className="text-danger">*</span>
+                        Confirm New Password{" "}
+                        <span className="text-danger">*</span>
                     </label>
                     <PasswordInput
                         fieldName="new_password2"
@@ -157,11 +188,15 @@ export const PasswordChangeForm: React.FC = () => {
                     >
                         {changePasswordMutation.isPending ? (
                             <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
                                 Changing Password...
                             </>
                         ) : (
-                            'Change Password'
+                            "Change Password"
                         )}
                     </button>
                 </div>

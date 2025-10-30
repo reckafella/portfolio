@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 
 from app.forms.contact import ContactFormAdminForm
 from app.forms.projects import ProjectsAdmin
-from app.models import Message, Projects, Profile, Education, Experience, Skill
+from app.models import Message, Projects, Profile, Education, Experience, Skill, SearchQuery
 
 # Enhanced admin site configuration
 admin.site.site_header = 'Portfolio Administration'
@@ -212,6 +212,69 @@ class SkillAdmin(admin.ModelAdmin):
             color, obj.get_proficiency_level_display()
         )
     proficiency_badge.short_description = 'Proficiency'
+
+    def is_active_badge(self, obj):
+        if obj.is_active:
+            return format_html(
+                '<span style="color: #28a745; font-weight: bold;">✓ Active</span>'
+            )
+        else:
+            return format_html(
+                '<span style="color: #dc3545; font-weight: bold;">✗ Inactive</span>'
+            )
+    is_active_badge.short_description = 'Status'
+
+    class Media:
+        css = {
+            'all': ('admin/css/custom_admin.css',)
+        }
+
+
+@admin.register(SearchQuery)
+class SearchQueryAdmin(admin.ModelAdmin):
+    """Admin interface for Search Query tracking"""
+
+    fieldsets = (
+        ('Query Information', {
+            'fields': ('query', 'query_normalized', 'count'),
+            'classes': ('wide',),
+        }),
+        ('Statistics', {
+            'fields': ('result_count', 'first_searched_at', 'last_searched_at'),
+            'classes': ('wide',),
+        }),
+        ('Settings', {
+            'fields': ('is_active',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    list_display = ('query', 'count_badge', 'result_count', 'last_searched_at', 'is_active_badge', 'is_active')
+    list_filter = ('is_active', 'first_searched_at', 'last_searched_at')
+    search_fields = ('query', 'query_normalized')
+    list_editable = ('is_active',)
+    ordering = ('-count', '-last_searched_at')
+    readonly_fields = ('query_normalized', 'first_searched_at', 'last_searched_at')
+    
+    date_hierarchy = 'last_searched_at'
+
+    def count_badge(self, obj):
+        if obj.count >= 50:
+            color = '#6f42c1'  # purple - very popular
+        elif obj.count >= 20:
+            color = '#28a745'  # green - popular
+        elif obj.count >= 10:
+            color = '#ffc107'  # yellow - moderate
+        else:
+            color = '#17a2b8'  # blue - low
+        
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 10px; '
+            'border-radius: 12px; font-size: 12px; font-weight: bold;">{}</span>',
+            color, obj.count
+        )
+    count_badge.short_description = 'Searches'
+    count_badge.admin_order_field = 'count'
 
     def is_active_badge(self, obj):
         if obj.is_active:

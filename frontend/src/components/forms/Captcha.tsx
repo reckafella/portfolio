@@ -7,9 +7,22 @@ export const CaptchaInput: React.FC<{
     onRefresh: () => void;
     isRefreshing: boolean;
     isSubmitting: boolean;
-}> = ({ fieldName, textBaseProps, captchaData, onRefresh, isRefreshing, isSubmitting }) => {
+}> = ({
+    fieldName,
+    textBaseProps,
+    captchaData,
+    onRefresh,
+    isRefreshing,
+    isSubmitting,
+}) => {
     return (
-        <div id={fieldName}>
+        <div id={fieldName} className="d-flex justify-content-center align-items-center gap-1">
+            <input
+                type="text"
+                {...textBaseProps}
+                placeholder="Enter the characters shown above"
+                autoComplete="off"
+            />
             {captchaData ? (
                 <div className="captcha-container mb-3">
                     <div className="d-flex align-items-center gap-2 mb-2">
@@ -18,9 +31,9 @@ export const CaptchaInput: React.FC<{
                             alt="CAPTCHA"
                             className="border rounded"
                             style={{
-                                height: '50px',
+                                height: "35px",
                                 opacity: isRefreshing ? 0.5 : 1,
-                                transition: 'opacity 0.3s ease'
+                                transition: "opacity 0.3s ease",
                             }}
                             onError={onRefresh}
                         />
@@ -31,7 +44,9 @@ export const CaptchaInput: React.FC<{
                             disabled={isSubmitting || isRefreshing}
                             title="Refresh CAPTCHA"
                         >
-                            <i className={`bi bi-arrow-clockwise ${isRefreshing ? 'captcha-refresh-spin' : ''}`}></i>
+                            <i
+                                className={`bi bi-arrow-repeat ${isRefreshing ? "captcha-refresh-spin" : ""}`}
+                            ></i>
                         </button>
                     </div>
                 </div>
@@ -46,17 +61,11 @@ export const CaptchaInput: React.FC<{
                             onClick={onRefresh}
                             disabled={isRefreshing}
                         >
-                            {isRefreshing ? 'Loading...' : 'Try again'}
+                            {isRefreshing ? "Loading..." : "Try again"}
                         </button>
                     </small>
                 </div>
             )}
-            <input
-                type="text"
-                {...textBaseProps}
-                placeholder="Enter the characters shown above"
-                autoComplete="off"
-            />
         </div>
     );
 };

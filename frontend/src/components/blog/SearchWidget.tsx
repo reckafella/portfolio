@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { BlogFilters } from '@/hooks/queries/blogQueries';
+import { useState } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { BlogFilters } from "@/hooks/queries/blogQueries";
 
 interface SearchWidgetProps {
     filters: BlogFilters;
@@ -8,14 +8,20 @@ interface SearchWidgetProps {
     tags: Array<{ name: string; count: number }>;
 }
 
-export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetProps) {
+export function SearchWidget({
+    filters,
+    onFiltersChange,
+    tags,
+}: SearchWidgetProps) {
     const [showFilterModal, setShowFilterModal] = useState(false);
     const [showSortModal, setShowSortModal] = useState(false);
-    const [searchValue, setSearchValue] = useState(filters.search || '');
-    const [selectedTag, setSelectedTag] = useState(filters.tag || '');
-    const [selectedYear, setSelectedYear] = useState(filters.year || '');
-    const [selectedMonth, setSelectedMonth] = useState(filters.month || '');
-    const [selectedSort, setSelectedSort] = useState(filters.ordering || '-first_published_at');
+    const [searchValue, setSearchValue] = useState(filters.search || "");
+    const [selectedTag, setSelectedTag] = useState(filters.tag || "");
+    const [selectedYear, setSelectedYear] = useState(filters.year || "");
+    const [selectedMonth, setSelectedMonth] = useState(filters.month || "");
+    const [selectedSort, setSelectedSort] = useState(
+        filters.ordering || "-first_published_at",
+    );
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,7 +37,9 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
             ...filters,
             tag: selectedTag || undefined,
             year: selectedYear ? parseInt(selectedYear as string) : undefined,
-            month: selectedMonth ? parseInt(selectedMonth as string) : undefined,
+            month: selectedMonth
+                ? parseInt(selectedMonth as string)
+                : undefined,
             page: 1,
         });
         setShowFilterModal(false);
@@ -47,9 +55,9 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
     };
 
     const clearFilters = () => {
-        setSelectedTag('');
-        setSelectedYear('');
-        setSelectedMonth('');
+        setSelectedTag("");
+        setSelectedYear("");
+        setSelectedMonth("");
         onFiltersChange({
             ...filters,
             tag: undefined,
@@ -63,26 +71,26 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
     const months = [
-        { value: 1, label: 'January' },
-        { value: 2, label: 'February' },
-        { value: 3, label: 'March' },
-        { value: 4, label: 'April' },
-        { value: 5, label: 'May' },
-        { value: 6, label: 'June' },
-        { value: 7, label: 'July' },
-        { value: 8, label: 'August' },
-        { value: 9, label: 'September' },
-        { value: 10, label: 'October' },
-        { value: 11, label: 'November' },
-        { value: 12, label: 'December' },
+        { value: 1, label: "January" },
+        { value: 2, label: "February" },
+        { value: 3, label: "March" },
+        { value: 4, label: "April" },
+        { value: 5, label: "May" },
+        { value: 6, label: "June" },
+        { value: 7, label: "July" },
+        { value: 8, label: "August" },
+        { value: 9, label: "September" },
+        { value: 10, label: "October" },
+        { value: 11, label: "November" },
+        { value: 12, label: "December" },
     ];
 
     const sortOptions = [
-        { value: '-first_published_at', label: 'Newest First' },
-        { value: 'first_published_at', label: 'Oldest First' },
-        { value: '-view_count', label: 'Most Popular' },
-        { value: 'title', label: 'Title A-Z' },
-        { value: '-title', label: 'Title Z-A' },
+        { value: "-first_published_at", label: "Newest First" },
+        { value: "first_published_at", label: "Oldest First" },
+        { value: "-view_count", label: "Most Popular" },
+        { value: "title", label: "Title A-Z" },
+        { value: "-title", label: "Title Z-A" },
     ];
 
     return (
@@ -90,7 +98,10 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
             <div className="widget-item search-widget gap-3 mb-3">
                 <div className="col-12">
                     <h3 className="widget-title">Search My Blog</h3>
-                    <form onSubmit={handleSearchSubmit} className="position-relative">
+                    <form
+                        onSubmit={handleSearchSubmit}
+                        className="position-relative"
+                    >
                         <input
                             type="search"
                             name="search"
@@ -100,8 +111,8 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
                             placeholder="Search..."
                             required
                         />
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             className="position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent pe-3"
                             style={{ zIndex: 10 }}
                         >
@@ -134,9 +145,9 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
             </div>
 
             {/* Filter Modal */}
-            <Modal 
-                show={showFilterModal} 
-                onHide={() => setShowFilterModal(false)} 
+            <Modal
+                show={showFilterModal}
+                onHide={() => setShowFilterModal(false)}
                 dialogClassName="filter-modal"
             >
                 <Modal.Header closeButton>
@@ -207,9 +218,9 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
             </Modal>
 
             {/* Sort Modal */}
-            <Modal 
-                show={showSortModal} 
-                onHide={() => setShowSortModal(false)} 
+            <Modal
+                show={showSortModal}
+                onHide={() => setShowSortModal(false)}
                 centered
                 dialogClassName="sort-modal"
             >
@@ -236,7 +247,10 @@ export function SearchWidget({ filters, onFiltersChange, tags }: SearchWidgetPro
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={() => setShowSortModal(false)}>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => setShowSortModal(false)}
+                    >
                         Cancel
                     </Button>
                     <Button variant="success" onClick={handleSortApply}>

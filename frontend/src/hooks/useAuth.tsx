@@ -1,7 +1,16 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import AuthService, {AuthResponse, RegisterData} from '@/services/authService';
-import { tabSyncService, TabSyncMessage } from '@/services/tabSyncService';
+import {
+    useState,
+    useEffect,
+    createContext,
+    useContext,
+    ReactNode,
+} from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import AuthService, {
+    AuthResponse,
+    RegisterData,
+} from "@/services/authService";
+import { tabSyncService, TabSyncMessage } from "@/services/tabSyncService";
 
 interface User {
     id: number;
@@ -25,15 +34,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Export the hook separately for better Fast Refresh compatibility
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
 }
 
 interface AuthProviderProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 // Make this the default export to fix Fast Refresh
@@ -46,7 +55,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     useEffect(() => {
         const initAuth = () => {
             // Check for Django authentication first (from hidden div)
-            const userLoggedInDiv = document.getElementById('user-logged-in');
+            const userLoggedInDiv = document.getElementById("user-logged-in");
             if (userLoggedInDiv) {
                 // User is authenticated in Django, get user info from localStorage or API
                 const currentUser = AuthService.getCurrentUser();
@@ -73,8 +82,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     useEffect(() => {
         const handleTabSyncMessage = (message: TabSyncMessage) => {
             switch (message.type) {
-                case 'AUTH_LOGIN':
-                case 'AUTH_SIGNUP':
+                case "AUTH_LOGIN":
+                case "AUTH_SIGNUP":
                     // Another tab logged in or signed up
                     if (message.payload.user) {
                         setUser(message.payload.user);
@@ -83,7 +92,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                     }
                     break;
 
-                case 'AUTH_LOGOUT':
+                case "AUTH_LOGOUT":
                     // Another tab logged out
                     setUser(null);
                     // Clear all cached queries on logout
@@ -106,28 +115,31 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     // Fetch user data from Django session
     const fetchUserFromSession = async () => {
         try {
-            const response = await fetch('/api/auth/user/', {
-                method: 'GET',
-                credentials: 'include',
+            const response = await fetch("/api/auth/user/", {
+                method: "GET",
+                credentials: "include",
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json',
-                }
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                },
             });
-            
+
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
                 // Store in localStorage for consistency
-                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem("user", JSON.stringify(userData));
             }
         } catch (error) {
             // Silently fail - user may not be authenticated
-            console.error('Failed to fetch user from session:', error);
+            console.error("Failed to fetch user from session:", error);
         }
     };
 
-    const login = async (username: string, password: string): Promise<AuthResponse> => {
+    const login = async (
+        username: string,
+        password: string,
+    ): Promise<AuthResponse> => {
         setIsLoading(true);
         try {
             const response = await AuthService.login({ username, password });
@@ -174,8 +186,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     };
 
     return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
     );
 }

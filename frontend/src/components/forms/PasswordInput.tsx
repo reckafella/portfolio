@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { analyzePassword, PasswordAnalysis } from '@/utils/passwordStrength';
-import { PasswordStrengthMeter } from './PasswordStrengthMeter';
-import { PasswordRequirements } from './PasswordRequirements';
+import React, { useState, useEffect } from "react";
+import { analyzePassword, PasswordAnalysis } from "@/utils/passwordStrength";
+import { PasswordStrengthMeter } from "./PasswordStrengthMeter";
+import { PasswordRequirements } from "./PasswordRequirements";
 
 interface PasswordInputProps {
     fieldName: string;
@@ -30,7 +30,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
     onChange,
     required = false,
     disabled = false,
-    placeholder = '',
+    placeholder = "",
     maxLength,
     minLength,
     showStrengthMeter = true,
@@ -38,10 +38,12 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
     confirmPasswordValue,
     oldPasswordValue,
     isConfirmField = false,
-    className = 'form-control'
+    className = "form-control",
 }) => {
     const [showPassword, setShowPassword] = useState(false);
-    const [analysis, setAnalysis] = useState<PasswordAnalysis>(analyzePassword(''));
+    const [analysis, setAnalysis] = useState<PasswordAnalysis>(
+        analyzePassword(""),
+    );
     const [isRequirementsExpanded, setIsRequirementsExpanded] = useState(false);
 
     // Analyze password whenever it changes
@@ -49,7 +51,11 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
         const newAnalysis = analyzePassword(value);
 
         // Check if passwords match (for confirmation field or when comparing)
-        if (confirmPasswordValue !== undefined && value && confirmPasswordValue) {
+        if (
+            confirmPasswordValue !== undefined &&
+            value &&
+            confirmPasswordValue
+        ) {
             newAnalysis.match = value === confirmPasswordValue;
         }
 
@@ -68,7 +74,8 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
     const uniqueId = `password-requirements-${fieldName}`;
 
     // Determine if we should show match or different requirements
-    const showMatchRequirement = confirmPasswordValue !== undefined && !isConfirmField;
+    const showMatchRequirement =
+        confirmPasswordValue !== undefined && !isConfirmField;
     const showDifferentRequirement = oldPasswordValue !== undefined;
 
     return (
@@ -76,7 +83,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
             {/* Password input with toggle button */}
             <div className="password-toggle-container">
                 <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     id={fieldName}
                     name={fieldName}
                     value={value}
@@ -87,17 +94,21 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
                     maxLength={maxLength}
                     minLength={minLength}
                     className={className}
-                    autoComplete={isConfirmField ? 'new-password' : 'current-password'}
+                    autoComplete={
+                        isConfirmField ? "new-password" : "current-password"
+                    }
                 />
                 <button
                     type="button"
                     className="password-toggle-btn btn border-0 rounded-0"
                     onClick={togglePasswordVisibility}
-                    title={showPassword ? 'Hide Password' : 'Show Password'}
+                    title={showPassword ? "Hide Password" : "Show Password"}
                     disabled={disabled}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                    }
                 >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? "🙈" : "👁️"}
                 </button>
             </div>
 

@@ -8,9 +8,10 @@
  * @returns Login URL with next parameter
  */
 export const getLoginUrlWithNext = (currentPath?: string): string => {
-  const nextPath = currentPath || window.location.pathname + window.location.search;
-  const encodedNext = encodeURIComponent(nextPath);
-  return `/login?next=${encodedNext}`;
+    const nextPath =
+        currentPath || window.location.pathname + window.location.search;
+    const encodedNext = encodeURIComponent(nextPath);
+    return `/login?next=${encodedNext}`;
 };
 
 /**
@@ -19,9 +20,10 @@ export const getLoginUrlWithNext = (currentPath?: string): string => {
  * @returns Signup URL with next parameter
  */
 export const getSignupUrlWithNext = (currentPath?: string): string => {
-  const nextPath = currentPath || window.location.pathname + window.location.search;
-  const encodedNext = encodeURIComponent(nextPath);
-  return `/signup?next=${encodedNext}`;
+    const nextPath =
+        currentPath || window.location.pathname + window.location.search;
+    const encodedNext = encodeURIComponent(nextPath);
+    return `/signup?next=${encodedNext}`;
 };
 
 /**
@@ -29,7 +31,7 @@ export const getSignupUrlWithNext = (currentPath?: string): string => {
  * @param currentPath - The current path to redirect back to after login (optional, defaults to current location)
  */
 export const redirectToLogin = (currentPath?: string): void => {
-  window.location.href = getLoginUrlWithNext(currentPath);
+    window.location.href = getLoginUrlWithNext(currentPath);
 };
 
 /**
@@ -37,7 +39,7 @@ export const redirectToLogin = (currentPath?: string): void => {
  * @param currentPath - The current path to redirect back to after signup (optional, defaults to current location)
  */
 export const redirectToSignup = (currentPath?: string): void => {
-  window.location.href = getSignupUrlWithNext(currentPath);
+    window.location.href = getSignupUrlWithNext(currentPath);
 };
 
 /**
@@ -45,8 +47,10 @@ export const redirectToSignup = (currentPath?: string): void => {
  * @param searchParams - URLSearchParams object
  * @returns The next URL or null if not present
  */
-export const getNextUrlFromParams = (searchParams: URLSearchParams): string | null => {
-  return searchParams.get('next');
+export const getNextUrlFromParams = (
+    searchParams: URLSearchParams,
+): string | null => {
+    return searchParams.get("next");
 };
 
 /**
@@ -55,18 +59,18 @@ export const getNextUrlFromParams = (searchParams: URLSearchParams): string | nu
  * @returns True if safe, false otherwise
  */
 export const isSafeNextUrl = (nextUrl: string): boolean => {
-  try {
-    // Allow relative URLs starting with /
-    if (nextUrl.startsWith('/') && !nextUrl.startsWith('//')) {
-      return true;
+    try {
+        // Allow relative URLs starting with /
+        if (nextUrl.startsWith("/") && !nextUrl.startsWith("//")) {
+            return true;
+        }
+
+        // For absolute URLs, check if they're same origin
+        const url = new URL(nextUrl, window.location.origin);
+        return url.origin === window.location.origin;
+    } catch {
+        return false;
     }
-    
-    // For absolute URLs, check if they're same origin
-    const url = new URL(nextUrl, window.location.origin);
-    return url.origin === window.location.origin;
-  } catch {
-    return false;
-  }
 };
 
 /**
@@ -75,7 +79,10 @@ export const isSafeNextUrl = (nextUrl: string): boolean => {
  * @param defaultUrl - Default URL if nextUrl is unsafe (defaults to '/')
  * @returns Safe URL
  */
-export const getSafeNextUrl = (nextUrl: string | null, defaultUrl: string = '/'): string => {
-  if (!nextUrl) return defaultUrl;
-  return isSafeNextUrl(nextUrl) ? nextUrl : defaultUrl;
+export const getSafeNextUrl = (
+    nextUrl: string | null,
+    defaultUrl: string = "/",
+): string => {
+    if (!nextUrl) return defaultUrl;
+    return isSafeNextUrl(nextUrl) ? nextUrl : defaultUrl;
 };

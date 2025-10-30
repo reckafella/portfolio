@@ -1,30 +1,27 @@
 from rest_framework import serializers
 from captcha.models import CaptchaStore
-from app.views.helpers.cloudinary import CloudinaryImageHandler
 
 from app.models import Message
 
-# Note: CloudinaryImageHandler should be instantiated when needed, not at module level
 
-
-class MessageSerializer(serializers.ModelSerializer):
+class ContactFormSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Message Model
+    Serializer for contact form with CAPTCHA validation
+    """
+    captcha_0 = serializers.CharField(max_length=40, write_only=True)  # CAPTCHA key
+    captcha_1 = serializers.CharField(max_length=10, write_only=True)  # CAPTCHA value
+
     class Meta:
         model = Message
         fields = ('id', 'name', 'subject', 'email',
-                  'message', 'created_at', 'is_read')
+                  'message', 'created_at', 'is_read', 'captcha_0', 'captcha_1')
         read_only_fields = ('id', 'created_at', 'is_read')
-
-    class ContactFormSerializer(serializers.Serializer):
-    Serializer for contact form with CAPTCHA validation
-    """
-    name = serializers.CharField(max_length=50, min_length=5)
-    email = serializers.EmailField(max_length=70)
-    subject = serializers.CharField(max_length=150, min_length=15)
-    message = serializers.CharField(max_length=1000, min_length=25)
-    captcha_0 = serializers.CharField(max_length=40)  # CAPTCHA key
-    captcha_1 = serializers.CharField(max_length=10)  # CAPTCHA value
+        extra_kwargs = {
+            'name': {'max_length': 50, 'min_length': 5},
+            'email': {'max_length': 70},
+            'subject': {'max_length': 150, 'min_length': 15},
+            'message': {'max_length': 1000, 'min_length': 25}
+        }
 
     def validate(self, attrs):
         """Validate CAPTCHA"""

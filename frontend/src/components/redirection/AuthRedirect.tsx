@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
 interface AuthRedirectProps {
-  to: string;
-  replace?: boolean;
+    to: string;
+    replace?: boolean;
 }
 
 const AuthRedirect: React.FC<AuthRedirectProps> = ({ to, replace = true }) => {
-  const location = useLocation();
+    const location = useLocation();
 
-  useEffect(() => {
-    // Optional: Track redirects for analytics @ future implementation
-  }, [location.pathname, to]);
+    useEffect(() => {
+        // Optional: Track redirects for analytics @ future implementation
+    }, [location.pathname, to]);
 
-  return <Navigate to={to} replace={replace} state={{ from: location }} />;
+    return <Navigate to={to} replace={replace} state={{ from: location }} />;
 };
 
 // Specific redirect components

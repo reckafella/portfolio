@@ -22,7 +22,7 @@ export interface PasswordAnalysis {
  * @returns Analysis results with strength indicators
  */
 export const analyzePassword = (password: string): PasswordAnalysis => {
-    if (!password || typeof password !== 'string') {
+    if (!password || typeof password !== "string") {
         return {
             length: false,
             hasUpperCase: false,
@@ -31,7 +31,7 @@ export const analyzePassword = (password: string): PasswordAnalysis => {
             hasSpecialChar: false,
             score: 0,
             isStrong: false,
-            isWeak: true
+            isWeak: true,
         };
     }
 
@@ -43,7 +43,7 @@ export const analyzePassword = (password: string): PasswordAnalysis => {
         hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
         score: 0,
         isStrong: false,
-        isWeak: false
+        isWeak: false,
     };
 
     // Length check (1 point)
@@ -67,11 +67,13 @@ export const analyzePassword = (password: string): PasswordAnalysis => {
  * @param analysis - Password analysis result
  * @returns Strength level: 'weak', 'medium', or 'strong'
  */
-export const getPasswordStrengthLevel = (analysis: PasswordAnalysis): 'none' | 'weak' | 'medium' | 'strong' => {
-    if (analysis.score === 0) return 'none';
-    if (analysis.score < 3) return 'weak';
-    if (analysis.score < 5) return 'medium';
-    return 'strong';
+export const getPasswordStrengthLevel = (
+    analysis: PasswordAnalysis,
+): "none" | "weak" | "medium" | "strong" => {
+    if (analysis.score === 0) return "none";
+    if (analysis.score < 3) return "weak";
+    if (analysis.score < 5) return "medium";
+    return "strong";
 };
 
 /**
@@ -79,7 +81,9 @@ export const getPasswordStrengthLevel = (analysis: PasswordAnalysis): 'none' | '
  * @param analysis - Password analysis result
  * @returns Percentage (0-100)
  */
-export const getPasswordStrengthPercentage = (analysis: PasswordAnalysis): number => {
+export const getPasswordStrengthPercentage = (
+    analysis: PasswordAnalysis,
+): number => {
     if (analysis.score === 0) return 0;
     if (analysis.score < 3) return 33;
     if (analysis.score < 5) return 66;
@@ -91,16 +95,18 @@ export const getPasswordStrengthPercentage = (analysis: PasswordAnalysis): numbe
  * @param level - Strength level
  * @returns Color code
  */
-export const getPasswordStrengthColor = (level: 'none' | 'weak' | 'medium' | 'strong'): string => {
+export const getPasswordStrengthColor = (
+    level: "none" | "weak" | "medium" | "strong",
+): string => {
     switch (level) {
-        case 'weak':
-            return '#de372b'; // Red
-        case 'medium':
-            return '#fa8509'; // Orange
-        case 'strong':
-            return '#067709'; // Green
+        case "weak":
+            return "#de372b"; // Red
+        case "medium":
+            return "#fa8509"; // Orange
+        case "strong":
+            return "#067709"; // Green
         default:
-            return '#6c757d'; // Gray
+            return "#6c757d"; // Gray
     }
 };
 
@@ -109,15 +115,17 @@ export const getPasswordStrengthColor = (level: 'none' | 'weak' | 'medium' | 'st
  * @param level - Strength level
  * @returns Human-readable strength text
  */
-export const getPasswordStrengthText = (level: 'none' | 'weak' | 'medium' | 'strong'): string => {
+export const getPasswordStrengthText = (
+    level: "none" | "weak" | "medium" | "strong",
+): string => {
     switch (level) {
-        case 'weak':
-            return 'Weak password';
-        case 'medium':
-            return 'Medium password';
-        case 'strong':
-            return 'Strong password';
+        case "weak":
+            return "Weak password";
+        case "medium":
+            return "Medium password";
+        case "strong":
+            return "Strong password";
         default:
-            return 'Password strength';
+            return "Password strength";
     }
 };

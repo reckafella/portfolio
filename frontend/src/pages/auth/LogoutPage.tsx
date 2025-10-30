@@ -1,106 +1,126 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { usePageTitle } from '@/hooks/usePageTitle';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const LogoutPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const { logout, isAuthenticated } = useAuth();
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+    const { logout, isAuthenticated } = useAuth();
 
-  usePageTitle('Logout');
+    usePageTitle("Logout");
 
-  useEffect(() => {
-    const handleLogout = async () => {
-      if (isAuthenticated) {
-        try {
-          await logout();
-          setTimeout(() => {
-            // Force a full page reload to ensure all authentication state is cleared
-            window.location.href = '/';
-          }, 2000);
-        } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'Logout failed';
-          setError(errorMessage);
-          setIsLoading(false);
-        }
-      } else {
-        // User is already logged out
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
-      }
+    useEffect(() => {
+        const handleLogout = async () => {
+            if (isAuthenticated) {
+                try {
+                    await logout();
+                    setTimeout(() => {
+                        // Force a full page reload to ensure all authentication state is cleared
+                        window.location.href = "/";
+                    }, 2000);
+                } catch (err: unknown) {
+                    const errorMessage =
+                        err instanceof Error ? err.message : "Logout failed";
+                    setError(errorMessage);
+                    setIsLoading(false);
+                }
+            } else {
+                // User is already logged out
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1000);
+            }
+        };
+
+        handleLogout();
+    }, [logout, isAuthenticated]);
+
+    const handleManualRedirect = () => {
+        window.location.href = "/";
     };
 
-    handleLogout();
-  }, [logout, isAuthenticated]);
-
-  const handleManualRedirect = () => {
-    window.location.href = '/';
-  };
-
-  if (error) {
-    return (
-      <div className="container mt-5">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className="card">
-              <div className="card-body text-center">
-                <div className="alert alert-danger" role="alert">
-                  <h1 className="alert-heading">Logout Error</h1>
-                  <p>{error}</p>
-                </div>
-                <button 
-                  className="btn btn-primary"
-                  onClick={handleManualRedirect}
-                >
-                  Go to Home
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-body text-center">
-              <div className="mb-4">
-                {isLoading ? (
-                  <>
-                    <h1 className="fw-bold">Log out</h1>
-                    <p className="text-muted">Please wait while we sign you out securely.</p>
-                    <LoadingSpinner size="md" text="Logging you out..." />
-                  </>
-                ) : (
-                  <>
-                    <h1 className="fw-bold">Successfully logged out!</h1>
-                    <div className="text-success mb-3">
-                      <i className="bi bi-check-circle" style={{ fontSize: '3rem' }}></i>
+    if (error) {
+        return (
+            <div className="container mt-5">
+                <div className="row justify-content-center">
+                    <div className="col-md-6">
+                        <div className="card">
+                            <div className="card-body text-center">
+                                <div
+                                    className="alert alert-danger"
+                                    role="alert"
+                                >
+                                    <h1 className="alert-heading">
+                                        Logout Error
+                                    </h1>
+                                    <p>{error}</p>
+                                </div>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleManualRedirect}
+                                >
+                                    Go to Home
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p className="text-muted">You have been signed out. Redirecting to home page...</p>
-                  </>
-                )}
-              </div>
-              
-              <button 
-                className="btn btn-outline-primary"
-                onClick={handleManualRedirect}
-                disabled={isLoading}
-              >
-                Go to Home
-              </button>
+                </div>
             </div>
-          </div>
+        );
+    }
+
+    return (
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body text-center">
+                            <div className="mb-4">
+                                {isLoading ? (
+                                    <>
+                                        <h1 className="fw-bold">Log out</h1>
+                                        <p className="text-muted">
+                                            Please wait while we sign you out
+                                            securely.
+                                        </p>
+                                        <LoadingSpinner
+                                            size="md"
+                                            text="Logging you out..."
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <h1 className="fw-bold">
+                                            Successfully logged out!
+                                        </h1>
+                                        <div className="text-success mb-3">
+                                            <i
+                                                className="bi bi-check-circle"
+                                                style={{ fontSize: "3rem" }}
+                                            ></i>
+                                        </div>
+                                        <p className="text-muted">
+                                            You have been signed out.
+                                            Redirecting to home page...
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={handleManualRedirect}
+                                disabled={isLoading}
+                            >
+                                Go to Home
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default LogoutPage;

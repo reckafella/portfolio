@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ProfileData, ProfileUpdateData } from '@/services/profileService';
-import { useUpdateProfile } from '@/hooks/useProfile';
+import React, { useState, useEffect } from "react";
+import { ProfileData, ProfileUpdateData } from "@/services/profileService";
+import { useUpdateProfile } from "@/hooks/useProfile";
 
 interface ProfileEditFormProps {
     profile: ProfileData;
@@ -10,63 +10,67 @@ interface ProfileEditFormProps {
  * ProfileEditForm component for editing user profile
  * Replicates: authentication/templates/auth/profile/partials/edit-profile.html
  */
-export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => {
+export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
+    profile,
+}) => {
     const updateProfileMutation = useUpdateProfile();
-    
+
     const [formData, setFormData] = useState<ProfileUpdateData>({
-        first_name: profile.user.first_name || '',
-        last_name: profile.user.last_name || '',
-        title: profile.title || '',
-        bio: profile.bio || '',
-        country: profile.country || '',
-        city: profile.city || '',
-        experience: profile.experience || '',
+        first_name: profile.user.first_name || "",
+        last_name: profile.user.last_name || "",
+        title: profile.title || "",
+        bio: profile.bio || "",
+        country: profile.country || "",
+        city: profile.city || "",
+        experience: profile.experience || "",
         social_links: {
-            twitter_x: profile.social_links?.twitter_x || '',
-            facebook: profile.social_links?.facebook || '',
-            instagram: profile.social_links?.instagram || '',
-            linkedin: profile.social_links?.linkedin || '',
-            github: profile.social_links?.github || '',
-            youtube: profile.social_links?.youtube || '',
-            tiktok: profile.social_links?.tiktok || '',
-            whatsapp: profile.social_links?.whatsapp || '',
-            website: profile.social_links?.website || '',
+            twitter_x: profile.social_links?.twitter_x || "",
+            facebook: profile.social_links?.facebook || "",
+            instagram: profile.social_links?.instagram || "",
+            linkedin: profile.social_links?.linkedin || "",
+            github: profile.social_links?.github || "",
+            youtube: profile.social_links?.youtube || "",
+            tiktok: profile.social_links?.tiktok || "",
+            whatsapp: profile.social_links?.whatsapp || "",
+            website: profile.social_links?.website || "",
         },
     });
 
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     // Update form when profile changes
     useEffect(() => {
         setFormData({
-            first_name: profile.user.first_name || '',
-            last_name: profile.user.last_name || '',
-            title: profile.title || '',
-            bio: profile.bio || '',
-            country: profile.country || '',
-            city: profile.city || '',
-            experience: profile.experience || '',
+            first_name: profile.user.first_name || "",
+            last_name: profile.user.last_name || "",
+            title: profile.title || "",
+            bio: profile.bio || "",
+            country: profile.country || "",
+            city: profile.city || "",
+            experience: profile.experience || "",
             social_links: {
-                twitter_x: profile.social_links?.twitter_x || '',
-                facebook: profile.social_links?.facebook || '',
-                instagram: profile.social_links?.instagram || '',
-                linkedin: profile.social_links?.linkedin || '',
-                github: profile.social_links?.github || '',
-                youtube: profile.social_links?.youtube || '',
-                tiktok: profile.social_links?.tiktok || '',
-                whatsapp: profile.social_links?.whatsapp || '',
-                website: profile.social_links?.website || '',
+                twitter_x: profile.social_links?.twitter_x || "",
+                facebook: profile.social_links?.facebook || "",
+                instagram: profile.social_links?.instagram || "",
+                linkedin: profile.social_links?.linkedin || "",
+                github: profile.social_links?.github || "",
+                youtube: profile.social_links?.youtube || "",
+                tiktok: profile.social_links?.tiktok || "",
+                whatsapp: profile.social_links?.whatsapp || "",
+                website: profile.social_links?.website || "",
             },
         });
     }, [profile]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
         const { name, value } = e.target;
-        
-        if (name.startsWith('social_')) {
-            const socialField = name.replace('social_', '');
-            setFormData(prev => ({
+
+        if (name.startsWith("social_")) {
+            const socialField = name.replace("social_", "");
+            setFormData((prev) => ({
                 ...prev,
                 social_links: {
                     ...prev.social_links,
@@ -74,7 +78,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                 },
             }));
         } else {
-            setFormData(prev => ({
+            setFormData((prev) => ({
                 ...prev,
                 [name]: value,
             }));
@@ -83,35 +87,54 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccessMessage('');
-        setErrorMessage('');
+        setSuccessMessage("");
+        setErrorMessage("");
 
         try {
             const response = await updateProfileMutation.mutateAsync(formData);
-            setSuccessMessage(response.message || 'Profile updated successfully!');
-            
+            setSuccessMessage(
+                response.message || "Profile updated successfully!",
+            );
+
             // Clear success message after 5 seconds
-            setTimeout(() => setSuccessMessage(''), 5000);
+            setTimeout(() => setSuccessMessage(""), 5000);
         } catch (error: any) {
-            setErrorMessage(error.message || 'Failed to update profile');
+            setErrorMessage(error.message || "Failed to update profile");
         }
     };
 
     return (
-        <div className="tab-pane fade show active profile-edit pt-3" id="profile-edit">
+        <div
+            className="tab-pane fade show active profile-edit pt-3"
+            id="profile-edit"
+        >
             {successMessage && (
-                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-check-circle-fill me-2"></i>
                     {successMessage}
-                    <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setSuccessMessage("")}
+                    ></button>
                 </div>
             )}
 
             {errorMessage && (
-                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <div
+                    className="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                >
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {errorMessage}
-                    <button type="button" className="btn-close" onClick={() => setErrorMessage('')}></button>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setErrorMessage("")}
+                    ></button>
                 </div>
             )}
 
@@ -152,7 +175,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="title" className="form-label">Title</label>
+                    <label htmlFor="title" className="form-label">
+                        Title
+                    </label>
                     <input
                         type="text"
                         className="form-control"
@@ -166,7 +191,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="bio" className="form-label">Bio</label>
+                    <label htmlFor="bio" className="form-label">
+                        Bio
+                    </label>
                     <textarea
                         className="form-control"
                         id="bio"
@@ -184,7 +211,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
 
                 <div className="row mb-3">
                     <div className="col-md-6">
-                        <label htmlFor="country" className="form-label">Country</label>
+                        <label htmlFor="country" className="form-label">
+                            Country
+                        </label>
                         <input
                             type="text"
                             className="form-control"
@@ -196,7 +225,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                         />
                     </div>
                     <div className="col-md-6">
-                        <label htmlFor="city" className="form-label">City</label>
+                        <label htmlFor="city" className="form-label">
+                            City
+                        </label>
                         <input
                             type="text"
                             className="form-control"
@@ -210,7 +241,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="experience" className="form-label">Experience</label>
+                    <label htmlFor="experience" className="form-label">
+                        Experience
+                    </label>
                     <input
                         type="text"
                         className="form-control"
@@ -323,11 +356,15 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile }) => 
                     >
                         {updateProfileMutation.isPending ? (
                             <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
                                 Saving...
                             </>
                         ) : (
-                            'Save Changes'
+                            "Save Changes"
                         )}
                     </button>
                 </div>

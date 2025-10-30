@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import '@/styles/share.css';
+import React, { useState, useCallback } from "react";
+import "@/styles/share.css";
 
 interface ShareManagerProps {
     url: string;
@@ -16,9 +16,9 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
     title,
     imageUrl,
     description,
-    className = '',
-    buttonText = 'Share',
-    showIcon = true
+    className = "",
+    buttonText = "Share",
+    showIcon = true,
 }) => {
     const [showModal, setShowModal] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -29,13 +29,13 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
         } catch (error) {
-            window.alert('Failed to copy link: ' + error);
+            window.alert("Failed to copy link: " + error);
             // Fallback for older browsers
-            const textArea = document.createElement('textarea');
+            const textArea = document.createElement("textarea");
             textArea.value = url;
             document.body.appendChild(textArea);
             textArea.select();
-            document.execCommand('copy');
+            document.execCommand("copy");
             document.body.removeChild(textArea);
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
@@ -51,7 +51,7 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
             twitter: `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
             whatsapp: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
-            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
         };
     };
 
@@ -76,12 +76,22 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
             {/* Share Modal */}
             {showModal && (
                 <>
-                    <div className="modal show d-block" tabIndex={-1} role="dialog" style={{ maxWidth: '100px' }}>
-                        <div className="modal-dialog modal-dialog-centered modal-sm" role="document" style={{ marginTop: '100px' }}>
+                    <div
+                        className="modal show d-block"
+                        tabIndex={-1}
+                        role="dialog"
+                        style={{ maxWidth: "100px" }}
+                    >
+                        <div
+                            className="modal-dialog modal-dialog-centered modal-sm"
+                            role="document"
+                            style={{ marginTop: "100px" }}
+                        >
                             <div className="modal-content">
                                 <div className="modal-header border-bottom-0 p-3">
                                     <h5 className="modal-title">
-                                        <span className="fw-bold">Share</span> {title}
+                                        <span className="fw-bold">Share</span>{" "}
+                                        {title}
                                     </h5>
                                     <button
                                         type="button"
@@ -100,21 +110,32 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
                                                 src={imageUrl}
                                                 alt={title}
                                                 className="share-image-preview img-fluid rounded"
-                                                style={{ maxHeight: '150px', objectFit: 'cover' }}
+                                                style={{
+                                                    maxHeight: "150px",
+                                                    objectFit: "cover",
+                                                }}
                                             />
                                         </div>
                                     )}
-                                    
+
                                     <div className="d-grid gap-3">
                                         {/* Copy Link */}
                                         <button
                                             className={`btn share-btn d-flex align-items-center gap-3 py-2 ${
-                                                copySuccess ? 'btn-success' : 'btn-outline-secondary'
+                                                copySuccess
+                                                    ? "btn-success"
+                                                    : "btn-outline-secondary"
                                             }`}
                                             onClick={handleCopyLink}
                                         >
-                                            <i className={`bi ${copySuccess ? 'bi-check-circle' : 'bi-copy'}`}></i>
-                                            <span>{copySuccess ? 'Copied!' : 'Copy link'}</span>
+                                            <i
+                                                className={`bi ${copySuccess ? "bi-check-circle" : "bi-copy"}`}
+                                            ></i>
+                                            <span>
+                                                {copySuccess
+                                                    ? "Copied!"
+                                                    : "Copy link"}
+                                            </span>
                                         </button>
 
                                         {/* Facebook */}
@@ -165,7 +186,10 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
                             </div>
                         </div>
                     </div>
-                    <div className="modal-backdrop show" onClick={() => setShowModal(false)}></div>
+                    <div
+                        className="modal-backdrop show"
+                        onClick={() => setShowModal(false)}
+                    ></div>
                 </>
             )}
         </>
@@ -174,10 +198,18 @@ export const ShareManager: React.FC<ShareManagerProps> = ({
 
 // Hook for easier usage
 export const useShareManager = () => {
-    const share = useCallback((url: string, title: string, imageUrl?: string, description?: string) => {
-        // This could be extended to trigger a global share modal
-        window.alert('Share:' + { url, title, imageUrl, description });
-    }, []);
+    const share = useCallback(
+        (
+            url: string,
+            title: string,
+            imageUrl?: string,
+            description?: string,
+        ) => {
+            // This could be extended to trigger a global share modal
+            window.alert("Share:" + { url, title, imageUrl, description });
+        },
+        [],
+    );
 
     return { share };
 };

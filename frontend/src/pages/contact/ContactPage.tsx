@@ -1,30 +1,35 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ContactForm from '@/components/forms/contact/ContactForm';
-import { useSendMessage } from '@/hooks/queries/contactQueries';
-import { usePageTitle } from '@/hooks/usePageTitle';
-import { useMetaTags } from '@/hooks/useMetaTags';
+import React from "react";
+import { Link } from "react-router-dom";
+import ContactForm from "@/components/forms/contact/ContactForm";
+import { useSendMessage } from "@/hooks/queries/contactQueries";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { useMetaTags } from "@/hooks/useMetaTags";
 
 const ContactPage: React.FC = () => {
-    usePageTitle('Contact Us');
+    usePageTitle("Contact Us");
     useMetaTags({
-        title: 'Contact Us',
-        description: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
-        keywords: 'contact, project, hello, message',
-        ogTitle: 'Contact Us - Ethan Wanyoike',
-        ogDescription: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
-        ogType: 'website',
+        title: "Contact Us",
+        description:
+            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+        keywords: "contact, project, hello, message",
+        ogTitle: "Contact Us - Ethan Wanyoike",
+        ogDescription:
+            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+        ogType: "website",
         ogUrl: window.location.origin,
-        ogImage: '/static/assets/images/og-default.jpeg',
-        twitterTitle: 'Contact Us - Ethan Wanyoike',
-        twitterDescription: 'Have got a project in mind or just want to say hello? I\'d love to hear from you.',
-        twitterImage: '/static/assets/images/og-default.jpeg',
-        canonical: window.location.origin
+        ogImage: "/static/assets/images/og-default.jpeg",
+        twitterTitle: "Contact Us - Ethan Wanyoike",
+        twitterDescription:
+            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+        twitterImage: "/static/assets/images/og-default.jpeg",
+        canonical: window.location.origin,
     });
 
     const sendMessageMutation = useSendMessage();
 
-    const handleSubmit = async (formData: Record<string, string | boolean | File | File[]>) => {
+    const handleSubmit = async (
+        formData: Record<string, string | boolean | File | File[]>,
+    ) => {
         await sendMessageMutation.mutateAsync(formData);
     };
 
@@ -37,12 +42,20 @@ const ContactPage: React.FC = () => {
                             <h1 className="">Contact me</h1>
                         </div>
 
-                        <p className="lead mx-auto" style={{ maxWidth: '42rem' }}>
-                            Have got a project in mind or just want to say hello? I'd love to hear from you.
+                        <p
+                            className="lead mx-auto"
+                            style={{ maxWidth: "42rem" }}
+                        >
+                            Have got a project in mind or just want to say
+                            hello? I'd love to hear from you.
                         </p>
                     </div>
                     <div className="row justify-content-around d-flex gy-3">
-                        <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="https://www.linkedin.com/in/ethanmuthoni" target="_blank">
+                        <Link
+                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            to="https://www.linkedin.com/in/ethanmuthoni"
+                            target="_blank"
+                        >
                             <div className="info-item d-flex linkedin">
                                 <i className="bi bi-linkedin"></i>
                                 <div className="d-none d-md-block">
@@ -51,7 +64,11 @@ const ContactPage: React.FC = () => {
                                 </div>
                             </div>
                         </Link>
-                        <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="https://github.com/reckafella" target="_blank">
+                        <Link
+                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            to="https://github.com/reckafella"
+                            target="_blank"
+                        >
                             <div className="info-item d-flex github">
                                 <i className="bi bi-github"></i>
                                 <div className="d-none d-md-block">
@@ -60,7 +77,11 @@ const ContactPage: React.FC = () => {
                                 </div>
                             </div>
                         </Link>
-                        <Link className="col-2 col-md-6 col-lg-3 col-xl-3" to="mailto:ethanwanyoike@gmail.com" target="_blank">
+                        <Link
+                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            to="mailto:ethanwanyoike@gmail.com"
+                            target="_blank"
+                        >
                             <div className="info-item d-flex email">
                                 <i className="bi bi-envelope"></i>
                                 <div className="d-none d-md-block">
@@ -72,7 +93,7 @@ const ContactPage: React.FC = () => {
                     </div>
                     <hr className="my-5" />
                     <div className="col-12 col-md-10 mx-auto">
-                        <ContactForm 
+                        <ContactForm
                             onSubmit={handleSubmit}
                             isSubmitting={sendMessageMutation.isPending}
                             error={sendMessageMutation.error?.message}

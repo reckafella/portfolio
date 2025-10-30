@@ -1,4 +1,4 @@
-import { handleApiError } from '@/utils/errorUtils';
+import { handleApiError } from "@/utils/errorUtils";
 
 export interface ProfileData {
     id: number;
@@ -79,9 +79,9 @@ export class ProfileService {
      */
     private static async getCSRFToken(): Promise<string> {
         try {
-            const response = await fetch('/api/v1/auth/csrf-token/', {
-                method: 'GET',
-                credentials: 'include'
+            const response = await fetch("/api/v1/auth/csrf-token/", {
+                method: "GET",
+                credentials: "include",
             });
             if (response.ok) {
                 const data = await response.json();
@@ -90,7 +90,7 @@ export class ProfileService {
         } catch {
             // Silently fail - we'll continue without CSRF token
         }
-        return '';
+        return "";
     }
 
     /**
@@ -98,13 +98,13 @@ export class ProfileService {
      */
     private static async getHeaders(): Promise<Record<string, string>> {
         const csrfToken = await this.getCSRFToken();
-        
+
         const headers: Record<string, string> = {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
         };
 
         if (csrfToken) {
-            headers['X-CSRFToken'] = csrfToken;
+            headers["X-CSRFToken"] = csrfToken;
         }
 
         return headers;
@@ -114,10 +114,10 @@ export class ProfileService {
      * Get current user's profile
      */
     static async getProfile(): Promise<ProfileData> {
-        const response = await fetch('/api/v1/auth/profile/', {
-            method: 'GET',
+        const response = await fetch("/api/v1/auth/profile/", {
+            method: "GET",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
         });
 
         await handleApiError(response);
@@ -127,11 +127,13 @@ export class ProfileService {
     /**
      * Update current user's profile
      */
-    static async updateProfile(data: ProfileUpdateData): Promise<{ message: string; profile: ProfileData }> {
-        const response = await fetch('/api/v1/auth/profile/', {
-            method: 'PATCH',
+    static async updateProfile(
+        data: ProfileUpdateData,
+    ): Promise<{ message: string; profile: ProfileData }> {
+        const response = await fetch("/api/v1/auth/profile/", {
+            method: "PATCH",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(data),
         });
 
@@ -142,11 +144,13 @@ export class ProfileService {
     /**
      * Change user password
      */
-    static async changePassword(data: PasswordChangeData): Promise<{ message: string }> {
-        const response = await fetch('/api/v1/auth/profile/password/', {
-            method: 'POST',
+    static async changePassword(
+        data: PasswordChangeData,
+    ): Promise<{ message: string }> {
+        const response = await fetch("/api/v1/auth/profile/password/", {
+            method: "POST",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(data),
         });
 
@@ -158,10 +162,10 @@ export class ProfileService {
      * Get user settings
      */
     static async getSettings(): Promise<SettingsData> {
-        const response = await fetch('/api/v1/auth/profile/settings/', {
-            method: 'GET',
+        const response = await fetch("/api/v1/auth/profile/settings/", {
+            method: "GET",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
         });
 
         await handleApiError(response);
@@ -171,11 +175,13 @@ export class ProfileService {
     /**
      * Update user settings
      */
-    static async updateSettings(data: SettingsData): Promise<{ message: string; settings: SettingsData }> {
-        const response = await fetch('/api/v1/auth/profile/settings/', {
-            method: 'PATCH',
+    static async updateSettings(
+        data: SettingsData,
+    ): Promise<{ message: string; settings: SettingsData }> {
+        const response = await fetch("/api/v1/auth/profile/settings/", {
+            method: "PATCH",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(data),
         });
 
@@ -186,13 +192,15 @@ export class ProfileService {
     /**
      * Upload profile image
      */
-    static async uploadProfileImage(file: File): Promise<{ message: string; image_url: string }> {
+    static async uploadProfileImage(
+        file: File,
+    ): Promise<{ message: string; image_url: string }> {
         const formData = new FormData();
-        formData.append('profile_pic', file);
+        formData.append("profile_pic", file);
 
-        const response = await fetch('/api/v1/auth/profile/', {
-            method: 'PATCH',
-            credentials: 'include',
+        const response = await fetch("/api/v1/auth/profile/", {
+            method: "PATCH",
+            credentials: "include",
             body: formData,
         });
 
@@ -204,10 +212,10 @@ export class ProfileService {
      * Delete profile image
      */
     static async deleteProfileImage(): Promise<{ message: string }> {
-        const response = await fetch('/api/v1/auth/profile/', {
-            method: 'PATCH',
+        const response = await fetch("/api/v1/auth/profile/", {
+            method: "PATCH",
             headers: await this.getHeaders(),
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify({ cloudinary_image_id: null }),
         });
 

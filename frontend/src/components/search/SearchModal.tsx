@@ -181,7 +181,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
                 placeholder=""
-                autoComplete="off"
+                autoComplete="on"
                 aria-label="Search"
                 aria-expanded={showSuggestions}
                 aria-haspopup="listbox"

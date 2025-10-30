@@ -247,34 +247,34 @@ class FrontendAPIView(View):
 
             # Build meta tags HTML
             meta_tags = f'''
-                <title>Ethan Wanyoike | {title}</title>
-                <meta name="description" content="{description}">
-                <meta name="author" content="Ethan Wanyoike">
+    <title>Ethan Wanyoike | {title}</title>
+    <meta name="description" content="{description}">
+    <meta name="author" content="Ethan Wanyoike">
 
-                <!-- Open Graph / Facebook -->
-                <meta property="og:type" content="website">
-                <meta property="og:url" content="{page_url}">
-                <meta property="og:title" content="{title} - Ethan Wanyoike">
-                <meta property="og:description" content="{description}">
-                <meta property="og:image" content="{cover_image}">
-                <meta property="og:image:secure_url" content="{cover_image}">
-                <meta property="og:image:width" content="1200">
-                <meta property="og:image:height" content="630">
-                <meta property="og:image:alt" content="{title}">
-                <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{page_url}">
+    <meta property="og:title" content="{title} - Ethan Wanyoike">
+    <meta property="og:description" content="{description}">
+    <meta property="og:image" content="{cover_image}">
+    <meta property="og:image:secure_url" content="{cover_image}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{title}">
+    <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
 
-                <!-- Twitter -->
-                <meta name="twitter:card" content="summary_large_image">
-                <meta name="twitter:url" content="{page_url}">
-                <meta name="twitter:title" content="{title} - Ethan Wanyoike">
-                <meta name="twitter:description" content="{description}">
-                <meta name="twitter:image" content="{cover_image}">
-                <meta name="twitter:image:alt" content="{title}">
-                <meta name="twitter:site" content="@frmundu">
-                <meta name="twitter:creator" content="@frmundu">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{page_url}">
+    <meta name="twitter:title" content="{title} - Ethan Wanyoike">
+    <meta name="twitter:description" content="{description}">
+    <meta name="twitter:image" content="{cover_image}">
+    <meta name="twitter:image:alt" content="{title}">
+    <meta name="twitter:site" content="@frmundu">
+    <meta name="twitter:creator" content="@frmundu">
 
-                <!-- Canonical -->
-                <link rel="canonical" href="{page_url}">
+    <!-- Canonical -->
+    <link rel="canonical" href="{page_url}">
             '''
 
             # Replace the closing </head> tag with meta tags + </head>

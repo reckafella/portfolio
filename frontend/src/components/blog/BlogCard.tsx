@@ -60,7 +60,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
           </li>
           <li className="d-flex align-items-center">
             <ShareButton
-              url={window.location.href}
+              url={`${window.location.origin}/blog/article/${post.slug}`}
               title={post.title}
               imageUrl={post.featured_image_url || post.cover_image_url}
               description={post.excerpt}

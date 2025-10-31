@@ -52,6 +52,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 const newCaptchaData = {
                     key: captchaField.captcha_key,
                     image: captchaField.captcha_image,
+                    timestamp: Date.now(),
                 };
                 setCaptchaData(newCaptchaData);
 
@@ -70,6 +71,17 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             }
         }
     }, [formConfig, initialData]);
+
+    // Debug: Log captcha data changes
+    useEffect(() => {
+        if (captchaData) {
+            console.log('Captcha data updated:', {
+                key: captchaData.key,
+                timestamp: captchaData.timestamp,
+                imageLength: captchaData.image?.length,
+            });
+        }
+    }, [captchaData]);
 
     // Handle input changes
     const handleInputChange = useCallback(
@@ -107,10 +119,13 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     // Handle captcha refresh
     const handleRefreshCaptcha = useCallback(() => {
         const oldKey = captchaData?.key;
+        console.log('Refreshing captcha with old key:', oldKey);
 
         refreshCaptcha(oldKey, {
             onSuccess: (data) => {
-                setCaptchaData(data);
+                console.log('Captcha refresh successful:', data);
+                // Force new object reference to ensure React detects change
+                setCaptchaData({ ...data });
                 setFormData((prev) => ({
                     ...prev,
                     captcha_0: data.key,
@@ -125,6 +140,9 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                 if (captchaInput) {
                     captchaInput.value = "";
                 }
+            },
+            onError: (error) => {
+                console.error('Captcha refresh failed:', error);
             },
         });
     }, [captchaData?.key, refreshCaptcha]);

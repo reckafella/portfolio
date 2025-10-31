@@ -1750,7 +1750,7 @@ Cards
 .card .card-body form input[type=search]::placeholder,
 .card .card-body form input[type=file]::placeholder,
 .card .card-body form textarea::placeholder {
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
+  color: color-mix(in srgb, var(--default-color), transparent 80%);
 }
 
 .card .card-body form .form-switch input {

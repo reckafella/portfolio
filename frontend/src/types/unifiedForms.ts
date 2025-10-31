@@ -24,6 +24,7 @@ export interface FormConfig {
 export interface CaptchaData {
     key: string;
     image: string;
+    timestamp?: number;
 }
 
 export interface UnifiedFormProps {

@@ -1678,7 +1678,7 @@ form textarea {
   font-size: 14px;
   padding: 10px 12px;
   box-shadow: none;
-  border-radius: 0;
+  border-radius: 5px;
   color: var(--default-color);
   background-color: color-mix(in srgb, var(--surface-color), transparent 10%);
   border-color: color-mix(in srgb, var(--default-color), transparent 60%);
@@ -1696,6 +1696,7 @@ form input[type=search]:focus,
 form input[type=file]:focus,
 form textarea:focus {
   border-color: var(--accent-color);
+  box-shadow: none;
 }
 
 /* placeholder */

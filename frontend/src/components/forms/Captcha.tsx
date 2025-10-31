@@ -1,4 +1,5 @@
 import { CaptchaData } from "@/types/unifiedForms";
+import { useEffect } from "react";
 
 export const CaptchaInput: React.FC<{
     fieldName: string;
@@ -15,6 +16,14 @@ export const CaptchaInput: React.FC<{
     isRefreshing,
     isSubmitting,
 }) => {
+    useEffect(() => {
+        console.log('CaptchaInput received new captchaData:', {
+            key: captchaData?.key,
+            timestamp: captchaData?.timestamp,
+            hasImage: !!captchaData?.image,
+        });
+    }, [captchaData]);
+
     return (
         <div id={fieldName} className="d-flex justify-content-center align-items-center gap-1">
             <input
@@ -24,14 +33,16 @@ export const CaptchaInput: React.FC<{
                 autoComplete="off"
             />
             {captchaData ? (
-                <div className="captcha-container mb-3">
-                    <div className="d-flex align-items-center gap-2 mb-2">
+                <div className="captcha-container mb-0">
+                    <div className="d-flex align-items-center gap-2 mb-0">
                         <img
+                            key={captchaData.timestamp || captchaData.key}
+                            id="captcha-image"
                             src={captchaData.image}
                             alt="CAPTCHA"
                             className="border rounded"
                             style={{
-                                height: "35px",
+                                height: "40px",
                                 opacity: isRefreshing ? 0.5 : 1,
                                 transition: "opacity 0.3s ease",
                             }}
@@ -51,7 +62,7 @@ export const CaptchaInput: React.FC<{
                     </div>
                 </div>
             ) : (
-                <div className="alert alert-warning mb-3">
+                <div className="alert alert-warning mb-0">
                     <small>
                         <i className="bi bi-exclamation-triangle me-1"></i>
                         CAPTCHA failed to load.

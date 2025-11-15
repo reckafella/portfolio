@@ -41,19 +41,19 @@ const LoginForm: React.FC = () => {
     };
 
     return (
-        <section>
-            <div className="container mt-5">
+        <section className="section">
+            <div className="container mt-1">
                 <div className="row justify-content-center">
-                    <div className="col-md-6">
+                    <div className="col-md-9 col-lg-7">
                         <div className="card shadow">
-                            <div className="card-body p-4">
+                            <div className="card-body py-4">
                                 <UnifiedForm
                                     formType="login"
                                     onSubmit={handleSubmit}
                                     isSubmitting={loginMutation.isPending}
                                     error={loginMutation.error?.message}
-                                    title="Sign In"
-                                    submitButtonText="Sign In"
+                                    title="Login"
+                                    submitButtonText="Login"
                                     loadingText="Signing in..."
                                     additionalContent={
                                         <p className="text-muted mb-0">

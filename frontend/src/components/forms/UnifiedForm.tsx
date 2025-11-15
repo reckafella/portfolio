@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import "./ImageUpload.css";
+import "../../styles/ImageUpload.css";
 import "../../styles/captcha.css";
 import "../../styles/password.css";
 import {
@@ -15,6 +15,7 @@ import {
 } from "../../utils/unifiedFormApis";
 import useFormConfig from "../../hooks/useUnifiedForm";
 import { FieldRenderer } from "./FieldRenderProps";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 const UnifiedForm: React.FC<UnifiedFormProps> = ({
     formType,
@@ -169,31 +170,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
     // Loading state
     if (isLoading) {
         return (
-            <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ minHeight: "200px" }}
-            >
-                <div
-                    className="spinner-grow spinner-grow-sm text-danger"
-                    role="status"
-                >
-                    <span className="visually-hidden">Loading form...</span>
-                </div>
-                <div
-                    className="spinner-grow text-info"
-                    role="status"
-                    style={{ height: "2rem", width: "2rem" }}
-                >
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-                <div
-                    className="spinner-grow spinner-grow-lg text-success"
-                    role="status"
-                    style={{ height: "3rem", width: "3rem" }}
-                >
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
+            <LoadingSpinner />
         );
     }
 
@@ -238,7 +215,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
             )}
 
             <form onSubmit={handleSubmit} method="POST">
-                <div className="row g-3">
+                <div className="row card-body g-3">
                     {Object.entries(formConfig.fields).map(
                         ([fieldName, fieldConfig]) => {
                             const config = fieldConfig as FieldConfig;
@@ -253,7 +230,7 @@ const UnifiedForm: React.FC<UnifiedFormProps> = ({
                                     {config.widget !== "CheckboxInput" && (
                                         <label
                                             htmlFor={fieldName}
-                                            className="form-label fw-medium"
+                                            className="form-label fw-bold"
                                         >
                                             {config.label}
                                             {config.required && (

@@ -8,7 +8,6 @@ const Search: React.FC<SearchProps> = ({ className = "", onToggleSearch }) => {
     return (
         <div className={`d-block search-icon ${className}`}>
             <a
-                href="#"
                 type="button"
                 role="button"
                 className="search-bar-toggle"

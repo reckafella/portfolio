@@ -78,22 +78,22 @@ export const ROUTES = {
 
 // Navigation items for the main navigation component
 export const NAV_ITEMS = [
-    { path: ROUTES.ABOUT, label: "About" },
-    { path: ROUTES.SERVICES, label: "Services" },
-    { path: ROUTES.BLOG.LIST, label: "Blog" },
-    { path: ROUTES.PROJECTS.LIST, label: "Projects" },
-    { path: ROUTES.CONTACT, label: "Contact" },
+    { path: ROUTES.ABOUT, icon: 'bi bi-person', label: "About" },
+    { path: ROUTES.SERVICES, icon: 'bi bi-briefcase', label: "Services" },
+    { path: ROUTES.BLOG.LIST, icon: 'bi bi-book', label: "Blog" },
+    { path: ROUTES.PROJECTS.LIST, icon: 'bi bi-briefcase', label: "Projects" },
+    { path: ROUTES.CONTACT, icon: 'bi bi-envelope', label: "Contact" },
 ] as const;
 
 export const ADMIN_NAV_ITEMS = [
-    { path: ROUTES.DJANGO_ADMIN.ROUTES, label: "Admin Panel" },
-    { path: ROUTES.WAGTAIL.ROUTES, label: "Wagtail Admin" },
+    { path: ROUTES.DJANGO_ADMIN.ROUTES, icon: 'bi bi-gear', label: "Admin Panel" },
+    { path: ROUTES.WAGTAIL.ROUTES, icon: 'bi bi-gear-fill', label: "Wagtail Admin" },
 ] as const;
 
 // Staff navigation items
 export const STAFF_NAV_ITEMS = [
-    { path: ROUTES.PROJECTS.ADD, label: "Add Project" },
-    { path: ROUTES.BLOG.ADD, label: "Add Blog Post" },
+    { path: ROUTES.PROJECTS.ADD, icon: 'bi bi-plus', label: "Add Project" },
+    { path: ROUTES.BLOG.ADD, icon: 'bi bi-plus', label: "Add Blog Post" },
 ] as const;
 
 // About management navigation items

@@ -1,5 +1,5 @@
 import { CaptchaData } from "@/types/unifiedForms";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 export const CaptchaInput: React.FC<{
     fieldName: string;
@@ -16,6 +16,22 @@ export const CaptchaInput: React.FC<{
     isRefreshing,
     isSubmitting,
 }) => {
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    // Generate cache-busted image URL
+    const getImageSrc = useCallback(() => {
+        if (!captchaData?.image) return '';
+        
+        // For base64 data URLs, don't add query params (they're not supported)
+        if (captchaData.image.startsWith('data:')) {
+            return captchaData.image;
+        }
+        
+        // For regular URLs, add timestamp as cache-buster
+        const separator = captchaData.image.includes('?') ? '&' : '?';
+        return `${captchaData.image}${separator}t=${captchaData.timestamp}`;
+    }, [captchaData?.image, captchaData?.timestamp]);
+
     useEffect(() => {
         console.log('CaptchaInput received new captchaData:', {
             key: captchaData?.key,
@@ -23,6 +39,20 @@ export const CaptchaInput: React.FC<{
             hasImage: !!captchaData?.image,
         });
     }, [captchaData]);
+
+    // Force image reload when captcha data changes
+    useEffect(() => {
+        if (imgRef.current && captchaData?.image) {
+            const newSrc = getImageSrc();
+            // Force reload by temporarily clearing src then setting new one
+            imgRef.current.src = '';
+            setTimeout(() => {
+                if (imgRef.current) {
+                    imgRef.current.src = newSrc;
+                }
+            }, 0);
+        }
+    }, [captchaData?.timestamp, captchaData?.key, captchaData?.image, getImageSrc]);
 
     return (
         <div id={fieldName} className="d-flex justify-content-center align-items-center gap-1">
@@ -36,9 +66,10 @@ export const CaptchaInput: React.FC<{
                 <div className="captcha-container mb-0">
                     <div className="d-flex align-items-center gap-2 mb-0">
                         <img
+                            ref={imgRef}
                             key={captchaData.timestamp || captchaData.key}
                             id="captcha-image"
-                            src={captchaData.image}
+                            src={getImageSrc()}
                             alt="CAPTCHA"
                             className="border rounded"
                             style={{

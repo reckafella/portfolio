@@ -10,17 +10,17 @@ const ContactPage: React.FC = () => {
     useMetaTags({
         title: "Contact Us",
         description:
-            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+            "Have got a project in mind or just want to say hello? We'd love to hear from you.",
         keywords: "contact, project, hello, message",
         ogTitle: "Contact Us - Ethan Wanyoike",
         ogDescription:
-            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+            "Have got a project in mind or just want to say hello? We'd love to hear from you.",
         ogType: "website",
         ogUrl: window.location.origin,
         ogImage: "/static/assets/images/og-default.jpeg",
         twitterTitle: "Contact Us - Ethan Wanyoike",
         twitterDescription:
-            "Have got a project in mind or just want to say hello? I'd love to hear from you.",
+            "Have got a project in mind or just want to say hello? We'd love to hear from you.",
         twitterImage: "/static/assets/images/og-default.jpeg",
         canonical: window.location.origin,
     });
@@ -34,25 +34,25 @@ const ContactPage: React.FC = () => {
     };
 
     return (
-        <section id="contact" className="section contact py-3">
+        <section id="contact" className="section contact mt-1">
             <div className="container">
-                <div className="info-wrap card bg-transparent border-0 col-12 col-md-11 col-lg-10 mx-auto">
+                <div className="info-wrap card border-0 col-12 col-md-11 col-lg-10 mx-auto">
                     <div className="text-center">
                         <div className="section-title">
-                            <h1 className="">Contact me</h1>
+                            <h1 className="">Contact Us</h1>
                         </div>
 
                         <p
                             className="lead mx-auto"
                             style={{ maxWidth: "42rem" }}
                         >
-                            Have got a project in mind or just want to say
-                            hello? I'd love to hear from you.
+                            Have got a project in mind or just want to send greetings?
+                            We'd love to hear from you.
                         </p>
                     </div>
                     <div className="row justify-content-around d-flex gy-3">
                         <Link
-                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            className="col-2 col-md-4"
                             to="https://www.linkedin.com/in/ethanmuthoni"
                             target="_blank"
                         >
@@ -65,7 +65,7 @@ const ContactPage: React.FC = () => {
                             </div>
                         </Link>
                         <Link
-                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            className="col-2 col-md-4"
                             to="https://github.com/reckafella"
                             target="_blank"
                         >
@@ -78,7 +78,7 @@ const ContactPage: React.FC = () => {
                             </div>
                         </Link>
                         <Link
-                            className="col-2 col-md-6 col-lg-3 col-xl-3"
+                            className="col-2 col-md-4"
                             to="mailto:ethanwanyoike@gmail.com"
                             target="_blank"
                         >
@@ -92,7 +92,7 @@ const ContactPage: React.FC = () => {
                         </Link>
                     </div>
                     <hr className="my-5" />
-                    <div className="col-12 col-md-10 mx-auto">
+                    <div className="card-body col-12 col-md-10 mx-auto">
                         <ContactForm
                             onSubmit={handleSubmit}
                             isSubmitting={sendMessageMutation.isPending}

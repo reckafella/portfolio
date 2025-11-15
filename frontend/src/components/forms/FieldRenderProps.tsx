@@ -36,7 +36,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         required,
         help_text,
         disabled,
-        widget,
+        type,
         max_length,
         min_length,
         choices,
@@ -82,7 +82,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         multiple,
     };
 
-    switch (widget) {
+    switch (type) {
         case "TextInput":
             return <input type="text" {...textBaseProps} />;
 

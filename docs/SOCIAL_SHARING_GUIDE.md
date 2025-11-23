@@ -30,9 +30,15 @@ Social media crawlers (Facebook, Twitter, LinkedIn) don't execute JavaScript. Th
    - **Canonical URL**: For SEO
 
 3. **Fallback Behavior**
-   - If blog post not found: Returns default HTML (React will show 404)
+   - If content not found: Returns default HTML (React will show 404)
    - If no cover image: Uses `/static/assets/images/og-default.jpeg`
-   - If no excerpt: Extracts first 160 characters from content
+   - If no excerpt/description: Extracts first 160 characters from content
+   - If route not recognized: Uses generic portfolio meta tags
+
+4. **Duplicate Prevention**
+   - Removes existing meta tags from `index.html` before injection
+   - Prevents duplicate title, description, og:*, twitter:* tags
+   - Ensures clean, single set of meta tags in final HTML
 
 ## Testing Social Media Previews
 

@@ -7,7 +7,6 @@ __pycache__/
 
 # C extensions
 *.so
-
 # Distribution / packaging
 .Python
 build/
@@ -182,3 +181,5 @@ redis.json
 media/
 node_modules/
 .venv.local
+
+docs/

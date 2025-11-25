@@ -2,31 +2,32 @@ import React from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import UnifiedForm from "@/components/forms/UnifiedForm";
 import { useLogin } from "@/hooks/queries/authQueries";
-import { usePreloader } from "@/hooks/usePreloader";
+// import { usePreloader } from "@/hooks/usePreloader";
 import { getSafeNextUrl } from "@/utils/authUtils";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { AUTH_SUCCESS_DELAY } from "@/config/authConfig";
+import { LoginCredentials } from "@/services/authService";
 
 const LoginForm: React.FC = () => {
     const [searchParams] = useSearchParams();
     const loginMutation = useLogin();
-    const { showLoader, hideLoader } = usePreloader();
+    // const { showLoader, hideLoader } = usePreloader();
     usePageTitle("Login");
 
     const handleSubmit = async (
         formData: Record<string, string | boolean | File | File[]>,
     ) => {
-        showLoader(); // Show global preloader during authentication
+        /* showLoader(); // Show global preloader during authentication */
 
         try {
-            await loginMutation.mutateAsync({
-                username: formData.username as string,
-                password: formData.password as string,
-            });
+            // Pass all form data to the mutation (includes captcha fields)
+            await loginMutation.mutateAsync(
+                formData as unknown as LoginCredentials,
+            );
 
             // Keep loader visible briefly to show success state
             setTimeout(() => {
-                hideLoader();
+                /* hideLoader(); */
 
                 // Get the next parameter or default to home page, ensuring it's safe
                 const nextUrl = getSafeNextUrl(searchParams.get("next"));
@@ -35,7 +36,7 @@ const LoginForm: React.FC = () => {
                 window.location.href = nextUrl;
             }, AUTH_SUCCESS_DELAY);
         } catch (error) {
-            hideLoader(); // Hide loader on error
+            /* hideLoader(); */ // Hide loader on error
             throw error; // Re-throw to let UnifiedForm handle the error display
         }
     };

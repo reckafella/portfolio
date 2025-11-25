@@ -110,7 +110,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className={`rich-text-editor ${className}`}>
             {/* Toolbar */}
             <div className="editor-toolbar border border-bottom-0 rounded-top p-2">
-                <div className="d-flex flex-wrap gap-1">
+                <div className="toolbar-container d-flex flex-wrap gap-1">
                     {/* Text Formatting */}
                     <div className="btn-group" role="group">
                         <button
@@ -295,68 +295,71 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                         </button>
                     </div>
 
-                    {/* Blockquote */}
-                    <button
-                        type="button"
-                        className={`btn btn-sm btn-outline-secondary ${editor.isActive("blockquote") ? "active" : ""}`}
-                        onClick={() =>
-                            editor.chain().focus().toggleBlockquote().run()
-                        }
-                        title="Blockquote"
-                    >
-                        <i className="bi bi-quote"></i>
-                    </button>
+                    <div className="btn-group" role="group">
+                        {/* Blockquote */}
+                        <button
+                            type="button"
+                            className={`btn btn-sm btn-outline-secondary ${editor.isActive("blockquote") ? "active" : ""}`}
+                            onClick={() =>
+                                editor.chain().focus().toggleBlockquote().run()
+                            }
+                            title="Blockquote"
+                        >
+                            <i className="bi bi-quote"></i>
+                        </button>
 
-                    {/* Horizontal Rule */}
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-outline-secondary"
-                        onClick={() =>
-                            editor.chain().focus().setHorizontalRule().run()
-                        }
-                        title="Horizontal Rule"
-                    >
-                        <i className="bi bi-hr"></i>
-                    </button>
+                        {/* Horizontal Rule */}
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() =>
+                                editor.chain().focus().setHorizontalRule().run()
+                            }
+                            title="Horizontal Rule"
+                        >
+                            <i className="bi bi-hr"></i>
+                        </button>
+                    </div>
 
-                    {/* Link */}
-                    <button
-                        type="button"
-                        className={`btn btn-sm btn-outline-secondary ${editor.isActive("link") ? "active" : ""}`}
-                        onClick={setLink}
-                        title="Add Link"
-                    >
-                        <i className="bi bi-link-45deg"></i>
-                    </button>
+                    <div className="btn-group" role="group">
+                        {/* Link */}
+                        <button
+                            type="button"
+                            className={`btn btn-sm btn-outline-secondary ${editor.isActive("link") ? "active" : ""}`}
+                            onClick={setLink}
+                            title="Add Link"
+                        >
+                            <i className="bi bi-link-45deg"></i>
+                        </button>
 
-                    {/* Image */}
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-outline-secondary"
-                        onClick={addImage}
-                        title="Add Image"
-                    >
-                        <i className="bi bi-image"></i>
-                    </button>
+                        {/* Image */}
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={addImage}
+                            title="Add Image"
+                        >
+                            <i className="bi bi-image"></i>
+                        </button>
 
-                    {/* Highlight */}
-                    <button
-                        type="button"
-                        className={`btn btn-sm btn-outline-secondary ${editor.isActive("highlight") ? "active" : ""}`}
-                        onClick={() =>
-                            editor.chain().focus().toggleHighlight().run()
-                        }
-                        title="Highlight"
-                    >
-                        <i className="bi bi-highlighter"></i>
-                    </button>
+                        {/* Highlight */}
+                        <button
+                            type="button"
+                            className={`btn btn-sm btn-outline-secondary ${editor.isActive("highlight") ? "active" : ""}`}
+                            onClick={() =>
+                                editor.chain().focus().toggleHighlight().run()
+                            }
+                            title="Highlight"
+                        >
+                            <i className="bi bi-highlighter"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* Editor Content */}
             <div
                 className={`editor-content border rounded-bottom ${error ? "border-danger" : ""}`}
-                style={{ minHeight: "300px" }}
             >
                 <EditorContent editor={editor} />
             </div>

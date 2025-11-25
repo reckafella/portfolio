@@ -1,7 +1,3 @@
-/**
- * Application route constants for consistent URL management
- */
-
 // Main navigation routes
 export const ROUTES = {
     // Core pages

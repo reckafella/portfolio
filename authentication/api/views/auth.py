@@ -78,9 +78,11 @@ class RegisterUserView(APIView):
                 key='auth_token',
                 value=token.key,
                 httponly=True,
-                secure=request.is_secure(),  # True in production (HTTPS), False in dev
+                secure=False,  # Allow HTTP in development for Vite proxy
                 samesite='Lax',
                 max_age=28800,  # 8 hours, matching session age
+                path='/',
+                domain=None,  # Let browser determine domain
             )
             
             return response
@@ -141,9 +143,11 @@ class LoginUserView(APIView):
                 key='auth_token',
                 value=token.key,
                 httponly=True,
-                secure=request.is_secure(),  # True in production (HTTPS), False in dev
+                secure=False,  # Allow HTTP in development for Vite proxy
                 samesite='Lax',
                 max_age=28800,  # 8 hours, matching session age
+                path='/',
+                domain=None,  # Let browser determine domain
             )
             
             return response

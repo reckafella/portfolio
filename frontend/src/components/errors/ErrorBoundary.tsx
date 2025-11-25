@@ -19,7 +19,6 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     static getDerivedStateFromError(error: Error): State {
-        // Update state so the next render will show the fallback UI
         return { hasError: true, error };
     }
 
@@ -28,9 +27,6 @@ class ErrorBoundary extends Component<Props, State> {
             error,
             errorInfo,
         });
-
-        // Here you could also log to an error reporting service
-        // Example: logErrorToService(error, errorInfo);
     }
 
     handleRetry = () => {

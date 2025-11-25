@@ -53,7 +53,7 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,rohn.live,portfolio-ot66.onrender.com"
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,rohn.live,[::1],portfolio-ot66.onrender.com"
 if ENVIRONMENT == 'production':
     # Allowed hosts
     ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=DEFAULT_HOSTS).split(",")
@@ -440,6 +440,8 @@ if ENVIRONMENT != 'production':
     # Use a simple cookie name
     CSRF_COOKIE_NAME = 'csrftoken'
     SESSION_COOKIE_NAME = 'sessionid'
+    # Ensure cookies work with Vite proxy
+    CSRF_USE_SESSIONS = False
 
 # Maximum upload size for images in bytes
 MAX_UPLOAD_SIZE: int = 15 * 1024 * 1024  # 15MB or 15 * 1024 * 1024 bytes
@@ -497,12 +499,12 @@ if ENVIRONMENT == 'production':
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
 else:
-    # For development, use 'Lax' which works with HTTP
-    # Note: Cookies will be domain-specific (localhost vs 127.0.0.1)
-    # For consistent behavior, use the same domain throughout development
+    # For development with Vite proxy (frontend:3000 -> backend:8000)
+    # Use 'Lax' which works with same-origin requests through the proxy
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
-    # Don't set a specific domain, allowing cookies to work on whichever domain is accessed
+    # CRITICAL: Don't set domain, let cookies work with proxy
+    # This allows cookies set by backend (127.0.0.1:8000) to work on frontend (localhost:3000)
     SESSION_COOKIE_DOMAIN = None
     CSRF_COOKIE_DOMAIN = None
 

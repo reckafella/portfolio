@@ -49,10 +49,6 @@ export type FormValue = string | File | File[] | boolean;
 
 export const MAX_IMAGES: number = 5;
 export const IMAGE_MIME_TYPES: string[] = [
-    "image/jpeg",
-    "image/png",
-    "image/gif",
-    "image/webp",
-    "image/bmp",
-    "image/svg+xml",
+    "image/jpeg", "image/png", "image/gif",
+    "image/webp", "image/bmp", "image/svg+xml"
 ];

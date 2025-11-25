@@ -33,6 +33,8 @@ export interface User {
 export interface LoginCredentials {
     username: string;
     password: string;
+    captcha_0?: string;
+    captcha_1?: string;
 }
 
 export interface RegisterData {

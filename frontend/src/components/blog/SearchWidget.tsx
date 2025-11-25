@@ -19,9 +19,7 @@ export function SearchWidget({
     const [selectedTag, setSelectedTag] = useState(filters.tag || "");
     const [selectedYear, setSelectedYear] = useState(filters.year || "");
     const [selectedMonth, setSelectedMonth] = useState(filters.month || "");
-    const [selectedSort, setSelectedSort] = useState(
-        filters.ordering || "-first_published_at",
-    );
+    const [selectedSort, setSelectedSort] = useState(filters.ordering || "-first_published_at");
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();

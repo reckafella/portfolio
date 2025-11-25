@@ -1,15 +1,11 @@
-/**
- * Custom hook for managing messages
- */
-
 import { useState, useEffect, useCallback } from "react";
-import { messageService } from "../services/messageService";
+import { messageService } from "@/services/messageService";
 import type {
     Message,
     MessageStats,
     MessageFilters,
     FilterType,
-} from "../types/message";
+} from "@/types/message";
 
 export const useMessages = () => {
     const [messages, setMessages] = useState<Message[]>([]);

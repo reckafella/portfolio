@@ -19,7 +19,7 @@ export interface UseApiOptions {
 
 /** Checks if the server is online */
 export async function checkServerOnline() {
-    const response = await fetch("http://127.0.0.1:8000/app-running");
+    const response = await fetch("/app-running");
     if (!response.ok) return false;
     return true;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { BlogPreviewContent } from "./BlogPreviewContent";
 import "@/styles/device-preview.css";
 
@@ -68,6 +68,25 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
 
     const deviceConfig = DEVICE_CONFIGS[selectedDevice];
 
+    // Handle escape key and body scroll lock
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isOpen && !isFullscreen) {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscape);
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, isFullscreen, onClose]);
+
     const previewData = useMemo(
         () => ({
             title,
@@ -122,20 +141,35 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
         };
     };
 
+    // Handle backdrop click only (not modal content clicks)
+    const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
         <div
-            className="modal fade show"
-            style={{ display: "block" }}
+            className="modal fade show d-block"
             tabIndex={-1}
+            role="dialog"
+            aria-labelledby="devicePreviewModalLabel"
+            aria-modal="true"
+            onClick={handleBackdropClick}
+            
         >
-            <div className="modal-backdrop fade show" onClick={onClose}></div>
+            <div className="modal-backdrop fade show"></div>
             <div
-                className={`modal-dialog ${isFullscreen ? "modal-fullscreen" : "modal-xl"}`}
+                className={`modal-dialog ${isFullscreen ? "modal-fullscreen" : "modal-xl"} modal-dialog-centered`}
+                role="document"
             >
-                <div className="modal-content">
+                <div
+                    className="modal-content"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div className="modal-header">
                         <div className="d-flex align-items-center">
-                            <h5 className="modal-title me-3">
+                            <h5 className="modal-title me-3" id="devicePreviewModalLabel">
                                 <i className="bi bi-eye me-2"></i>
                                 Preview: {title || "Untitled"}
                             </h5>
@@ -148,23 +182,22 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                         </div>
                         <div className="d-flex align-items-center gap-2">
                             {/* Device Selection */}
-                            <div className="btn-group" role="group">
+                            <div className="btn-group" role="group" aria-label="Device selection">
                                 {Object.entries(DEVICE_CONFIGS).map(
                                     ([device, config]) => (
                                         <button
                                             key={device}
                                             type="button"
-                                            className={`btn btn-outline-secondary btn-sm ${
-                                                selectedDevice === device
+                                            className={`btn btn-outline-secondary btn-sm ${selectedDevice === device
                                                     ? "active"
                                                     : ""
-                                            }`}
-                                            onClick={() =>
-                                                handleDeviceChange(
-                                                    device as DeviceType,
-                                                )
-                                            }
+                                                }`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeviceChange(device as DeviceType);
+                                            }}
                                             title={`Preview on ${config.name}`}
+                                            aria-label={`Preview on ${config.name}`}
                                         >
                                             <i
                                                 className={`bi ${config.icon} me-1`}
@@ -179,8 +212,16 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                             <button
                                 type="button"
                                 className="btn btn-outline-secondary btn-sm"
-                                onClick={toggleFullscreen}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFullscreen();
+                                }}
                                 title={
+                                    isFullscreen
+                                        ? "Exit Fullscreen"
+                                        : "Enter Fullscreen"
+                                }
+                                aria-label={
                                     isFullscreen
                                         ? "Exit Fullscreen"
                                         : "Enter Fullscreen"
@@ -195,7 +236,11 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                             <button
                                 type="button"
                                 className="btn-close"
-                                onClick={onClose}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClose();
+                                }}
+                                aria-label="Close"
                             ></button>
                         </div>
                     </div>
@@ -228,7 +273,10 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                                 <button
                                     type="button"
                                     className="btn btn-outline-secondary btn-sm"
-                                    onClick={() => window.open("#", "_blank")}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        window.open("#", "_blank");
+                                    }}
                                     disabled
                                     title="Live preview will be available after publishing"
                                 >
@@ -238,7 +286,10 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                                 <button
                                     type="button"
                                     className="btn btn-secondary"
-                                    onClick={onClose}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onClose();
+                                    }}
                                 >
                                     Close Preview
                                 </button>

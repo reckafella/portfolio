@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 import { BlogPost } from "@/hooks/queries/blogQueries";
 import { useStaffPermissions } from "@/hooks/useStaffPermissions";
-import { ShareButton } from "../share/ShareButton";
+import { ShareButton } from "@/components/share/ShareButton";
 
 interface BlogCardProps {
     post: BlogPost;
     showExcerpt?: boolean;
 }
 
-export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
+export const BlogCard: React.FC<BlogCardProps> = ({
+    post,
+    showExcerpt = true,
+}) => {
     const { canEditProjects: canEditBlog } = useStaffPermissions();
-    const justifyClass = canEditBlog
-        ? "justify-content-around"
-        : "justify-content-center";
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("en-GB");
-    };
+    const justifyClass = canEditBlog ? "justify-content-around" : "justify-content-center";
+    const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString("en-GB");
 
     return (
         <article className="entry col-12">
@@ -79,6 +78,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
                     </li>
                 </ul>
             </div>
+
             <h2 className="entry-title my-2 my-lg-3">
                 <Link
                     to={`/blog/article/${post.slug}`}
@@ -92,14 +92,14 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
                 <div
                     className="entry-content flex-grow-1"
                     dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                    style={{ lineHeight: "1.3" }}
+                    style={{ lineHeight: "0.58" }}
                 />
             )}
 
             <div className={`d-flex ${justifyClass} gap-2`}>
                 <Link
                     to={`/blog/article/${post.slug}`}
-                    className="btn btn-success btn-sm"
+                    className="btn btn-success btn-md"
                 >
                     Read Article <i className="bi bi-arrow-right"></i>
                 </Link>
@@ -107,7 +107,7 @@ export function BlogCard({ post, showExcerpt = true }: BlogCardProps) {
                 {canEditBlog && (
                     <Link
                         to={`/blog/edit/${post.slug}`}
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-secondary btn-md"
                     >
                         <i className="bi bi-pen"></i> Edit Article
                     </Link>

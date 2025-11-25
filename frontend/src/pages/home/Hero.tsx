@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
                                     backSpeed={100}
                                     backDelay={2000}
                                     loop
-                                    className="text-decoration-underline satisfy-regular"
+                                    className="text-decoration-underline"
                                     style={{ textDecorationThickness: "4%" }}
                                 />
                             </p>
@@ -49,7 +49,7 @@ const HeroSection: React.FC = () => {
                             <p>
                                 <button
                                     type="button"
-                                    className="btn btn-lg bg-success text-light py-2 pacifico-regular"
+                                    className="btn btn-lg bg-success text-light py-2"
                                     onClick={() => (location.href = "/contact")}
                                 >
                                     Get in Touch{" "}

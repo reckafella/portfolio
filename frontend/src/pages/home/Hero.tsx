@@ -31,7 +31,7 @@ const HeroSection: React.FC = () => {
                                         "Software Testing",
                                         "DevOps Engineering",
                                         "Database Management",
-                                        "Cloud Computing & Security",
+                                        "Cloud Computing",
                                         "Machine Learning",
                                         "Technical Writing",
                                     ]}

@@ -53,7 +53,7 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development')
 
 # SECURITY WARNING: define the correct hosts in production!
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,rohn.live,[::1],portfolio-ot66.onrender.com"
+DEFAULT_HOSTS = "127.0.0.1,localhost,0.0.0.0,[::1],portfolio-ot66.onrender.com"
 if ENVIRONMENT == 'production':
     # Allowed hosts
     ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=DEFAULT_HOSTS).split(",")
@@ -368,7 +368,7 @@ WAGTAILIMAGES_IMAGE_MODEL = 'blog.CloudinaryWagtailImage'
 
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
 
-WAGTAILADMIN_BASE_URL = 'https://rohn.live'
+WAGTAILADMIN_BASE_URL = 'https://mundu.onrender.com'
 
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx',
                           'rtf', 'txt', 'xlsx', 'zip']
@@ -547,7 +547,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:4173",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8000",
-    "https://rohn.live",
+    "https://mundu.onrender.com",
     "https://portfolio-ot66.onrender.com",
 ]
 
@@ -569,7 +569,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:4173",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8000",
-    "https://rohn.live",
+    "https://mundu.onrender.com",
     "https://portfolio-ot66.onrender.com",
 ]
 

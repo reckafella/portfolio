@@ -268,11 +268,11 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                         <div className="navmenu-mobile-container">
                             <ul>
                                 {navItems.map((item, index) => {
-                                    const priority = index < 4 ? "high" : "low";
-                                    
+                                    const priority = index < 2 ? "high" : "low";
+
                                     // Only show low-priority items in mobile container
                                     if (priority === "high") return null;
-                                    
+
                                     // Handle Blog dropdown for staff users
                                     if (
                                         item.path === ROUTES.BLOG.LIST &&
@@ -440,7 +440,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                             </ul>
                         </div>
                         <i
-                            className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? "bi-x" : "bi-list"}`}
+                            className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? "bi-x-lg" : "bi-list"}`}
                             onClick={toggleMobileMenu}
                         ></i>
                     </div>

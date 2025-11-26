@@ -8,11 +8,10 @@ const Footer: React.FC = () => {
         <footer id="footer" className="footer">
             <div className="footer-top">
                 <div className="container">
-                    <div className="row row-cols-2 row-cols-md-4 row-cols-lg-4 g-3 justify-content-center gy-3">
+                    <div className="row row-cols-2 row-cols-md-4 row-cols-lg-4 g-3 justify-content-center gy-2">
                         {/* Social Links */}
                         <div className="col footer-info h-100">
                             <h4>Social Links</h4>
-                            <p>Connect with me on:</p>
                             <div className="social-links d-flex flex-wrap gap-2">
                                 <Link
                                     to="https://github.com/reckafella"
@@ -51,10 +50,12 @@ const Footer: React.FC = () => {
                                 <li>
                                     <Link
                                         to="mailto:ethanmuthoni@mail.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         title="Send me an email"
                                     >
-                                        <i className="bi bi-envelope me-2"></i>
-                                        Send Email
+                                        <i className="bi bi-envelope me-1"></i>
+                                        Email Me
                                     </Link>
                                 </li>
                             </ul>
@@ -65,21 +66,27 @@ const Footer: React.FC = () => {
                             <h4>Useful Links</h4>
                             <ul>
                                 <li>
+                                    <i className="bi bi-house me-1"></i>
                                     <Link to="/">Home</Link>
                                 </li>
                                 <li>
+                                    <i className="bi bi-journal-text me-1"></i>
                                     <Link to="/blog">Blog</Link>
                                 </li>
                                 <li>
+                                    <i className="bi bi-person me-1"></i>
                                     <Link to="/contact">Contact</Link>
                                 </li>
                                 <li>
+                                    <i className="bi bi-briefcase me-1"></i>
                                     <Link to="/projects">Projects</Link>
                                 </li>
                                 <li>
+                                    <i className="bi bi-gear me-1"></i>
                                     <Link to="/services">Services</Link>
                                 </li>
                                 <li>
+                                    <i className="bi bi-diagram-3 me-1"></i>
                                     <Link
                                         to="/sitemap"
                                         title="View website sitemap"
@@ -95,31 +102,37 @@ const Footer: React.FC = () => {
                             <h4>Services Offered</h4>
                             <ul>
                                 <li>
-                                    <Link to="#">Web Development</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">Web Development</Link>
                                 </li>
                                 <li>
-                                    <Link to="#">Software Testing</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">Quality Assurance</Link>
                                 </li>
                                 <li>
-                                    <Link to="#">Website Maintenance</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">Website Maintenance</Link>
                                 </li>
                                 <li>
-                                    <Link to="#">SEO Optimization</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">SEO Optimization</Link>
                                 </li>
                                 <li>
-                                    <Link to="#">Domain Registration</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">Domain Registration</Link>
                                 </li>
                                 <li>
-                                    <Link to="#">Technical Writing</Link>
+                                    <i className="bi bi-gear me-1"></i>
+                                    <Link to="/services">Technical Writing</Link>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 {/* Copyright */}
-                <div className="copyright text-center mt-4">
-                    <p>
-                        <strong>© {currentYear} — All Rights Reserved.</strong>
+                <div className="copyright mt-1">
+                    <p className="text-center text-muted">
+                        &copy;{currentYear}. Ethan Muthoni. All rights reserved.
                     </p>
                 </div>
             </div>

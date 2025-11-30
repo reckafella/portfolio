@@ -22,6 +22,7 @@
   --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
   --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
   --background-color: rgb(22, 22, 24); /* #161618 jet black */
+  --dashboard-background-color: rgb(22, 22, 24); /* #161618 jet black */
   --search-background-color: rgba(0, 0, 0, 0.98);
   --project-info-color: rgb(255, 255, 255); /* #ffffff */
   --project-info-background-color: rgba(22, 22, 24, 0.9); /* #161618 jet black */
@@ -77,6 +78,7 @@
   --search-background-color: rgb(181, 172, 185); /* #1d0723 */
   --nav-dropdown-hover-color: var(--accent-color);
   --background-color: rgb(232, 231, 228); /* #e8e7e4 */
+  --dashboard-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --default-color: rgb(0, 0, 0); /* #000000 */
   --heading-color: rgb(34, 34, 34); /* #222222 */
   --text-error-color: rgb(220, 53, 69); /* #dc3545 */

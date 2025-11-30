@@ -29,6 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         if (isAuthenticated) {
             return [
                 { path: ROUTES.AUTH.PROFILE, icon: "bi-person-gear", label: "My Profile" },
+                { path: "/goals", icon: "bi-bullseye", label: "My Goals" },
                 ...adminNavItems,
                 { path: ROUTES.AUTH.LOGOUT, icon: "bi-box-arrow-left", label: "Logout" },
             ];
@@ -89,8 +90,8 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                             <ul>
                                 {navItems.map((item, index) => {
                                     // Determine priority: first 2 items are high priority for medium screens
-                                    const priority = index < 4 ? "high" : "low";
-                                    
+                                    const priority = index < 2 ? "high" : "low";
+
                                     // Handle Blog dropdown for staff users
                                     if (
                                         item.path === ROUTES.BLOG.LIST &&
@@ -207,7 +208,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                                 to={item.path}
                                                 className={
                                                     location.pathname ===
-                                                    item.path
+                                                        item.path
                                                         ? "active"
                                                         : ""
                                                 }

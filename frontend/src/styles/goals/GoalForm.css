@@ -1,0 +1,192 @@
+.goal-form-container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: var(--dashboard-background, #f9fafb);
+}
+
+.goal-form-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--card-background, #ffffff);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.goal-form-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 1.5rem;
+}
+
+.goal-form-error {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.goal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.goal-form-label {
+  font-weight: 600;
+  color: var(--text-primary, #1f2937);
+  font-size: 0.875rem;
+}
+
+.required {
+  color: #dc2626;
+}
+
+.goal-form-input,
+.goal-form-textarea,
+.goal-form-select {
+  padding: 0.75rem;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-primary, #1f2937);
+  background: var(--input-background, #ffffff);
+  transition: all 0.2s;
+}
+
+.goal-form-input:focus,
+.goal-form-textarea:focus,
+.goal-form-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.goal-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.goal-form-radio-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.goal-form-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.goal-form-radio:has(input:checked) {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.goal-form-radio input[type="radio"] {
+  cursor: pointer;
+}
+
+.goal-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.goal-form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.goal-form-checkbox input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.goal-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.goal-form-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.goal-form-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.goal-form-btn-cancel {
+  background: var(--secondary-background, #f3f4f6);
+  color: var(--text-primary, #1f2937);
+}
+
+.goal-form-btn-cancel:hover:not(:disabled) {
+  background: var(--secondary-hover, #e5e7eb);
+}
+
+.goal-form-btn-submit {
+  background: #3b82f6;
+  color: white;
+}
+
+.goal-form-btn-submit:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .goal-form-container {
+    --dashboard-background: #111827;
+    --card-background: #1f2937;
+    --text-primary: #f9fafb;
+    --border-color: #374151;
+    --input-background: #111827;
+    --secondary-background: #374151;
+    --secondary-hover: #4b5563;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .goal-form-card {
+    padding: 1.5rem;
+  }
+
+  .goal-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .goal-form-radio-group {
+    flex-direction: column;
+  }
+}

@@ -88,10 +88,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                         <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">
                             <ul>
-                                {navItems.map((item, index) => {
-                                    // Determine priority: first 2 items are high priority for medium screens
-                                    const priority = index < 2 ? "high" : "low";
-
+                                {navItems.map((item) => {
                                     // Handle Blog dropdown for staff users
                                     if (
                                         item.path === ROUTES.BLOG.LIST &&
@@ -101,7 +98,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         return (
                                             <li
                                                 key={item.path}
-                                                data-priority={priority}
                                                 className={`dropdown ${isBlogDropdownOpen ? "dropdown-active" : ""}`}
                                             >
                                                 <a
@@ -154,7 +150,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                         return (
                                             <li
                                                 key={item.path}
-                                                data-priority={priority}
                                                 className={`dropdown ${isProjectsDropdownOpen ? "dropdown-active" : ""}`}
                                             >
                                                 <a
@@ -203,7 +198,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
 
                                     // Regular nav items
                                     return (
-                                        <li key={item.path} data-priority={priority}>
+                                        <li key={item.path}>
                                             <Link
                                                 to={item.path}
                                                 className={
@@ -220,7 +215,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                 })}
 
                                 <li
-                                    data-priority="low"
                                     className={`dropdown ${isToggleDropdownOpen ? "active" : ""}`}
                                 >
                                     <a
@@ -265,181 +259,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                                 </li>
                             </ul>
                         </nav>
-                        {/* Mobile menu container for medium screens (shows low-priority items) */}
-                        <div className="navmenu-mobile-container">
-                            <ul>
-                                {navItems.map((item, index) => {
-                                    const priority = index < 2 ? "high" : "low";
-
-                                    // Only show low-priority items in mobile container
-                                    if (priority === "high") return null;
-
-                                    // Handle Blog dropdown for staff users
-                                    if (
-                                        item.path === ROUTES.BLOG.LIST &&
-                                        isStaff &&
-                                        canCreateBlog
-                                    ) {
-                                        return (
-                                            <li
-                                                key={item.path}
-                                                data-priority={priority}
-                                                className={`dropdown ${isBlogDropdownOpen ? "dropdown-active" : ""}`}
-                                            >
-                                                <a
-                                                    role="button"
-                                                    className="toggle-dropdown"
-                                                    onClick={toggleBlogDropdown}
-                                                    aria-expanded={isBlogDropdownOpen}
-                                                >
-                                                    <span>{item.label}</span>
-                                                    <i
-                                                        className={`bi ${isBlogDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"} toggle-dropdown`}
-                                                    ></i>
-                                                </a>
-                                                <ul
-                                                    className={
-                                                        isBlogDropdownOpen
-                                                            ? "dropdown-active"
-                                                            : ""
-                                                    }
-                                                >
-                                                    <li>
-                                                        <Link to={item.path}
-                                                            className={location.pathname === item.path ? "active" : ""}
-                                                        >
-                                                            <i className="bi bi-list"></i>
-                                                            <span>View Articles</span>
-                                                        </Link>
-                                                    </li>
-                                                    <li>
-                                                        <Link to={ROUTES.BLOG.ADD}
-                                                            className={location.pathname === ROUTES.BLOG.ADD ? "active" : ""}
-                                                        >
-                                                            <i className={`bi bi-plus-square`}></i>
-                                                            <span>Add Article</span>
-                                                        </Link>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        );
-                                    }
-
-                                    // Handle Projects dropdown for staff users
-                                    if (
-                                        item.path === ROUTES.PROJECTS.LIST &&
-                                        isStaff &&
-                                        canCreateProjects
-                                    ) {
-                                        return (
-                                            <li
-                                                key={item.path}
-                                                data-priority={priority}
-                                                className={`dropdown ${isProjectsDropdownOpen ? "dropdown-active" : ""}`}
-                                            >
-                                                <a
-                                                    role="button"
-                                                    className="toggle-dropdown"
-                                                    onClick={toggleProjectsDropdown}
-                                                    aria-expanded={isProjectsDropdownOpen}
-                                                >
-                                                    <span>{item.label}</span>
-                                                    <i
-                                                        className={`bi ${isProjectsDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"} toggle-dropdown`}
-                                                    ></i>
-                                                </a>
-                                                <ul
-                                                    className={
-                                                        isProjectsDropdownOpen
-                                                            ? "dropdown-active"
-                                                            : ""
-                                                    }
-                                                >
-                                                    <li>
-                                                        <Link
-                                                            to={item.path}
-                                                            className={location.pathname === item.path ? "active" : ""}
-                                                        >
-                                                            <i className={`bi bi-list`}></i>
-                                                            <span>View Projects</span>
-                                                        </Link>
-                                                    </li>
-                                                    <li>
-                                                        <Link to={ROUTES.PROJECTS.ADD}
-                                                            className={location.pathname === ROUTES.PROJECTS.ADD ? "active" : ""}
-                                                        >
-                                                            <i className={`bi bi-plus-square`}></i>
-                                                            <span>Add Project</span>
-                                                        </Link>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        );
-                                    }
-
-                                    // Regular nav items
-                                    return (
-                                        <li key={item.path} data-priority={priority}>
-                                            <Link
-                                                to={item.path}
-                                                className={
-                                                    location.pathname === item.path
-                                                        ? "active"
-                                                        : ""
-                                                }
-                                            >
-                                                <span>{item.label}</span>
-                                            </Link>
-                                        </li>
-                                    );
-                                })}
-
-                                <li
-                                    data-priority="low"
-                                    className={`dropdown ${isToggleDropdownOpen ? "active" : ""}`}
-                                >
-                                    <a
-                                        role="button"
-                                        className="toggle-dropdown"
-                                        onClick={toggleAccountDropdown}
-                                        aria-expanded={isToggleDropdownOpen}
-                                    >
-                                        <span>Account</span>
-                                        <i
-                                            className={`bi ${isToggleDropdownOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
-                                        ></i>
-                                    </a>
-                                    <ul
-                                        className={
-                                            isToggleDropdownOpen
-                                                ? "dropdown-active"
-                                                : ""
-                                        }
-                                    >
-                                        {/* Staff-only inbox link */}
-                                        {isStaff && (
-                                            <li>
-                                                <Link
-                                                    to={ROUTES.MESSAGES.INBOX}
-                                                    className="d-flex align-items-center justify-content-start gap-1"
-                                                >
-                                                    <i className="bi bi-inbox"></i>
-                                                    <span>Inbox</span>
-                                                </Link>
-                                            </li>
-                                        )}
-                                        {getAuthItems().map((item) => (
-                                            <li key={item.path}>
-                                                <Link to={item.path} className="d-flex align-items-center justify-content-start gap-1">
-                                                    <i className={`bi ${item.icon}`}></i>
-                                                    <span>{item.label}</span>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
                         <i
                             className={`mobile-nav-toggle d-xl-none bi ${isMobileMenuOpen ? "bi-x-lg" : "bi-list"}`}
                             onClick={toggleMobileMenu}

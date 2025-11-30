@@ -9,7 +9,7 @@ import {
     BlogPost,
 } from "@/hooks/queries/blogQueries";
 import { BlogCard } from "@/components/blog/BlogCard";
-import { BlogFiltersComponent } from "@/components/blog/BlogFilters";
+// import { BlogFiltersComponent } from "@/components/blog/BlogFilters";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { AlertMessage } from "@/components/common/AlertMessage";
 import { useStaffPermissions } from "@/hooks/useStaffPermissions";

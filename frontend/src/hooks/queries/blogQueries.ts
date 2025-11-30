@@ -176,8 +176,11 @@ export function useCreateBlogPost() {
             return response.json();
         },
         onSuccess: () => {
-            // Invalidate blog posts list
-            queryClient.invalidateQueries({ queryKey: blogKeys.posts() });
+            // Invalidate all blog posts lists (including filtered ones)
+            queryClient.invalidateQueries({
+                queryKey: blogKeys.posts(),
+                exact: false
+            });
             // Invalidate stats
             queryClient.invalidateQueries({ queryKey: blogKeys.stats() });
         },
@@ -219,8 +222,11 @@ export function useUpdateBlogPost() {
         onSuccess: (_, { slug }) => {
             // Invalidate the specific blog post
             queryClient.invalidateQueries({ queryKey: blogKeys.post(slug) });
-            // Invalidate blog posts list
-            queryClient.invalidateQueries({ queryKey: blogKeys.posts() });
+            // Invalidate all blog posts lists (including filtered ones)
+            queryClient.invalidateQueries({
+                queryKey: blogKeys.posts(),
+                exact: false
+            });
         },
     });
 }
@@ -241,8 +247,11 @@ export function useDeleteBlogPost() {
         onSuccess: (_, slug) => {
             // Remove the specific blog post from cache
             queryClient.removeQueries({ queryKey: blogKeys.post(slug) });
-            // Invalidate blog posts list
-            queryClient.invalidateQueries({ queryKey: blogKeys.posts() });
+            // Invalidate all blog posts lists (including filtered ones)
+            queryClient.invalidateQueries({
+                queryKey: blogKeys.posts(),
+                exact: false
+            });
             // Invalidate stats
             queryClient.invalidateQueries({ queryKey: blogKeys.stats() });
         },

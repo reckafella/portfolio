@@ -14,10 +14,10 @@ export const BlogCard: React.FC<BlogCardProps> = ({
 }) => {
     const { canEditProjects: canEditBlog } = useStaffPermissions();
     const justifyClass = canEditBlog ? "justify-content-around" : "justify-content-center";
-    const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString("en-GB");
+    const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString("ru-RU");
 
     return (
-        <article className="entry col-12">
+        <article className="entry h-100 col-12">
             {post.featured_image_url ? (
                 <div className="entry-img my-2">
                     <img
@@ -59,7 +59,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
                         <i className="bi bi-calendar me-1"></i>
                         <span>{formatDate(post.first_published_at)}</span>
                     </li>
-                    <li className="d-none d-lg-flex align-items-center">
+                    <li className="d-flex align-items-center">
                         <i className="bi bi-clock me-1"></i>
                         <span>{post.reading_time}</span>
                     </li>

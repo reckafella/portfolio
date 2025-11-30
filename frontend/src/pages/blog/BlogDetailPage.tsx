@@ -25,7 +25,11 @@ export function BlogDetailPage() {
     const [showToast, setShowToast] = useState(false);
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("en-GB");
+        const date = new Date(dateString);
+        const day = date.toLocaleDateString("en-GB", { day: "numeric" });
+        const month = date.toLocaleDateString("en-GB", { month: "short" });
+        const year = date.toLocaleDateString("en-GB", { year: "numeric" });
+        return `${month}. ${day}, ${year}`;
     };
 
     const { data: post, isLoading, error } = useBlogPost(slug!);
@@ -284,8 +288,8 @@ export function BlogDetailPage() {
                                             <span className="text-decoration-none">
                                                 {post?.view_count
                                                     ? post?.view_count === 1
-                                                        ? `${post?.view_count} view`
-                                                        : `${post?.view_count} views`
+                                                        ? `${post?.view_count} View`
+                                                        : `${post?.view_count} Views`
                                                     : 0}
                                             </span>
                                         </li>
@@ -309,7 +313,7 @@ export function BlogDetailPage() {
                                 <h2 className="entry-title">{post.title}</h2>
                                 {/* Post Content */}
                                 <div
-                                    className="mb-3 entry-content blog-content"
+                                    className="mb-3 entry-content "
                                     dangerouslySetInnerHTML={{
                                         __html: post.content,
                                     }}

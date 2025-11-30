@@ -122,39 +122,39 @@ export function BlogListPage() {
                             <li>
                                 <Link to={`/`}>Home</Link>
                             </li>
-                            <li>Blog Articles</li>
+                            <li>Blog</li>
                         </ol>
                     </nav>
                 </div>
             </div>
-            <section className="section blog">
-                <div className="container my-2 my-lg-3">
+            <section className="section py-3 blog">
+                <div className="container my-0">
                     <div className="row">
-                        <div className="text-center section-title mb-2 mb-lg-3">
-                            <h1>Blog Articles</h1>
+                        <div className="text-center section-title pb-2">
+                            <h1>Blog</h1>
                         </div>
                         <div className="entries col-12 col-lg-8">
                             {/* Header */}
                             {canCreateBlog && (
-                                <div className="d-flex justify-content-between align-items-center mb-3 mb-lg-5">
+                                <div className="d-flex justify-content-start justify-content-lg-end align-items-center mb-3 mb-lg-4">
                                     <div className="btn-group">
                                         <Link
                                             to="/blog/new"
                                             className="btn btn-primary"
                                         >
-                                            <i className="bi bi-plus me-2"></i>
+                                            <i className="bi bi-plus me-1"></i>
                                             New Post
                                         </Link>
                                     </div>
                                 </div>
                             )}
-                            {/* Filters */}
+                            {/* Filters
                             <BlogFiltersComponent
                                 filters={filters}
                                 onFiltersChange={handleFiltersChange}
                                 tags={popularTags}
                                 totalCount={totalCount}
-                            />
+                            /> */}
 
                             {/* Loading State */}
                             {postsLoading && !posts.length && (
@@ -169,11 +169,11 @@ export function BlogListPage() {
                             {/* Blog Posts */}
                             {!postsLoading && posts.length > 0 && (
                                 <>
-                                    <div className="row g-4">
+                                    <div className="row g-2 g-lg-3">
                                         {posts.map((post: BlogPost) => (
                                             <div
                                                 key={post.id}
-                                                className="col-md-5 col-lg-12"
+                                                className="col-md-6 col-lg-12"
                                             >
                                                 <BlogCard post={post} />
                                             </div>
@@ -183,7 +183,7 @@ export function BlogListPage() {
                                     {/* Pagination */}
                                     {totalPages > 1 && (
                                         <nav aria-label="Blog pagination">
-                                            <ul className="pagination justify-content-center">
+                                            <ul className="pagination justify-content-center mt-2 mt-md-3">
                                                 <li
                                                     className={`page-item ${!previousPage ? "disabled" : ""}`}
                                                 >
@@ -286,6 +286,14 @@ export function BlogListPage() {
                                 className="widget-items-container"
                                 style={{ top: "2rem" }}
                             >
+                                {!statsLoading && statsData && (
+                                    <SearchWidget
+                                        filters={filters}
+                                        onFiltersChange={handleFiltersChange}
+                                        tags={popularTags}
+                                    />
+                                )}
+
                                 {/* Blog Stats - hidden for now */}
                                 {!statsLoading && statsData && (
                                     <div className="d-none widget-item recent-posts-widget mb-4">
@@ -403,11 +411,6 @@ export function BlogListPage() {
                                         </div>
                                     )}
 
-                                <SearchWidget
-                                    filters={filters}
-                                    onFiltersChange={handleFiltersChange}
-                                    tags={popularTags}
-                                />
 
                                 {/* Popular Tags */}
                                 {popularTags.length > 0 && (

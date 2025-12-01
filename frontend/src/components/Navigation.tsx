@@ -83,7 +83,7 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
                     >
                         <SVGComponent />
                     </Link>
-                    <div className="search-nav-wrapper d-flex justify-content-center align-items-center gap-0">
+                    <div className="search-nav-wrapper d-flex justify-content-center align-items-center gap-1">
                         <Search onToggleSearch={onToggleSearch} />
                         <ThemeSwitch />
                         <nav id="navmenu" className="navmenu">

@@ -64,11 +64,11 @@ import GoalsDashboard from "./pages/goals/GoalsDashboard";
 import CreateGoal from "./pages/goals/CreateGoal";
 import EditGoal from "./pages/goals/EditGoal";
 import GoalDetail from "./pages/goals/GoalDetail";
-import "./App.css";
-import "./styles/search.css";
-import "./styles/messages.css";
-import "./styles/main.css";
-import "./styles/styles.css";
+import "@/styles/main.css";
+import "@/styles/styles.css";
+import "@/App.css";
+import "@/styles/search.css";
+import "@/styles/messages.css";
 
 const queryClient = new QueryClient({
     defaultOptions: {

@@ -7,19 +7,21 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
-  --about-background-color: rgb(10, 10, 10); /* #0a0a0a rich black */
+  /* --about-background-color: rgb(10, 10, 10); #0a0a0a rich black */
   --blog-background-color: rgb(36, 37, 38); /* #242526 black olive */
   --projects-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
   --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
   --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
-  --header-background-color: rgb(11, 18, 21); /* #0b1215 obsidian */
-  --services-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --header-background-color: rgb(16, 23, 32); /*#101720 smoky black  */
+  --services-background-color: rgb(24, 24, 24); /* #181818 iridium */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: rgb(16, 23, 32); /*#101720 smoky black  */
+  --special-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
   --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
+  --footer-background-color: var(--special-background-color);
+  --skills-background-color: var(--resume-background-color);
   --breadcrumbs-background-color: rgb(37, 37, 37); /* #252525 outer space */
-  --footer-background-color: rgb(24, 24, 24); /* #181818 iridium */
+  --about-background-color:rgb(11, 18, 21); /* #0b1215 obsidian */
   --card-background-color: rgb(17, 24, 28); /* #11181c arsenic */
   --background-color: rgb(22, 22, 24); /* #161618 jet black */
   --dashboard-background-color: rgb(22, 22, 24); /* #161618 jet black */

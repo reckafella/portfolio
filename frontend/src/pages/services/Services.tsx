@@ -66,12 +66,6 @@ const ServicesSection: React.FC = () => {
                         </div>
                     ))}
                 </div>
-
-                <hr />
-                <p className="text-center text-muted">
-                    &copy; {new Date().getFullYear()} Ethan Muthoni. All rights
-                    reserved.
-                </p>
             </div>
         </section>
     );

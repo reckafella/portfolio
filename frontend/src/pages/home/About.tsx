@@ -22,19 +22,24 @@ const AboutSection: React.FC = () => {
                                 loading="lazy"
                             />
                             <div className="social-links mt-3">
-                                <a href="#" className="linkedin">
+                                <a href="https://www.linkedin.com/in/ethanmuthoni/"
+                                    className="linkedin" target="_blank" rel="noopener noreferrer">
                                     <i className="bi bi-linkedin"></i>
                                 </a>
-                                <a href="#" className="github">
+                                <a href="https://github.com/reckafella" className="github"
+                                    target="_blank" rel="noopener noreferrer">
                                     <i className="bi bi-github"></i>
                                 </a>
-                                <a href="#" className="twitter">
+                                <a href="https://x.com/frmundu" className="twitter"
+                                    target="_blank" rel="noopener noreferrer">
                                     <i className="bi bi-twitter-x"></i>
                                 </a>
-                                <a href="#" className="facebook">
+                                <a href="https://www.facebook.com/frmundu" className="facebook"
+                                    target="_blank" rel="noopener noreferrer">
                                     <i className="bi bi-facebook"></i>
                                 </a>
-                                <a href="#" className="instagram">
+                                <a href="https://www.instagram.com/frmundu" className="instagram"
+                                    target="_blank" rel="noopener noreferrer">
                                     <i className="bi bi-instagram"></i>
                                 </a>
                             </div>
@@ -68,7 +73,7 @@ const AboutSection: React.FC = () => {
                                     <ul className="list-unstyled">
                                         <li className="mb-2">
                                             <i className="bi bi-check-circle-fill me-2"></i>
-                                            <strong>Experience:</strong> 2+
+                                            <strong>Experience:</strong> 3+
                                             Years
                                         </li>
                                         <li className="mb-2">

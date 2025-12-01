@@ -50,15 +50,18 @@ const GoalForm: React.FC<GoalFormProps> = ({ initialData, isEditing = false, goa
             if (isEditing && goalId) {
                 await GoalsService.updateGoal(goalId, formData);
                 showToast('Goal updated successfully!', 'success');
+                // Navigate after a short delay to show the toast
+                setTimeout(() => {
+                    navigate('/goals');
+                }, 500);
             } else {
-                await GoalsService.createGoal(formData);
+                const response = await GoalsService.createGoal(formData);
                 showToast('Goal created successfully!', 'success');
+                // Navigate after a short delay to show the toast
+                setTimeout(() => {
+                    navigate('/goals');
+                }, 500);
             }
-
-            // Navigate after a short delay to show the toast
-            setTimeout(() => {
-                navigate('/goals');
-            }, 1000);
         } catch (err: any) {
             console.error('Form submission error:', err);
 

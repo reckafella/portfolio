@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import GoalsService from '@/services/goalsService';
 import GoalCard from '@/components/goals/GoalCard';
@@ -12,33 +12,51 @@ const GoalsDashboard: React.FC = () => {
     const [filters, setFilters] = useState<GoalFilters>({ is_active: true });
     const [reminderCount, setReminderCount] = useState(0);
 
-    useEffect(() => {
-        fetchGoals();
-        fetchReminders();
-    }, [filters]);
-
-    const fetchGoals = async () => {
+    const fetchGoals = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await GoalsService.getGoals(filters);
-            setGoals(data);
+            const data: any = await GoalsService.getGoals(filters);
+            // support both array responses and paginated responses with `results`
+            if (Array.isArray(data)) {
+                setGoals(data);
+            } else {
+                setGoals(data?.results || []);
+            }
             setError(null);
-        } catch (err) {
+        } catch {
             setError('Failed to load goals');
-            console.error('Error fetching goals:', err);
+            setGoals([]);
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters]);
 
-    const fetchReminders = async () => {
+    const fetchReminders = useCallback(async () => {
         try {
             const data = await GoalsService.getReminders();
             setReminderCount(data.count);
-        } catch (err) {
-            console.error('Error fetching reminders:', err);
+        } catch {
+            setReminderCount(0);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchGoals();
+        fetchReminders();
+    }, [fetchGoals, fetchReminders]);
+
+    useEffect(() => {
+        // Refetch goals when returning to the tab
+        const handleFocus = () => {
+            fetchGoals();
+            fetchReminders();
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, [fetchGoals, fetchReminders]);
 
     const handleQuickCheckIn = async (goalId: number) => {
         try {
@@ -50,8 +68,7 @@ const GoalsDashboard: React.FC = () => {
             await GoalsService.createCheckIn(checkInData);
             fetchGoals(); // Refresh goals to update stats
             fetchReminders(); // Update reminder count
-        } catch (err) {
-            console.error('Error creating check-in:', err);
+        } catch {
             alert('Failed to create check-in. You may have already checked in today.');
         }
     };

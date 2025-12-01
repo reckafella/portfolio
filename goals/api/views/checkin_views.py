@@ -4,7 +4,6 @@ API views for CheckIn model
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 
 from goals.models import CheckIn, Goal
@@ -27,8 +26,7 @@ class CheckInViewSet(viewsets.ModelViewSet):
     - DELETE /api/checkins/{id}/ - Delete check-in
     """
     permission_classes = [IsAuthenticated, IsGoalOwner]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['status', 'date']
+    filter_backends = [OrderingFilter]
     ordering_fields = ['date', 'created_at']
     ordering = ['-date']
     
@@ -43,6 +41,15 @@ class CheckInViewSet(viewsets.ModelViewSet):
         goal_id = self.kwargs.get('goal_id')
         if goal_id:
             queryset = queryset.filter(goal_id=goal_id)
+        
+        # Apply filters from query parameters
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        
+        date_filter = self.request.query_params.get('date')
+        if date_filter:
+            queryset = queryset.filter(date=date_filter)
         
         return queryset
     

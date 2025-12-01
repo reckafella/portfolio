@@ -96,5 +96,6 @@ class CheckInCreateSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Set default date to today if not provided
-        if not self.initial_data.get('date'):
-            self.initial_data['date'] = timezone.now().date()
+        if hasattr(self, 'initial_data') and self.initial_data:
+            if not self.initial_data.get('date'):
+                self.initial_data['date'] = timezone.now().date()

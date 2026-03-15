@@ -60,7 +60,7 @@ const ContactPage: React.FC = () => {
                                 <i className="bi bi-linkedin"></i>
                                 <div className="d-none d-md-block">
                                     <h3>LinkedIn</h3>
-                                    <p>Ethan Muthoni</p>
+                                    <p>Ethan Wanyoike</p>
                                 </div>
                             </div>
                         </Link>

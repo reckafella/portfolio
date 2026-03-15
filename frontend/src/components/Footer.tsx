@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
                 {/* Copyright */}
                 <div className="copyright mt-1">
                     <p className="text-center text-muted">
-                        &copy;{currentYear}. Ethan Muthoni. All rights reserved.
+                        &copy;{currentYear}. Ethan Wanyoike. All rights reserved.
                     </p>
                 </div>
             </div>

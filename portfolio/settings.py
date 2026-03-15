@@ -361,7 +361,7 @@ APPEND_SLASH = True
 
 
 # WAGTAIL SETTINGS
-WAGTAIL_SITE_NAME = "Ethan Muthoni"
+WAGTAIL_SITE_NAME = "Ethan Wanyoike"
 
 # Custom Image Model for Cloudinary integration
 WAGTAILIMAGES_IMAGE_MODEL = 'blog.CloudinaryWagtailImage'

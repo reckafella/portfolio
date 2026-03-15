@@ -75,7 +75,7 @@ INSTALLED_APPS += [
     "rest_framework.authtoken", "django.contrib.contenttypes", 'django.contrib.sites',
     "django.contrib.sessions", "django.contrib.messages",
     "django.contrib.staticfiles", "django.contrib.sitemaps",
-    "corsheaders", "app", "authentication", "blog", "goals",
+    "corsheaders", "app", "authentication", "blog",
     'robots', 'captcha', "django_redis", "crispy_forms",
 ]
 

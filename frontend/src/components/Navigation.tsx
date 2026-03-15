@@ -29,7 +29,6 @@ const Navigation: React.FC<NavigationProps> = ({ onToggleSearch }) => {
         if (isAuthenticated) {
             return [
                 { path: ROUTES.AUTH.PROFILE, icon: "bi-person-gear", label: "My Profile" },
-                { path: "/goals", icon: "bi-bullseye", label: "My Goals" },
                 ...adminNavItems,
                 { path: ROUTES.AUTH.LOGOUT, icon: "bi-box-arrow-left", label: "Logout" },
             ];

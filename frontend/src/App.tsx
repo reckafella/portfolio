@@ -60,10 +60,6 @@ import {
     ForbiddenPage,
     ServerErrorPage,
 } from "./pages/errors";
-import GoalsDashboard from "./pages/goals/GoalsDashboard";
-import CreateGoal from "./pages/goals/CreateGoal";
-import EditGoal from "./pages/goals/EditGoal";
-import GoalDetail from "./pages/goals/GoalDetail";
 import "@/styles/main.css";
 import "@/styles/styles.css";
 import "@/App.css";
@@ -257,40 +253,6 @@ function App() {
                                                 element={
                                                     <ProtectedRoute>
                                                         <ProfilePage />
-                                                    </ProtectedRoute>
-                                                }
-                                            />
-
-                                            {/* Goals routes - Protected */}
-                                            <Route
-                                                path="/goals"
-                                                element={
-                                                    <ProtectedRoute>
-                                                        <GoalsDashboard />
-                                                    </ProtectedRoute>
-                                                }
-                                            />
-                                            <Route
-                                                path="/goals/new"
-                                                element={
-                                                    <ProtectedRoute>
-                                                        <CreateGoal />
-                                                    </ProtectedRoute>
-                                                }
-                                            />
-                                            <Route
-                                                path="/goals/:id"
-                                                element={
-                                                    <ProtectedRoute>
-                                                        <GoalDetail />
-                                                    </ProtectedRoute>
-                                                }
-                                            />
-                                            <Route
-                                                path="/goals/:id/edit"
-                                                element={
-                                                    <ProtectedRoute>
-                                                        <EditGoal />
                                                     </ProtectedRoute>
                                                 }
                                             />

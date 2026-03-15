@@ -33,8 +33,6 @@ urlpatterns = [
     # Blog API
     path('blog/', include('blog.api.urls')),
 
-    path('goals/', include('goals.api.urls')),
-
     # Project APIs URLs
     path('projects/list', ProjectListAPIView.as_view(), name='project_list_api'),
     path('projects/create/', ProjectCreateAPIView.as_view(), name='project_create_api'),

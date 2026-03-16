@@ -54,7 +54,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         if (project.first_image?.cloudinary_image_url) {
             return project.first_image.cloudinary_image_url;
         }
-        return "/static/assets/images/placeholder-project.jpg";
+        return "/static/assets/images/600db1a4-3842-4ce4-bad0-b09953346794.jpeg";
     };
 
     /* const getBadgeColor = (type: string) => {
@@ -81,7 +81,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src =
-                            "/static/assets/images/placeholder-project.jpg";
+                            "/static/assets/images/600db1a4-3842-4ce4-bad0-b09953346794.jpeg";
                     }}
                 />
                 {!project.live && (

@@ -177,7 +177,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                         aria-expanded={expandAccordion}
                         onClick={toggleAccordion}
                     >
-                        <i className="bi bi-funnel me-2"></i> Filter & Sort
+                        <i className="bi bi-funnel me-1 me-md-2"></i>Filter & Sort
                         Projects
                     </button>
                 </h2>
@@ -190,7 +190,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                     <div className="accordion-body">
                         <form
                             onSubmit={handleSubmit}
-                            className="card g-3 form-control"
+                            className="card g-1 form-control"
                         >
                             <div className="card-body row form-group">
                                 <div className="col-md-5">
@@ -198,7 +198,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         htmlFor="search"
                                         className="form-label"
                                     >
-                                        Search Project
+                                        Search Project(s)
                                     </label>
                                     <div className="input-group">
                                         <span className="input-group-text">
@@ -207,7 +207,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         <input
                                             type="text"
                                             className="form-control"
-                                            placeholder="Search Project..."
+                                            placeholder="Type to Search..."
                                             value={localFilters.search}
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -225,7 +225,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         className="form-label"
                                         htmlFor="sort_by"
                                     >
-                                        Sort By
+                                        Sort Projects By
                                     </label>
                                     <select
                                         className="form-select"
@@ -249,7 +249,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-4 text-end d-flex gap-2 justify-content-end">
+                                <div className="col-md-4 text-end d-flex gap-3 justify-content-end">
                                     <button
                                         className="btn btn-outline-secondary"
                                         onClick={() =>
@@ -258,11 +258,11 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         type="button"
                                     >
                                         <i
-                                            className={`bi bi-filter me-1 ${showFilters ? "text-primary" : ""}`}
+                                            className={`bi bi-filter me-1 me-md-2 ${showFilters ? "text-primary" : ""}`}
                                         ></i>
                                         Filters
                                         {hasActiveFilters && (
-                                            <span className="badge bg-primary ms-1">
+                                            <span className="badge bg-info ms-1">
                                                 {
                                                     Object.values(
                                                         filters,
@@ -277,7 +277,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                     </button>
                                     <button
                                         type="submit"
-                                        className="btn btn-primary"
+                                        className="btn btn-outline-primary"
                                     >
                                         <i className="bi bi-search me-1"></i>
                                         Apply

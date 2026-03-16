@@ -114,8 +114,8 @@ export const ProjectListPage: React.FC = () => {
     }
 
     return (
-        <div className="container py-5">
-            <div className="section-title">
+        <div className="container py-2">
+            <div className="section-title pb-2 pb-md-1">
                 <h2 className="fw-bold">Projects</h2>
             </div>
             {/* Header */}
@@ -131,7 +131,7 @@ export const ProjectListPage: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="row mb-4">
+            <div className="row mb-1 mb-lg-0">
                 <div className="col-12">
                     <ProjectFilters
                         filters={filters}

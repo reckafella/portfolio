@@ -380,7 +380,7 @@ export const ImagePreview: React.FC<{
                     }}
                     onClick={onRemove}
                 >
-                    <i className="bi bi-x-lg" style={{ fontSize: "10px" }}></i>
+                    <i className="bi bi-x" style={{ fontSize: "10px" }}></i>
                 </button>
 
                 <img

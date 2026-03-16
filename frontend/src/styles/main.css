@@ -51,8 +51,8 @@
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --accent-color: rgb(255, 106, 0); /* #3a0369 */
-  --header-background-color: rgb(255, 255, 240); /* #fffff0 marble */
+  --accent-color: #001aff; /* #3a0369 */
+  --header-background-color: rgb(216, 216, 215); /* #fffff0 marble */
   --blog-background-color: rgb(244, 241, 248); /* #f4f1f8 lavender */
   --projects-background-color: rgb(251, 245, 223); /* #fbf5df parachment */
   --skills-background-color: rgb(209, 209, 202); /* #d1d1ca pearl */
@@ -115,11 +115,10 @@ body, button, input, select, textarea, .card, .navbar, .footer {
 # General Styling & Shared Classes
 --------------------------------------------------------------*/
 body {
-  color: var(--default-color);
-  background-color: var(--background-color);
   font-family: var(--default-font);
   overflow-x: hidden;
   box-sizing: border-box;
+  max-width: 100vw;
 }
 
 a {
@@ -152,7 +151,7 @@ h6 {
   padding: 15px 0;
   transition: all 0.2s;
   z-index: 997;
-  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0 10px rgba(0, 0, 0, 0.39);
 
 }
 
@@ -200,9 +199,9 @@ h6 {
   color: var(--default-color);
   padding: 0;
   cursor: pointer;
-  font-size: 20px;
-  margin-right: 15px;
-  margin-left: 15px;
+  font-size: 16px;
+  margin-right: 10px;
+  margin-left: 10px;
   transition: 0.3s;
   line-height: 0;
   align-items: center;
@@ -211,6 +210,7 @@ h6 {
 .header .search-nav-wrapper .search-icon i:hover,
 .header .search-nav-wrapper .theme-switcher i:hover {
   color: var(--accent-color);
+  font-size: 17px;
   transform: rotate(-10deg);
 }
 
@@ -245,6 +245,7 @@ h6 {
     -ms-transform: translate(0px, 0px) scale(1, 1);
     transform: translate(0px, 0px) scale(1, 1);
     opacity: 1;
+    border-color: #fb1010;
     width: 100%;
   }
 
@@ -323,7 +324,7 @@ h6 {
   .navmenu li:hover>a:before,
   .navmenu .active:before {
     visibility: visible;
-    width: 100%;
+    width: 90%;
   }
 
   .navmenu li:hover>a,
@@ -417,7 +418,7 @@ h6 {
     z-index: 998;
     background-color: var(--nav-mobile-background-color);
     box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
-    transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-color) var(--nav-mobile-background-color);
@@ -524,12 +525,13 @@ h6 {
     border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
     box-shadow: none;
     border-radius: 0;
+    transition: top 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     overflow: visible;
   }
 
   .navmenu .dropdown ul ul {
     background-color: var(--background-color);
-    transition: all 0.3s ease-in-out;
+    transition: top 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .navmenu .dropdown>.dropdown-active {
@@ -550,7 +552,7 @@ h6 {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, .99);
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease-in-out;
@@ -563,12 +565,12 @@ h6 {
   }
 
   .mobile-nav-active .mobile-nav-toggle {
-    color: var(--special-background-color);
-    font-size: 32px;
+    color: var(--accent-color);
+    font-size: 25px;
     padding: 0;
     margin-right: 0;
-    z-index: 100;
-    position: fixed;
+    z-index: 100;/* 
+    position: fixed; */
     display: block;
     right: 20px;
     top: 8px;
@@ -581,18 +583,19 @@ h6 {
   }
 
   .mobile-nav-active .nav-overlay {
-    opacity: 0.25;
+    opacity: 0.75;
     visibility: visible;
   }
 
   /* Close button styling */
-  .mobile-nav-toggle.bi-x-lg {
+  .mobile-nav-toggle.bi-x {
     border-radius: 50%;
     padding: 0;
   }
 
-  .mobile-nav-active .theme-switcher {
-    opacity: .15;
+  .mobile-nav-active .theme-switcher,
+  .mobile-nav-active .search-icon {
+    opacity: .45;
     visibility: visible;
     transition: all 0.35s ease-in-out;
   }

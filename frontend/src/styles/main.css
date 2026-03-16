@@ -1764,8 +1764,8 @@ button[type=button]
 .card .card-body form button[type=submit] {
   /* --btn-color: #d0d5d9;
   --btn-bg: #120303; */
-  color: var(--surface-color);
-  background-color: var(--default-color);
+  color: var(--default-color);
+  background-color: var(--surface-color);
   border: 2px solid var(--default-color);
   padding: 8px 10px;
   transition: 0.4s;
@@ -1776,8 +1776,9 @@ button[type=button]
 }
 
 .card .card-body form button[type=submit]:hover {
-  background-color: var(--surface-color);
+  background-color: var(--accent-color);
   color: var(--default-color);
+  text-decoration: none;
 }
 
 

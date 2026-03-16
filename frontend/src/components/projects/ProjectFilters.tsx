@@ -192,7 +192,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                             onSubmit={handleSubmit}
                             className="card g-1 form-control"
                         >
-                            <div className="card-body row form-group">
+                            <div className="card-body row form-group d-lg-flex align-items-center justify-content-between">
                                 <div className="col-md-5">
                                     <label
                                         htmlFor="search"
@@ -249,16 +249,16 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-4 text-end d-flex gap-3 justify-content-end">
+                                <div className="col-md-4 text-end d-flex gap-3 justify-content-end mt-3 mt-md-0 align-items-center">
                                     <button
-                                        className="btn btn-outline-secondary"
+                                        className="btn btn-outline-info h-50 d-flex"
                                         onClick={() =>
                                             setShowFilters(!showFilters)
                                         }
                                         type="button"
                                     >
                                         <i
-                                            className={`bi bi-filter me-1 me-md-2 ${showFilters ? "text-primary" : ""}`}
+                                            className={`bi bi-filter me-1 ${showFilters ? "text-info" : ""}`}
                                         ></i>
                                         Filters
                                         {hasActiveFilters && (
@@ -277,7 +277,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
                                     </button>
                                     <button
                                         type="submit"
-                                        className="btn btn-outline-primary"
+                                        className="btn btn-outline-info h-50 d-flex"
                                     >
                                         <i className="bi bi-search me-1"></i>
                                         Apply

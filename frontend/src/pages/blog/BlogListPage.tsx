@@ -364,6 +364,10 @@ export function BlogListPage() {
                                                                     objectFit:
                                                                         "cover",
                                                                 }}
+                                                                onError={(e) => {
+                                                                    const target = e.target as HTMLImageElement;
+                                                                    target.src = "/static/assets/images/600db1a4-3842-4ce4-bad0-b09953346794.jpeg";
+                                                                }}
                                                             />
                                                         ) : (
                                                             <div

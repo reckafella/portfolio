@@ -10,6 +10,11 @@ const HeroSection: React.FC = () => {
                     alt="Hero Background"
                     className="img-fluid"
                     loading="lazy"
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src =
+                            "/static/assets/images/icons/Fabric.jpg";
+                    }}
                 />
             </div>
             <div className="overlay"></div>

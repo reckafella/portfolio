@@ -13,7 +13,7 @@ const HeroSection: React.FC = () => {
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src =
-                            "/static/assets/images/icons/Fabric.jpg";
+                            "/static/assets/images/icons/open-laptop.jpg";
                     }}
                 />
             </div>

@@ -6,6 +6,7 @@ interface PasswordRequirementsProps {
     showMatchRequirement?: boolean;
     showDifferentRequirement?: boolean;
     isExpanded?: boolean;
+    onToggle: () => void;
     uniqueId: string;
 }
 
@@ -18,6 +19,7 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
     showMatchRequirement = false,
     showDifferentRequirement = false,
     isExpanded = false,
+    onToggle,
     uniqueId,
 }) => {
     const requirements = [
@@ -72,8 +74,7 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
                     <button
                         className={`accordion-button ${isExpanded ? "" : "collapsed"}`}
                         type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#${uniqueId}`}
+                        onClick={onToggle}
                         aria-expanded={isExpanded}
                         aria-controls={uniqueId}
                     >

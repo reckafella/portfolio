@@ -65,7 +65,6 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
         }
 
         setAnalysis(newAnalysis);
-        setIsRequirementsExpanded(true)
     }, [value, confirmPasswordValue, oldPasswordValue]);
 
     const togglePasswordVisibility = () => {
@@ -88,7 +87,13 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
                     id={fieldName}
                     name={fieldName}
                     value={value}
-                    onChange={(e) => onChange(fieldName, e.target.value)}
+                    onChange={(e) => {
+                        const nextValue = e.target.value;
+                        if (!value && nextValue) {
+                            setIsRequirementsExpanded(true);
+                        }
+                        onChange(fieldName, nextValue);
+                    }}
                     required={required}
                     disabled={disabled}
                     placeholder={placeholder}
@@ -123,6 +128,9 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
                             showMatchRequirement={showMatchRequirement}
                             showDifferentRequirement={showDifferentRequirement}
                             isExpanded={isRequirementsExpanded}
+                            onToggle={() =>
+                                setIsRequirementsExpanded((expanded) => !expanded)
+                            }
                             uniqueId={uniqueId}
                         />
                     )}

@@ -61,9 +61,9 @@ urlpatterns = [
     # Regular app URLs - ordered from most specific to least specific
     path('captcha/refresh/', CaptchaRefreshView.as_view(), name='captcha-refresh'),
     path("captcha/", include("captcha.urls")),
-    path("app/blog/", include("blog.urls"), name="blog"),
     path("auth/", include("authentication.urls"), name="auth"),
-    path("app/", include("app.urls"), name="app"),
+    path("", include("app.urls"), name="app"),
+    path("blog/", include("blog.urls"), name="blog"),
 
     # React frontend (catch-all for React Router) - must be last
     re_path(r"^.*$", FrontendAPIView.as_view(), name="react_frontend")

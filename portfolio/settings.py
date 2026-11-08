@@ -70,6 +70,9 @@ else:
     except ImportError:
         pass  # daphne not available, skip it
 
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO','https')
+
 INSTALLED_APPS += [
     "django.contrib.admin", "django.contrib.auth", "rest_framework",
     "rest_framework.authtoken", "django.contrib.contenttypes", 'django.contrib.sites',

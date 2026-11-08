@@ -864,7 +864,7 @@ export function BlogEditorPage() {
                                                                     formData.content.split(
                                                                         " ",
                                                                     ).length /
-                                                                        200,
+                                                                        150,
                                                                 )}
                                                             </div>
                                                             <small className="text-muted">

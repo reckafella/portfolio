@@ -367,10 +367,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             {/* Character Count */}
             <div className="editor-footer mt-2 d-flex justify-content-between align-items-center text-muted small">
                 <span>
-                    {editor.storage.characterCount?.characters() || 0}{" "}
+                    {editor.storage.characterCount?.characters() || content.length || 0}{" "}
                     characters
                 </span>
-                <span>{editor.storage.characterCount?.words() || 0} words</span>
+                <span>~{editor.storage.characterCount?.words() || content.split(" ").length || 0} word(s)</span>
             </div>
         </div>
     );

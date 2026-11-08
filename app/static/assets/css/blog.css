@@ -4,16 +4,14 @@
 .blog {
   padding: 5px;
   background-color: var(--blog-background-color);
-  box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
 }
 
 .blog .entry {
   padding: 10px;
   margin-bottom: 30px;
-  box-shadow: 1px 1px color-mix(in srgb, var(--default-color), transparent 10%);
+  /* box-shadow: 1px 1px color-mix(in srgb, var(--default-color), transparent 10%); */
   border-radius: 5px;
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
-  background-color: var(--special-background-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
 }
 
 
@@ -67,6 +65,7 @@
 }
 
 .blog .entry .entry-meta a,
+.blog .entry .entry-meta span,
 .blog .entry .entry-meta #view-count {
   color: var(--default-color);
   font-size: 14px;
@@ -118,6 +117,23 @@
   margin-bottom: 20px;
 }
 
+.blog .entry .entry-content pre {
+  background-color: color-mix(in srgb, var(--default-color), transparent 10%);
+  padding: 1rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  width: max-content;
+}
+
+.blog .entry .entry-content pre code {
+  font-size: 0.875em;
+  color: var(--card-background-color);
+}
+.blog .entry .entry-content mark {
+  background-color: color-mix(in srgb, var(--accent-color), var(--background-color) 20%);
+}
+
 .blog .entry .entry-footer {
   padding-top: 10px;
   border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 10%);
@@ -125,19 +141,19 @@
 
 .blog .entry .entry-footer i {
   color: var(--default-color);
-  font-size: 14px;
+  font-size: 12px;
   margin-right: 5px;
   display: inline;
 }
 
 .blog .entry .entry-footer a {
-  font-size: 14px;
+  font-size: 12px;
   transition: 0.3s;
 }
 
 .blog .entry .entry-footer .read-article{
-  font-size: 14px;
-  border-radius: 4px;
+  font-size: 12px;
+  border-radius: 14px;
   transition: 0.3s;
 }
 
@@ -390,11 +406,11 @@
 
 .widget-item {
   margin-bottom: 30px;
-  background-color: color-mix(in srgb, var(--background-color), transparent 8%);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 8%);
+  background-color: color-mix(in srgb, var(--background-color), transparent 80%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
   color: var(--default-color);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--default-color), transparent 8%);
-  padding: 30px;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--default-color), transparent 80%);
+  padding: 15px;
   border-radius: 5px;
 }
 
@@ -781,5 +797,143 @@
     
     .blog-image-right {
         margin-left: 0.5rem;
+    }
+}
+
+
+/* Enhanced styling for StreamField blog content */
+.blog-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    /* Ensure content doesn't overflow container */
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Global image container rules */
+.blog-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+/* Handle any media elements with hardcoded dimensions */
+.blog-content img[width],
+.blog-content img[height] {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+.blog-content figure {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content .rich-text-block {
+    margin: 1.5rem 0;
+    max-width: 100%;
+}
+
+.blog-content .rich-text-block p {
+    margin-bottom: 1.2rem;
+    max-width: 100%;
+}
+
+/* Handle images in rich text content */
+.blog-content .rich-text-block img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+    margin: 1rem auto;
+}
+
+.blog-content .rich-text-block h2,
+.blog-content .rich-text-block h3,
+.blog-content .rich-text-block h4,
+.blog-content .rich-text-block h5 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.blog-content .rich-text-block ul,
+.blog-content .rich-text-block ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.blog-content .rich-text-block li {
+    margin-bottom: 0.5rem;
+}
+
+/* Image block specific styling is in the image_block.html template */
+
+.blog-content .heading-block {
+    clear: both;
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+.blog-content .quote-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .code-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .callout-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+.blog-content .embed-block {
+    clear: both;
+    margin: 2rem 0;
+}
+
+/* Ensure proper spacing after floating images */
+.blog-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Container overflow protection */
+.blog-content {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* Prevent horizontal scrolling on the main container */
+.container, .card {
+    overflow-x: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-content {
+        font-size: 1rem;
+        padding: 0 0.5rem; /* Add some padding on mobile */
+    }
+    
+    .blog-content .rich-text-block h2,
+    .blog-content .rich-text-block h3,
+    .blog-content .rich-text-block h4,
+    .blog-content .rich-text-block h5 {
+        margin-top: 2rem;
+    }
+    
+    /* Ensure all floating elements are contained on mobile */
+    .blog-content .rich-text-block img {
+        float: none !important;
+        margin: 1rem auto;
+        display: block;
+        text-align: center;
     }
 }

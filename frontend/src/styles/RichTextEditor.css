@@ -26,9 +26,10 @@
 }
 
 .editor-content {
-  background-color: var(--background-color);
+  background-color: var(--special-background-color);
   min-height: 300px;
   padding: 1rem;
+  border: 2px solid green;
 }
 
 /* Prose styling for the editor content */

@@ -299,7 +299,7 @@ export function BlogAddPage() {
                                             <RichTextEditor
                                                 content={formData.content}
                                                 onChange={handleContentChange}
-                                                placeholder="Start writing your blog post content..."
+                                                placeholder="Start typing your blog post content..."
                                                 error={!!errors.content}
                                             />
                                             {errors.content && (

@@ -57,12 +57,12 @@
                                         title="View all posts from this day">
                                         {{ article.first_published_at|date:"d" }}
                                     </a>
-                                    <span class="separator">-</span>
+                                    <span class="separator">/</span>
                                     <a href="{% url 'blog:articles_by_date' year|add:'-'|add:month %}"
                                         title="View all posts from this month">
                                         {{ article.first_published_at|date:"m" }}
                                     </a>
-                                    <span class="separator">-</span>
+                                    <span class="separator">/</span>
                                     <a href="{% url 'blog:articles_by_date' year %}"
                                         title="View all posts from this year">
                                         {{ article.first_published_at|date:"Y" }}

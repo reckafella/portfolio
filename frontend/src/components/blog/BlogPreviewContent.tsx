@@ -42,6 +42,24 @@ export const BlogPreviewContent: React.FC<BlogPreviewContentProps> = ({
             <div className="container my-2">
                 <div className="row justify-content-center">
                     <div className="entry entry-single col-lg-9">
+                        {/* Preview Notice */}
+                        <div
+                            className="alert alert-success d-flex align-items-center mb-3"
+                            role="alert"
+                        >
+                            <i className="bi bi-info-circle me-2"></i>
+                            <div>
+                                <strong>Preview Mode:</strong> This is how the
+                                blog post will appear to readers.
+                                {!published && (
+                                    <span className="ms-2 badge bg-danger">
+                                        <i className="bi bi-eye-slash me-1"></i>
+                                        Draft
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
                         {/* Featured Image */}
                         {coverImage && (
                             <div className="mb-4">
@@ -57,24 +75,6 @@ export const BlogPreviewContent: React.FC<BlogPreviewContentProps> = ({
                                 />
                             </div>
                         )}
-
-                        {/* Preview Notice */}
-                        <div
-                            className="alert alert-info d-flex align-items-center mb-3"
-                            role="alert"
-                        >
-                            <i className="bi bi-info-circle me-2"></i>
-                            <div>
-                                <strong>Preview Mode:</strong> This is how your
-                                blog post will appear to readers.
-                                {!published && (
-                                    <span className="ms-2 badge bg-warning">
-                                        <i className="bi bi-eye-slash me-1"></i>
-                                        Draft
-                                    </span>
-                                )}
-                            </div>
-                        </div>
 
                         {/* Post Header */}
                         <h2 className="entry-title">

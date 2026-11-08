@@ -65,6 +65,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
         }
 
         setAnalysis(newAnalysis);
+        setIsRequirementsExpanded(true)
     }, [value, confirmPasswordValue, oldPasswordValue]);
 
     const togglePasswordVisibility = () => {

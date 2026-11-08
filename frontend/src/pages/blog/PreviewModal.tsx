@@ -136,8 +136,8 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
         return {
             width: `${deviceConfig.width}px`,
             height: `${deviceConfig.height}px`,
-            maxWidth: "90vw",
-            maxHeight: "90vh",
+            maxWidth: "80vw",
+            maxHeight: "80vh",
         };
     };
 
@@ -168,18 +168,6 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="modal-header">
-                        <div className="d-flex align-items-center">
-                            <h5 className="modal-title me-3" id="devicePreviewModalLabel">
-                                <i className="bi bi-eye me-2"></i>
-                                Preview: {title || "Untitled"}
-                            </h5>
-                            {!published && (
-                                <span className="badge bg-warning">
-                                    <i className="bi bi-eye-slash me-1"></i>
-                                    Draft
-                                </span>
-                            )}
-                        </div>
                         <div className="d-flex align-items-center gap-2">
                             {/* Device Selection */}
                             <div className="btn-group" role="group" aria-label="Device selection">
@@ -243,6 +231,18 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                                 aria-label="Close"
                             ></button>
                         </div>
+                        <div className="d-flex align-items-center">
+                            <h5 className="modal-title me-3" id="devicePreviewModalLabel">
+                                <i className="bi bi-eye me-2"></i>
+                                Preview: {title || "Untitled"}
+                            </h5>
+                            {/* {!published && (
+                                <span className="badge bg-danger">
+                                    <i className="bi bi-eye-slash me-1"></i>
+                                    Draft
+                                </span>
+                            )} */}
+                        </div>
                     </div>
 
                     <div className="modal-body p-0">
@@ -269,7 +269,7 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                                 {deviceConfig.name} ({deviceConfig.width}×
                                 {deviceConfig.height})
                             </div>
-                            <div className="d-flex gap-2">
+                            <div className="d-flex gap-1">
                                 <button
                                     type="button"
                                     className="btn btn-outline-secondary btn-sm"
@@ -280,7 +280,7 @@ export const DevicePreviewModal: React.FC<DevicePreviewModalProps> = ({
                                     disabled
                                     title="Live preview will be available after publishing"
                                 >
-                                    <i className="bi bi-box-arrow-up-right me-1"></i>
+                                    <i className="bi bi-box-arrow-up-right me-2"></i>
                                     View Live
                                 </button>
                                 <button

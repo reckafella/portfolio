@@ -12,8 +12,10 @@ from captcha.helpers import captcha_image_url
 import logging
 
 from blog.models import BlogPostPage, BlogPostComment
-from blog.api.serializers.serializers import (
-    BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer,
+from blog.api.serializers.blog_post_serializers import (
+    BlogPostPageSerializer, BlogPostCreateSerializer, BlogPostDeleteSerializer
+)
+from blog.api.serializers.blog_comment_serializers import (
     BlogPostCommentSerializer, BlogCommentCreateSerializer
 )
 from rest_framework.permissions import IsAuthenticated
@@ -488,7 +490,7 @@ def refresh_captcha(request):
             pass  # Already deleted or expired
 
     # Clean up expired captchas
-    CaptchaStore.remove_expired()
+    CaptchaStore.remove_expired(cls=CaptchaStore())
 
     captcha_key = CaptchaStore.generate_key()
     captcha_obj = CaptchaStore.objects.get(hashkey=captcha_key)

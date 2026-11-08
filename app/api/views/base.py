@@ -35,6 +35,9 @@ class FrontendAPIView(View):
         """Serve static files from the React build directory."""
         file_path = os.path.join(settings.BASE_DIR, 'frontend/build', path)
 
+        if path == 'favicon.ico' or path == 'favicon.svg':
+            file_path = os.path.join(settings.BASE_DIR, 'frontend/build/static/assets/images/icons/old-logo.png')
+
         if not os.path.exists(file_path):
             raise Http404(f"Static file not found: {path}")
 
@@ -184,7 +187,7 @@ class FrontendAPIView(View):
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{title}">
-    <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
+    <meta property="og:site_name" content="Ethan Wanyoike | Portfolio">
     <meta property="article:author" content="{author}">
 
     <!-- Twitter -->
@@ -254,19 +257,19 @@ class FrontendAPIView(View):
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{page_url}">
-    <meta property="og:title" content="{title} - Ethan Wanyoike">
+    <meta property="og:title" content="Ethan Wanyoike | {title}">
     <meta property="og:description" content="{description}">
     <meta property="og:image" content="{cover_image}">
     <meta property="og:image:secure_url" content="{cover_image}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{title}">
-    <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
+    <meta property="og:site_name" content="Ethan Wanyoike | Portfolio">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{page_url}">
-    <meta name="twitter:title" content="{title} - Ethan Wanyoike">
+    <meta name="twitter:title" content="Ethan Wanyoike | {title}">
     <meta name="twitter:description" content="{description}">
     <meta name="twitter:image" content="{cover_image}">
     <meta name="twitter:image:alt" content="{title}">
@@ -294,16 +297,16 @@ class FrontendAPIView(View):
             # Map common routes to titles and descriptions
             route_meta = {
                 '/': {
-                    'title': 'Modern Developer Portfolio',
-                    'description': 'Personal portfolio showcasing modern web development projects and skills in React, Django, and more.',
+                    'title': 'Software Engineer | Portfolio',
+                    'description': 'Personal portfolio showcasing modern software development projects and skills in C, Bash, React, Django, and more.',
                 },
                 '/about': {
                     'title': 'About Me',
-                    'description': 'Learn more about my journey, skills, and experience as a full-stack developer.',
+                    'description': 'Learn more about my journey, skills, and experience as a full-stack Software Engineer.',
                 },
                 '/blog': {
                     'title': 'Blog & Articles',
-                    'description': 'Read my latest articles and insights about web development, technology, and software engineering.',
+                    'description': 'Read my latest articles and insights about web development, technology, software engineering, and other interesting topics.',
                 },
                 '/projects': {
                     'title': 'Projects Portfolio',
@@ -315,14 +318,14 @@ class FrontendAPIView(View):
                 },
                 '/services': {
                     'title': 'Services',
-                    'description': 'Professional web development and software engineering services I offer.',
+                    'description': 'Professional software engineering services that I offer.',
                 },
             }
 
             # Get meta info for the current path or use defaults
             meta_info = route_meta.get(path, {
                 'title': 'Portfolio',
-                'description': 'Personal portfolio showcasing modern web development projects and skills.',
+                'description': 'Personal portfolio showcasing modern software development projects and skills.',
             })
 
             title = escape(meta_info['title'])
@@ -345,8 +348,8 @@ class FrontendAPIView(View):
                 <meta property="og:image:secure_url" content="{og_image}">
                 <meta property="og:image:width" content="1200">
                 <meta property="og:image:height" content="630">
-                <meta property="og:image:alt" content="Ethan Wanyoike Portfolio">
-                <meta property="og:site_name" content="Ethan Wanyoike Portfolio">
+                <meta property="og:image:alt" content="Ethan Wanyoike | Portfolio">
+                <meta property="og:site_name" content="Ethan Wanyoike | Portfolio">
 
                 <!-- Twitter -->
                 <meta name="twitter:card" content="summary_large_image">
@@ -354,7 +357,7 @@ class FrontendAPIView(View):
                 <meta name="twitter:title" content="Ethan Wanyoike | {title}">
                 <meta name="twitter:description" content="{description}">
                 <meta name="twitter:image" content="{og_image}">
-                <meta name="twitter:image:alt" content="Ethan Wanyoike Portfolio">
+                <meta name="twitter:image:alt" content="Ethan Wanyoike | Portfolio">
                 <meta name="twitter:site" content="@frmundu">
                 <meta name="twitter:creator" content="@frmundu">
 

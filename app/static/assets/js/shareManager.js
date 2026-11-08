@@ -18,10 +18,10 @@ export default class ShareManager {
         }
 
         // Set up share links
-        const fbLink = this.modal.querySelector('.share-facebook');
-        if (fbLink) {
+        const facebookLink = this.modal.querySelector('.share-facebook');
+        if (facebookLink) {
             // Facebook allows sharing image through Open Graph meta tags
-            fbLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
         }
 
         const twitterXLink = this.modal.querySelector('.share-twitter-x');
@@ -34,7 +34,12 @@ export default class ShareManager {
         if (whatsappLink) {
             whatsappLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
         }
-        
+
+        const linkedInLink = this.modal.querySelector('.share-linkedin');
+        if (linkedInLink) {
+            linkedInLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        }
+
         // Show image preview if available
         const imagePreview = this.modal.querySelector('.share-image-preview');
         if (imagePreview) {
@@ -50,7 +55,7 @@ export default class ShareManager {
         // Update modal title
         const modalTitle = this.modal.querySelector('.modal-title');
         if (modalTitle) {
-            modalTitle.innerHTML = `<span class="fw-bold">Share</span> ${title}`;
+            modalTitle.innerHTML = `Share: ${title}`;
         }
     }
 
@@ -82,7 +87,7 @@ export default class ShareManager {
 
         const states = {
             success: {
-                html: '<i class="bi bi-check"></i> <span>Link Copied!</span>'
+                html: '<i class="bi bi-check-circle"></i> <span>Link Copied!</span>',
             },
             error: {
                 html: '<i class="bi bi-exclamation-circle text-danger"></i> <span>Error!</span>'

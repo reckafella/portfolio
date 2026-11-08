@@ -4,6 +4,7 @@ import {
     createContext,
     useContext,
     ReactNode,
+    useCallback,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import AuthService, {
@@ -163,18 +164,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         }
     };
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         setIsLoading(true);
         try {
             await AuthService.logout();
             setUser(null);
-            // Trigger a page reload to update Django template context
-            window.location.reload();
-        } catch (error) {
+            queryClient.clear();
+        } finally {
             setIsLoading(false);
-            throw error;
         }
-    };
+    }, [queryClient]);
 
     const value: AuthContextType = {
         user,

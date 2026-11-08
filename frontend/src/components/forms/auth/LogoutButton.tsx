@@ -17,13 +17,11 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
         setIsLoading(true);
         try {
             await logout();
-            // Force a full page reload to ensure all authentication state is cleared
-            window.location.href = "/";
+            window.location.replace("/");
         } catch {
-            // Clear local storage and reload on error as well
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user");
-            window.location.href = "/";
+            window.location.replace("/");
         } finally {
             setIsLoading(false);
         }

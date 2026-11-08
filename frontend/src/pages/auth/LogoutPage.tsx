@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -6,19 +6,20 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 const LogoutPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
-    const { logout, isAuthenticated } = useAuth();
+    const { logout, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+    const logoutStarted = useRef(false);
 
     usePageTitle("Logout");
 
     useEffect(() => {
+        if (isAuthLoading || logoutStarted.current) return;
+        logoutStarted.current = true;
+
         const handleLogout = async () => {
             if (isAuthenticated) {
                 try {
                     await logout();
-                    setTimeout(() => {
-                        // Force a full page reload to ensure all authentication state is cleared
-                        window.location.href = "/";
-                    }, 2000);
+                    window.location.replace("/");
                 } catch (err: unknown) {
                     const errorMessage =
                         err instanceof Error ? err.message : "Logout failed";
@@ -26,18 +27,15 @@ const LogoutPage: React.FC = () => {
                     setIsLoading(false);
                 }
             } else {
-                // User is already logged out
-                setTimeout(() => {
-                    window.location.href = "/";
-                }, 1000);
+                window.location.replace("/");
             }
         };
 
         handleLogout();
-    }, [logout, isAuthenticated]);
+    }, [logout, isAuthenticated, isAuthLoading]);
 
     const handleManualRedirect = () => {
-        window.location.href = "/";
+        window.location.replace("/");
     };
 
     if (error) {

@@ -45,7 +45,7 @@ export const MessageToolbar: React.FC<MessageToolbarProps> = ({
             <div className="card">
                 <div className="card-body">
                     <div className="row align-items-center">
-                        <div className="col-md-6">
+                        <div className="col-md-5">
                             {/* Search */}
                             <div className="search-container">
                                 <form

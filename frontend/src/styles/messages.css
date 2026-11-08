@@ -1,372 +1,18 @@
-/**
- * Message Inbox Styles
- * Gmail-like interface styling
- */
+/* Gmail-like inbox styling shared with the Django inbox template */
 
-/* Inbox Layout */
 #inbox-layout {
-  min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 200px);
 }
 
-.inbox-sidebar {
-  background: var(--card-background-color);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.inbox-sidebar.sidebar-minimized {
-  max-width: 60px;
-}
-
-.inbox-sidebar .card {
-  border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.inbox-main {
-  padding-left: 1rem;
-}
-
-/* Sidebar Styles */
-.folder-item {
-  margin-bottom: 0.25rem;
-}
-
-.folder-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  text-decoration: none;
-  color: var(--default-color);
-  border: none;
-  background: transparent;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.folder-link:hover {
-  background: var(--special-background-color);
-  color: var(--accent-color);
-}
-
-.folder-link.active {
-  background: var(--special-background-color);
-  color: var(--accent-color);
-}
-
-.folder-link-content {
-  display: flex;
-  align-items: center;
-}
-
-.folder-link i {
-  width: 20px;
-  text-align: center;
-}
-
-/* Minimized Sidebar */
-.sidebar-minimized .folder-link {
-  padding: 0.75rem 0.5rem;
-  justify-content: center;
-}
-
-.sidebar-minimized .folder-link-content span,
-.sidebar-minimized .badge {
-  display: none;
-}
-
-/* Toolbar Styles */
-.inbox-toolbar {
-  margin-bottom: 1rem;
-}
-
-.inbox-toolbar .card {
-  border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.search-container .input-group {
-  max-width: 400px;
-}
-
-.bulk-actions .btn-group .btn {
-  font-size: 0.875rem;
-}
-
-/* Message List Styles */
-.inbox-content {
-  background: var(--background-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.message-list {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.message-item {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--default-color);
-  background: color-mix(in srgb, var(--background-color) 50%, transparent);
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.message-item:hover {
-  background: color-mix(in srgb, var(--special-background-color) 50%, transparent);
-  border-left: 2px solid var(--accent-color);
-}
-
-.message-item.selected {
-  background: var(--background-color);
-  border-left: 2px solid var(--accent-color);
-  border-bottom: 1.5px solid var(--accent-color);
-  border-top: 1.5px solid var(--accent-color);
-}
-
-.message-item.unread {
-  font-weight: 500;
-}
-
-.message-item.read {
-  background: color-mix(in srgb, var(--surface-color) 80%, transparent);
-  opacity: 0.8;
-}
-
-.message-checkbox {
-  margin-right: 1rem;
-  flex-shrink: 0;
-}
-
-.message-checkbox input[type="checkbox"] {
-  transform: scale(1.2);
-}
-
-.message-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.message-sender strong {
-  color: var(--accent-color);
-}
-
-.message-email {
-  font-size: 0.875rem;
-  margin-left: 0.5rem;
-}
-
-.message-date {
-  font-size: 0.875rem;
-  color: var(--default-color);
-  flex-shrink: 0;
-}
-
-.message-subject {
-  margin-bottom: 0.5rem;
-}
-
-.message-subject strong {
-  color: var(--default-color);
-  font-size: 1rem;
-}
-
-.message-preview {
-  color: var(--default-color);
-  font-size: 0.875rem;
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.message-actions {
-  margin-left: 1rem;
-  flex-shrink: 0;
-}
-
-.message-actions .btn-group .btn {
-  padding: 0.375rem 0.5rem;
-  background: var(--accent-color);
-  color: var(--default-color);
-  font-size: 0.875rem;
-  border: none;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
-}
-
-.message-actions .btn-group .btn:hover {
-  background: var(--special-background-color);
-  color: var(--accent-color);
-}
-
-/* Modal Styles */
-.message-detail {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.message-meta {
-  background: var(--about-background-color);
-  padding: 1rem;
-  border-radius: 6px;
-  border-left: 3px solid var(--accent-color);
-}
-
-.message-subject h4 {
-  color: var(--default-color);
-  margin: 0;
-  font-weight: 600;
-}
-
-.message-body {
-  border: 1px solid var(--card-background-color);
-  font-family: inherit;
-  line-height: 1.6;
-}
-
-/* Stats */
-.inbox-stats .stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid var(--default-color);
-}
-
-.inbox-stats .stat-item:hover {
-  background: var(--special-background-color);
-  color: var(--accent-color);
-  border-bottom: 1px solid var(--accent-color);
-}
-
-
-.inbox-stats .stat-item:first-of-type {
-  border-top: 1px solid var(--default-color);
-}
-
-.inbox-stats .stat-item:last-of-type {
-  border-bottom: 1px solid var(--default-color);
-  border-top: none;
-}
-
-/* Responsive Design */
-@media (max-width: 991.98px) {
-  .inbox-main {
-    padding-left: 0;
-    margin-top: 1rem;
-  }
-  
-  .message-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .message-date {
-    margin-top: 0.25rem;
-  }
-  
-  .bulk-actions {
-    margin-top: 1rem;
-    justify-content: flex-start !important;
-  }
-  
-  .bulk-actions .btn-group {
-    flex-wrap: wrap;
-  }
-  
-  .bulk-actions .btn-group .btn {
-    margin-bottom: 0.25rem;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .message-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .message-checkbox {
-    margin-bottom: 0.5rem;
-  }
-  
-  .message-actions {
-    margin-left: 0;
-    margin-top: 0.5rem;
-    width: 100%;
-  }
-  
-  .message-actions .btn-group {
-    width: 100%;
-  }
-  
-  .message-actions .btn-group .btn {
-    flex: 1;
-  }
-}
-
-/* Loading States */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-}
-
-/* Empty States */
-.display-1 {
-  font-size: 4rem;
-  opacity: 0.3;
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.message-item {
-  animation: fadeIn 0.3s ease;
-}
-
-/* Focus States */
-.folder-link:focus,
-.message-checkbox:focus,
-.btn:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
-
-/* Gmail-like Inbox Styles */
-
-/* Inbox Layout */
 #inbox-sidebar {
     position: sticky;
     top: 20px;
     height: fit-content;
-    transition: all 0.3s ease;
     min-width: 220px;
     max-width: 320px;
+    transition: all 0.3s ease;
 }
 
-/* Desktop Minimized Sidebar */
 #inbox-sidebar.sidebar-minimized {
     width: 48px !important;
     min-width: 48px !important;
@@ -391,15 +37,14 @@
     padding: 0.75rem 0.5rem;
 }
 
-#inbox-sidebar.sidebar-minimized .folder-link .folder-link-content {
+#inbox-sidebar.sidebar-minimized .folder-link-content {
     justify-content: center;
 }
 
-#inbox-sidebar.sidebar-minimized .folder-link .folder-link-content .me-3 {
+#inbox-sidebar.sidebar-minimized .folder-link-content .me-3 {
     margin-right: 0 !important;
 }
 
-/* Mobile Collapsed Sidebar */
 #inbox-sidebar.mobile-collapsed {
     min-height: auto;
 }
@@ -408,53 +53,48 @@
     display: none !important;
 }
 
-/* Folder Link Layout */
-.folder-link {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    justify-content: space-between;
-    width: 100%;
-    color: var(--default-color);
-    border-radius: 0.375rem;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.folder-link-content {
-    display: flex;
-    align-items: center;
-    flex: 1;
-}
-
 .inbox-main {
     min-height: 70vh;
     transition: all 0.3s ease;
 }
 
-/* Layout Adjustments for Minimized Sidebar */
-.row.sidebar-minimized #inbox-main {
-    transition: all 0.3s ease;
-}
-
-/* Sidebar Styles */
-.inbox-folders .folder-item {
+.folder-item {
     margin-bottom: 0.25rem;
 }
 
-.inbox-folders .folder-link:hover,
-.inbox-folders .folder-link.active {
+.folder-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--default-color);
+    text-align: left;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.folder-link-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+.folder-link:hover,
+.folder-link.active {
     background-color: var(--accent-color);
     color: var(--default-color) !important;
     text-decoration: none;
 }
 
-.inbox-folders .folder-link.active {
+.folder-link.active {
     font-weight: 500;
 }
 
-.inbox-folders .folder-link .badge {
+.folder-link .badge {
     font-size: 0.75rem;
 }
 
@@ -466,10 +106,9 @@
 }
 
 .inbox-stats .stat-item:last-child {
-    border-bottom: none;
+    border-bottom: 0;
 }
 
-/* Toggle Button Styles */
 #sidebar-toggle-btn {
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
@@ -477,12 +116,11 @@
 }
 
 #sidebar-toggle-btn:hover {
-    background-color: var(--accent-color);
     border-color: var(--accent-color);
-    color: white;
+    background-color: var(--accent-color);
+    color: #fff;
 }
 
-/* Toolbar Styles */
 .inbox-toolbar {
     margin-bottom: 1rem;
 }
@@ -492,15 +130,14 @@
 }
 
 .bulk-actions .btn-group .btn {
-    border-radius: 0.375rem;
     margin-left: 0.25rem;
+    border-radius: 0.375rem;
 }
 
 .bulk-actions .btn-group .btn:first-child {
     margin-left: 0;
 }
 
-/* Message List Styles */
 .messages-container {
     max-height: 90vh;
     overflow-y: auto;
@@ -512,21 +149,22 @@
 }
 
 .message-row.message-unread {
-    background: linear-gradient(90deg, 
-        rgba(var(--accent-color-rgb), 0.1) 0%, 
-        rgba(var(--accent-color-rgb), 0.05) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(var(--accent-color-rgb), 0.1) 0%,
+        rgba(var(--accent-color-rgb), 0.05) 100%
+    );
 }
 
 .message-card {
     border: 1px solid var(--special-background-color);
     transition: all 0.3s ease;
-    cursor: pointer;
 }
 
 .message-card:hover {
+    transform: translateY(-1px);
     border-color: var(--accent-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
 }
 
 .message-row.selected .message-card {
@@ -534,43 +172,54 @@
     background-color: rgba(var(--accent-color-rgb), 0.1);
 }
 
-/* Message Content Styles */
 .message-sender .sender-name {
-    font-size: 0.95rem;
     color: var(--default-color);
+    font-size: 0.95rem;
 }
 
 .message-sender .sender-email {
-    font-size: 0.8rem;
     margin-top: 0.1rem;
+    font-size: 0.8rem;
 }
 
 .message-subject-preview .message-subject {
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
 }
 
 .message-subject-preview .message-preview {
+    overflow: hidden;
     font-size: 0.8rem;
     line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .unread-indicator {
+    display: inline-block;
+    flex: 0 0 8px;
     width: 8px;
     height: 8px;
-    background-color: var(--accent-color);
-    border-radius: 50%;
-    display: inline-block;
     margin-right: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--accent-color);
     animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .message-date {
@@ -583,7 +232,8 @@
     transition: opacity 0.3s ease;
 }
 
-.message-card:hover .message-actions {
+.message-card:hover .message-actions,
+.message-card:focus-within .message-actions {
     opacity: 1;
 }
 
@@ -601,36 +251,55 @@
     color: var(--accent-color);
 }
 
-/* Checkbox Styles */
 .message-checkbox {
     transform: scale(1.1);
 }
 
 .message-checkbox:checked {
-    background-color: var(--accent-color);
     border-color: var(--accent-color);
+    background-color: var(--accent-color);
 }
 
-/* Modal Styles */
-.modal-lg {
-    max-width: 800px;
+.message-detail {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.message-meta {
+    padding: 1rem;
+    border-left: 3px solid var(--accent-color);
+    border-radius: 6px;
+    background: var(--about-background-color);
+}
+
+.message-subject h4 {
+    margin: 0;
+    color: var(--default-color);
+    font-weight: 600;
+}
+
+.message-body {
+    border: 1px solid var(--card-background-color);
+    font-family: inherit;
+    line-height: 1.6;
 }
 
 .message-header {
-    border-bottom: 1px solid var(--special-background-color);
     padding-bottom: 1rem;
+    border-bottom: 1px solid var(--special-background-color);
 }
 
 .sender-info h6 {
     color: var(--default-color);
 }
 
-.sender-info a {
+.sender-info a,
+.empty-state a {
     color: var(--accent-color);
     text-decoration: none;
 }
 
-.sender-info a:hover {
+.sender-info a:hover,
+.empty-state a:hover {
     text-decoration: underline;
 }
 
@@ -645,24 +314,23 @@
 }
 
 .message-quick-actions {
-    border-top: 1px solid var(--special-background-color);
     padding-top: 1rem;
+    border-top: 1px solid var(--special-background-color);
 }
 
-/* Empty State */
 .empty-state {
     padding: 3rem 1rem;
 }
 
 .empty-state .empty-icon {
-    font-size: 4rem;
     color: var(--default-color);
+    font-size: 4rem;
     opacity: 0.3;
 }
 
 .empty-state h4 {
-    color: var(--default-color);
     margin-bottom: 1rem;
+    color: var(--default-color);
 }
 
 .empty-state p {
@@ -670,119 +338,107 @@
     margin: 0 auto;
 }
 
-.empty-state a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-.empty-state a:hover {
-    text-decoration: underline;
-}
-
-/* Loading Overlay */
 .loading-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
     backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.5);
+    inset: 0;
 }
 
-/* Pagination Styles */
 .pagination-container {
-    border-top: 1px solid var(--special-background-color);
     padding-top: 1rem;
+    border-top: 1px solid var(--special-background-color);
 }
 
 .pagination .page-link {
-    color: var(--default-color);
-    background-color: var(--background-color);
     border-color: var(--special-background-color);
+    background-color: var(--background-color);
+    color: var(--default-color);
 }
 
 .pagination .page-link:hover {
-    color: var(--accent-color);
-    background-color: var(--special-background-color);
     border-color: var(--accent-color);
+    background-color: var(--special-background-color);
+    color: var(--accent-color);
 }
 
 .pagination .page-item.active .page-link {
-    background-color: var(--accent-color);
     border-color: var(--default-color);
+    background-color: var(--accent-color);
     color: var(--default-color);
 }
 
-/* Responsive Design */
+.inbox-sidebar .btn:focus-visible,
+.inbox-toolbar .btn:focus-visible,
+.message-actions .btn:focus-visible,
+.message-checkbox:focus-visible,
+.folder-link:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
 @media (max-width: 991.98px) {
-    /* Medium screens and below */
     #inbox-sidebar {
         position: static;
-        margin-bottom: 1rem;
         min-width: auto;
         max-width: none;
+        margin-bottom: 1rem;
     }
-    
+
     .inbox-toolbar .col-md-5,
     .inbox-toolbar .col-md-6 {
         margin-bottom: 1rem;
     }
-    
+
     .bulk-actions {
-        justify-content: start !important;
+        justify-content: flex-start !important;
     }
 }
 
 @media (max-width: 767.98px) {
-    /* Small screens */
-    #inbox-sidebar-wrapper {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 0 0 100% !important;
-    }
-    
+    #inbox-sidebar-wrapper,
     #inbox-main {
         width: 100% !important;
         max-width: 100% !important;
         flex: 0 0 100% !important;
     }
-    
+
     .inbox-sidebar {
         margin-bottom: 1rem;
     }
-    
-    /* Mobile sidebar toggle behavior */
+
     #inbox-sidebar.mobile-collapsed {
         margin-bottom: 0.5rem;
     }
-    
+
     .message-actions {
         opacity: 1;
     }
-    
+
     .bulk-actions .btn-group {
         flex-wrap: wrap;
         gap: 0.25rem;
     }
-    
+
     .message-date {
-        text-align: left;
         margin-top: 0.5rem;
+        text-align: left;
     }
-    
+
     .search-container .input-group {
         max-width: 100%;
     }
-    
+
     .inbox-toolbar .row {
         flex-direction: column;
     }
-    
+
     .inbox-toolbar .col-md-5,
     .inbox-toolbar .col-md-6 {
         width: 100%;
@@ -792,415 +448,38 @@
 }
 
 @media (max-width: 575.98px) {
-    /* Extra small screens */
     .message-sender,
     .message-subject-preview {
         margin-bottom: 0.5rem;
     }
-    
+
     .message-actions .btn-group .btn {
         padding: 0.25rem 0.5rem;
         font-size: 0.8rem;
     }
-    
+
     .inbox-folders .folder-link {
         padding: 0.5rem 0.75rem;
         font-size: 0.9rem;
     }
-    
+
     .bulk-actions .btn {
-        font-size: 0.8rem;
         padding: 0.375rem 0.5rem;
+        font-size: 0.8rem;
     }
-    
+
     .search-container {
         margin-bottom: 1rem;
     }
 }
 
-/* Animation for message updates */
-.message-row.updating {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.message-row.updated {
-    animation: highlight 1s ease-in-out;
-}
-
-@keyframes highlight {
-    0% { background-color: rgba(var(--accent-color-rgb), 0.3); }
-    100% { background-color: transparent; }
-}
-
-/* Custom scrollbar for messages container */
-.messages-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-    background: var(--special-background-color);
-    border-radius: 4px;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-    background: var(--default-color);
-    border-radius: 4px;
-    opacity: 0.5;
-}
-
-.messages-container::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
-}
-
-/* Smooth transitions for layout changes */
-.row, .col-lg-1, .col-lg-3, .col-lg-9, .col-lg-11 {
-    transition: all 0.3s ease;
-}
-
-/* Enhanced visual feedback for minimized state */
-#inbox-sidebar.sidebar-minimized .card {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-#inbox-sidebar.sidebar-minimized .folder-link:hover {
-    transform: scale(1.05);
-}
-
-/* Mobile chevron adjustments */
-@media (max-width: 991.98px) {
-    .d-lg-none {
-        display: inline !important;
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-    
-    .d-none.d-lg-inline {
-        display: none !important;
-    }
-}
-
-@media (min-width: 992px) {
-    .d-lg-none {
-        display: none !important;
-    }
-    
-    .d-none.d-lg-inline {
-        display: inline !important;
-    }
-}
-
-/* Toolbar Styles */
-.inbox-toolbar {
-    margin-bottom: 1rem;
-}
-
-.search-container .input-group {
-    max-width: 400px;
-}
-
-.bulk-actions .btn-group .btn {
-    border-radius: 0.375rem;
-    margin-left: 0.25rem;
-}
-
-.bulk-actions .btn-group .btn:first-child {
-    margin-left: 0;
-}
-
-/* Message List Styles */
-.messages-container {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.message-row {
-    margin-bottom: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.message-row.message-unread {
-    background: linear-gradient(90deg, 
-        rgba(var(--accent-color-rgb), 0.1) 0%, 
-        rgba(var(--accent-color-rgb), 0.05) 100%);
-}
-
-.message-card {
-    border: 1px solid var(--special-background-color);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.message-card:hover {
-    border-color: var(--accent-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
-}
-
-.message-row.selected .message-card {
-    border-color: var(--accent-color);
-    background-color: rgba(var(--accent-color-rgb), 0.1);
-}
-
-/* Message Content Styles */
-.message-sender .sender-name {
-    font-size: 0.95rem;
-    color: var(--default-color);
-}
-
-.message-sender .sender-email {
-    font-size: 0.8rem;
-    margin-top: 0.1rem;
-}
-
-.message-subject-preview .message-subject {
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-}
-
-.message-subject-preview .message-preview {
-    font-size: 0.8rem;
-    line-height: 1.3;
-}
-
-.unread-indicator {
-    width: 8px;
-    height: 8px;
-    background-color: var(--accent-color);
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 0.5rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-.message-date {
-    font-size: 0.8rem;
-    text-align: right;
-}
-
-.message-actions {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.message-card:hover .message-actions {
-    opacity: 1;
-}
-
-.message-star {
-    color: var(--default-color);
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.message-star:hover {
-    color: var(--accent-color);
-}
-
-.message-star.starred {
-    color: var(--accent-color);
-}
-
-/* Checkbox Styles */
-.message-checkbox {
-    transform: scale(1.1);
-}
-
-.message-checkbox:checked {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-/* Modal Styles */
-.modal-lg {
-    max-width: 800px;
-}
-
-.message-header {
-    border-bottom: 1px solid var(--special-background-color);
-    padding-bottom: 1rem;
-}
-
-.sender-info h6 {
-    color: var(--default-color);
-}
-
-.sender-info a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-.sender-info a:hover {
-    text-decoration: underline;
-}
-
-.message-content .card {
-    border: 1px solid var(--card-background-color);
-}
-
-.message-content .card-body {
-    background-color: var(--background-color);
-    color: var(--default-color);
-    line-height: 1.6;
-}
-
-.message-quick-actions {
-    border-top: 1px solid var(--special-background-color);
-    padding-top: 1rem;
-}
-
-/* Empty State */
-.empty-state {
-    padding: 3rem 1rem;
-}
-
-.empty-state .empty-icon {
-    font-size: 4rem;
-    color: var(--default-color);
-    opacity: 0.3;
-}
-
-.empty-state h4 {
-    color: var(--default-color);
-    margin-bottom: 1rem;
-}
-
-.empty-state p {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.empty-state a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-.empty-state a:hover {
-    text-decoration: underline;
-}
-
-/* Loading Overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(3px);
-}
-
-/* Pagination Styles */
-.pagination-container {
-    border-top: 1px solid var(--special-background-color);
-    padding-top: 1rem;
-}
-.pagination .page-link {
-    color: var(--default-color);
-    background-color: var(--background-color);
-    border-color: var(--special-background-color);
-}
-
-.pagination .page-link:hover {
-    color: var(--accent-color);
-    background-color: var(--special-background-color);
-    border-color: var(--accent-color);
-}
-
-.pagination .page-item.active .page-link {
-    background-color: var(--accent-color);
-    border-color: var(--default-color);
-    color: var(--default-color);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .inbox-sidebar {
-        margin-bottom: 1rem;
-        position: static;
-    }
-    
-    .message-actions {
-        opacity: 1;
-    }
-    
-    .bulk-actions {
-        margin-top: 1rem;
-    }
-    
-    .bulk-actions .btn-group {
-        flex-wrap: wrap;
-        gap: 0.25rem;
-    }
-    
-    .message-date {
-        text-align: left;
-        margin-top: 0.5rem;
-    }
-    
-    .search-container .input-group {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 576px) {
-    .message-sender,
-    .message-subject-preview {
-        margin-bottom: 0.5rem;
-    }
-    
-    .message-actions .btn-group .btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-    }
-    
-    .inbox-folders .folder-link {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
-    }
-}
-
-/* Animation for message updates */
-.message-row.updating {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.message-row.updated {
-    animation: highlight 1s ease-in-out;
-}
-
-@keyframes highlight {
-    0% { background-color: rgba(var(--accent-color-rgb), 0.3); }
-    100% { background-color: transparent; }
-}
-
-/* Custom scrollbar for messages container */
-.messages-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-    background: var(--special-background-color);
-    border-radius: 4px;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-    background: var(--default-color);
-    border-radius: 4px;
-    opacity: 0.5;
-}
-
-.messages-container::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
 }

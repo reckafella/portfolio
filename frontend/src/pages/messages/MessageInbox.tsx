@@ -3,7 +3,7 @@
  * Main inbox container combining all message components
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMessages } from "@/hooks/useMessages";
 import { useMessageActions } from "@/hooks/useMessageActions";
 import { InboxSidebar } from "@/components/messages/InboxSidebar";
@@ -22,6 +22,7 @@ export const MessageInbox: React.FC = () => {
         filters,
         setFilter,
         setSearch,
+        goToPage,
         refresh,
     } = useMessages();
 
@@ -43,6 +44,23 @@ export const MessageInbox: React.FC = () => {
         null,
     );
     const [showModal, setShowModal] = useState(false);
+    const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+    const [isMobileSidebarCollapsed, setIsMobileSidebarCollapsed] =
+        useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 992) {
+                setIsMobileSidebarCollapsed(false);
+            } else {
+                setIsSidebarMinimized(false);
+            }
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const handleViewMessage = (message: Message) => {
         setSelectedMessage(message);
@@ -79,20 +97,33 @@ export const MessageInbox: React.FC = () => {
                     <div className="row" id="inbox-layout">
                         {/* Sidebar */}
                         <div
-                            className="col-12 col-md-4 col-lg-3"
+                            className={`col-12 col-md-4 ${isSidebarMinimized ? "col-lg-1" : "col-lg-3"}`}
                             id="inbox-sidebar-wrapper"
                         >
                             <InboxSidebar
                                 stats={stats}
                                 currentFilter={filters.filter}
                                 onFilterChange={setFilter}
+                                isMinimized={isSidebarMinimized}
+                                isMobileCollapsed={isMobileSidebarCollapsed}
+                                onToggle={() => {
+                                    if (window.innerWidth >= 992) {
+                                        setIsSidebarMinimized(
+                                            (minimized) => !minimized,
+                                        );
+                                    } else {
+                                        setIsMobileSidebarCollapsed(
+                                            (collapsed) => !collapsed,
+                                        );
+                                    }
+                                }}
                             />
                         </div>
 
                         {/* Main Content */}
                         <div
                             id="inbox-main"
-                            className="col-12 col-md-8 col-lg-9"
+                            className={`col-12 col-md-8 ${isSidebarMinimized ? "col-lg-11" : "col-lg-9"}`}
                         >
                             <div className="inbox-main">
                                 {/* Toolbar */}
@@ -122,6 +153,8 @@ export const MessageInbox: React.FC = () => {
                                     messages={messages}
                                     selectedIds={selectedIds}
                                     loading={loading}
+                                    pagination={pagination}
+                                    onPageChange={goToPage}
                                     onToggleSelect={toggleSelect}
                                     onViewMessage={handleViewMessage}
                                     onMarkAsRead={markAsRead}
@@ -129,74 +162,6 @@ export const MessageInbox: React.FC = () => {
                                     onDeleteMessage={deleteMessage}
                                     processing={processing}
                                 />
-
-                                {/* Pagination */}
-                                {pagination.total_pages > 1 && (
-                                    <div className="d-flex justify-content-center mt-4">
-                                        <nav>
-                                            <ul className="pagination">
-                                                <li
-                                                    className={`page-item ${!pagination.has_previous ? "disabled" : ""}`}
-                                                >
-                                                    <button
-                                                        className="page-link"
-                                                        onClick={() =>
-                                                            setFilter(
-                                                                filters.filter,
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            !pagination.has_previous
-                                                        }
-                                                    >
-                                                        Previous
-                                                    </button>
-                                                </li>
-
-                                                {Array.from(
-                                                    {
-                                                        length: pagination.total_pages,
-                                                    },
-                                                    (_, i) => i + 1,
-                                                ).map((page) => (
-                                                    <li
-                                                        key={page}
-                                                        className={`page-item ${page === pagination.page ? "active" : ""}`}
-                                                    >
-                                                        <button
-                                                            className="page-link"
-                                                            onClick={() =>
-                                                                setFilter(
-                                                                    filters.filter,
-                                                                )
-                                                            }
-                                                        >
-                                                            {page}
-                                                        </button>
-                                                    </li>
-                                                ))}
-
-                                                <li
-                                                    className={`page-item ${!pagination.has_next ? "disabled" : ""}`}
-                                                >
-                                                    <button
-                                                        className="page-link"
-                                                        onClick={() =>
-                                                            setFilter(
-                                                                filters.filter,
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            !pagination.has_next
-                                                        }
-                                                    >
-                                                        Next
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>

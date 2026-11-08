@@ -13,10 +13,10 @@
   --skills-background-color: rgb(29, 31, 33); /* #1d1f21 gunmetal */
   --resume-background-color: rgb(12, 12, 12); /* #0c0c0c oil black */
   --contact-background-color: rgb(33, 33, 36); /* #212124 Charleston green */
-  --header-background-color: rgb(16, 23, 32); /*#101720 smoky black  */
+  --header-background-color: rgb(14, 36, 65); /*#101720 smoky black  */
   --services-background-color: rgb(24, 24, 24); /* #181818 iridium */
   --nav-mobile-background-color: var(--header-background-color);
-  --special-background-color: rgb(33, 33, 33); /* #212121 midnight blue */
+  --special-background-color: rgb(201, 193, 193); /* #212121 midnight blue */
   --accordion-button-background: rgb(24, 24, 24); /* #181818 iridium */
   --footer-background-color: var(--special-background-color);
   --skills-background-color: var(--resume-background-color);
@@ -51,8 +51,8 @@
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 [data-bs-theme="light"] {
-  --accent-color: #001aff; /* #3a0369 */
-  --header-background-color: rgb(216, 216, 215); /* #fffff0 marble */
+  --accent-color: #7a711a; /* # */
+  --header-background-color: rgb(221, 221, 218); /* #fffff0 marble */
   --blog-background-color: rgb(244, 241, 248); /* #f4f1f8 lavender */
   --projects-background-color: rgb(251, 245, 223); /* #fbf5df parachment */
   --skills-background-color: rgb(209, 209, 202); /* #d1d1ca pearl */
@@ -64,8 +64,8 @@
   --accordion-button-background: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --breadcrumbs-background-color: rgb(248, 249, 250); /* #f8f9fa */
   --footer-background-color: rgb(245, 245, 247); /* #F5F5F7 ghost white */
-  --card-background-color: rgb(242, 248, 252); /* #f2f8fc */
-  --special-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
+  --card-background-color: rgb(206, 208, 209); /* #f2f8fc */
+  --special-background-color: rgb(9, 79, 141); /* #f0f8ff alice blue */
   --scroll-top-background-color: rgb(0, 0, 0); /* #000000 black */
   --scroll-top-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --search-background-color: rgba(255, 255, 255, 0.95);
@@ -82,7 +82,7 @@
   --background-color: rgb(232, 231, 228); /* #e8e7e4 */
   --dashboard-background-color: rgb(240, 248, 255); /* #f0f8ff alice blue */
   --default-color: rgb(0, 0, 0); /* #000000 */
-  --heading-color: rgb(34, 34, 34); /* #222222 */
+  --heading-color: rgb(31, 27, 27); /* #222222 */
   --text-error-color: rgb(220, 53, 69); /* #dc3545 */
   --text-success-color: rgb(25, 135, 84); /* #198754 */
   --text-warning-color: rgb(255, 193, 7); /* #ffc107 */
@@ -96,7 +96,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+  z-index: 19999;
   pointer-events: none;
   clip-path: ellipse(0% 0% at 0% 0%);
 }

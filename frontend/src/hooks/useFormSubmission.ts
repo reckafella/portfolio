@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { handleApiError } from "../utils/api";
+import { handleExpiredAuthResponse } from "@/utils/authSession";
 
 interface UseFormSubmissionOptions<T> {
-    onSuccess: (data: T) => void;
-    onError: (error: string) => void;
+    onSuccess: (_data: T) => void;
+    onError: (_error: string) => void;
     submitFunction: () => Promise<Response>;
     errorMessage?: string;
 }
@@ -30,6 +31,7 @@ export function useFormSubmission<T>({
 
         try {
             const response = await submitFunction();
+            const isExpiredSession = await handleExpiredAuthResponse(response);
 
             if (response.ok) {
                 const result = await response.json();
@@ -40,7 +42,7 @@ export function useFormSubmission<T>({
                 }
             } else {
                 // Handle different HTTP status codes
-                if (response.status === 401) {
+                if (isExpiredSession) {
                     onError("Authentication failed. Please log in again.");
                 } else if (response.status === 400) {
                     const errorData = await response.json();

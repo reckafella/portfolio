@@ -16,9 +16,10 @@ app_name = "blog"
 urlpatterns = [
     path("", PLV.as_view(), name="list_articles"),
     path("article/", CRV.as_view(redirect_to="/blog")),
-    path("article/create", CPV.as_view(), name="create_article"),
+    # path("article/create", CPV.as_view(), name="create_article"),
+    path("article/create", CRV.as_view(redirect_to="/blog/new"), name="create_article"),
     path("article/<slug:slug>", PDV.as_view(), name="article_details"),
-    path("article/<slug:slug>/update", UPV.as_view(),
+    path("article/<slug:slug>/update", CRV.as_view(redirect_to="/blog/edit/<slug:slug>"),
          name="update_article"),
     path("article/<slug:slug>/delete", DPV.as_view(),
          name="delete_article"),

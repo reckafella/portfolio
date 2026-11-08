@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { handleExpiredAuthResponse } from "@/utils/authSession";
 
 export interface ApiState<T> {
     data: T | null;
@@ -122,6 +123,7 @@ export function useApi<T>(
                 ]);
 
                 if (!response.ok) {
+                    await handleExpiredAuthResponse(response);
                     if (response.status >= 500) {
                         throw new Error(
                             "Server is temporarily unavailable. Please try again later.",

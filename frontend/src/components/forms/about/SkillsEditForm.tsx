@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BsSave, BsX, BsPlus, BsTrash } from "react-icons/bs";
 import { aboutApi } from "../../../utils/aboutApi";
 import { handleApiError } from "../../../utils/api";
+import { handleExpiredAuthResponse } from "@/utils/authSession";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface SkillsEditFormProps {
@@ -77,6 +78,7 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
                 category: "Technical Skills",
                 proficiency_level: 3,
             });
+            const isExpiredSession = await handleExpiredAuthResponse(response);
 
             if (response.ok) {
                 const result = await response.json();
@@ -87,7 +89,7 @@ const SkillsEditForm: React.FC<SkillsEditFormProps> = ({
                 }
             } else {
                 // Handle different HTTP status codes
-                if (response.status === 401) {
+                if (isExpiredSession) {
                     onError("Authentication failed. Please log in again.");
                 } else if (response.status === 400) {
                     const errorData = await response.json();

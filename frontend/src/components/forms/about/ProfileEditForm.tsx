@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BsSave, BsX } from "react-icons/bs";
 import { aboutApi, ProfileData } from "../../../utils/aboutApi";
 import { handleApiError } from "../../../utils/api";
+import { handleExpiredAuthResponse } from "@/utils/authSession";
 
 interface ProfileEditFormProps {
     data: ProfileData;
@@ -65,6 +66,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
 
         try {
             const response = await aboutApi.updateProfile(formData);
+            const isExpiredSession = await handleExpiredAuthResponse(response);
 
             if (response.ok) {
                 const result = await response.json();
@@ -75,7 +77,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
                 }
             } else {
                 // Handle different HTTP status codes
-                if (response.status === 401) {
+                if (isExpiredSession) {
                     onError("Authentication failed. Please log in again.");
                 } else if (response.status === 400) {
                     const errorData = await response.json();

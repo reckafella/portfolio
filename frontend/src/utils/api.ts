@@ -1,6 +1,10 @@
 /**
  * API utility functions for making authenticated requests
  */
+import {
+    clearExpiredAuthSession,
+    handleExpiredAuthResponse,
+} from "./authSession";
 
 interface RequestOptions extends RequestInit {
     headers?: Record<string, string>;
@@ -78,7 +82,9 @@ export const apiRequest = async (
         },
     };
 
-    return fetch(url, mergedOptions);
+    const response = await fetch(url, mergedOptions);
+    await handleExpiredAuthResponse(response);
+    return response;
 };
 
 /**
@@ -87,8 +93,7 @@ export const apiRequest = async (
  */
 export const handleApiError = (response: Response, error?: Error): void => {
     if (response.status === 401) {
-        // Unauthorized - redirect to login
-        window.location.href = "/login";
+        clearExpiredAuthSession();
     } else if (response.status === 403) {
         // Forbidden - redirect to forbidden page
         window.location.href = "/error/403";

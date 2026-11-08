@@ -1,6 +1,7 @@
 /**
  * Error handling utilities for redirecting to appropriate error pages
  */
+import { handleExpiredAuthResponse } from "./authSession";
 
 export const ErrorCodes = {
     BAD_REQUEST: 400,
@@ -102,6 +103,8 @@ export class ApiError extends Error {
  */
 export const handleApiError = async (response: Response): Promise<void> => {
     if (!response.ok) {
+        await handleExpiredAuthResponse(response);
+
         let errorMessage: string;
 
         try {

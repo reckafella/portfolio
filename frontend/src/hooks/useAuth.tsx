@@ -12,6 +12,10 @@ import AuthService, {
     RegisterData,
 } from "@/services/authService";
 import { tabSyncService, TabSyncMessage } from "@/services/tabSyncService";
+import {
+    AUTH_SESSION_EXPIRED_EVENT,
+    clearExpiredAuthSession,
+} from "@/utils/authSession";
 
 interface User {
     id: number;
@@ -52,32 +56,84 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const [isLoading, setIsLoading] = useState(true);
     const queryClient = useQueryClient();
 
-    // Initialize authentication state
+    // Validate cached auth data against the server before allowing protected routes.
     useEffect(() => {
-        const initAuth = () => {
-            // Check for Django authentication first (from hidden div)
-            const userLoggedInDiv = document.getElementById("user-logged-in");
-            if (userLoggedInDiv) {
-                // User is authenticated in Django, get user info from localStorage or API
-                const currentUser = AuthService.getCurrentUser();
-                if (currentUser && AuthService.isAuthenticated()) {
-                    setUser(currentUser);
-                } else {
-                    // If no localStorage data, fetch from Django session
-                    fetchUserFromSession();
+        let isMounted = true;
+
+        const initializeAuth = async () => {
+            const cachedUser = AuthService.getCurrentUser();
+            const hasDjangoSessionContext =
+                document.getElementById("user-logged-in") !== null;
+
+            if (!cachedUser && !hasDjangoSessionContext) {
+                setUser(null);
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/auth/user/", {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.ok) {
+                    const currentUser: User = await response.json();
+                    if (isMounted) {
+                        setUser(currentUser);
+                        localStorage.setItem(
+                            "user",
+                            JSON.stringify(currentUser),
+                        );
+                    }
+                } else if (response.status === 401) {
+                    clearExpiredAuthSession();
+                    if (isMounted) {
+                        setUser(null);
+                        queryClient.clear();
+                    }
+                } else if (cachedUser && isMounted) {
+                    setUser(cachedUser);
                 }
-            } else {
-                // Check localStorage anyway in case of client-side auth
-                const currentUser = AuthService.getCurrentUser();
-                if (currentUser && AuthService.isAuthenticated()) {
-                    setUser(currentUser);
+            } catch {
+                // Keep cached auth during temporary network failures; protected API
+                // responses will invalidate it if the server rejects the session.
+                if (cachedUser && isMounted) {
+                    setUser(cachedUser);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
                 }
             }
-            setIsLoading(false);
         };
 
-        initAuth();
-    }, []);
+        void initializeAuth();
+        return () => {
+            isMounted = false;
+        };
+    }, [queryClient]);
+
+    useEffect(() => {
+        const handleExpiredSession = () => {
+            setUser(null);
+            queryClient.clear();
+        };
+
+        window.addEventListener(
+            AUTH_SESSION_EXPIRED_EVENT,
+            handleExpiredSession,
+        );
+        return () =>
+            window.removeEventListener(
+                AUTH_SESSION_EXPIRED_EVENT,
+                handleExpiredSession,
+            );
+    }, [queryClient]);
 
     // Listen for cross-tab authentication changes
     useEffect(() => {
@@ -112,30 +168,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             tabSyncService.removeListener(handleTabSyncMessage);
         };
     }, [queryClient]);
-
-    // Fetch user data from Django session
-    const fetchUserFromSession = async () => {
-        try {
-            const response = await fetch("/api/auth/user/", {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.ok) {
-                const userData = await response.json();
-                setUser(userData);
-                // Store in localStorage for consistency
-                localStorage.setItem("user", JSON.stringify(userData));
-            }
-        } catch (error) {
-            // Silently fail - user may not be authenticated
-            console.error("Failed to fetch user from session:", error);
-        }
-    };
 
     const login = async (
         username: string,
